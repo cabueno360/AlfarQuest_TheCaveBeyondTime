@@ -427,3 +427,36 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# =====================================================================
+#  Alfar Quest
+#
+#  Appended to the Visual Studio template above rather than replacing it.
+#  The template covers bin/x64 and bin/x86 but not a plain bin/ or obj/,
+#  which is where this project's build output actually lands — without
+#  these the whole compiled WebAssembly payload would be committed.
+# =====================================================================
+
+# .NET build output
+bin/
+obj/
+*.user
+
+# A developer's own connection string and secrets.
+appsettings.Development.json
+
+# Build-time art tooling. The tools themselves are tracked; their npm tree
+# is not.
+tools/node_modules/
+
+# Screenshots written by the verification probes. Regenerated on every run,
+# and eighteen megabytes of them is not history worth keeping.
+tools/shots/
+
+# macOS
+.DS_Store
+
+# Agent settings. settings.json is shared configuration and is tracked;
+# settings.local.json is one machine's own permissions.
+.claude/settings.local.json
+

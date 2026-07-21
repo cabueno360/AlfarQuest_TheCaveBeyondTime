@@ -1,0 +1,21 @@
+@using AlfarQuest.Client.Models
+
+@* Rendered from SlotInfo.All, so a new slot is one row in that list. Clicking a
+   filled slot takes the item off. *@
+<section class="aq-cw-panel">
+    <h3 class="aq-cw-panel-title">Equipment</h3>
+    @* "worn" is the counterpart to the pack's "pack": both grids render the same
+       .aq-slot children, and without a modifier on each there is no way — in CSS
+       or in a test — to say which grid you mean. *@
+    <div class="aq-slots worn">
+        @foreach (var info in SlotInfo.All)
+        {
+            <EquipmentSlot Info="info" Item="Character.Gear[info.Slot]" OnUnequip="OnUnequip" />
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public required Character Character { get; set; }
+    [Parameter] public EventCallback<Slot> OnUnequip { get; set; }
+}

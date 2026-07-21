@@ -1,0 +1,151 @@
+/* Profile and settings pages: banner, card grid, statistics, uploader. */
+
+.aq-profile {
+    max-width: 1080px; margin: 0 auto; padding: clamp(1rem, 3vw, 2.2rem) clamp(.9rem, 3vw, 1.6rem) 4rem;
+}
+
+.aq-page-title {
+    font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .12rem;
+    font-size: clamp(1.5rem, 4vw, 2.1rem); color: var(--aq-gold-soft); margin: 0 0 1.4rem;
+}
+
+/* ---------- banner ---------- */
+.aq-profile-head {
+    position: relative; display: flex; align-items: center; gap: clamp(1rem, 3vw, 1.8rem);
+    padding: clamp(1.2rem, 3vw, 2rem); margin-bottom: 1.4rem; overflow: hidden;
+    background: linear-gradient(120deg, rgba(30, 24, 62, .9), rgba(10, 8, 24, .95));
+    border: 1px solid rgba(185, 199, 255, .2); border-radius: 18px;
+}
+.aq-profile-head-glow {
+    position: absolute; inset: -40% -20% auto -20%; height: 200%;
+    background: radial-gradient(ellipse at 18% 30%, rgba(185, 199, 255, .18), transparent 62%);
+    pointer-events: none;
+}
+.aq-profile-head-text { position: relative; min-width: 0; }
+
+.aq-profile-name {
+    margin: 0; font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .06rem;
+    font-size: clamp(1.35rem, 4vw, 2rem); color: var(--aq-gold-soft);
+    overflow-wrap: anywhere;
+}
+.aq-profile-email { margin: .2rem 0 .9rem; color: var(--aq-crystal); overflow-wrap: anywhere; }
+
+.aq-profile-dates { display: flex; gap: 1.6rem; margin: 0; flex-wrap: wrap; }
+.aq-profile-dates dt {
+    font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .1rem;
+    text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-profile-dates dd { margin: .15rem 0 0; font-size: .93rem; }
+
+/* ---------- card grid ---------- */
+.aq-profile-grid {
+    display: grid; gap: 1.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    align-items: start;
+}
+.aq-card {
+    background: linear-gradient(180deg, rgba(24, 19, 48, .88), rgba(9, 7, 22, .94));
+    border: 1px solid rgba(185, 199, 255, .18); border-radius: 16px; overflow: hidden;
+}
+.aq-card.wide { grid-column: 1 / -1; }
+
+.aq-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .85rem 1.15rem; border-bottom: 1px solid rgba(185, 199, 255, .14);
+    background: rgba(185, 199, 255, .05);
+}
+.aq-card-title {
+    display: flex; align-items: center; gap: .55rem; margin: 0;
+    font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 500;
+    letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-crystal);
+}
+.aq-card-icon { color: var(--aq-gold); }
+.aq-card-body { padding: 1.15rem; }
+.aq-card-more { margin: 1rem 0 0; }
+
+/* ---------- statistics ----------
+   Named aq-gamestat, not aq-stat: the character sheet already owns aq-stat, and
+   because character.css is imported after this one it won, laying these tiles
+   out as flex rows and wrapping every value onto three lines. Distinct names are
+   what keeps one module out of another's way. */
+.aq-gamestats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0; }
+.aq-gamestat {
+    padding: .8rem .9rem; border-radius: 12px;
+    background: rgba(185, 199, 255, .06); border: 1px solid rgba(185, 199, 255, .12);
+}
+.aq-gamestat dt {
+    font-family: 'Cinzel', serif; font-size: .64rem; letter-spacing: .1rem;
+    text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-gamestat-value {
+    margin: .3rem 0 0; font-size: 1.35rem; font-weight: 600; color: var(--aq-text);
+    overflow-wrap: anywhere;
+}
+.aq-gamestat-value.gold { color: var(--aq-gold-soft); }
+
+/* ---------- avatar ---------- */
+.aq-avatar {
+    display: inline-grid; place-items: center; border-radius: 50%; overflow: hidden;
+    flex: none; background: rgba(8, 6, 20, .8);
+    border: 2px solid rgba(216, 180, 90, .45);
+    box-shadow: 0 0 0 4px rgba(8, 6, 20, .7), 0 6px 22px rgba(0, 0, 0, .5);
+}
+.aq-avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.aq-avatar-sm { width: 32px; height: 32px; border-width: 1px; box-shadow: none; }
+.aq-avatar-md { width: 56px; height: 56px; }
+.aq-avatar-lg { width: 112px; height: 112px; }
+.aq-avatar-xl { width: clamp(88px, 18vw, 132px); height: clamp(88px, 18vw, 132px); }
+
+.aq-uploader { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.aq-avatar-preview { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.aq-avatar-badge {
+    font-size: .7rem; letter-spacing: .06rem; text-transform: uppercase;
+    color: #e8c48a; border: 1px solid rgba(216, 180, 90, .4);
+    padding: .1rem .5rem; border-radius: 999px;
+}
+.aq-uploader-controls { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; }
+/* The label drives the hidden file input, so it has to look and behave like the
+   button it stands in for. */
+.aq-uploader-choose { cursor: pointer; display: inline-flex; align-items: center; }
+.aq-uploader-note { text-align: center; margin: 0; max-width: 34ch; }
+
+/* ---------- account settings ---------- */
+.aq-settings { display: flex; flex-direction: column; gap: .85rem; margin: 0; }
+.aq-setting { display: flex; flex-direction: column; gap: .2rem; }
+.aq-setting dt {
+    font-family: 'Cinzel', serif; font-size: .66rem; letter-spacing: .1rem;
+    text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-setting dd { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.aq-settings-actions { margin-top: 1.2rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+
+.aq-tag {
+    font-size: .7rem; letter-spacing: .06rem; text-transform: uppercase;
+    padding: .12rem .55rem; border-radius: 999px;
+    border: 1px solid rgba(185, 199, 255, .3); color: var(--aq-muted);
+}
+.aq-tag.pending { color: #e8c48a; border-color: rgba(216, 180, 90, .38); }
+.aq-code {
+    font-family: ui-monospace, Menlo, monospace; font-size: .8rem;
+    color: var(--aq-crystal); background: rgba(8, 6, 20, .6);
+    padding: .1rem .4rem; border-radius: 6px; overflow-wrap: anywhere;
+}
+
+/* ---------- achievements ---------- */
+.aq-empty { display: flex; gap: .6rem; align-items: flex-start; color: var(--aq-muted); margin: 0; line-height: 1.5; }
+.aq-empty-mark { color: var(--aq-gold); }
+.aq-achievements { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+.aq-achievement {
+    display: flex; gap: .75rem; align-items: center; padding: .65rem .8rem;
+    background: rgba(185, 199, 255, .06); border-radius: 10px;
+}
+.aq-achievement-mark { color: var(--aq-gold); font-size: 1.1rem; }
+.aq-achievement-name { margin: 0; font-weight: 600; }
+.aq-achievement-desc { margin: .1rem 0 0; font-size: .86rem; color: var(--aq-muted); }
+.aq-achievement time { margin-left: auto; font-size: .78rem; color: var(--aq-muted); white-space: nowrap; }
+
+@media (max-width: 560px) {
+    .aq-profile-head { flex-direction: column; text-align: center; }
+    .aq-profile-dates { justify-content: center; }
+    .aq-gamestats { grid-template-columns: 1fr; }
+}

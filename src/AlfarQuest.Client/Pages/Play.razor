@@ -1,0 +1,30 @@
+@page "/play"
+@attribute [Authorize]
+@layout AlfarQuest.Client.Layout.GameLayout
+@using Microsoft.AspNetCore.Authorization
+@using AlfarQuest.Client.Components.Game
+@using AlfarQuest.Client.Components.Character
+
+@* The game itself, and the only page that loads it.
+
+   [Authorize] is what stops the world from being built for an anonymous visitor:
+   the module import, the party load and every asset fetch live in
+   OnAfterRenderAsync, which never runs when the route guard redirects instead of
+   rendering this. *@
+
+<div class="aq-stage">
+    <canvas id="gameCanvas"></canvas>
+
+    <NowPlaying Track="The Ballad of the Wandering" Muted="Muted" OnToggle="ToggleMute" />
+
+    <MenuBar OnCharacter="OpenCharacterSheet" OnQuit="Quit" />
+
+    <ControlsHelp />
+
+    <CharacterWindow Visible="SheetOpen" AtCraftsman="AtCraftsman" OnClose="CloseSheet" />
+
+    @* Sits above the character window in the markup so that when a level-up
+       hands off to the sheet, the celebration is on top until it is dismissed. *@
+    <LevelUpWindow Event="CurrentLevelUp" Remaining="Party.PendingLevelUps.Count"
+                   OnContinue="DismissLevelUp" />
+</div>

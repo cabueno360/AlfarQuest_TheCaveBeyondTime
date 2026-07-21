@@ -1,0 +1,12 @@
+@using AlfarQuest.Client.Models
+
+<div class="aq-cw-portrait">
+    <img src="@Src" alt="" onerror="this.closest('.aq-cw-portrait').classList.add('no-art')" />
+    <div class="aq-cw-portrait-stub" style="background:@Character.Def.SwatchCss"></div>
+    <div class="aq-cw-portrait-frame"></div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Character Character { get; set; }
+    private string Src => $"assets/ui/hero-{Character.Key}.png";
+}

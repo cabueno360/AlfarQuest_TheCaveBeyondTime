@@ -1,0 +1,30 @@
+@* A labelled row: label, control, validation message, hint.
+
+   The label's `for` and the control's `id` are the same value passed once, so a
+   form cannot ship with a label that clicks through to nothing — which is the
+   usual way an accessible form quietly stops being one. *@
+
+<div class="aq-field">
+    <label class="aq-field-label" for="@Id">
+        @Label
+        @if (!Required)
+        {
+            <span class="aq-field-optional">optional</span>
+        }
+    </label>
+
+    @ChildContent
+
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <p class="aq-field-hint" id="@($"{Id}-hint")">@Hint</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Id { get; set; } = "";
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter] public bool Required { get; set; } = true;
+    [Parameter] public string? Hint { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

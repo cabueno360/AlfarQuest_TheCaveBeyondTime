@@ -1,0 +1,37 @@
+/* The gate: what an anonymous visitor sees, and the documents linked from it. */
+
+.aq-landing {
+    position: relative; min-height: calc(100vh - 3.4rem);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2.5rem 1.25rem; text-align: center; overflow: hidden;
+}
+.aq-landing-inner {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    gap: 1.4rem; width: 100%; max-width: 780px;
+}
+.aq-landing-actions { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; }
+.aq-landing-actions .aq-btn { text-decoration: none; display: inline-block; }
+
+.aq-landing-points {
+    list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column;
+    gap: .55rem; text-align: left; color: var(--aq-crystal); font-size: .95rem;
+}
+.aq-landing-points li { display: flex; gap: .6rem; align-items: flex-start; }
+.aq-landing-points span { color: var(--aq-gold); }
+
+/* ---------- privacy / terms ---------- */
+.aq-doc {
+    max-width: 720px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 3rem) 1.25rem 4rem;
+    line-height: 1.65;
+}
+.aq-doc h1 {
+    font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: .1rem;
+    color: var(--aq-gold-soft); margin: 0 0 1rem; font-size: clamp(1.6rem, 5vw, 2.2rem);
+}
+.aq-doc h2 {
+    font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: .1rem;
+    text-transform: uppercase; color: var(--aq-crystal); margin: 2rem 0 .6rem;
+}
+.aq-doc-lede { color: var(--aq-crystal); font-style: italic; }
+.aq-doc ul { padding-left: 1.2rem; display: flex; flex-direction: column; gap: .4rem; }
+.aq-doc-foot { margin-top: 2.5rem; }

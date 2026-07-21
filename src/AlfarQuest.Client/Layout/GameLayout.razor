@@ -1,0 +1,14 @@
+@inherits LayoutComponentBase
+@using AlfarQuest.Client.Components.Common
+
+@* The game's frame: nothing but the game.
+
+   No top bar. The canvas is sized to the viewport and the game has its own menu
+   bar over it, so a second navigation strip would both steal pixels and put two
+   competing menus on one screen. Notifications still render, because a session
+   ending mid-play is worth being told about. *@
+
+<div class="aq-gameframe">
+    @Body
+    <ToastHost />
+</div>

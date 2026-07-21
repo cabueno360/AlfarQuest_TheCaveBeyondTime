@@ -1,0 +1,20 @@
+@using AlfarQuest.Client.Models
+
+<div class="aq-slot @(Item is null ? "empty" : "filled")"
+     style="@(Item is null ? "" : $"--rarity:{RarityInfo.Of(Item.Rarity).Colour}")"
+     title="@(Item is null ? Info.Name : null)"
+     @onclick="Unequip">
+    <span class="aq-slot-icon">@(Item?.Icon ?? Info.Icon)</span>
+    @if (Item is not null)
+    {
+        <ItemTooltip Item="Item" />
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required SlotInfo Info { get; set; }
+    [Parameter] public Item? Item { get; set; }
+    [Parameter] public EventCallback<Slot> OnUnequip { get; set; }
+
+    private Task Unequip() => Item is null ? Task.CompletedTask : OnUnequip.InvokeAsync(Info.Slot);
+}

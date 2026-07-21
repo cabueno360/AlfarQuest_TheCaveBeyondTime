@@ -1,0 +1,40 @@
+@implements IDisposable
+@inject NotificationService Notifications
+
+@* Lives once, in the layout. aria-live="polite" means each message is read out
+   when the user is idle instead of interrupting them mid-sentence. *@
+<div class="aq-toasts" aria-live="polite" aria-atomic="false">
+    @foreach (var toast in Notifications.Active)
+    {
+        <div class="aq-toast @Kind(toast.Kind)" role="@(toast.Kind == NotificationKind.Error ? "alert" : "status")">
+            <span class="aq-toast-icon" aria-hidden="true">@Icon(toast.Kind)</span>
+            <span class="aq-toast-text">@toast.Message</span>
+            <button type="button" class="aq-toast-close" aria-label="Dismiss"
+                    @onclick="() => Notifications.Dismiss(toast.Id)">×</button>
+        </div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized() => Notifications.Changed += OnChanged;
+
+    // The notification may be raised from a service call rather than an event
+    // handler, so the re-render has to be marshalled onto the renderer's thread.
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private static string Kind(NotificationKind kind) => kind switch
+    {
+        NotificationKind.Success => "ok",
+        NotificationKind.Error => "bad",
+        _ => "info",
+    };
+
+    private static string Icon(NotificationKind kind) => kind switch
+    {
+        NotificationKind.Success => "✦",
+        NotificationKind.Error => "⚠",
+        _ => "◈",
+    };
+
+    public void Dispose() => Notifications.Changed -= OnChanged;
+}

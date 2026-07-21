@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node wallshot.mjs)",
+      "Bash(node montage2.mjs 6 8 9 5 arches.png)",
+      "Bash(node crop.mjs /Users/carlosbueno/Downloads/AlfarQuest/src/AlfarQuest.Client/wwwroot/assets/Miner_Ores.png 0 384 1280 640 1 ores_mid.png)"
+    ]
+  }
+}

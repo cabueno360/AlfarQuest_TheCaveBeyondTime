@@ -1,0 +1,75 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+
+@* Composition only — every panel is its own component, and nothing here knows
+   how a stat is calculated. *@
+@if (Party.Selected is { } c)
+{
+    <PauseOverlay Visible="Visible" OnDismiss="Close" />
+
+    <section class="aq-cw @(Visible ? "shown" : "")"
+             role="dialog" aria-modal="true" aria-label="Character">
+        <div class="aq-cw-frame">
+            <button class="aq-cw-close" title="Close (C or Esc)" @onclick="Close">✕</button>
+
+            <div class="aq-cw-cols">
+                <aside class="aq-cw-left">
+                    <CharacterPortrait Character="c" />
+                    <CharacterHeader Character="c" />
+                    <ExperienceBar Level="c.Level" Xp="c.Xp" />
+                    <VitalsPanel Character="c" />
+                    <MoneyPanel Wallet="Party.Purse" />
+                </aside>
+
+                <div class="aq-cw-right">
+                    <EquipmentPanel Character="c" OnUnequip="slot => Unequip(c, slot)" />
+                    <InventoryPanel Bag="Party.Bag" Gear="c.Gear" OnEquip="item => Equip(c, item)" />
+                    <MaterialsPanel Pouch="Party.Pouch" />
+                    <CraftingPanel Pouch="Party.Pouch" Purse="Party.Purse"
+                                   AtStation="AtCraftsman" OnCraft="Craft" />
+                    <AttributesPanel Character="c" OnRaise="k => Raise(c, k)" />
+                    <CombatStatsPanel Character="c" />
+                    <SkillsPanel Character="c" OnLearn="s => Learn(c, s)" />
+                </div>
+            </div>
+
+            <footer class="aq-cw-footer">
+                @if (c.AttributePoints > 0)
+                {
+                    <span class="aq-cw-points">@c.AttributePoints attribute points</span>
+                }
+                @if (c.SkillPoints > 0)
+                {
+                    <span class="aq-cw-points skill">@c.SkillPoints skill points</span>
+                }
+                <span class="aq-cw-hint">C or Esc to close</span>
+            </footer>
+        </div>
+    </section>
+}
+
+@code {
+    [Inject] private PartyState Party { get; set; } = default!;
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public bool AtCraftsman { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    protected override void OnInitialized() => Party.Changed += StateHasChanged;
+    public void Dispose() => Party.Changed -= StateHasChanged;
+
+    private Task Close() => OnClose.InvokeAsync();
+
+    /// <summary>Spending a point re-publishes the sheet, so both this window and
+    /// the simulation pick up the new numbers from the one change.</summary>
+    private void Raise(Models.Character c, AttributeKind kind) => Party.Raise(c, kind);
+
+    private void Learn(Models.Character c, Skill skill) => Party.Learn(c, skill);
+
+    /// <summary>Clicking a worn item takes it off; every derived number and the
+    /// simulation follow from the same change.</summary>
+    private void Unequip(Models.Character c, Slot slot) => Party.Unequip(c, slot);
+
+    private void Equip(Models.Character c, Item item) => Party.Equip(c, item);
+
+    private void Craft(Recipe r) => Party.Craft(r);
+}

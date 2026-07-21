@@ -1,0 +1,67 @@
+@using AlfarQuest.Client.Components.Common
+@using AlfarQuest.Client.Services.Auth
+@implements IDisposable
+@inject CurrentUserProvider Me
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+@* Avatar and name in the top bar; the dropdown hangs off it.
+
+   This component owns only "is it open". What is inside is UserDropdown's
+   business, and signing out is AuthenticationService's. *@
+
+<div class="aq-playermenu" @onkeydown="OnKeyDown">
+    @* aria-expanded is spelled out rather than bound to the bool: Blazor renders
+       a false bool attribute as absent and a true one as an empty value, and
+       aria-expanded="" means nothing to a screen reader.
+
+       The comment sits here and not among the attributes — a Razor comment
+       inside an element's attribute list is emitted as an attribute name, which
+       throws InvalidCharacterError and takes the whole component down. *@
+    <button type="button" class="aq-playermenu-trigger"
+            @onclick="Toggle"
+            aria-haspopup="menu"
+            aria-expanded="@(_open ? "true" : "false")"
+            id="aq-playermenu-trigger">
+        <PlayerAvatar AvatarUrl="@Me.Player?.AvatarUrl" Name="@Me.DisplayName" Size="sm" />
+        <span class="aq-playermenu-name">@Me.DisplayName</span>
+        <span class="aq-playermenu-caret @(_open ? "open" : "")" aria-hidden="true">▾</span>
+    </button>
+
+    @if (_open)
+    {
+        @* A full-screen transparent sheet behind the menu. Clicking anywhere lands
+           here and closes it — which is what people expect, and what a handler on
+           the menu itself cannot do. *@
+        <div class="aq-dropdown-scrim" @onclick="Close"></div>
+        <UserDropdown OnNavigate="Close" OnSignOut="SignOut" />
+    }
+</div>
+
+@code {
+    private bool _open;
+
+    protected override void OnInitialized() => Me.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private void Toggle() => _open = !_open;
+
+    private void Close() => _open = false;
+
+    /// <summary>Escape closes the menu. Without it, a keyboard user who opens this
+    /// by accident has no way out but tabbing through every item.</summary>
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Close();
+    }
+
+    private async Task SignOut()
+    {
+        Close();
+        await Auth.SignOutAsync();
+        Nav.NavigateTo("/", replace: true);
+    }
+
+    public void Dispose() => Me.Changed -= OnChanged;
+}

@@ -1,0 +1,41 @@
+/* The sign-in / sign-up / recovery screen: key art behind, one lit panel in
+   front. */
+
+.aq-auth {
+    position: relative; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1.2rem; padding: 2.5rem 1.25rem;
+    overflow-y: auto;
+}
+
+.aq-auth-panel {
+    position: relative; width: 100%; max-width: 460px; padding: 2.1rem 2rem 1.9rem;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .93), rgba(9, 7, 22, .97));
+    border: 1px solid rgba(185, 199, 255, .22); border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .7), 0 0 60px rgba(185, 199, 255, .06);
+}
+/* A thin gold seam along the top edge — the same trim the character window uses,
+   so the account screens read as part of the game rather than bolted on. */
+.aq-auth-panel::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 1px; border-radius: 18px 18px 0 0;
+    background: linear-gradient(90deg, transparent, rgba(216, 180, 90, .7), transparent);
+}
+
+.aq-auth-title {
+    margin: 0 0 .25rem; font-family: 'Cinzel', serif; font-weight: 700;
+    font-size: 1.85rem; letter-spacing: .1rem; color: var(--aq-gold-soft);
+    text-align: center; text-shadow: 0 0 26px rgba(216, 180, 90, .35);
+}
+.aq-auth-sub {
+    margin: 0 0 1.5rem; text-align: center; color: var(--aq-crystal);
+    font-style: italic; font-size: .95rem;
+}
+
+.aq-auth-foot {
+    position: relative; display: flex; gap: .6rem; align-items: center;
+    color: var(--aq-muted); font-size: .86rem;
+}
+
+@media (max-width: 520px) {
+    .aq-auth { padding: 1.5rem 1rem; }
+    .aq-auth-panel { padding: 1.6rem 1.25rem 1.4rem; border-radius: 14px; }
+}

@@ -1,0 +1,47 @@
+@using AlfarQuest.Client.Components.Common
+@using AlfarQuest.Shared.Profiles
+
+@* The banner: portrait, name, and the two dates that say how long someone has
+   been here. Presentation only — it takes a profile and draws it, which is why
+   it needs no services and can be dropped anywhere one is in hand. *@
+
+<header class="aq-profile-head">
+    <div class="aq-profile-head-glow" aria-hidden="true"></div>
+
+    <PlayerAvatar AvatarUrl="@Player.AvatarUrl" Name="@Player.FullName" Size="xl" />
+
+    <div class="aq-profile-head-text">
+        <h1 class="aq-profile-name">@Player.FullName</h1>
+        <p class="aq-profile-email">@Player.Email</p>
+
+        @* Country and phone are read here as well as being editable below. The
+           form holds them in input values, which are not text — so without this
+           the page never actually *displays* what it stores. *@
+        <dl class="aq-profile-dates">
+            <div>
+                <dt>Joined</dt>
+                <dd>@Player.RegisteredAt.ToLocalTime().ToString("d MMM yyyy")</dd>
+            </div>
+            <div>
+                <dt>Last seen</dt>
+                <dd>@(Player.LastLoginAt is { } seen ? seen.ToLocalTime().ToString("d MMM yyyy, HH:mm") : "—")</dd>
+            </div>
+            <div>
+                <dt>Country</dt>
+                <dd>@Blank(Player.Country)</dd>
+            </div>
+            <div>
+                <dt>Phone</dt>
+                <dd>@Blank(Player.PhoneNumber)</dd>
+            </div>
+        </dl>
+    </div>
+</header>
+
+@code {
+    [Parameter, EditorRequired] public PlayerProfileDto Player { get; set; } = new();
+
+    /// <summary>An em dash for what was never filled in. An empty cell reads as a
+    /// rendering fault; a dash reads as "nothing here", which is the truth.</summary>
+    private static string Blank(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value;
+}

@@ -1,0 +1,41 @@
+@using AlfarQuest.Client.Services.Auth
+@inject CurrentUserProvider Me
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+@* Facts about the account rather than about the character: what it is, how it is
+   secured, and the way out. *@
+
+<dl class="aq-settings">
+    <div class="aq-setting">
+        <dt>Sign-in method</dt>
+        <dd>Email and password</dd>
+    </div>
+    <div class="aq-setting">
+        <dt>Email confirmed</dt>
+        <dd>
+            <span class="aq-tag pending">Not yet</span>
+            <span class="aq-hint">Confirmation is not sent yet — your account works without it.</span>
+        </dd>
+    </div>
+    <div class="aq-setting">
+        <dt>Two-factor</dt>
+        <dd><span class="aq-tag pending">Not available</span></dd>
+    </div>
+    <div class="aq-setting">
+        <dt>Account id</dt>
+        <dd><code class="aq-code">@Me.Player?.Id</code></dd>
+    </div>
+</dl>
+
+<div class="aq-settings-actions">
+    <button type="button" class="aq-btn ghost" @onclick="SignOut">Log out of this device</button>
+</div>
+
+@code {
+    private async Task SignOut()
+    {
+        await Auth.SignOutAsync();
+        Nav.NavigateTo("/", replace: true);
+    }
+}

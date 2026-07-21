@@ -1,0 +1,122 @@
+@using AlfarQuest.Client.Components.Auth
+@using AlfarQuest.Client.Services.Auth
+@using AlfarQuest.Client.Services.Profile
+@using Microsoft.AspNetCore.Components.Forms
+@inject AvatarService Avatars
+@inject CurrentUserProvider Me
+@inject NotificationService Notifications
+
+@* Choose, preview, upload. The choosing and the uploading are separate steps on
+   purpose: an avatar that changed the instant a file was picked would leave no
+   room to notice it was the wrong file. *@
+
+<div class="aq-uploader">
+    <AvatarPreview AvatarUrl="@Me.Player?.AvatarUrl" Name="@Me.DisplayName" Pending="@_preview" />
+
+    <div class="aq-uploader-controls">
+        @* The real file input is hidden and driven by the label, because a raw
+           file input cannot be styled and looks like nothing else on the page.
+           It is still a real input, so keyboard and screen readers reach it. *@
+        <InputFile id="avatar-file" class="aq-visually-hidden"
+                   OnChange="OnFileChosen"
+                   accept="@AvatarService.Accept" />
+
+        <label for="avatar-file" class="aq-btn ghost aq-uploader-choose">
+            @(_preview is null ? "Change avatar" : "Choose another")
+        </label>
+
+        @if (_preview is not null)
+        {
+            <button type="button" class="aq-btn" disabled="@_busy" @onclick="Upload">
+                @(_busy ? "Uploading…" : "Upload image")
+            </button>
+            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Discard">Cancel</button>
+        }
+        else if (Me.Player?.AvatarUrl is not null)
+        {
+            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Remove">Remove</button>
+        }
+    </div>
+
+    <FormErrorSummary Message="@_error" />
+
+    <p class="aq-hint aq-uploader-note">
+        PNG, JPG or WEBP, up to 5 MB. It will be cropped square and resized to 256px.
+    </p>
+</div>
+
+@code {
+    private IBrowserFile? _chosen;
+    private string? _preview;
+    private string? _error;
+    private bool _busy;
+
+    private async Task OnFileChosen(InputFileChangeEventArgs e)
+    {
+        _error = null;
+        var file = e.File;
+
+        // Refuse before reading. A 40 MB file would otherwise be pulled into the
+        // browser's memory just to draw a preview it will never get to show.
+        if (AvatarService.Precheck(file) is { Ok: false } rejected)
+        {
+            _chosen = null;
+            _preview = null;
+            _error = rejected.Error;
+            return;
+        }
+
+        _chosen = file;
+        _preview = await ToDataUrlAsync(file);
+    }
+
+    private async Task Upload()
+    {
+        if (_chosen is null) return;
+
+        _busy = true;
+        _error = null;
+
+        var result = await Avatars.UploadAsync(_chosen);
+
+        _busy = false;
+
+        if (!result.Ok)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        // The session now holds the new profile, so every portrait on screen has
+        // already changed; dropping the preview reveals the stored one.
+        Discard();
+        Notifications.Success("Your portrait has been changed.");
+    }
+
+    private async Task Remove()
+    {
+        _busy = true;
+        var result = await Avatars.RemoveAsync();
+        _busy = false;
+
+        if (result.Ok) Notifications.Success("Your portrait has been removed.");
+        else _error = result.Error;
+    }
+
+    private void Discard()
+    {
+        _chosen = null;
+        _preview = null;
+        _error = null;
+    }
+
+    /// <summary>Reads the chosen file into a data: URL for the preview. Capped at
+    /// the same 5 MB the upload is, so this cannot become the way to exhaust the
+    /// tab's memory.</summary>
+    private static async Task<string> ToDataUrlAsync(IBrowserFile file)
+    {
+        using var buffer = new MemoryStream();
+        await file.OpenReadStream(AvatarService.MaxBytes).CopyToAsync(buffer);
+        return $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer.ToArray())}";
+    }
+}

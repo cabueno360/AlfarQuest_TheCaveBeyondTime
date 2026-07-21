@@ -1,0 +1,23 @@
+@page "/settings"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using AlfarQuest.Client.Components.Profile
+
+<PageTitle>Settings · Alfar Quest</PageTitle>
+
+<div class="aq-profile">
+    <h1 class="aq-page-title">Settings</h1>
+
+    <div class="aq-profile-grid">
+        @* The id is what /settings#password lands on, so the dropdown's "Change
+           password" arrives at the form rather than at the top of the page. *@
+        <ProfileCard Title="Change Password" Icon="🔑" Class="wide">
+            <div id="password"></div>
+            <PasswordChangeForm />
+        </ProfileCard>
+
+        <ProfileCard Title="Account" Icon="⚙">
+            <AccountSettings />
+        </ProfileCard>
+    </div>
+</div>

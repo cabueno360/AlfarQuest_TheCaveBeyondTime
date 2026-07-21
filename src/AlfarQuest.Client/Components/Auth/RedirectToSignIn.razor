@@ -1,0 +1,21 @@
+@using AlfarQuest.Client.Services.Auth
+@inject NavigationManager Nav
+
+@* The route guard. Renders nothing: reaching it at all means the route wanted an
+   identity the visitor does not have, and the only useful response is to send
+   them somewhere they can get one.
+
+   Where they were heading is carried along, so signing in resumes the journey
+   rather than dropping them on a generic page. *@
+
+@code {
+    protected override void OnInitialized()
+    {
+        var target = Nav.ToBaseRelativePath(Nav.Uri);
+        var returnUrl = string.IsNullOrEmpty(target) ? "/" : "/" + target;
+
+        // replace: true, so Back from the sign-in form does not bounce off the
+        // protected page and land here again.
+        Nav.NavigateTo($"/signin?returnUrl={Uri.EscapeDataString(returnUrl)}", replace: true);
+    }
+}

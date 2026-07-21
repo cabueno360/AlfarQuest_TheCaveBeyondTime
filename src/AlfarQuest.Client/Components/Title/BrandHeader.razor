@@ -1,0 +1,13 @@
+@* The wordmark is art, not text. The heading below only appears if the file is
+   missing, so a fresh clone still shows a title instead of a broken image. *@
+<header class="aq-brand">
+    <img class="aq-logo" src="assets/ui/logo.png" alt="@FullTitle"
+         onerror="this.closest('.aq-brand').classList.add('no-art')" />
+    <h1 class="aq-logo-fallback">@Name<span>@Subtitle</span></h1>
+</header>
+
+@code {
+    [Parameter] public string Name { get; set; } = "Àlfar Quest";
+    [Parameter] public string Subtitle { get; set; } = "The Cave Beyond Time";
+    private string FullTitle => $"{Name} — {Subtitle}";
+}

@@ -1,0 +1,37 @@
+@* The framed section every part of the profile page sits in.
+
+   One component rather than a repeated <section class="…"> so the heading level,
+   the aria-labelledby wiring and the frame are decided once. Sections are what
+   let a screen-reader user jump through the page instead of reading it. *@
+
+<section class="aq-card @Class" aria-labelledby="@HeadingId">
+    <header class="aq-card-head">
+        <h2 id="@HeadingId" class="aq-card-title">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <span class="aq-card-icon" aria-hidden="true">@Icon</span>
+            }
+            @Title
+        </h2>
+        @if (Action is not null)
+        {
+            <div class="aq-card-action">@Action</div>
+        }
+    </header>
+
+    <div class="aq-card-body">
+        @ChildContent
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public RenderFragment? Action { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    // Derived from the title so the heading and its section are linked without
+    // every caller having to invent and pass a unique id.
+    private string HeadingId => "card-" + new string([.. Title.ToLowerInvariant().Where(char.IsLetterOrDigit)]);
+}

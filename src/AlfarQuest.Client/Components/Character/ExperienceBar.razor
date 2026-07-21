@@ -1,0 +1,21 @@
+@using AlfarQuest.Client.Models
+
+<div class="aq-cw-xp">
+    <div class="aq-cw-xp-head">
+        <span>Experience</span>
+        <span class="aq-cw-xp-num">@Xp / @Needed</span>
+    </div>
+    <div class="aq-cw-bar" role="progressbar" aria-valuenow="@Xp" aria-valuemin="0" aria-valuemax="@Needed">
+        <div class="aq-cw-bar-fill xp" style="width:@(Fraction * 100)%"></div>
+    </div>
+    <p class="aq-cw-xp-foot">@Remaining XP to level @(Level + 1)</p>
+</div>
+
+@code {
+    [Parameter] public int Level { get; set; } = 1;
+    [Parameter] public int Xp { get; set; }
+
+    private int Needed => Progression.XpForNext(Level);
+    private int Remaining => Math.Max(0, Needed - Xp);
+    private float Fraction => Progression.FractionToNext(Level, Xp);
+}

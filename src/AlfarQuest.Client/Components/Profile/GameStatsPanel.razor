@@ -1,0 +1,28 @@
+@using AlfarQuest.Shared.Profiles
+
+@* The numbers a player earned. A dl rather than divs: each figure genuinely is a
+   term and its value, and that pairing is what a screen reader needs to read
+   "Total gold, 1,240" instead of two loose numbers. *@
+
+<dl class="aq-gamestats">
+    <div class="aq-gamestat">
+        <dt>Current delver</dt>
+        <dd class="aq-gamestat-value">@(Stats.CurrentCharacter is { Length: > 0 } who ? who : "None yet")</dd>
+    </div>
+    <div class="aq-gamestat">
+        <dt>Highest level</dt>
+        <dd class="aq-gamestat-value">@Stats.HighestLevel</dd>
+    </div>
+    <div class="aq-gamestat">
+        <dt>Total gold</dt>
+        <dd class="aq-gamestat-value gold">@Stats.TotalGold.ToString("N0")</dd>
+    </div>
+    <div class="aq-gamestat">
+        <dt>Time in the dark</dt>
+        <dd class="aq-gamestat-value">@Stats.PlayTimeDisplay</dd>
+    </div>
+</dl>
+
+@code {
+    [Parameter, EditorRequired] public PlayerStatsDto Stats { get; set; } = new();
+}

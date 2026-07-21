@@ -1,0 +1,34 @@
+@using AlfarQuest.Client.Game
+@using AlfarQuest.Shared
+
+@* One selectable delver on the title screen. A <button> rather than a <div>:
+   it is reachable by keyboard and announces its own pressed state. *@
+<button type="button"
+        class="aq-hero-card @(Selected ? "selected" : "")"
+        aria-pressed="@Selected"
+        @onclick="OnSelect">
+    <div class="aq-portrait">
+        <img src="@PortraitSrc" alt="" loading="lazy"
+             onerror="this.closest('.aq-portrait').classList.add('no-art')" />
+        <div class="aq-portrait-stub" style="background:@Def.SwatchCss"></div>
+        <div class="aq-portrait-fade"></div>
+    </div>
+    <div class="aq-hero-body">
+        <div class="aq-hero-class" style="color:@Def.ColorAccent">@Hero.HeroClass</div>
+        <div class="aq-hero-name">@Hero.Name</div>
+        <div class="aq-hero-title">@Hero.Title</div>
+        <div class="aq-hero-desc">@Hero.Description</div>
+    </div>
+    <div class="aq-lead-badge">Leads the descent</div>
+</button>
+
+@code {
+    [Parameter, EditorRequired] public required HeroDto Hero { get; set; }
+    [Parameter] public bool Selected { get; set; }
+    [Parameter] public EventCallback<string> SelectedChanged { get; set; }
+
+    private Lore.HeroDef Def => Lore.ByKey(Hero.Key);
+    private string PortraitSrc => $"assets/ui/hero-{Hero.Key}.png";
+
+    private Task OnSelect() => SelectedChanged.InvokeAsync(Hero.Key);
+}

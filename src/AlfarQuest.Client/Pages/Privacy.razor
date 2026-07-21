@@ -1,0 +1,36 @@
+@page "/privacy"
+
+<PageTitle>Privacy · Alfar Quest</PageTitle>
+
+<article class="aq-doc">
+    <h1>Privacy</h1>
+
+    <p class="aq-doc-lede">
+        What this game stores about you, in plain words. This is a description of the
+        implementation, not a lawyer's document — read it as a technical statement.
+    </p>
+
+    <h2>What is stored</h2>
+    <ul>
+        <li>Your name, email address, and — if you gave them — country and phone number.</li>
+        <li>A one-way hash of your password. The password itself is never stored, and cannot be recovered from the hash.</li>
+        <li>Your avatar, if you upload one, re-encoded to a 256px PNG.</li>
+        <li>When you registered, when you last signed in, and one row per active session.</li>
+        <li>Your game statistics: highest level, gold and time played.</li>
+    </ul>
+
+    <h2>What is not stored</h2>
+    <ul>
+        <li>Your password in any readable form.</li>
+        <li>Anything from third-party trackers or analytics — there are none in this application.</li>
+    </ul>
+
+    <h2>Sessions</h2>
+    <p>
+        Signing in stores a random token in your browser. It is not your password and
+        carries no personal information. Signing out revokes it on the server, so it
+        cannot be used again by anyone who has a copy.
+    </p>
+
+    <p class="aq-doc-foot"><a class="aq-link" href="/">Back to the gate</a></p>
+</article>

@@ -1,0 +1,13 @@
+{
+  "name": "alfarquest-tools",
+  "private": true,
+  "type": "module",
+  "description": "Build-time art tooling. Not part of the game — the client ships zero JS dependencies.",
+  "scripts": {
+    "sprites": "node extract-sprites.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.61.1",
+    "pngjs": "^7.0.0"
+  }
+}

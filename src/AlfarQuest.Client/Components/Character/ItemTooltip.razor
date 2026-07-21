@@ -1,0 +1,23 @@
+@using AlfarQuest.Client.Models
+
+@* Shown on hover over a filled slot. Positioned by the slot, so this only knows
+   how to describe an item. *@
+<div class="aq-tip">
+    <div class="aq-tip-name" style="color:@Info.Colour">@Item.Name</div>
+    <div class="aq-tip-kind">@Info.Name @SlotInfo.Of(Item.Slot).Name</div>
+    <ul class="aq-tip-bonuses">
+        @foreach (var line in Item.Bonuses())
+        {
+            <li>@line</li>
+        }
+    </ul>
+    @if (!string.IsNullOrWhiteSpace(Item.Flavour))
+    {
+        <p class="aq-tip-flavour">@Item.Flavour</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Item Item { get; set; }
+    private RarityInfo Info => RarityInfo.Of(Item.Rarity);
+}

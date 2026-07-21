@@ -1,0 +1,20 @@
+@* The brief calls this ValidationSummary. It is named FormErrorSummary because
+   Blazor already ships a component by that name, and two components with one
+   name in scope is a compile error rather than an override.
+
+   role="alert" so the failure is announced the moment it appears — a sighted
+   user sees the box, and everyone else should hear it. *@
+
+@if (!string.IsNullOrWhiteSpace(Message))
+{
+    <div class="aq-form-error" role="alert">
+        <span aria-hidden="true">⚠</span>
+        <span>@Message</span>
+    </div>
+}
+
+@code {
+    /// <summary>The one message that belongs above the form. Per-field messages
+    /// belong beside their field, where the eye is already looking.</summary>
+    [Parameter] public string? Message { get; set; }
+}

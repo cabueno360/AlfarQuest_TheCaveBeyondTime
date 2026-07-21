@@ -1,0 +1,37 @@
+@using AlfarQuest.Client.Models
+
+<div class="aq-attr @(Raised ? "raised" : "")" title="@Info.Description">
+    <span class="aq-attr-abbr">@Info.Abbr</span>
+    <span class="aq-attr-name">@Info.Name</span>
+    <span class="aq-attr-val">
+        @Value
+        @if (Spent > 0)
+        {
+            <span class="aq-attr-spent">+@Spent</span>
+        }
+    </span>
+    <button class="aq-mini-btn" disabled="@(!CanRaise)"
+            title="@(CanRaise ? $"Raise {Info.Name}" : "No attribute points")"
+            @onclick="Raise">+</button>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required AttributeInfo Info { get; set; }
+    [Parameter] public int Value { get; set; }
+    [Parameter] public int Spent { get; set; }
+    [Parameter] public bool CanRaise { get; set; }
+    [Parameter] public EventCallback<AttributeKind> OnRaise { get; set; }
+
+    private bool Raised;
+
+    private async Task Raise()
+    {
+        if (!CanRaise) return;
+        await OnRaise.InvokeAsync(Info.Kind);
+        // A brief highlight so the player sees which number moved.
+        Raised = true;
+        StateHasChanged();
+        await Task.Delay(420);
+        Raised = false;
+    }
+}

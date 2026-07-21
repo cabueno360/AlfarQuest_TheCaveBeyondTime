@@ -1,0 +1,24 @@
+@using AlfarQuest.Client.Components.Common
+
+@* Submit with a busy state. Disabled while working, which is the only reliable
+   way to stop a double submit — and on a sign-up that would mean two accounts
+   racing for one address.
+
+   aria-busy rather than swapping the label out, so the button keeps its
+   accessible name while the spinner runs. *@
+
+<button type="submit" class="aq-btn aq-submit @Class" disabled="@(Busy || Disabled)" aria-busy="@Busy">
+    @if (Busy)
+    {
+        <Spinner Small="true" Label="@BusyLabel" />
+    }
+    <span>@(Busy ? BusyLabel : Label)</span>
+</button>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter] public string BusyLabel { get; set; } = "Working…";
+    [Parameter] public bool Busy { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string? Class { get; set; }
+}

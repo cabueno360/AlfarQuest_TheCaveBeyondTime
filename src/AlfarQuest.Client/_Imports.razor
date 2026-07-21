@@ -1,0 +1,17 @@
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using AlfarQuest.Client
+@using AlfarQuest.Client.Layout
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Shared
+
+@* Auth, profile and navigation components are used across many pages; importing
+   them here keeps each page's own @using list about that page. *@
+@using AlfarQuest.Client.Components.Auth
+@using AlfarQuest.Client.Components.Profile
+@using AlfarQuest.Client.Components.Navigation

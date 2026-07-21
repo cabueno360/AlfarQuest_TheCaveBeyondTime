@@ -1,0 +1,25 @@
+@inherits LayoutComponentBase
+@using AlfarQuest.Client.Components.Common
+
+@* The frame around sign-in, sign-up and password recovery: key art behind, a
+   single lit panel in front. No navigation — these pages have exactly one thing
+   to do, and every link away from them is a way to not do it. *@
+
+<div class="aq-auth">
+    <div class="aq-keyart" aria-hidden="true"></div>
+    <div class="aq-vignette" aria-hidden="true"></div>
+
+    <main class="aq-auth-panel">
+        @Body
+    </main>
+
+    <footer class="aq-auth-foot">
+        <a class="aq-link" href="/">Back to the gate</a>
+        <span aria-hidden="true">·</span>
+        <a class="aq-link" href="/privacy">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <a class="aq-link" href="/terms">Terms</a>
+    </footer>
+
+    <ToastHost />
+</div>

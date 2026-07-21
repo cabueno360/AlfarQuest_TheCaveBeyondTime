@@ -1,0 +1,67 @@
+@page "/profile"
+@attribute [Authorize]
+@implements IDisposable
+@using Microsoft.AspNetCore.Authorization
+@using AlfarQuest.Client.Components.Common
+@using AlfarQuest.Client.Components.Profile
+@using AlfarQuest.Client.Services.Auth
+@using AlfarQuest.Client.Services.Profile
+@inject CurrentUserProvider Me
+@inject ProfileService Profiles
+
+@* The profile page: sections assembled, nothing computed. Every panel below is
+   its own component, so this file stays a description of the page rather than an
+   implementation of it. *@
+
+<PageTitle>Profile · Alfar Quest</PageTitle>
+
+@if (Me.Player is not { } player)
+{
+    <div class="aq-page-loading"><Spinner Label="Reading your records" /></div>
+}
+else
+{
+    <div class="aq-profile">
+        <ProfileHeader Player="player" />
+
+        <div class="aq-profile-grid">
+            <ProfileCard Title="Avatar" Icon="◈">
+                <AvatarUploader />
+            </ProfileCard>
+
+            <ProfileCard Title="Game Statistics" Icon="⚔">
+                <GameStatsPanel Stats="player.Stats" />
+            </ProfileCard>
+
+            <ProfileCard Title="Personal Information" Icon="✦" Class="wide">
+                <PersonalInfoForm />
+            </ProfileCard>
+
+            <ProfileCard Title="Account Settings" Icon="⚙">
+                <AccountSettings />
+                <p class="aq-hint aq-card-more">
+                    <a class="aq-link" href="/settings#password">Change your password →</a>
+                </p>
+            </ProfileCard>
+
+            <ProfileCard Title="Recent Activity" Icon="✧">
+                <AchievementsPanel Achievements="player.Achievements" />
+            </ProfileCard>
+        </div>
+    </div>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        Me.Changed += OnChanged;
+        // The session already holds a profile from sign-in; this refreshes the
+        // statistics, which change while playing and would otherwise be as old as
+        // the session.
+        await Profiles.LoadAsync();
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Me.Changed -= OnChanged;
+}

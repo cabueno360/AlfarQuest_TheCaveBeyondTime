@@ -1,0 +1,104 @@
+/* The level-up popup. Its own module: it is the one thing in the game that is
+   allowed to interrupt, and it should be tunable without touching the character
+   sheet it hands off to. */
+
+.aq-levelup {
+    position: fixed; inset: 0; z-index: 120;
+    display: grid; place-items: center;
+    pointer-events: none;                 /* the frame below takes the clicks */
+}
+
+.aq-levelup-frame {
+    pointer-events: auto; position: relative; overflow: hidden;
+    width: min(420px, calc(100vw - 2.5rem));
+    padding: 1.8rem 1.8rem 1.6rem; text-align: center;
+    background: linear-gradient(180deg, rgba(38, 30, 74, .97), rgba(11, 8, 26, .99));
+    border: 1px solid rgba(216, 180, 90, .55); border-radius: 20px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .8), 0 0 80px rgba(216, 180, 90, .22);
+    animation: aq-levelup-in .34s cubic-bezier(.2, .9, .3, 1.25);
+}
+
+/* A slow turn of light behind the portrait. Sits under everything and never
+   takes a click. */
+.aq-levelup-rays {
+    position: absolute; inset: -60% -60% auto -60%; height: 220%;
+    background: conic-gradient(from 0deg,
+        rgba(240, 217, 154, .16) 0deg, transparent 26deg,
+        rgba(240, 217, 154, .16) 52deg, transparent 78deg,
+        rgba(240, 217, 154, .16) 104deg, transparent 130deg,
+        rgba(240, 217, 154, .16) 156deg, transparent 182deg,
+        rgba(240, 217, 154, .16) 208deg, transparent 234deg,
+        rgba(240, 217, 154, .16) 260deg, transparent 286deg,
+        rgba(240, 217, 154, .16) 312deg, transparent 338deg);
+    animation: aq-levelup-spin 22s linear infinite;
+    pointer-events: none;
+}
+
+.aq-levelup-frame > *:not(.aq-levelup-rays) { position: relative; }
+
+.aq-levelup-kicker {
+    margin: 0 0 .9rem; font-family: 'Cinzel', serif; font-weight: 700;
+    letter-spacing: .18rem; font-size: 1.1rem; color: var(--aq-gold-soft);
+    text-shadow: 0 0 26px rgba(216, 180, 90, .6);
+}
+
+/* The portrait component is shared with the character sheet; only its size
+   changes here. */
+.aq-levelup .aq-cw-portrait { width: 128px; height: 128px; margin: 0 auto; }
+
+.aq-levelup-name {
+    margin: .9rem 0 0; font-family: 'Cinzel', serif; font-size: 1.25rem;
+    color: var(--aq-text); letter-spacing: .04rem;
+}
+.aq-levelup-title {
+    margin: .15rem 0 0; font-style: italic; font-size: .9rem; color: var(--aq-crystal);
+}
+
+.aq-levelup-level {
+    margin: 1rem 0 .1rem; display: flex; align-items: center; justify-content: center;
+    gap: .7rem; font-family: 'Cinzel', serif;
+}
+.aq-levelup-level .from { font-size: 1.5rem; color: var(--aq-muted); }
+.aq-levelup-level .arrow { color: var(--aq-gold); }
+.aq-levelup-level .to {
+    font-size: 2.6rem; font-weight: 700; color: var(--aq-gold-soft); line-height: 1;
+    text-shadow: 0 0 34px rgba(216, 180, 90, .55);
+}
+.aq-levelup-reached {
+    margin: 0; font-family: 'Cinzel', serif; letter-spacing: .1rem;
+    font-size: .8rem; text-transform: uppercase; color: var(--aq-crystal);
+}
+
+.aq-levelup-rewards {
+    list-style: none; margin: 1.1rem 0 0; padding: .8rem 1rem; display: flex;
+    flex-direction: column; gap: .3rem;
+    background: rgba(185, 199, 255, .07); border-radius: 12px;
+    border: 1px solid rgba(185, 199, 255, .16);
+}
+.aq-levelup-rewards strong { color: var(--aq-gold-soft); font-size: 1.05rem; }
+
+.aq-levelup-flavour {
+    margin: .9rem 0 0; font-style: italic; color: var(--aq-muted);
+    font-size: .88rem; line-height: 1.5;
+}
+.aq-levelup-party {
+    margin: .4rem 0 0; font-size: .84rem; color: var(--aq-crystal);
+}
+.aq-levelup-more {
+    margin: .5rem 0 0; font-size: .78rem; letter-spacing: .08rem;
+    text-transform: uppercase; color: var(--aq-crystal);
+}
+.aq-levelup-go { margin-top: 1.2rem; min-width: 60%; }
+
+@keyframes aq-levelup-in {
+    from { opacity: 0; transform: translateY(18px) scale(.94); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes aq-levelup-spin { to { transform: rotate(360deg); } }
+
+/* The rays turn slowly and the entrance is small, but neither is worth
+   overriding someone who has asked for stillness. */
+@media (prefers-reduced-motion: reduce) {
+    .aq-levelup-frame { animation: none; }
+    .aq-levelup-rays { animation: none; }
+}

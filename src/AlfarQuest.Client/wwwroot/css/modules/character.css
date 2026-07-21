@@ -1,0 +1,252 @@
+/* Character window. Semi-transparent by design: the delver is opening a journal,
+   not leaving the world, so the cave stays faintly visible behind it. */
+
+.aq-pause-overlay {
+    position: fixed; inset: 0; z-index: 40;
+    background: rgba(4, 3, 12, .58);
+    backdrop-filter: blur(2.5px) saturate(.85);
+    opacity: 0; pointer-events: none;
+    transition: opacity .22s ease;
+}
+.aq-pause-overlay.shown { opacity: 1; pointer-events: auto; }
+
+.aq-cw {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2vh 2vw; pointer-events: none;
+    opacity: 0; transform: translateY(10px) scale(.985);
+    transition: opacity .24s ease, transform .24s ease;
+}
+.aq-cw.shown { opacity: 1; transform: none; pointer-events: auto; }
+
+.aq-cw-frame {
+    position: relative; width: min(1080px, 96vw); max-height: 92vh; overflow: auto;
+    padding: 1.4rem 1.6rem 1rem;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .90), rgba(9, 7, 22, .93));
+    border: 1px solid rgba(216, 180, 90, .38); border-radius: 14px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .5) inset;
+}
+
+.aq-cw-close {
+    position: absolute; top: .7rem; right: .8rem;
+    background: none; border: none; cursor: pointer; font-size: 1rem;
+    color: var(--aq-muted); transition: color .15s ease, transform .15s ease;
+}
+.aq-cw-close:hover { color: var(--aq-gold-soft); transform: scale(1.15); }
+
+.aq-cw-cols { display: grid; grid-template-columns: 300px 1fr; gap: 1.6rem; }
+@media (max-width: 820px) { .aq-cw-cols { grid-template-columns: 1fr; } }
+
+.aq-cw-left { display: flex; flex-direction: column; gap: .9rem; }
+
+.aq-cw-portrait { position: relative; height: 220px; border-radius: 10px; overflow: hidden;
+    background: rgba(0, 0, 0, .35); }
+.aq-cw-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 10%; display: block; }
+.aq-cw-portrait-stub { display: none; position: absolute; inset: 0; opacity: .35; }
+.aq-cw-portrait.no-art img { display: none; }
+.aq-cw-portrait.no-art .aq-cw-portrait-stub { display: block; }
+.aq-cw-portrait-frame { position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 -40px 50px -20px rgba(9, 7, 22, .95), inset 0 0 0 1px rgba(216, 180, 90, .25); }
+
+.aq-cw-header { text-align: left; }
+.aq-cw-name { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--aq-crystal-2); margin: 0; }
+.aq-cw-title { font-style: italic; font-size: .82rem; color: var(--aq-gold-soft); margin: .1rem 0 .5rem; }
+.aq-cw-idents { display: flex; gap: 1.1rem; margin: 0; }
+.aq-cw-idents div { display: flex; flex-direction: column; }
+.aq-cw-idents dt { font-size: .62rem; letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-muted); }
+.aq-cw-idents dd { margin: 0; font-family: 'Cinzel', serif; font-size: .95rem; color: var(--aq-text); }
+
+.aq-cw-xp-head { display: flex; justify-content: space-between; font-size: .72rem;
+    letter-spacing: .08rem; text-transform: uppercase; color: var(--aq-muted); margin-bottom: .25rem; }
+.aq-cw-xp-num { font-variant-numeric: tabular-nums; color: var(--aq-text); }
+.aq-cw-xp-foot { margin: .3rem 0 0; font-size: .72rem; font-style: italic; color: var(--aq-muted); }
+
+.aq-cw-bar { height: 9px; border-radius: 999px; background: rgba(0, 0, 0, .5);
+    overflow: hidden; border: 1px solid rgba(185, 199, 255, .14); }
+.aq-cw-bar-fill { height: 100%; border-radius: 999px; transition: width .32s ease; }
+.aq-cw-bar-fill.xp   { background: linear-gradient(90deg, #d8b45a, #f0d99a); }
+.aq-cw-bar-fill.hp   { background: linear-gradient(90deg, #4e9c5e, #7fd694); }
+.aq-cw-bar-fill.mana { background: linear-gradient(90deg, #3f6fb5, #7fb6ff); }
+.aq-cw-bar-fill.stam { background: linear-gradient(90deg, #9c7b3f, #d8c07a); }
+
+.aq-cw-vitals { display: flex; flex-direction: column; gap: .55rem; }
+
+.aq-cw-money { display: flex; gap: 1rem; padding-top: .2rem; }
+.aq-cw-coin { display: flex; align-items: baseline; gap: .3rem; }
+.aq-cw-coin-sym { font-size: 1rem; }
+.aq-cw-coin-amt { font-variant-numeric: tabular-nums; color: var(--aq-text); font-size: .9rem; }
+
+.aq-cw-right { min-height: 260px; }
+.aq-cw-soon { color: var(--aq-muted); font-style: italic; }
+
+.aq-cw-footer { display: flex; align-items: center; gap: .9rem; margin-top: 1rem;
+    padding-top: .7rem; border-top: 1px solid rgba(185, 199, 255, .12); }
+.aq-cw-points { font-size: .74rem; letter-spacing: .06rem; color: #2a2008;
+    background: linear-gradient(180deg, #f0d99a, #d8b45a); padding: .22rem .55rem; border-radius: 999px; }
+.aq-cw-points.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
+.aq-cw-hint { margin-left: auto; font-size: .72rem; color: var(--aq-muted); font-style: italic; }
+
+/* ---- panels: attributes and combat ---- */
+.aq-cw-right { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.aq-cw-panel { }
+.aq-cw-panel-title {
+    display: flex; align-items: center; gap: .6rem; margin: 0 0 .55rem;
+    font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .14rem;
+    text-transform: uppercase; color: var(--aq-gold-soft);
+    padding-bottom: .35rem; border-bottom: 1px solid rgba(216, 180, 90, .22);
+}
+.aq-cw-badge {
+    font-family: 'EB Garamond', serif; font-size: .66rem; letter-spacing: .04rem;
+    text-transform: none; color: #2a2008;
+    background: linear-gradient(180deg, #f0d99a, #d8b45a);
+    padding: .12rem .5rem; border-radius: 999px;
+}
+
+.aq-attrs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem .9rem; }
+@media (max-width: 640px) { .aq-attrs { grid-template-columns: 1fr; } }
+
+.aq-attr {
+    display: grid; grid-template-columns: 2.4rem 1fr auto auto; align-items: center; gap: .5rem;
+    padding: .3rem .45rem; border-radius: 7px; cursor: help;
+    transition: background .18s ease;
+}
+.aq-attr:hover { background: rgba(185, 199, 255, .07); }
+/* Brief flash so the player sees which number moved. */
+.aq-attr.raised { background: rgba(216, 180, 90, .22); }
+
+.aq-attr-abbr { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .06rem; color: var(--aq-muted); }
+.aq-attr-name { font-size: .86rem; color: var(--aq-text); }
+.aq-attr-val { font-variant-numeric: tabular-nums; font-size: .95rem; color: var(--aq-crystal-2); }
+.aq-attr-spent { font-size: .7rem; color: #7fd694; margin-left: .2rem; }
+
+/* The small round + used by attributes, skills and crafting. Named for its
+   shape rather than for the first place it was used: three controls share it,
+   and a name that claims otherwise misleads anyone selecting on it. */
+.aq-mini-btn {
+    width: 1.35rem; height: 1.35rem; line-height: 1; cursor: pointer;
+    border-radius: 50%; border: 1px solid rgba(216, 180, 90, .5);
+    background: rgba(216, 180, 90, .14); color: var(--aq-gold-soft); font-size: .85rem;
+    transition: background .15s ease, transform .12s ease, opacity .15s ease;
+}
+.aq-mini-btn:hover:not(:disabled) { background: rgba(216, 180, 90, .34); transform: scale(1.12); }
+.aq-mini-btn:disabled { opacity: .22; cursor: default; }
+
+.aq-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .2rem .9rem; }
+@media (max-width: 640px) { .aq-stats { grid-template-columns: 1fr; } }
+.aq-stat {
+    display: flex; justify-content: space-between; align-items: baseline; gap: .6rem;
+    padding: .22rem .45rem; border-radius: 6px; cursor: help;
+    border-bottom: 1px dotted rgba(185, 199, 255, .10);
+}
+.aq-stat:hover { background: rgba(185, 199, 255, .07); }
+.aq-stat-name { font-size: .82rem; color: var(--aq-muted); }
+.aq-stat-val { font-variant-numeric: tabular-nums; font-size: .88rem; color: var(--aq-text); }
+
+/* ---- equipment ---- */
+.aq-slots { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
+@media (max-width: 640px) { .aq-slots { grid-template-columns: repeat(4, 1fr); } }
+
+.aq-slot {
+    position: relative; aspect-ratio: 1; display: grid; place-items: center;
+    border-radius: 8px; font-size: 1.15rem;
+    border: 1px solid rgba(185, 199, 255, .16); background: rgba(0, 0, 0, .3);
+    transition: border-color .15s ease, transform .12s ease, background .15s ease;
+}
+.aq-slot.empty { color: rgba(185, 199, 255, .3); }
+.aq-slot.filled {
+    cursor: pointer; color: var(--aq-text);
+    border-color: var(--rarity, #b8b6c8);
+    background: color-mix(in srgb, var(--rarity, #b8b6c8) 12%, rgba(0, 0, 0, .45));
+    box-shadow: 0 0 12px -4px var(--rarity, transparent);
+}
+.aq-slot.filled:hover { transform: translateY(-2px); }
+
+/* Tooltip lives inside the slot so it follows it, and is inert until hover. */
+.aq-tip {
+    position: absolute; bottom: calc(100% + .45rem); left: 50%; transform: translate(-50%, 4px);
+    z-index: 5; width: max-content; max-width: 230px; text-align: left;
+    padding: .55rem .7rem; border-radius: 9px; pointer-events: none;
+    background: rgba(9, 7, 22, .97); border: 1px solid rgba(216, 180, 90, .35);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .65);
+    opacity: 0; transition: opacity .16s ease, transform .16s ease;
+}
+.aq-slot:hover .aq-tip { opacity: 1; transform: translate(-50%, 0); }
+.aq-tip-name { font-family: 'Cinzel', serif; font-size: .9rem; }
+.aq-tip-kind { font-size: .68rem; color: var(--aq-muted); margin-bottom: .35rem; }
+.aq-tip-bonuses { list-style: none; margin: 0; padding: 0; }
+.aq-tip-bonuses li { font-size: .76rem; color: #7fd694; }
+.aq-tip-flavour { margin: .4rem 0 0; font-size: .72rem; font-style: italic; color: var(--aq-muted); }
+
+/* ---- skills ---- */
+.aq-cw-badge.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
+.aq-skill-cat {
+    margin: .7rem 0 .35rem; font-family: 'Cinzel', serif; font-size: .68rem;
+    letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
+@media (max-width: 720px) { .aq-skills { grid-template-columns: 1fr; } }
+
+.aq-skill {
+    display: grid; grid-template-columns: 1.6rem 1fr auto; align-items: center; gap: .5rem;
+    padding: .4rem .5rem; border-radius: 8px; cursor: help;
+    background: rgba(185, 199, 255, .04); border: 1px solid rgba(185, 199, 255, .10);
+    transition: background .15s ease, border-color .15s ease;
+}
+.aq-skill:hover { background: rgba(185, 199, 255, .09); border-color: rgba(185, 199, 255, .2); }
+.aq-skill.maxed { border-color: rgba(216, 180, 90, .4); }
+.aq-skill-icon { font-size: 1rem; }
+.aq-skill-head { display: flex; justify-content: space-between; gap: .5rem; }
+.aq-skill-name { font-size: .84rem; color: var(--aq-text); }
+.aq-skill-rank { font-size: .72rem; font-variant-numeric: tabular-nums; color: var(--aq-muted); }
+.aq-skill-pips { display: flex; gap: 3px; margin: .2rem 0; }
+.aq-pip { width: 14px; height: 4px; border-radius: 2px; background: rgba(185, 199, 255, .16); }
+.aq-pip.on { background: linear-gradient(90deg, #5aa8d8, #9fe4ff); }
+.aq-skill-next { margin: 0; font-size: .7rem; font-style: italic; color: var(--aq-muted); }
+
+/* ---- pack ---- */
+.aq-cw-badge.pack {
+    background: none; color: var(--aq-muted); border: 1px solid rgba(185, 199, 255, .2);
+    font-variant-numeric: tabular-nums;
+}
+.aq-slots.pack { grid-template-columns: repeat(8, 1fr); }
+@media (max-width: 640px) { .aq-slots.pack { grid-template-columns: repeat(6, 1fr); } }
+.aq-slots.pack .aq-slot { cursor: pointer; }
+
+.aq-tip.compare { max-width: 250px; }
+.aq-tip-vs {
+    margin: .45rem 0 .2rem; padding-top: .35rem; font-size: .68rem; font-style: italic;
+    color: var(--aq-muted); border-top: 1px dashed rgba(185, 199, 255, .18);
+}
+.aq-tip-bonuses li.up   { color: #7fd694; }
+.aq-tip-bonuses li.down { color: #d98a8a; }
+.aq-tip-bonuses li.same { color: var(--aq-muted); }
+
+/* ---- materials ---- */
+.aq-mats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem .8rem; }
+@media (max-width: 720px) { .aq-mats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.aq-mat {
+    display: grid; grid-template-columns: 1.2rem 1fr auto; align-items: baseline; gap: .45rem;
+    padding: .2rem .4rem; border-radius: 6px; cursor: help;
+    border-bottom: 1px dotted rgba(185, 199, 255, .10);
+}
+.aq-mat:hover { background: rgba(185, 199, 255, .07); }
+.aq-mat-icon { font-size: .95rem; }
+.aq-mat-name { font-size: .8rem; color: var(--aq-muted); }
+.aq-mat-count { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--aq-text); }
+
+/* ---- crafting ---- */
+.aq-recipes { display: flex; flex-direction: column; gap: .35rem; }
+.aq-recipe {
+    display: grid; grid-template-columns: 1.6rem 1fr auto; align-items: center; gap: .55rem;
+    padding: .4rem .5rem; border-radius: 8px;
+    background: rgba(185, 199, 255, .04); border: 1px solid rgba(185, 199, 255, .10);
+    transition: border-color .15s ease, background .15s ease;
+}
+.aq-recipe.ready { border-color: rgba(216, 180, 90, .45); background: rgba(216, 180, 90, .08); }
+.aq-recipe-icon { font-size: 1rem; }
+.aq-recipe-name { font-size: .86rem; }
+.aq-recipe-cost { display: flex; flex-wrap: wrap; gap: .5rem; margin: .12rem 0; font-size: .72rem; }
+.aq-recipe-cost .have  { color: #7fd694; }
+.aq-recipe-cost .short { color: #d98a8a; }
+.aq-recipe-where { font-size: .7rem; font-style: italic; color: var(--aq-muted); }

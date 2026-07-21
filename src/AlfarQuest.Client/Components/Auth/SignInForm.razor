@@ -1,0 +1,95 @@
+@using AlfarQuest.Shared.Auth
+@using AlfarQuest.Client.Services.Auth
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+<EditForm Model="Model" OnValidSubmit="Submit" class="aq-form" novalidate>
+    @* novalidate hands validation to Blazor alone. Without it the browser's own
+       check on type="email" refuses to fire the submit event at all, so an
+       invalid address silently suppressed every other field's error. *@
+
+    <DataAnnotationsValidator />
+
+    <FormErrorSummary Message="@_error" />
+
+    <FormField Id="signin-email" Label="Email">
+        <InputText id="signin-email" class="aq-input" @bind-Value="Model.Email"
+                   type="email" autocomplete="username" placeholder="you@example.com"
+                   @ref="_first" />
+        <ValidationMessage For="@(() => Model.Email)" class="aq-field-error" />
+    </FormField>
+
+    <FormField Id="signin-password" Label="Password">
+        <PasswordField Id="signin-password" @bind-Value="Model.Password"
+                       AutoComplete="current-password" />
+        <ValidationMessage For="@(() => Model.Password)" class="aq-field-error" />
+    </FormField>
+
+    <div class="aq-form-row">
+        <label class="aq-check">
+            <InputCheckbox @bind-Value="Model.RememberMe" />
+            <span>Remember me</span>
+        </label>
+        <a class="aq-link" href="/forgot-password">Forgot your password?</a>
+    </div>
+
+    <SubmitButton Label="Enter the Realm" BusyLabel="Opening the way…" Busy="_busy" />
+
+    <p class="aq-form-foot">
+        No account yet? <a class="aq-link" href="@SignUpHref">Create one</a>
+    </p>
+</EditForm>
+
+@code {
+    /// <summary>Where to go once signed in. Carried through from the guard that
+    /// intercepted the original navigation, so the player lands where they were
+    /// heading instead of somewhere generic.</summary>
+    [Parameter] public string? ReturnUrl { get; set; }
+
+    private readonly SignInRequest Model = new();
+    private InputText? _first;
+    private bool _busy;
+    private string? _error;
+
+    private string SignUpHref =>
+        ReturnUrl is null ? "/signup" : $"/signup?returnUrl={Uri.EscapeDataString(ReturnUrl)}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Land the caret in the first box: on a form this short, asking for a
+        // click before typing is friction for no reason.
+        if (firstRender && _first?.Element is { } element) await element.FocusAsync();
+    }
+
+    private async Task Submit()
+    {
+        _busy = true;
+        _error = null;
+
+        var result = await Auth.SignInAsync(Model);
+
+        _busy = false;
+
+        if (!result.Ok)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        // Replace the history entry so Back does not return to a sign-in form for
+        // a session that is now open.
+        Nav.NavigateTo(SafeReturnUrl(), replace: true);
+    }
+
+    /// <summary>Only ever a path within this app.
+    ///
+    /// A returnUrl arrives in the query string, where anyone can put anything. If
+    /// an absolute URL were honoured, a link to
+    /// /signin?returnUrl=https://evil.example would send a freshly signed-in
+    /// player straight off the site — the open-redirect that makes phishing links
+    /// look genuine.</summary>
+    private string SafeReturnUrl() =>
+        ReturnUrl is { Length: > 0 } url && url.StartsWith('/') && !url.StartsWith("//")
+            ? url
+            : "/heroes";
+}

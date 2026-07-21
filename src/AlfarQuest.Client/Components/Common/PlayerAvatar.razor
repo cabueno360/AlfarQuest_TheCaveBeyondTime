@@ -1,0 +1,43 @@
+@inject HttpClient Http
+
+@* The player's portrait, round, at whatever size the caller asks for.
+
+   One component so the default portrait, the alt text and the frame are decided
+   once — a second copy of this logic is how a page ends up showing a broken
+   image where someone has never uploaded anything. *@
+
+<span class="aq-avatar @SizeClass" style="@Style">
+    @if (Url is { } src)
+    {
+        <img src="@src" alt="@Alt" class="aq-avatar-img" />
+    }
+    else
+    {
+        <img src="assets/ui/default-avatar.svg" alt="@Alt" class="aq-avatar-img" />
+    }
+</span>
+
+@code {
+    /// <summary>Relative to the API, as the profile reports it. Null draws the
+    /// default portrait instead.</summary>
+    [Parameter] public string? AvatarUrl { get; set; }
+
+    [Parameter] public string Name { get; set; } = "";
+
+    /// <summary>sm | md | lg | xl — named rather than free pixels so portraits
+    /// stay consistent between the header, the dropdown and the profile page.</summary>
+    [Parameter] public string Size { get; set; } = "md";
+
+    [Parameter] public string? Style { get; set; }
+
+    private string SizeClass => $"aq-avatar-{Size}";
+
+    private string Alt => string.IsNullOrWhiteSpace(Name) ? "Player portrait" : $"{Name}'s portrait";
+
+    // The profile reports an API-relative path; the client is served from a
+    // different origin, so it has to be resolved against the API's base address
+    // rather than the page's.
+    private string? Url => AvatarUrl is { Length: > 0 } path && Http.BaseAddress is { } api
+        ? new Uri(api, path).ToString()
+        : null;
+}

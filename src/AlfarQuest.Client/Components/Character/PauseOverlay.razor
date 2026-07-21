@@ -1,0 +1,11 @@
+@* Dim + blur behind a menu. Separate from any one window so the inventory,
+   settings and quest log can reuse it. Pointer events pass through to the
+   window above; clicking the backdrop itself closes. *@
+<div class="aq-pause-overlay @(Visible ? "shown" : "")" @onclick="OnBackdrop"></div>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback OnDismiss { get; set; }
+
+    private Task OnBackdrop() => OnDismiss.InvokeAsync();
+}

@@ -1,0 +1,67 @@
+/* In-game DOM overlays that sit above the canvas. */
+
+/* ---------- gameplay ---------- */
+.aq-stage { position: relative; height: 100vh; width: 100vw; background: #04030a; }
+#gameCanvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+.aq-topbar {
+    position: absolute; top: 12px; left: 0; right: 0; display: flex;
+    justify-content: center; gap: 10px; pointer-events: none;
+}
+.aq-nowplaying {
+    pointer-events: auto; background: rgba(10,8,24,.65); border: 1px solid rgba(185,199,255,.2);
+    border-radius: 999px; padding: .35rem .9rem; font-size: .82rem; color: var(--aq-crystal);
+    display: flex; align-items: center; gap: .5rem; backdrop-filter: blur(4px);
+}
+.aq-nowplaying button {
+    background: none; border: none; color: var(--aq-gold-soft); cursor: pointer; font-size: 1rem;
+}
+/* Bottom-RIGHT on purpose: the canvas HUD owns the bottom-left corner (the
+   party panel) and the two layers know nothing about each other, so they used
+   to draw straight through one another. One element per corner. */
+.aq-controls-help {
+    position: absolute; bottom: 12px; right: 12px; text-align: right; color: var(--aq-muted);
+    font-size: .8rem; line-height: 1.5; background: rgba(10,8,24,.5);
+    padding: .6rem .8rem; border-radius: 10px; pointer-events: none;
+}
+/* Too narrow to keep both bottom corners apart — drop the static help text. */
+@media (max-width: 720px) {
+    .aq-controls-help { display: none; }
+}
+.aq-controls-help b { color: var(--aq-crystal-2); }
+.aq-key-row { display: flex; justify-content: flex-end; gap: .5rem; }
+.aq-key-row span { color: var(--aq-muted); }
+/* Top-right: the canvas HUD deliberately leaves this corner alone. */
+.aq-menubar {
+    position: absolute; top: 12px; right: 12px; pointer-events: auto;
+    display: flex; align-items: center; gap: .55rem;
+}
+.aq-icon-btn {
+    display: inline-flex; align-items: center; gap: .4rem; cursor: pointer;
+    font-family: 'Cinzel', serif; font-size: .78rem; letter-spacing: .08rem;
+    color: var(--aq-crystal); background: rgba(10, 8, 24, .65);
+    border: 1px solid rgba(185, 199, 255, .28); border-radius: 999px;
+    padding: .42rem .85rem; backdrop-filter: blur(4px);
+    transition: border-color .15s ease, color .15s ease, transform .12s ease;
+}
+.aq-icon-btn:hover {
+    border-color: var(--aq-gold); color: var(--aq-gold-soft); transform: translateY(-1px);
+}
+.aq-icon { font-size: .95rem; line-height: 1; }
+@media (max-width: 720px) { .aq-icon-label { display: none; } }
+
+.aq-banner {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 1rem; background: rgba(4,3,10,.72); text-align: center;
+}
+.aq-banner h2 {
+    font-family: 'Cinzel', serif; color: var(--aq-gold-soft); font-size: 2rem; margin: 0;
+    text-shadow: 0 0 24px rgba(216,180,90,.4);
+}
+.aq-banner p { color: var(--aq-crystal); max-width: 42ch; margin: 0; }
+
+#blazor-error-ui {
+    background: #2a0f0f; color: #ffd7d7; bottom: 0; box-shadow: 0 -1px 2px rgba(0,0,0,.2);
+    display: none; left: 0; padding: .6rem 1.25rem; position: fixed; width: 100%; z-index: 1000;
+}
+#blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: .75rem; top: .5rem; }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The portrait shown before anyone uploads one: a hooded delver against the
+     crystal glow of the cave. Drawn as vector so it is a couple of kilobytes and
+     stays sharp at every size the app asks for. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="A hooded delver">
+  <defs>
+    <radialGradient id="deep" cx="50%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="#2a2154"/>
+      <stop offset="62%" stop-color="#120d2c"/>
+      <stop offset="100%" stop-color="#07050f"/>
+    </radialGradient>
+    <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b3170"/>
+      <stop offset="100%" stop-color="#191333"/>
+    </linearGradient>
+    <radialGradient id="spark" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e7ccff" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#b9c7ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="256" height="256" fill="url(#deep)"/>
+
+  <!-- Crystal light behind the figure. -->
+  <circle cx="128" cy="104" r="74" fill="url(#spark)" opacity=".55"/>
+
+  <!-- Shoulders. -->
+  <path d="M40 256c0-52 39-84 88-84s88 32 88 84z" fill="url(#cloak)"/>
+  <path d="M40 256c0-52 39-84 88-84s88 32 88 84z" fill="none" stroke="#b9c7ff" stroke-opacity=".22" stroke-width="2"/>
+
+  <!-- Hood, and the dark where a face would be. -->
+  <path d="M128 44c30 0 52 24 52 56 0 26-14 44-14 44l-10-30c-8 8-18 12-28 12s-20-4-28-12l-10 30s-14-18-14-44c0-32 22-56 52-56z" fill="url(#cloak)"/>
+  <path d="M128 44c30 0 52 24 52 56 0 26-14 44-14 44l-10-30c-8 8-18 12-28 12s-20-4-28-12l-10 30s-14-18-14-44c0-32 22-56 52-56z" fill="none" stroke="#b9c7ff" stroke-opacity=".28" stroke-width="2"/>
+  <ellipse cx="128" cy="104" rx="30" ry="34" fill="#06040e" opacity=".92"/>
+
+  <!-- The two lights under the hood: the only thing you ever see of a delver. -->
+  <circle cx="117" cy="102" r="4.5" fill="#d8b45a"/>
+  <circle cx="139" cy="102" r="4.5" fill="#d8b45a"/>
+
+  <!-- Clasp at the throat. -->
+  <path d="M128 186l9 12-9 12-9-12z" fill="#d8b45a" opacity=".85"/>
+</svg>

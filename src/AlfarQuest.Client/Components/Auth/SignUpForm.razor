@@ -1,0 +1,110 @@
+@using AlfarQuest.Shared.Auth
+@using AlfarQuest.Client.Services.Auth
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+@inject NotificationService Notifications
+
+<EditForm Model="Model" OnValidSubmit="Submit" class="aq-form" novalidate>
+    @* novalidate hands validation to Blazor alone. Without it the browser's own
+       check on type="email" refuses to fire the submit event at all, so an
+       invalid address silently suppressed every other field's error. *@
+
+    <DataAnnotationsValidator />
+
+    <FormErrorSummary Message="@_error" />
+
+    <FormField Id="signup-name" Label="Full name">
+        <InputText id="signup-name" class="aq-input" @bind-Value="Model.FullName"
+                   autocomplete="name" placeholder="Your name" @ref="_first" />
+        <ValidationMessage For="@(() => Model.FullName)" class="aq-field-error" />
+    </FormField>
+
+    <FormField Id="signup-email" Label="Email">
+        <InputText id="signup-email" class="aq-input" @bind-Value="Model.Email"
+                   type="email" autocomplete="username" placeholder="you@example.com" />
+        <ValidationMessage For="@(() => Model.Email)" class="aq-field-error" />
+    </FormField>
+
+    <FormField Id="signup-password" Label="Password"
+               Hint="@($"At least {PasswordRules.MinLength} characters. A phrase you can remember beats a word with symbols in it.")">
+        <PasswordField Id="signup-password" @bind-Value="Model.Password" AutoComplete="new-password" HasHint="true" />
+        <PasswordStrengthMeter Password="@Model.Password" />
+        <ValidationMessage For="@(() => Model.Password)" class="aq-field-error" />
+    </FormField>
+
+    <FormField Id="signup-confirm" Label="Confirm password">
+        <PasswordField Id="signup-confirm" @bind-Value="Model.ConfirmPassword" AutoComplete="new-password" />
+        <ValidationMessage For="@(() => Model.ConfirmPassword)" class="aq-field-error" />
+    </FormField>
+
+    <div class="aq-form-split">
+        <FormField Id="signup-country" Label="Country" Required="false">
+            <InputText id="signup-country" class="aq-input" @bind-Value="Model.Country"
+                       autocomplete="country-name" placeholder="Where you delve from" />
+            <ValidationMessage For="@(() => Model.Country)" class="aq-field-error" />
+        </FormField>
+
+        <FormField Id="signup-phone" Label="Phone" Required="false">
+            <InputText id="signup-phone" class="aq-input" @bind-Value="Model.PhoneNumber"
+                       type="tel" autocomplete="tel" placeholder="+00 000 000 000" />
+            <ValidationMessage For="@(() => Model.PhoneNumber)" class="aq-field-error" />
+        </FormField>
+    </div>
+
+    <SubmitButton Label="Forge Your Account" BusyLabel="Writing you into the records…" Busy="_busy" />
+
+    <p class="aq-form-foot">
+        Already have one? <a class="aq-link" href="@SignInHref">Sign in</a>
+    </p>
+    <p class="aq-form-fineprint">
+        Creating an account means you accept the
+        <a class="aq-link" href="/terms">Terms of Service</a> and
+        <a class="aq-link" href="/privacy">Privacy Policy</a>.
+    </p>
+</EditForm>
+
+@code {
+    [Parameter] public string? ReturnUrl { get; set; }
+
+    private readonly SignUpRequest Model = new();
+    private InputText? _first;
+    private bool _busy;
+    private string? _error;
+
+    private string SignInHref =>
+        ReturnUrl is null ? "/signin" : $"/signin?returnUrl={Uri.EscapeDataString(ReturnUrl)}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _first?.Element is { } element) await element.FocusAsync();
+    }
+
+    private async Task Submit()
+    {
+        _busy = true;
+        _error = null;
+
+        var result = await Auth.SignUpAsync(Model);
+
+        _busy = false;
+
+        if (!result.Ok)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        // Registration signs the player in, so they go straight to choosing a
+        // hero rather than being sent to a login form for the password they typed
+        // ten seconds ago.
+        Notifications.Success("Welcome to Alfar Quest. Your account is ready.");
+        Nav.NavigateTo(SafeReturnUrl(), replace: true);
+    }
+
+    /// <summary>Same rule as sign-in: relative paths only, so a crafted returnUrl
+    /// cannot bounce a new player off the site.</summary>
+    private string SafeReturnUrl() =>
+        ReturnUrl is { Length: > 0 } url && url.StartsWith('/') && !url.StartsWith("//")
+            ? url
+            : "/heroes";
+}

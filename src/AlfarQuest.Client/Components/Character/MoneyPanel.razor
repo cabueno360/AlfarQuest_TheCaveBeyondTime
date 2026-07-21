@@ -1,0 +1,17 @@
+@using AlfarQuest.Client.Models
+
+@* Data-driven: every currency in Currency.All renders here, so adding one needs
+   no change to this component. *@
+<div class="aq-cw-money">
+    @foreach (var c in Currency.All)
+    {
+        <div class="aq-cw-coin" title="@c.Name">
+            <span class="aq-cw-coin-sym" style="color:@c.Colour">@c.Symbol</span>
+            <span class="aq-cw-coin-amt">@Wallet[c.Key].ToString("N0")</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Wallet Wallet { get; set; }
+}

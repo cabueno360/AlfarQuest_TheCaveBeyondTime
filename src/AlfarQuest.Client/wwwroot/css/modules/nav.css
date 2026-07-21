@@ -1,0 +1,92 @@
+/* Top bar, player menu and its dropdown. */
+
+.aq-app { min-height: 100vh; display: flex; flex-direction: column; }
+
+.aq-topnav {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: .7rem clamp(.9rem, 3vw, 2rem);
+    background: linear-gradient(180deg, rgba(10, 8, 24, .96), rgba(10, 8, 24, .82));
+    border-bottom: 1px solid rgba(185, 199, 255, .14);
+    backdrop-filter: blur(8px);
+}
+
+.aq-topnav-brand {
+    display: flex; align-items: center; gap: .55rem; text-decoration: none;
+    font-family: 'Cinzel', serif; letter-spacing: .13rem; font-size: .95rem;
+    color: var(--aq-gold-soft);
+}
+.aq-topnav-mark { color: var(--aq-crystal); }
+
+.aq-topnav-links { display: flex; align-items: center; gap: .4rem; }
+.aq-topnav-link {
+    padding: .45rem .8rem; border-radius: 999px; text-decoration: none;
+    color: var(--aq-text); font-size: .92rem;
+    transition: background .14s ease, color .14s ease;
+}
+.aq-topnav-link:hover { background: rgba(185, 199, 255, .12); color: var(--aq-gold-soft); }
+.aq-topnav-link:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+
+.aq-btn-sm { padding: .45rem 1.1rem; font-size: .85rem; text-decoration: none; display: inline-block; }
+
+/* ---------- player menu ---------- */
+.aq-playermenu { position: relative; }
+
+.aq-playermenu-trigger {
+    display: flex; align-items: center; gap: .55rem; cursor: pointer;
+    padding: .3rem .6rem .3rem .3rem; border-radius: 999px; font: inherit;
+    color: var(--aq-text); background: rgba(185, 199, 255, .08);
+    border: 1px solid rgba(185, 199, 255, .18);
+    transition: border-color .14s ease, background .14s ease;
+}
+.aq-playermenu-trigger:hover { background: rgba(185, 199, 255, .16); border-color: rgba(216, 180, 90, .5); }
+.aq-playermenu-trigger:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+
+.aq-playermenu-name {
+    max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: .92rem;
+}
+.aq-playermenu-caret { font-size: .7rem; color: var(--aq-muted); transition: transform .16s ease; }
+.aq-playermenu-caret.open { transform: rotate(180deg); }
+
+/* Sits under the menu and over everything else, so a click anywhere closes it. */
+.aq-dropdown-scrim { position: fixed; inset: 0; z-index: 50; background: transparent; }
+
+.aq-dropdown {
+    position: absolute; right: 0; top: calc(100% + .55rem); z-index: 60;
+    min-width: 230px; margin: 0; padding: .4rem; list-style: none;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .98), rgba(11, 8, 26, .99));
+    border: 1px solid rgba(185, 199, 255, .22); border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, .65);
+    animation: aq-dropdown-in .13s ease-out;
+}
+@keyframes aq-dropdown-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+}
+
+.aq-dropdown-item {
+    display: flex; align-items: center; gap: .65rem; width: 100%;
+    padding: .58rem .7rem; border-radius: 8px; border: none; cursor: pointer;
+    font: inherit; font-size: .92rem; text-align: left; text-decoration: none;
+    color: var(--aq-text); background: none;
+}
+.aq-dropdown-item:hover { background: rgba(185, 199, 255, .13); }
+.aq-dropdown-item:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: -2px; }
+.aq-dropdown-item.danger { color: #f0919f; }
+.aq-dropdown-item.danger:hover { background: rgba(160, 40, 60, .25); }
+.aq-dropdown-item.disabled { color: var(--aq-muted); cursor: default; }
+.aq-dropdown-item.disabled:hover { background: none; }
+
+.aq-dropdown-icon { width: 1.1rem; text-align: center; opacity: .85; }
+.aq-soon {
+    margin-left: auto; font-size: .68rem; letter-spacing: .06rem; text-transform: uppercase;
+    color: var(--aq-muted); border: 1px solid rgba(185, 199, 255, .25);
+    padding: .05rem .4rem; border-radius: 999px;
+}
+.aq-dropdown-rule { height: 1px; margin: .35rem .3rem; background: rgba(185, 199, 255, .16); }
+
+@media (max-width: 640px) {
+    .aq-playermenu-name { display: none; }
+    .aq-topnav-link { padding: .45rem .55rem; font-size: .86rem; }
+}

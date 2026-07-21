@@ -1,0 +1,45 @@
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using AlfarQuest.Client.Components.Title
+
+@* The only page anonymous visitors are meant to see. It sells the game and
+   points at the two doors; it loads no game code and touches no game data. *@
+
+<PageTitle>Alfar Quest</PageTitle>
+
+<div class="aq-landing">
+    <div class="aq-keyart" aria-hidden="true"></div>
+    <div class="aq-vignette" aria-hidden="true"></div>
+
+    <div class="aq-landing-inner">
+        <BrandHeader />
+
+        <p class="aq-tagline">
+            Beneath Kae Ychel lies the Cave Beyond Time, and everything three ruined souls
+            have left to lose. Take up the torch.
+        </p>
+
+        <AuthorizeView>
+            <Authorized>
+                <p class="aq-hint">Welcome back, @context.User.Identity?.Name.</p>
+                <div class="aq-landing-actions">
+                    <a class="aq-btn aq-begin" href="/heroes">Continue the Descent</a>
+                    <a class="aq-btn ghost" href="/profile">Your profile</a>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="aq-landing-actions">
+                    <a class="aq-btn aq-begin" href="/signup">Create an Account</a>
+                    <a class="aq-btn ghost" href="/signin">Sign In</a>
+                </div>
+                <p class="aq-hint">An account keeps your party, your gold and your progress.</p>
+            </NotAuthorized>
+        </AuthorizeView>
+
+        <ul class="aq-landing-points">
+            <li><span aria-hidden="true">◆</span> Three delvers, each with their own way through the dark.</li>
+            <li><span aria-hidden="true">◆</span> An open approach above ground, and the mine below it.</li>
+            <li><span aria-hidden="true">◆</span> Attributes, skills, gear and crafting that all reach the fight.</li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+@using AlfarQuest.Client.Models
+
+@* The pack. Clicking an item wears it; whatever comes off lands back here, so
+   nothing the player owns can be lost by a click. *@
+<section class="aq-cw-panel">
+    <h3 class="aq-cw-panel-title">
+        Pack
+        <span class="aq-cw-badge pack">@Bag.Items.Count / @Bag.Capacity</span>
+    </h3>
+
+    @if (Bag.Items.Count == 0)
+    {
+        <p class="aq-cw-soon">The pack is empty.</p>
+    }
+    else
+    {
+        <div class="aq-slots pack">
+            @foreach (var item in Bag.Items)
+            {
+                <div class="aq-slot filled" style="--rarity:@RarityInfo.Of(item.Rarity).Colour"
+                     @onclick="() => OnEquip.InvokeAsync(item)">
+                    <span class="aq-slot-icon">@item.Icon</span>
+                    <ItemCompare Candidate="item" Worn="Gear[item.Slot]" />
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public required Inventory Bag { get; set; }
+    [Parameter, EditorRequired] public required Loadout Gear { get; set; }
+    [Parameter] public EventCallback<Item> OnEquip { get; set; }
+}

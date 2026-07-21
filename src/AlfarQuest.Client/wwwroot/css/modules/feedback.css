@@ -1,0 +1,63 @@
+/* Notifications, busy indicators and the accessibility helpers that go with
+   them. */
+
+.aq-toasts {
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 200;
+    display: flex; flex-direction: column; gap: .55rem;
+    /* The strip must not swallow clicks meant for the page behind it; each toast
+       turns pointer events back on for itself. */
+    pointer-events: none;
+}
+
+.aq-toast {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: .65rem;
+    min-width: 260px; max-width: min(420px, calc(100vw - 2rem));
+    padding: .7rem .85rem; border-radius: 12px; font-size: .92rem; line-height: 1.4;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .97), rgba(11, 8, 26, .98));
+    border: 1px solid rgba(185, 199, 255, .22);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, .6);
+    animation: aq-toast-in .18s ease-out;
+}
+@keyframes aq-toast-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+.aq-toast.ok   { border-color: rgba(134, 210, 154, .5); }
+.aq-toast.bad  { border-color: rgba(226, 104, 122, .55); }
+.aq-toast.info { border-color: rgba(185, 199, 255, .4); }
+.aq-toast.ok   .aq-toast-icon { color: #9fdcb1; }
+.aq-toast.bad  .aq-toast-icon { color: #f0919f; }
+.aq-toast.info .aq-toast-icon { color: var(--aq-crystal); }
+
+.aq-toast-text { flex: 1; }
+.aq-toast-close {
+    background: none; border: none; cursor: pointer; color: var(--aq-muted);
+    font-size: 1.15rem; line-height: 1; padding: .1rem .3rem; border-radius: 6px;
+}
+.aq-toast-close:hover { color: var(--aq-text); }
+.aq-toast-close:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 1px; }
+
+/* ---------- busy ---------- */
+.aq-spinner { display: inline-flex; align-items: center; }
+.aq-spinner-ring {
+    width: 1.15rem; height: 1.15rem; border-radius: 50%;
+    border: 2px solid rgba(216, 180, 90, .28); border-top-color: var(--aq-gold);
+    animation: aq-spin .7s linear infinite;
+}
+.aq-spinner.sm .aq-spinner-ring { width: .9rem; height: .9rem; border-width: 2px; }
+@keyframes aq-spin { to { transform: rotate(360deg); } }
+
+.aq-page-loading {
+    min-height: 50vh; display: flex; flex-direction: column; gap: .8rem;
+    align-items: center; justify-content: center; color: var(--aq-muted);
+}
+.aq-notfound { text-align: center; padding: 4rem 1rem; color: var(--aq-crystal); font-style: italic; }
+
+/* Anyone who has asked their system to reduce motion gets the state changes
+   without the movement — the spinner still turns, because a frozen spinner reads
+   as a hang. */
+@media (prefers-reduced-motion: reduce) {
+    .aq-toast, .aq-dropdown { animation: none; }
+    .aq-btn, .aq-input, .aq-topnav-link { transition: none; }
+}

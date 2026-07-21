@@ -1,0 +1,122 @@
+/* Title screen: key art, wordmark, hero cards. */
+
+/* ---------- title / hero select ---------- */
+/* Minus the top bar, which now sits above it — at a full 100vh the hero select
+   would push a scrollbar onto a screen that has nothing below the fold. */
+.aq-menu {
+    position: relative; min-height: calc(100vh - 3.4rem); display: flex; align-items: center;
+    justify-content: center; padding: 2rem 1.25rem; text-align: center; overflow: hidden;
+}
+/* Key art, pushed back with blur + darkness so it sets mood without fighting
+   the menu for attention. Falls back to the base gradient if absent. */
+.aq-keyart {
+    position: absolute; inset: -4%;
+    background: url('../../assets/ui/keyart.png') center/cover no-repeat;
+    filter: blur(2px) saturate(.85) brightness(.42);
+    transform: scale(1.04);
+}
+.aq-vignette {
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 42%, rgba(6,4,16,0) 30%, rgba(6,4,16,.82) 78%),
+        linear-gradient(180deg, rgba(6,4,16,.72), rgba(6,4,16,.30) 35%, rgba(6,4,16,.92));
+}
+.aq-menu-inner {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    gap: 1.5rem; width: 100%; max-width: 1080px;
+}
+
+.aq-brand { margin: 0 0 .2rem; }
+/* Logo art is the real wordmark; the text below only appears if the file is
+   missing, so a fresh clone still shows a title instead of a broken image. */
+.aq-logo-fallback { display: none; }
+.aq-brand.no-art .aq-logo { display: none; }
+.aq-brand.no-art .aq-logo-fallback {
+    display: block; margin: 0; font-family: 'Cinzel', serif; font-weight: 700;
+    letter-spacing: .28rem; font-size: clamp(2rem, 6.5vw, 3.8rem);
+    color: var(--aq-gold-soft); text-shadow: 0 0 30px rgba(216,180,90,.45);
+}
+.aq-brand.no-art .aq-logo-fallback span {
+    display: block; font-size: .34em; letter-spacing: .2rem; color: var(--aq-crystal);
+    margin-top: .3rem;
+}
+.aq-logo {
+    display: block; width: min(680px, 82vw); height: auto;
+    filter: drop-shadow(0 6px 26px rgba(0,0,0,.75)) drop-shadow(0 0 34px rgba(216,180,90,.28));
+}
+.aq-tagline {
+    color: var(--aq-crystal); font-style: italic; margin: 0; max-width: 56ch;
+    line-height: 1.6; text-shadow: 0 2px 10px rgba(0,0,0,.8);
+}
+
+.aq-heroes {
+    display: flex; flex-wrap: wrap; gap: 1.1rem; justify-content: center; width: 100%;
+}
+/* Cards are buttons: keyboard-reachable and announce their pressed state. */
+.aq-hero-card {
+    position: relative; width: 268px; padding: 0; text-align: left; cursor: pointer;
+    font: inherit; color: inherit; overflow: hidden;
+    background: linear-gradient(180deg, rgba(26,21,52,.86), rgba(9,7,22,.94));
+    border: 1px solid rgba(185,199,255,.20); border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.55);
+    transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.aq-hero-card:hover { transform: translateY(-5px); border-color: rgba(216,180,90,.55); }
+.aq-hero-card:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 3px; }
+.aq-hero-card.selected {
+    transform: translateY(-5px); border-color: var(--aq-gold);
+    box-shadow: 0 0 0 1px rgba(216,180,90,.5), 0 14px 40px rgba(216,180,90,.22);
+}
+
+.aq-portrait { position: relative; height: 232px; background: rgba(0,0,0,.35); }
+.aq-portrait img {
+    width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%;
+    display: block; filter: saturate(.95) contrast(1.03);
+}
+/* Fades the portrait into the card body so the crop never shows a hard edge. */
+.aq-portrait-fade {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(9,7,22,0) 52%, rgba(9,7,22,.96) 99%);
+}
+.aq-hero-card.selected .aq-portrait img { filter: saturate(1.08) contrast(1.06) brightness(1.06); }
+/* Stand-in banner while a portrait file is missing. */
+.aq-portrait-stub { display: none; position: absolute; inset: 0; opacity: .35; }
+.aq-portrait.no-art img { display: none; }
+.aq-portrait.no-art .aq-portrait-stub { display: block; }
+
+.aq-hero-body { padding: .1rem 1rem 1rem; margin-top: -1.6rem; position: relative; }
+.aq-hero-class {
+    font-family: 'Cinzel', serif; font-size: .74rem; letter-spacing: .18rem;
+    text-transform: uppercase; opacity: .95;
+}
+.aq-hero-name { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--aq-crystal-2); margin-top: .15rem; }
+.aq-hero-title { color: var(--aq-gold-soft); font-size: .82rem; font-style: italic; letter-spacing: .03rem; }
+.aq-hero-desc { color: var(--aq-muted); font-size: .86rem; margin-top: .55rem; line-height: 1.45; }
+
+.aq-lead-badge {
+    position: absolute; top: .7rem; right: .7rem; opacity: 0;
+    font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .12rem;
+    text-transform: uppercase; color: #2a2008;
+    background: linear-gradient(180deg, #f0d99a, #d8b45a);
+    padding: .28rem .55rem; border-radius: 999px;
+    box-shadow: 0 2px 12px rgba(216,180,90,.5);
+    transition: opacity .16s ease;
+}
+.aq-hero-card.selected .aq-lead-badge { opacity: 1; }
+
+.aq-begin { margin-top: .4rem; font-size: 1.05rem; padding: .85rem 2.4rem; letter-spacing: .12rem; }
+
+.aq-mute {
+    margin-top: -.4rem; display: inline-flex; align-items: center; gap: .45rem;
+    background: none; border: none; cursor: pointer; font: inherit;
+    color: var(--aq-muted); font-size: .78rem; letter-spacing: .06rem; opacity: .75;
+    transition: opacity .15s ease, color .15s ease;
+}
+.aq-mute:hover { opacity: 1; color: var(--aq-crystal); }
+.aq-mute span { font-style: italic; }
+
+@media (max-width: 720px) {
+    .aq-portrait { height: 180px; }
+    .aq-hero-card { width: min(320px, 88vw); }
+}
+.aq-hero-locked { opacity: .45; filter: grayscale(.6); }

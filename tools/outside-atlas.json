@@ -1,0 +1,31 @@
+{
+  "_comment": [
+    "Source: wwwroot/assets/Outside/outside_tiles.png (1536x1024).",
+    "Two facts drive everything here:",
+    "  1. The sheet has NO alpha channel — its background is opaque near-white",
+    "     (254,255,254), about 50% of the image. Props must have it keyed out by",
+    "     flood fill from their own border, never by a colour threshold, or the",
+    "     white highlights inside the art get eaten too.",
+    "  2. It is a CONTACT SHEET, not an indexed atlas. Terrain is hand-painted",
+    "     patches and cliffs are whole formations, so there is no uniform grid to",
+    "     index and no autotile matrix. Terrain tiles below were cut from clean",
+    "     interior areas and each was verified by tiling it 4x4 and looking for",
+    "     seams."
+  ],
+  "tile": 32,
+  "terrain": {
+    "grass":       [{ "x": 40, "y": 250 }, { "x": 30, "y": 230 }, { "x": 16, "y": 210 }],
+    "grassRocky":  [{ "x": 14, "y": 104 }],
+    "path":        [{ "x": 62, "y": 215 }, { "x": 66, "y": 60 }, { "x": 70, "y": 110 }],
+    "water":       [{ "x": 236, "y": 60 }, { "x": 230, "y": 30 }],
+    "waterRocky":  [{ "x": 300, "y": 205 }],
+    "bridge":      [{ "x": 214, "y": 240 }]
+  },
+  "_next": [
+    "Props still to extract (white keyed out, packed into an atlas):",
+    "pine trees, broadleaf trees, bushes, flowers, logs, stumps, rocks,",
+    "cave entrance (labelled section), mine rails, mine cart, wooden supports,",
+    "barrels, crates, tent, campfire, workbench, tool rack, signpost, lantern,",
+    "fence, statues, gravestones, crystals, waterfall."
+  ]
+}

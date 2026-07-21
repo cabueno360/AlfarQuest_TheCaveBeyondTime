@@ -1,0 +1,26 @@
+@page "/signin"
+@layout AlfarQuest.Client.Layout.AuthLayout
+@using AlfarQuest.Client.Components.Auth
+@using AlfarQuest.Client.Services.Auth
+@inject CurrentUserProvider Me
+@inject NavigationManager Nav
+
+<PageTitle>Sign in · Alfar Quest</PageTitle>
+
+<h1 class="aq-auth-title">Sign In</h1>
+<p class="aq-auth-sub">The way back into the dark.</p>
+
+<SignInForm ReturnUrl="@ReturnUrl" />
+
+@code {
+    /// <summary>Bound from ?returnUrl=. Where the guard was going when it stopped.</summary>
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Someone already signed in has no business on a sign-in form; send them
+        // on rather than letting them create a second session for no reason.
+        if (Me.IsAuthenticated) Nav.NavigateTo(ReturnUrl ?? "/heroes", replace: true);
+    }
+}

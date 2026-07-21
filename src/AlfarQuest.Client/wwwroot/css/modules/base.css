@@ -1,0 +1,56 @@
+/* Palette, reset and the app shell. */
+
+:root {
+    --aq-void: #070510;
+    --aq-void-2: #0e0a20;
+    --aq-crystal: #b9c7ff;
+    --aq-crystal-2: #e7ccff;
+    --aq-gold: #d8b45a;
+    --aq-gold-soft: #f0d99a;
+    --aq-text: #e8e6f2;
+    --aq-muted: #9a95b6;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: radial-gradient(120% 100% at 50% 0%, #17123a 0%, var(--aq-void) 70%);
+    background-attachment: fixed;
+    color: var(--aq-text);
+    font-family: 'EB Garamond', Georgia, serif;
+}
+
+/* The document scrolls now that there are pages taller than a screen — the
+   profile, the terms. Only the game suppresses it, on the frame that wraps the
+   canvas, so a page can never be trapped un-scrollable by a global rule. */
+.aq-shell { flex: 1; min-height: 0; }
+.aq-shell:focus { outline: none; }
+
+.aq-gameframe { height: 100vh; width: 100vw; overflow: hidden; }
+
+/* On every navigation the router moves focus to the new page's <h1> so the change
+   is announced. That is a cue for assistive tech, not an interactive control, so
+   it should not draw a focus ring — :focus-visible still does for anything a
+   keyboard actually lands on. */
+[tabindex="-1"]:focus { outline: none; }
+
+/* Off-screen but still read aloud and still focusable. Used for the labels on
+   icon-only controls and for the real file input behind the upload button —
+   display:none would take those out of the accessibility tree entirely. */
+.aq-visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Hidden until tabbed to, then the first thing on the page. Without it, reaching
+   the content by keyboard means passing through the whole navigation each time. */
+.aq-skip {
+    position: absolute; left: .75rem; top: -3rem; z-index: 300;
+    padding: .55rem 1rem; border-radius: 0 0 10px 10px; text-decoration: none;
+    color: #1b1405; background: var(--aq-gold-soft);
+    transition: top .15s ease;
+}
+.aq-skip:focus { top: 0; }

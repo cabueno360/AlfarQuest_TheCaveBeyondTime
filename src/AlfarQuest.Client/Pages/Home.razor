@@ -1,0 +1,44 @@
+@page "/heroes"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using AlfarQuest.Client.Components.Title
+
+@* Hero select. Behind [Authorize]: it is the first screen that reads game data,
+   and the API it reads from requires the same token.
+
+   It moved off "/" when the landing page took that route — anonymous visitors
+   now meet the gate, not the roster. *@
+<div class="aq-menu">
+    <div class="aq-keyart"></div>
+    <div class="aq-vignette"></div>
+
+    <div class="aq-menu-inner">
+        <BrandHeader />
+
+        <p class="aq-tagline">
+            Three souls stand at the mouth of the Cave Beyond Time.<br />
+            Choose who leads the descent — you may take up any of them once the dark closes in.
+        </p>
+
+        @if (Heroes is null)
+        {
+            <p class="aq-hint">Reading the old records…</p>
+        }
+        else
+        {
+            <div class="aq-heroes">
+                @foreach (var hero in Heroes)
+                {
+                    <HeroCard Hero="hero"
+                              Selected="@(Lead == hero.Key)"
+                              SelectedChanged="SelectLead" />
+                }
+            </div>
+
+            <button class="aq-btn aq-begin" @onclick="Begin">Begin the Descent</button>
+
+            <button type="button" class="aq-mute" title="Mute / unmute the intro"
+                    @onclick="ToggleMusic">@(Muted ? "🔇" : "🔊") <span>Intro theme</span></button>
+        }
+    </div>
+</div>

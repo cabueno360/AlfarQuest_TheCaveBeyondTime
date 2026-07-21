@@ -1,0 +1,27 @@
+@using AlfarQuest.Client.Components.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+
+@* The application's top bar. Two faces of the same strip: the player menu once
+   signed in, the way in before that. AuthorizeView decides which — so the bar
+   cannot end up showing a sign-out button to someone who is not signed in. *@
+
+<header class="aq-topnav">
+    <a class="aq-topnav-brand" href="/">
+        <span class="aq-topnav-mark" aria-hidden="true">◆</span>
+        <span>Alfar Quest</span>
+    </a>
+
+    <nav class="aq-topnav-links" aria-label="Main">
+        <AuthorizeView>
+            <Authorized>
+                <a class="aq-topnav-link" href="/heroes">Play</a>
+                <a class="aq-topnav-link" href="/profile">Profile</a>
+                <PlayerMenu />
+            </Authorized>
+            <NotAuthorized>
+                <a class="aq-topnav-link" href="/signin">Sign in</a>
+                <a class="aq-btn aq-btn-sm" href="/signup">Create account</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</header>

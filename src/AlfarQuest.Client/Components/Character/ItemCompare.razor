@@ -1,0 +1,63 @@
+@using AlfarQuest.Client.Models
+
+@* Shown when hovering a packed item that would replace something worn. The
+   point of a comparison is the delta, so the numbers are signed and coloured by
+   direction rather than merely listed side by side. *@
+<div class="aq-tip compare">
+    <div class="aq-tip-name" style="color:@RarityInfo.Of(Candidate.Rarity).Colour">@Candidate.Name</div>
+    <div class="aq-tip-kind">@RarityInfo.Of(Candidate.Rarity).Name @SlotInfo.Of(Candidate.Slot).Name</div>
+
+    <ul class="aq-tip-bonuses">
+        @foreach (var line in Candidate.Bonuses())
+        {
+            <li>@line</li>
+        }
+    </ul>
+
+    @if (Worn is not null)
+    {
+        <div class="aq-tip-vs">replacing @Worn.Name</div>
+        <ul class="aq-tip-bonuses">
+            @foreach (var (label, delta) in Deltas())
+            {
+                <li class="@(delta > 0 ? "up" : delta < 0 ? "down" : "same")">
+                    @(delta > 0 ? "▲" : delta < 0 ? "▼" : "•") @label
+                </li>
+            }
+        </ul>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Candidate.Flavour))
+    {
+        <p class="aq-tip-flavour">@Candidate.Flavour</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Item Candidate { get; set; }
+    [Parameter] public Item? Worn { get; set; }
+
+    private IEnumerable<(string Label, float Delta)> Deltas()
+    {
+        if (Worn is null) yield break;
+
+        foreach (var (name, now, then) in new (string, float, float)[]
+        {
+            ("Damage", Candidate.Damage, Worn.Damage),
+            ("Armour", Candidate.Armour, Worn.Armour),
+        })
+        {
+            var d = now - then;
+            if (d != 0) yield return ($"{d:+0;-0} {name}", d);
+        }
+
+        var crit = (Candidate.CritChance - Worn.CritChance) * 100;
+        if (crit != 0) yield return ($"{crit:+0.0;-0.0}% Critical", crit);
+
+        foreach (var a in AttributeInfo.All)
+        {
+            var d = Candidate.Attributes[a.Kind] - Worn.Attributes[a.Kind];
+            if (d != 0) yield return ($"{d:+0;-0} {a.Name}", d);
+        }
+    }
+}

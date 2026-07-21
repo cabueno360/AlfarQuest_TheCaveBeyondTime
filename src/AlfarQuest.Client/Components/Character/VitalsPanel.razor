@@ -1,0 +1,26 @@
+@using AlfarQuest.Client.Models
+
+@* Health, mana and stamina. The values are mirrored from the simulation, so this
+   shows what the party actually has, not what the sheet thinks it should. *@
+<div class="aq-cw-vitals">
+    @foreach (var v in Bars)
+    {
+        <div class="aq-cw-vital">
+            <div class="aq-cw-xp-head"><span>@v.Label</span><span class="aq-cw-xp-num">@($"{v.Now:0} / {v.Max:0}")</span></div>
+            <div class="aq-cw-bar">
+                <div class="aq-cw-bar-fill @v.Css" style="width:@(v.Max > 0 ? v.Now / v.Max * 100 : 0)%"></div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Character Character { get; set; }
+
+    private (string Label, float Now, float Max, string Css)[] Bars =>
+    [
+        ("Health",  Character.Hp,      Character.MaxHp,      "hp"),
+        ("Mana",    Character.Mana,    Character.MaxMana,    "mana"),
+        ("Stamina", Character.Stamina, Character.MaxStamina, "stam"),
+    ];
+}

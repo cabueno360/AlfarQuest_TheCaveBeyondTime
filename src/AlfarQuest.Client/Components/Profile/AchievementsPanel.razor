@@ -1,0 +1,35 @@
+@using AlfarQuest.Shared.Profiles
+
+@* Achievements, once there are any. The empty state is the honest one today —
+   the server sends an empty list, and this says so rather than inventing rows.
+   When the first achievement is awarded, nothing here changes. *@
+
+@if (Achievements.Count == 0)
+{
+    <p class="aq-empty">
+        <span class="aq-empty-mark" aria-hidden="true">✦</span>
+        No deeds recorded yet. The cave is not known for handing them out.
+    </p>
+}
+else
+{
+    <ul class="aq-achievements">
+        @foreach (var earned in Achievements)
+        {
+            <li class="aq-achievement">
+                <span class="aq-achievement-mark" aria-hidden="true">✦</span>
+                <div>
+                    <p class="aq-achievement-name">@earned.Name</p>
+                    <p class="aq-achievement-desc">@earned.Description</p>
+                </div>
+                <time datetime="@earned.EarnedAt.ToString("o")">
+                    @earned.EarnedAt.ToLocalTime().ToString("d MMM yyyy")
+                </time>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter] public IReadOnlyList<AchievementDto> Achievements { get; set; } = [];
+}

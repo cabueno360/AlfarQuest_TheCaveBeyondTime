@@ -1,0 +1,13 @@
+<div class="aq-topbar">
+    <div class="aq-nowplaying">
+        <span>♪ Now playing — <i>@Track</i> (@Artist)</span>
+        <button title="Mute / unmute" @onclick="OnToggle">@(Muted ? "🔇" : "🔊")</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Track { get; set; } = "";
+    [Parameter] public string Artist { get; set; } = "Alfar Quest";
+    [Parameter] public bool Muted { get; set; }
+    [Parameter] public EventCallback OnToggle { get; set; }
+}

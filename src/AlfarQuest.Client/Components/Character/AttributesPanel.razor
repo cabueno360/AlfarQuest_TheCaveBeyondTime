@@ -1,0 +1,28 @@
+@using AlfarQuest.Client.Models
+
+@* Driven by AttributeInfo.All — adding an attribute needs no change here. *@
+<section class="aq-cw-panel">
+    <h3 class="aq-cw-panel-title">
+        Attributes
+        @if (Character.AttributePoints > 0)
+        {
+            <span class="aq-cw-badge">@Character.AttributePoints to spend</span>
+        }
+    </h3>
+
+    <div class="aq-attrs">
+        @foreach (var info in AttributeInfo.All)
+        {
+            <AttributeRow Info="info"
+                          Value="Character.Total[info.Kind]"
+                          Spent="Character.Spent[info.Kind]"
+                          CanRaise="Character.AttributePoints > 0"
+                          OnRaise="OnRaise" />
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public required Character Character { get; set; }
+    [Parameter] public EventCallback<AttributeKind> OnRaise { get; set; }
+}

@@ -1,0 +1,16 @@
+/* Buttons and hints, shared by every screen. */
+
+.aq-btn {
+    font-family: 'Cinzel', serif; letter-spacing: .12rem; cursor: pointer;
+    padding: .8rem 2.2rem; border-radius: 999px; font-size: 1rem;
+    color: #1b1405; background: linear-gradient(180deg, var(--aq-gold-soft), var(--aq-gold));
+    border: none; box-shadow: 0 6px 24px rgba(216,180,90,.35);
+    transition: transform .12s ease, filter .12s ease;
+}
+.aq-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.aq-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+.aq-btn.ghost {
+    background: transparent; color: var(--aq-crystal); box-shadow: none;
+    border: 1px solid rgba(185,199,255,.35);
+}
+.aq-hint { color: var(--aq-muted); font-size: .85rem; }

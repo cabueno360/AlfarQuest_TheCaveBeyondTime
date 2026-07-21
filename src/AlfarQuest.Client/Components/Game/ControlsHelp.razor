@@ -1,0 +1,23 @@
+@* Bottom-right by design: the canvas HUD owns the bottom-left corner, and the
+   two layers cannot see each other's layout. One element per corner.
+
+   Data-driven so a new binding is one row here and nowhere else. *@
+<div class="aq-controls-help">
+    @foreach (var (action, keys) in Bindings)
+    {
+        <div class="aq-key-row"><b>@action</b> <span>@keys</span></div>
+    }
+</div>
+
+@code {
+    private static readonly (string Action, string Keys)[] Bindings =
+    [
+        ("Move",         "WASD / arrows"),
+        ("Aim",          "mouse"),
+        ("Attack",       "J / left-click"),
+        ("Ability",      "K / right-click"),
+        ("Dash",         "Shift / Space"),
+        ("Switch hero",  "1 · 2 · 3"),
+        ("Character",    "C"),
+    ];
+}

@@ -1,0 +1,23 @@
+@page "/signup"
+@layout AlfarQuest.Client.Layout.AuthLayout
+@using AlfarQuest.Client.Components.Auth
+@using AlfarQuest.Client.Services.Auth
+@inject CurrentUserProvider Me
+@inject NavigationManager Nav
+
+<PageTitle>Create an account · Alfar Quest</PageTitle>
+
+<h1 class="aq-auth-title">Create an Account</h1>
+<p class="aq-auth-sub">Your name in the records, so the cave remembers you.</p>
+
+<SignUpForm ReturnUrl="@ReturnUrl" />
+
+@code {
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Me.IsAuthenticated) Nav.NavigateTo(ReturnUrl ?? "/heroes", replace: true);
+    }
+}

@@ -1,0 +1,73 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using AlfarQuest.Client.Components.Auth
+@using AlfarQuest.Client.Services.Auth
+@implements IDisposable
+@inject SessionBootstrapper Bootstrapper
+@inject NavigationManager Nav
+
+@* Nothing renders until the stored session has been checked with the server.
+
+   That ordering is the whole point: if the router ran first, a protected route
+   would resolve against an "anonymous" state that simply had not loaded yet, and
+   a signed-in player refreshing on /play would be thrown out to sign-in. The
+   splash below is what the user sees for that one round trip. *@
+
+@if (!Bootstrapper.Ready)
+{
+    <div class="aq-boot">
+        <div class="aq-boot-title">ALFAR&nbsp;QUEST</div>
+        <div class="aq-boot-sub">lighting the torch…</div>
+    </div>
+}
+else
+{
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                @* AuthorizeRouteView, not RouteView: this is what makes [Authorize]
+                   on a page mean anything. A page without the attribute is public,
+                   so every protected route says so on its own file. *@
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        <RedirectToSignIn />
+                    </NotAuthorized>
+                    <Authorizing>
+                        <div class="aq-page-loading">
+                            <div class="aq-boot-sub">checking your seal…</div>
+                        </div>
+                    </Authorizing>
+                </AuthorizeRouteView>
+
+                @* Moves focus to the new page's heading on every navigation, so a
+                   keyboard or screen-reader user is not left at the top of the
+                   document wondering whether anything happened. *@
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <p role="alert" class="aq-notfound">The path you seek is lost beyond time.</p>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </CascadingAuthenticationState>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        Bootstrapper.SessionEnded += OnSessionEnded;
+        await Bootstrapper.RestoreAsync();
+    }
+
+    /// <summary>The server stopped honouring the session while the app was
+    /// running — it expired, or was revoked from another device. The router is
+    /// already showing pages that assume an identity, so the player is moved out
+    /// of them rather than left on a screen that will fail on its next request.</summary>
+    private void OnSessionEnded() => InvokeAsync(() =>
+    {
+        Nav.NavigateTo("/signin", replace: true);
+        StateHasChanged();
+    });
+
+    public void Dispose() => Bootstrapper.SessionEnded -= OnSessionEnded;
+}

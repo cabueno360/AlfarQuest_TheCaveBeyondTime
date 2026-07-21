@@ -1,0 +1,96 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+
+@* The moment the whole progression system exists to produce.
+
+   Deliberately one thing on screen and one button. Everything else — spending
+   the points, reading the new numbers — comes next, in the character window this
+   hands off to. A popup that also let you spend points would bury the moment
+   under a form. *@
+
+@if (Event is { } up)
+{
+    <PauseOverlay Visible="true" OnDismiss="Continue" />
+
+    <section class="aq-levelup shown"
+             role="alertdialog" aria-modal="true" aria-labelledby="levelup-title">
+        <div class="aq-levelup-frame">
+            <div class="aq-levelup-rays" aria-hidden="true"></div>
+
+            <p class="aq-levelup-kicker" id="levelup-title">
+                <span aria-hidden="true">⭐</span> Level Up! <span aria-hidden="true">⭐</span>
+            </p>
+
+            <CharacterPortrait Character="up.Hero" />
+
+            <h2 class="aq-levelup-name">@up.Hero.Name</h2>
+            <p class="aq-levelup-title">@up.Hero.Title</p>
+
+            <p class="aq-levelup-level">
+                <span class="from">@up.FromLevel</span>
+                <span class="arrow" aria-hidden="true">→</span>
+                <span class="to">@up.ToLevel</span>
+            </p>
+            <p class="aq-levelup-reached">Level @up.ToLevel reached!</p>
+
+            <ul class="aq-levelup-rewards">
+                <li><strong>+@up.AttributePoints</strong> attribute points</li>
+                @if (up.SkillPoints > 0)
+                {
+                    <li><strong>+@up.SkillPoints</strong> skill @(up.SkillPoints == 1 ? "point" : "points")</li>
+                }
+            </ul>
+
+            <p class="aq-levelup-flavour">
+                The dark has taught @(up.Hero.Name.Split(' ').Last()) something. Spend it well.
+            </p>
+
+            @* The party levels together, but only one window opens. Naming the
+               others means their progress is visible without interrupting twice
+               more for it. *@
+            @if (up.Companions.Count > 0)
+            {
+                <p class="aq-levelup-party">
+                    @string.Join(" and ", up.Companions) also grew.
+                </p>
+            }
+
+            @if (Remaining > 0)
+            {
+                <p class="aq-levelup-more">@Remaining more waiting</p>
+            }
+
+            <button class="aq-btn aq-levelup-go" @ref="_continue" @onclick="Continue">
+                Continue
+            </button>
+        </div>
+    </section>
+}
+
+@code {
+    /// <summary>The level-up being celebrated, or null when there is none. The
+    /// queue lives in PartyState; this component shows one at a time.</summary>
+    [Parameter] public LevelUp? Event { get; set; }
+
+    /// <summary>How many are still queued behind this one, so a double level does
+    /// not look like the window is stuck.</summary>
+    [Parameter] public int Remaining { get; set; }
+
+    [Parameter] public EventCallback OnContinue { get; set; }
+
+    private ElementReference _continue;
+    private LevelUp? _focused;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Focus the only button, once per level-up rather than once per render.
+        // The game was being steered by keyboard a moment ago, so leaving focus
+        // on the canvas would mean Enter does nothing and WASD moves a hero
+        // nobody can see.
+        if (Event is null || ReferenceEquals(_focused, Event)) return;
+        _focused = Event;
+        await _continue.FocusAsync();
+    }
+
+    private Task Continue() => OnContinue.InvokeAsync();
+}

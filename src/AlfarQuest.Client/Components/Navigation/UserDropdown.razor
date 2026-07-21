@@ -1,0 +1,48 @@
+@* The menu itself: only the list of destinations, so what the menu *contains* can
+   change without touching how it opens.
+
+   Rendered as a real <ul> of links inside role="menu": the browser's own
+   keyboard handling and middle-click-to-open-in-a-tab come free, and a screen
+   reader announces it as a menu rather than as loose text. *@
+
+<ul class="aq-dropdown" role="menu" aria-label="Player menu">
+    <li role="none">
+        <a role="menuitem" class="aq-dropdown-item" href="/profile" @onclick="Choose" @onclick:preventDefault="false">
+            <span class="aq-dropdown-icon" aria-hidden="true">◈</span> Profile
+        </a>
+    </li>
+    <li role="none">
+        @* Characters is not built yet. Shown disabled rather than hidden, so the
+           menu tells the truth about what is coming instead of changing shape
+           the day it lands. *@
+        <span role="menuitem" class="aq-dropdown-item disabled" aria-disabled="true">
+            <span class="aq-dropdown-icon" aria-hidden="true">⚔</span> Characters
+            <span class="aq-soon">soon</span>
+        </span>
+    </li>
+    <li role="none">
+        <a role="menuitem" class="aq-dropdown-item" href="/settings" @onclick="Choose">
+            <span class="aq-dropdown-icon" aria-hidden="true">⚙</span> Settings
+        </a>
+    </li>
+    <li role="none">
+        <a role="menuitem" class="aq-dropdown-item" href="/settings#password" @onclick="Choose">
+            <span class="aq-dropdown-icon" aria-hidden="true">🔑</span> Change password
+        </a>
+    </li>
+
+    <li class="aq-dropdown-rule" role="separator"></li>
+
+    <li role="none">
+        <button type="button" role="menuitem" class="aq-dropdown-item danger" @onclick="OnSignOut">
+            <span class="aq-dropdown-icon" aria-hidden="true">⤴</span> Log out
+        </button>
+    </li>
+</ul>
+
+@code {
+    [Parameter] public EventCallback OnNavigate { get; set; }
+    [Parameter] public EventCallback OnSignOut { get; set; }
+
+    private Task Choose() => OnNavigate.InvokeAsync();
+}
