@@ -98,6 +98,127 @@ mixed content. HTTP on both sides removes both problems for local development. T
 HTTPS instead, trust the dev cert, re-add an `Https` endpoint under `Kestrel:Endpoints`
 in the API's `appsettings.json`, and update `ApiBaseUrl` to match.
 
+## Interacting with the world
+
+Forty-odd things to open, search, mine, gather and read, spread across the seven
+zones. `[E]` when one is in reach; the prompt names the action, not just the
+object — *Search Cook's Barrel*, *Mine Deepdelve Seam*, *Unlock the Warden's Box*.
+
+**The catalogue is the system.** A container kind is one row in
+`Models/ContainerKind.cs`: its name, the verb, the prop that stands for it, its
+loot table, what it pays in experience, whether it needs a key and whether it
+ever comes back. Nothing anywhere reads an id and decides what a chest does, so
+adding a wardrobe or a fishing spot is a row and a placement.
+
+The kind carries the prop, and the placement puts both down together. A reward
+pinned to a prop placed elsewhere in the build is how a chest ends up invisible —
+it had already happened once.
+
+**Loot tables** carry drop chances, minimum and maximum quantities, guaranteed
+lines and rare ones, and they roll with the party's Luck — the same figure the
+kill drops use, so a Luck build pays off everywhere. Barrels are often empty on
+purpose and say so in their own words; a chest always has something.
+
+**What is left stays left.** Opening rolls the contents once and keeps them. Take
+a sword, walk away, and the coin is still in the chest when you come back — and
+still there after a reload, because the *remainder* is saved, not merely the fact
+that it was opened. Saving opened-ness alone would either hand the rest over
+again or lose it. Respawning kinds carry a UTC stamp, so a barrel that refills in
+half an hour refills while the game is shut.
+
+An emptied container stops offering itself. Forty objects that all still invite a
+press for nothing would be worse than none.
+
+**What this does not do**, of the brief's list: no bookshelves, cabinets or
+wardrobes — those are interior furniture and this map is outdoors. No levers,
+doors or secret passages, which need geometry that can change. No lockpicking,
+stealing, traps or mimics. No drag-and-drop out of the loot window, no weight,
+durability or sell value, and no search animation on the sprite — there is no
+bend-down pose in the art.
+
+```bash
+node tools/loot-probe.mjs   # 17 checks: the prompt, opening, taking one line,
+                            # what is left, and that a reload duplicates nothing
+```
+
+## Reading the world
+
+Actors were getting lost in the ground. The outdoor tiles are a busy
+green-and-brown checkerboard with flowers through them, and so is the Thief —
+at full contrast a figure standing on ground the same colour simply vanished.
+
+Lightening the floor alone does not fix it, and that is worth saying: the three
+heroes are not one value. The Cleric is near-white and the Mage is dark, so any
+single adjustment to the ground helps one and hurts the other. It also does
+nothing for the cave, which has the same problem with different colours.
+
+So the work is split. **A one-pixel dark rim and a soft pool of shade on every
+actor** — hero, villager and creature — which separates a figure from any
+background whatever its colour. And **a warm wash over the outdoor floor only**,
+which lifts it and compresses its own contrast in one blend
+(`new = (1-a)·old + a·tint`). Trees, tents and crates are entities drawn after
+the floor, so they keep their full contrast and the ground stops competing with
+what stands on it.
+
+Measured: the ground's mean luminance goes from 89 to 104, and the frame rate is
+unchanged — the rim is baked into a copy of each atlas at load time, so drawing
+an outlined sprite is the same single `drawImage` it always was.
+
+Only the atlases that draw actors carry an outlined copy. Terrain and props do
+not have one, so no amount of calling `drawSprite` wrongly can put an ink line
+round a tree.
+
+## The character window
+
+Tabbed, not a column. It was one page with every section stacked and ran to
+several screens of scrolling; now the frame is a fixed grid — header, tabs,
+panel, footer — and **only the panel scrolls**. Every tab is measured to fit at
+1080p, 1440p, ultrawide and a 768px-tall laptop.
+
+**Character** — condition and ledger. **Equipment** — a paper doll with the pack
+beside it, because dragging needs both ends on screen. **Skills** — the one real
+active ability and the passives as a grid. **Inventory** — search, category
+chips, sorting, grid or compact. **Stats** — attributes above, Offensive /
+Defensive / General below. **Crafting**. **Quests**, disabled and labelled.
+
+Tabs come from `Models/CharacterTab.cs`. A future tab — achievements, bestiary,
+guild — is one row there and one component; nothing in the shell changes.
+
+**What it remembers.** The open tab, the typed search, the filter, the sort and
+the view, in `CharacterWindowState`. Blazor destroys component fields when a
+component stops rendering, so without that service closing the window mid-fight
+would reset everything.
+
+**What is honest about it.** The doll carries slots the game has no gear for —
+Cape, Shoulders, Belt, Shield, Artifact — because an empty slot tells a player
+what to look for. Pet and Mount are shown *locked*: named because the brief names
+them, disabled because neither system exists. The Stats tab lists Mining Speed,
+Fishing Speed, Experience Bonus and Crafting Bonus as dimmed dashes rather than
+inventing numbers for systems that are not there. The Skills tab gives cooldown
+and mana cost only to the class ultimate, which is the only thing that has
+either — printing "Cooldown: 0s" on a passive would be filling in a template
+rather than describing the game.
+
+**Three bugs the redesign exposed**, all from putting a text field into a game
+that captures the keyboard:
+
+- The document key handler ignored focus, so typing `c` in the search box closed
+  the window, and space and the arrow keys never reached the caret at all
+  because they are `preventDefault`-ed for the hero. It now stops at the edge of
+  any editable element.
+- The hidden window still held focus. Closing it from the search box left the
+  caret inside, and since the game ignores keys aimed at a text field, `C`
+  stopped reopening it and WASD typed instead of moving. The frame is now
+  `inert` while hidden — the one attribute that actually means "not focusable".
+- Chrome clears a `type="search"` input on Escape by itself, silently emptying a
+  filter the player had set. It is a text input now, and Escape clears the search
+  if there is one and closes the window if there is not.
+
+```bash
+node tools/sheet-probe.mjs   # 60 checks: tabs, no scrolling, keyboard, drag and
+                             # drop, remembered state, four resolutions
+```
+
 ## Progression
 
 Experience, levels and attributes, wired end to end: the world pays, the sheet

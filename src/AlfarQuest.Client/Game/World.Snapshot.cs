@@ -44,7 +44,13 @@ public partial class World
         }
 
         foreach (var p in Fx)
-            ents.Add(new REnt { t = "particle", x = p.Pos.X, y = p.Pos.Y, r = 3, c = p.Color, life = p.Life });
+            ents.Add(new REnt
+            {
+                t = "particle", x = p.Pos.X, y = p.Pos.Y,
+                r = p.Size, c = p.Color, life = p.Life,
+                t01 = p.MaxLife > 0 ? p.Life / p.MaxLife : 0,
+                add = p.Additive,
+            });
 
         foreach (var k in Husks)
             ents.Add(new REnt { t = "husk", x = k.Pos.X, y = k.Pos.Y, r = k.R, hp = k.Hp, mhp = k.MaxHp,
@@ -107,10 +113,14 @@ public partial class World
             xpNext = HeroProgressNow.XpNext,
             xpFrac = HeroProgressNow.Fraction,
             levelUpGlow = LevelUpGlow,
+            hitStop = HitStop,
+            particles = Fx.Count,
+            particleCap = MaxParticles,
+            particlesEmitted = FxEmitted,
             xpAwards = RewardBridge.Awarded,
             xpTotal = RewardBridge.TotalXp,
             claimsHeld = RewardBridge.Claimed().Count,
-            rewardsLeft = Discoveries.Count(d => !d.Found) + Interactables.Count(t => !t.Used),
+            rewardsLeft = Discoveries.Count(d => !d.Found) + Interactables.Count(t => t.Offers),
             party = Party.Select((h, i) => new RHero
             {
                 key = h.Def.Key, name = h.Def.Name, cls = h.Def.HeroClass, hp = Math.Max(0, h.Hp), mhp = h.MaxHp,

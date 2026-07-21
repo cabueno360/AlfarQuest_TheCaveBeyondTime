@@ -60,6 +60,10 @@ public readonly record struct HeroModifiers(
     float MagicResistance = 0,
     // The mana and stamina pools. Absolute, not bonuses like BonusMaxHp: unlike
     // health there is no class baseline in HeroDef for these to add to.
+    // The critical roll. Computed for the character sheet since the sheet
+    // existed and read by nothing until now — a promise the combat never kept.
+    float CritChance = 0,
+    float CritDamage = 1.5f,
     float MaxMana = 0,
     float MaxStamina = 0,
     float ManaRegen = 0,

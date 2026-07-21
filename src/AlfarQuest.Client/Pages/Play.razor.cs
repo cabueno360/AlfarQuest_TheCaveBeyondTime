@@ -18,6 +18,7 @@ public sealed partial class Play : IAsyncDisposable
     [Inject] private PartyState Party { get; set; } = default!;
     [Inject] private PlayTimeTracker PlayTime { get; set; } = default!;
     [Inject] private CampaignSaveService Campaign { get; set; } = default!;
+    [Inject] private LootState Loot { get; set; } = default!;
 
     private const string SheetHold = "character-window";
     private const string LevelUpHold = "level-up";
@@ -40,6 +41,10 @@ public sealed partial class Play : IAsyncDisposable
         // Nothing above this line touches game state. Reaching here at all means
         // the route guard let the page render, which means there is a session.
         Party.Load(GameSession.PartyKeys);
+        // Before the world is built: the engine offers an opened container to
+        // whoever is listening, and nothing listening means the contents go
+        // straight to the pack with no window at all.
+        Loot.Attach();
 
         // Before the world is built, so a returning player starts the session at
         // the level they left it — the engine reads attribute-derived numbers on
@@ -61,6 +66,26 @@ public sealed partial class Play : IAsyncDisposable
     /// <summary>Raised by the JS input layer when a menu key is pressed. Keeping
     /// the binding there rather than on a Blazor element means it works while the
     /// canvas has focus, which is almost always.</summary>
+    /// <summary>A menu key arrived from the input layer.
+    ///
+    /// Escape means "close the thing in front of me", and what that is depends on
+    /// what is open. Resolved here because this page is the only thing that can
+    /// see all of them at once — shallowest first, so one press does not close
+    /// the whole stack.</summary>
+    [JSInvokable]
+    public async Task MenuKey(string action, string? activeHeroKey = null)
+    {
+        if (action != "close") { await ToggleCharacterSheet(activeHeroKey); return; }
+
+        // The level-up window is deliberately not in this list: it is dismissed
+        // by reading it, and an Escape reflex should not skip past a level.
+        // StateHasChanged after each: this arrives from JS, and Blazor only
+        // re-renders automatically after its own event handlers. Without it the
+        // sheet closed in state and stayed on screen.
+        if (Loot.Open is not null) { Loot.Close(); StateHasChanged(); return; }
+        if (SheetOpen) { await CloseSheet(); StateHasChanged(); }
+    }
+
     [JSInvokable]
     public async Task ToggleCharacterSheet(string? activeHeroKey = null)
     {

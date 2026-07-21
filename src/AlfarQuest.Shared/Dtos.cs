@@ -38,6 +38,11 @@ public record SaveGameDto
     /// and a count — and <see cref="TallyKind"/> says which is which.</summary>
     public IReadOnlyList<SaveTallyDto> Belongings { get; init; } = [];
 
+    /// <summary>Every container the party has opened, and what is still in it.
+    /// Without the remainder, a chest half-emptied and left would either hand its
+    /// rest over again on the next visit or lose it.</summary>
+    public IReadOnlyList<SavedContainerDto> Containers { get; init; } = [];
+
     public DateTime UpdatedAt { get; init; }
 }
 
@@ -80,6 +85,17 @@ public record SaveTallyDto
     public int Count { get; init; }
 }
 
+/// <summary>One opened container. <paramref name="OpenedAt"/> is what the
+/// respawn timers are measured from, so it is UTC rather than play time — a
+/// barrel that refills in half an hour should refill while the game is shut.</summary>
+public record SavedContainerDto
+{
+    public string Key { get; init; } = "";
+    public DateTime OpenedAt { get; init; }
+    public int Coin { get; init; }
+    public IReadOnlyList<SaveTallyDto> Remaining { get; init; } = [];
+}
+
 /// <summary>The values <see cref="SaveTallyDto.Kind"/> may take. Constants rather
 /// than an enum because they cross a wire and are stored as text — a renamed enum
 /// member would silently orphan every existing row.</summary>
@@ -88,6 +104,10 @@ public static class TallyKind
     public const string Currency = "currency";
     public const string Material = "material";
     public const string PackItem = "pack";
+
+    /// <summary>Used inside a container's remainder rather than in the party's
+    /// belongings: the same shape, a different owner.</summary>
+    public const string Item = "item";
 }
 
 /// <summary>Points the player chose to put somewhere. A flat record rather than a

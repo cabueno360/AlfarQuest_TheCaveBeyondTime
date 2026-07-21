@@ -1,0 +1,64 @@
+@using AlfarQuest.Client.Models
+
+@* The paper doll.
+
+   Laid out from SlotInfo.All by column, so a new slot is one row in that
+   catalogue — the three columns arrange themselves and this file does not
+   change. The old equipment panel was a flat wrap of ten squares, which said
+   nothing about where anything is worn. *@
+
+<div class="aq-doll">
+    <div class="aq-doll-col left">
+        @foreach (var info in SlotInfo.In(DollColumn.Left))
+        {
+            @Slot(info)
+        }
+    </div>
+
+    <div class="aq-doll-figure">
+        <CharacterPortrait Character="Character" />
+        <p class="aq-doll-name">@Character.Name</p>
+        <p class="aq-doll-sub">@Character.Class · Level @Character.Level</p>
+
+        <div class="aq-doll-hands">
+            @foreach (var info in SlotInfo.In(DollColumn.Hands))
+            {
+                @Slot(info)
+            }
+        </div>
+
+        <div class="aq-doll-future" aria-label="Not yet available">
+            @foreach (var info in SlotInfo.In(DollColumn.Future))
+            {
+                @Slot(info)
+            }
+        </div>
+    </div>
+
+    <div class="aq-doll-col right">
+        @foreach (var info in SlotInfo.In(DollColumn.Right))
+        {
+            @Slot(info)
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
+    [Parameter] public Slot? Incoming { get; set; }
+    [Parameter] public EventCallback<Slot> OnUnequip { get; set; }
+    [Parameter] public EventCallback<Slot> OnDropItem { get; set; }
+    [Parameter] public EventCallback<Item> OnDragOut { get; set; }
+    [Parameter] public EventCallback OnDragEnded { get; set; }
+
+    /// <summary>One slot, wired the same way wherever it lands. Written as a
+    /// fragment rather than repeated three times so the columns cannot drift
+    /// apart in what they support.</summary>
+    private RenderFragment Slot(SlotInfo info) =>@<EquipmentSlot Info="info"
+                                                                Item="Character.Gear[info.Slot]"
+                                                                Incoming="Incoming"
+                                                                OnUnequip="OnUnequip"
+                                                                OnDropItem="OnDropItem"
+                                                                OnDragOut="OnDragOut"
+                                                                OnDragEnded="OnDragEnded" />;
+}

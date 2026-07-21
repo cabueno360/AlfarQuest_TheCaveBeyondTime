@@ -2,26 +2,23 @@
 
 @* Gathered resources. Driven by Material.All, so a new drop shows up here on its
    own once something reports it. *@
-<section class="aq-cw-panel">
-    <h3 class="aq-cw-panel-title">Materials</h3>
-    @if (!Pouch.Held().Any())
-    {
-        <p class="aq-cw-soon">Nothing gathered yet.</p>
-    }
-    else
-    {
-        <div class="aq-mats">
-            @foreach (var (mat, count) in Pouch.Held())
-            {
-                <div class="aq-mat" title="@mat.Name">
-                    <span class="aq-mat-icon" style="color:@mat.Colour">@mat.Icon</span>
-                    <span class="aq-mat-name">@mat.Name</span>
-                    <span class="aq-mat-count">@count</span>
-                </div>
-            }
-        </div>
-    }
-</section>
+@if (!Pouch.Held().Any())
+{
+    <p class="aq-cw-soon">Nothing gathered yet.</p>
+}
+else
+{
+    <div class="aq-mats">
+        @foreach (var (mat, count) in Pouch.Held())
+        {
+            <div class="aq-mat" title="@mat.Name">
+                <span class="aq-mat-icon" style="color:@mat.Colour">@mat.Icon</span>
+                <span class="aq-mat-name">@mat.Name</span>
+                <span class="aq-mat-count">@count</span>
+            </div>
+        }
+    </div>
+}
 
 @code {
     [Parameter, EditorRequired] public required Satchel Pouch { get; set; }

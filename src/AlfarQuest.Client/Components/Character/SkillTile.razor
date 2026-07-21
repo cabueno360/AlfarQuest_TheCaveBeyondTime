@@ -1,0 +1,46 @@
+@using AlfarQuest.Client.Models
+
+@* One skill in the grid.
+
+   A tile, not a row: the brief asks for a grid, and at a glance what matters is
+   the icon, whether it is learned, and how far. The wording of the next rank
+   belongs in the detail panel, where there is room for it. *@
+
+<button type="button"
+        class="aq-skilltile @(Rank > 0 ? "known" : "") @(Maxed ? "maxed" : "") @(Selected ? "on" : "")"
+        aria-pressed="@(Selected ? "true" : "false")"
+        aria-label="@($"{Skill.Name}, rank {Rank} of {Skill.MaxLevel}")"
+        @onclick="() => OnSelect.InvokeAsync(Skill)">
+
+    <span class="aq-skilltile-icon" aria-hidden="true">@Skill.Icon</span>
+    <span class="aq-skilltile-name">@Skill.Name</span>
+
+    <span class="aq-skilltile-rank @(Maxed ? "maxed" : "")">
+        @Rank / @Skill.MaxLevel
+    </span>
+
+    <span class="aq-skilltile-pips" aria-hidden="true">
+        @for (var i = 0; i < Skill.MaxLevel; i++)
+        {
+            <span class="aq-pip @(i < Rank ? "on" : "")"></span>
+        }
+    </span>
+
+    @if (CanLearn)
+    {
+        @* A dot rather than a "+": the tile selects, and putting a second action
+           inside a button is how a click ends up doing the wrong one. Raising the
+           rank happens in the detail panel. *@
+        <span class="aq-skilltile-ready" title="Can be raised" aria-hidden="true">●</span>
+    }
+</button>
+
+@code {
+    [Parameter, EditorRequired] public required Skill Skill { get; set; }
+    [Parameter] public int Rank { get; set; }
+    [Parameter] public bool CanLearn { get; set; }
+    [Parameter] public bool Selected { get; set; }
+    [Parameter] public EventCallback<Skill> OnSelect { get; set; }
+
+    private bool Maxed => Rank >= Skill.MaxLevel;
+}

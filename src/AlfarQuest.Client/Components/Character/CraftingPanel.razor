@@ -3,36 +3,33 @@
 @* Recipes. Shown always, but only craftable beside the right craftsman — the
    gate is stated on the row rather than hiding the recipe, so the player knows
    what to look for out in the world. *@
-<section class="aq-cw-panel">
-    <h3 class="aq-cw-panel-title">Crafting</h3>
-    <div class="aq-recipes">
-        @foreach (var r in RecipeBook.All)
-        {
-            var affordable = r.Affordable(Pouch, Purse);
-            var here = AtStation;
-            <div class="aq-recipe @(affordable && here ? "ready" : "")">
-                <span class="aq-recipe-icon" style="color:@RarityInfo.Of(r.Output.Rarity).Colour">@r.Output.Icon</span>
-                <div class="aq-recipe-body">
-                    <div class="aq-recipe-name" style="color:@RarityInfo.Of(r.Output.Rarity).Colour">@r.Output.Name</div>
-                    <div class="aq-recipe-cost">
-                        @foreach (var (mat, n) in r.Cost)
-                        {
-                            <span class="@(Pouch[mat] >= n ? "have" : "short")">@n× @mat</span>
-                        }
-                        @if (r.CoinCost > 0)
-                        {
-                            <span class="@(Purse["gold"] >= r.CoinCost ? "have" : "short")">@r.CoinCost ◈</span>
-                        }
-                    </div>
-                    <div class="aq-recipe-where">@(here ? "Ready to craft" : $"Needs {r.StationName}")</div>
+<div class="aq-recipes">
+    @foreach (var r in RecipeBook.All)
+    {
+        var affordable = r.Affordable(Pouch, Purse);
+        var here = AtStation;
+        <div class="aq-recipe @(affordable && here ? "ready" : "")">
+            <span class="aq-recipe-icon" style="color:@RarityInfo.Of(r.Output.Rarity).Colour">@r.Output.Icon</span>
+            <div class="aq-recipe-body">
+                <div class="aq-recipe-name" style="color:@RarityInfo.Of(r.Output.Rarity).Colour">@r.Output.Name</div>
+                <div class="aq-recipe-cost">
+                    @foreach (var (mat, n) in r.Cost)
+                    {
+                        <span class="@(Pouch[mat] >= n ? "have" : "short")">@n× @mat</span>
+                    }
+                    @if (r.CoinCost > 0)
+                    {
+                        <span class="@(Purse["gold"] >= r.CoinCost ? "have" : "short")">@r.CoinCost ◈</span>
+                    }
                 </div>
-                <button class="aq-mini-btn" disabled="@(!(affordable && here))"
-                        title="@(here ? affordable ? "Craft" : "Missing materials" : $"Find {r.StationName}")"
-                        @onclick="() => OnCraft.InvokeAsync(r)">⚒</button>
+                <div class="aq-recipe-where">@(here ? "Ready to craft" : $"Needs {r.StationName}")</div>
             </div>
-        }
-    </div>
-</section>
+            <button class="aq-mini-btn" disabled="@(!(affordable && here))"
+                    title="@(here ? affordable ? "Craft" : "Missing materials" : $"Find {r.StationName}")"
+                    @onclick="() => OnCraft.InvokeAsync(r)">⚒</button>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter, EditorRequired] public required Satchel Pouch { get; set; }

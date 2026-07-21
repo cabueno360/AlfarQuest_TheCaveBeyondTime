@@ -1,0 +1,49 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@inject PartyState Party
+
+@* Attributes and what they derive, in cards by role.
+
+   The grouping is the brief's — Offensive, Defensive, General — and it comes from
+   StatGroups rather than from three hand-written blocks here, so a new derived
+   stat is one row there and appears under the right heading on its own. *@
+
+<div class="aq-tab-stack">
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">✦</span> Attributes</h3>
+            @if (Character.AttributePoints > 0)
+            {
+                <span class="aq-cw-badge">@Character.AttributePoints to spend</span>
+            }
+        </header>
+        <div class="aq-card-body">
+            <div class="aq-attrs">
+                @foreach (var info in AttributeInfo.All)
+                {
+                    <AttributeRow Info="info"
+                                  Value="Character.Total[info.Kind]"
+                                  Spent="Character.Spent[info.Kind]"
+                                  CanRaise="Character.AttributePoints > 0"
+                                  OnRaise="Raise" />
+                }
+            </div>
+        </div>
+    </section>
+
+    @* Three abreast rather than stacked in one column: they are peers, and a
+       column of them was a scroll where a row fits. *@
+    <div class="aq-tab-grid three">
+        @foreach (var group in StatGroups.For(Character))
+        {
+            <StatCard Group="group" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
+
+    private void Raise(AttributeKind kind) => Party.Raise(Character, kind);
+}

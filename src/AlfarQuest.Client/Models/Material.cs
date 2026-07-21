@@ -14,6 +14,11 @@ public sealed record Material(string Id, string Name, string Icon, string Colour
         new("Bat Wing",      "Bat Wing",      "𝇋", "#c98fff"),
         new("Herbs",         "Herbs",         "❦", "#7fd694"),
         new("Small Crystal", "Small Crystal", "◆", "#9fe4ff"),
+
+        // Not a crafting resource — a key. It lives here because the pouch is
+        // already the place that counts things the party carries but does not
+        // wear, and inventing a third container for one row would be worse.
+        new("Rusted Key",    "Rusted Key",    "🗝", "#c9a06a"),
     ];
 
     public static Material? Find(string id) => All.FirstOrDefault(m => m.Id == id);

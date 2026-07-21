@@ -1,0 +1,49 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@inject PartyState Party
+
+@* Crafting, promoted from a strip inside the old scrolling column to its own
+   tab. The recipes and the gate are unchanged — what a craftsman will make is
+   still decided by standing next to one. *@
+
+<div class="aq-tab-grid two">
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🔨</span> Recipes</h3>
+            @if (!AtStation)
+            {
+                <span class="aq-card-hint">Find a craftsman to work</span>
+            }
+        </header>
+        <div class="aq-card-body">
+            <CraftingPanel Pouch="Party.Pouch" Purse="Party.Purse"
+                           AtStation="AtStation" OnCraft="Craft" />
+        </div>
+    </section>
+
+    <div class="aq-stack">
+        <section class="aq-card">
+            <header class="aq-card-head">
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> Materials</h3>
+            </header>
+            <div class="aq-card-body">
+                <MaterialsPanel Pouch="Party.Pouch" />
+            </div>
+        </section>
+
+        <section class="aq-card">
+            <header class="aq-card-head">
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
+            </header>
+            <div class="aq-card-body">
+                <MoneyPanel Wallet="Party.Purse" />
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool AtStation { get; set; }
+
+    private void Craft(Recipe r) => Party.Craft(r);
+}

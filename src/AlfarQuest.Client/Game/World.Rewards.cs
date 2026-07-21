@@ -39,17 +39,13 @@ public partial class World
             ? HeroProgress.None
             : CharacterStats.ProgressOf(Party[Active].Def.Key);
 
-    /// <summary>What the prompt says you would be doing. Reads from the source so
-    /// a new kind of interactable cannot ship with the wrong verb.</summary>
-    static string VerbFor(Interactable t) => t.Source switch
-    {
-        XpSource.TreasureChest => "Open",
-        XpSource.OreVein => "Mine",
-        XpSource.RareCrystal => "Prise",
-        XpSource.AncientTablet => "Read",
-        XpSource.Relic => "Take",
-        _ => "Use",
-    };
+    /// <summary>What the prompt says you would be doing.
+    ///
+    /// Read off the kind rather than switched on here, so a new container carries
+    /// its own verb and cannot ship with the wrong one. A locked container says
+    /// so before it is opened — the prompt is where "what do I need" gets asked.</summary>
+    static string VerbFor(Interactable t) =>
+        t.Kind.RequiresKey is not null && !t.Opened ? "Unlock" : t.Kind.Verb;
 
     // ---- awarding ---------------------------------------------------
 
@@ -116,9 +112,14 @@ public partial class World
 
         ThingInReach = null;
         var best = ReachRange;
+        var now = DateTime.UtcNow;
         foreach (var t in Interactables)
         {
-            if (t.Used) continue;
+            // Checked here rather than only at world build, so a barrel refills
+            // during a long session instead of only between them.
+            if (t.DueToRefill(now)) t.Refill();
+
+            if (!t.Offers) continue;
             var d = (t.Pos - hero.Pos).Len();
             if (d < best) { best = d; ThingInReach = t; }
         }
@@ -130,19 +131,83 @@ public partial class World
     {
         if (ThingInReach is not { } thing) return false;
 
-        thing.Used = true;
-        Claim(thing.Name);
-        Award(XpAward.Value(thing.Source), thing.Source, thing.Pos, thing.Name);
-
-        if (thing.Loot is { } item)
+        // A lock is checked before anything else happens: no XP, no particles and
+        // no "opened" flag for a chest that did not open.
+        if (thing.Kind.RequiresKey is { } key && !thing.Opened)
         {
-            LootBridge.Drop(item, thing.LootCount);
-            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -32), $"+{thing.LootCount} {item}", "#9fe4ff"));
+            if (!ContainerBridge.CarryingKey(key))
+            {
+                Floaters.Add(new FloatText(thing.Pos + new Vec(0, -30),
+                                           $"Locked — needs a {key}", "#d98a8a"));
+                return true;               // handled: it must not fall through to an NPC
+            }
+            ContainerBridge.SpendKey(key);
+            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), $"{key} turns", "#f0d99a"));
         }
 
-        Burst(thing.Pos, "#f0d99a", 12);
+        // First opening rolls it; later ones show whatever is still inside.
+        if (!thing.Opened)
+        {
+            var (luck, _) = CharacterStats.PartyFortune?.Invoke() ?? (0f, 0f);
+            thing.Contents = thing.Kind.Loot.Roll(_rng.NextDouble, luck);
+            thing.Opened = true;
+            thing.OpenedAt = DateTime.UtcNow;
+
+            Claim(thing.Name);
+            Record(thing);
+            Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
+        }
+
+        Play(EffectFor(thing.Kind), thing.Pos);
+
+        var contents = thing.Contents!;
+        if (contents.IsEmpty)
+        {
+            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -32), thing.Kind.WhenEmpty, "#9a95b6"));
+            return true;
+        }
+
+        // Offered to the interface. If nothing is listening — a test, or before
+        // the party loads — the contents go straight to the party instead, so the
+        // simulation never depends on a window existing.
+        if (!ContainerBridge.Offer(new OpenedContainer(thing.Name, thing.Kind, contents)))
+            TakeEverything(thing);
+
         return true;
     }
+
+    /// <summary>Hands a container's whole contents to the party. The fallback for
+    /// a headless run, and what the interface calls for "Take All".</summary>
+    void TakeEverything(Interactable thing)
+    {
+        if (thing.Contents is not { } c) return;
+
+        if (c.Coin > 0) LootBridge.Drop("Coins", c.Coin);
+        foreach (var (id, n) in c.Materials) LootBridge.Drop(id, n);
+        foreach (var id in c.Items) LootBridge.Drop(id, 1);
+        c.Clear();
+        Record(thing);
+    }
+
+    /// <summary>Writes a container's state down, for Stage 1 only — the cave is
+    /// regenerated on every descent, so its containers are meant to come back.</summary>
+    void Record(Interactable thing)
+    {
+        if (Stage != 1 || thing.Contents is null || thing.OpenedAt is not { } at) return;
+        RewardBridge.SaveContainer(ContainerSave.From(thing.Name, at, thing.Contents));
+    }
+
+    /// <summary>What opening this container looks like.
+    ///
+    /// Chosen from the verb and the tier rather than from the id, so a new kind
+    /// of thing to mine gets rock fragments and a new rare chest gets the loud
+    /// version without either being registered anywhere.</summary>
+    static string EffectFor(ContainerKind kind) => kind.Verb switch
+    {
+        "Mine" or "Prise" => "mine",
+        "Gather" => "gather",
+        _ => kind.Tier >= Rarity.Rare ? "chest_rare" : "chest_open",
+    };
 
     /// <summary>Records a one-shot reward as taken, for Stage 1 only.
     ///
@@ -160,10 +225,25 @@ public partial class World
     void ApplyClaims()
     {
         var claimed = RewardBridge.Claimed();
-        if (claimed.Count == 0) return;
-
         foreach (var d in Discoveries) if (claimed.Contains(d.Name)) d.Found = true;
-        foreach (var t in Interactables) if (claimed.Contains(t.Name)) t.Used = true;
+
+        var saved = RewardBridge.Containers();
+        var now = DateTime.UtcNow;
+
+        foreach (var t in Interactables)
+        {
+            if (!saved.TryGetValue(t.Name, out var state)) continue;
+
+            // Long enough closed to have refilled: left untouched, so it rolls
+            // fresh the next time it is opened. This is also why the roll happens
+            // on opening rather than at world build — a respawned barrel should
+            // not hold what it held last time.
+            if (state.HasRespawned(t.Kind, now)) continue;
+
+            t.Opened = true;
+            t.OpenedAt = state.OpenedAt;
+            t.Contents = state.ToStack();
+        }
     }
 
     /// <summary>XP for a kill. Separate from the table because the value belongs

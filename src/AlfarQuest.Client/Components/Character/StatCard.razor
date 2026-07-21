@@ -1,0 +1,27 @@
+@using AlfarQuest.Client.Services.Character
+
+@* One category of derived stats. Presentation only — it draws whatever group it
+   is handed, which is what lets StatGroups decide the categories. *@
+
+<section class="aq-card">
+    <header class="aq-card-head">
+        <h3 class="aq-card-title">
+            <span class="aq-card-icon" aria-hidden="true">@Group.Icon</span> @Group.Name
+        </h3>
+    </header>
+    <div class="aq-card-body">
+        <div class="aq-stats">
+            @foreach (var s in Group.Stats)
+            {
+                <div class="aq-stat @(s.Pending ? "pending" : "")" title="@s.Description">
+                    <span class="aq-stat-name">@s.Name</span>
+                    <span class="aq-stat-val">@s.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public required StatGroup Group { get; set; }
+}

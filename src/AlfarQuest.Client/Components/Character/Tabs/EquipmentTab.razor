@@ -1,0 +1,98 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@inject PartyState Party
+@inject CharacterWindowState State
+
+@* Paper doll and pack, side by side.
+
+   The brief gives Equipment and Inventory their own tabs, and they have them —
+   but dragging is only useful if both ends are on screen at once, so the pack
+   appears here in its compact form as well. The Inventory tab is where it gets
+   the search, the filters and the full grid.
+
+   This component owns the drag: it is the only thing that can see both the doll
+   and the pack, so it is the only thing that can decide what a drop means. *@
+
+<div class="aq-tab-grid doll">
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🛡</span> Equipment</h3>
+            <span class="aq-card-hint">Drag to wear · click to take off</span>
+        </header>
+        <div class="aq-card-body">
+            <PaperDoll Character="Character"
+                       Incoming="_carrying?.Slot"
+                       OnUnequip="Unequip"
+                       OnDropItem="DropOnSlot"
+                       OnDragOut="StartDrag"
+                       OnDragEnded="EndDrag" />
+        </div>
+    </section>
+
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
+            <span class="aq-cw-badge pack">@Party.Bag.Items.Count / @Party.Bag.Capacity</span>
+        </header>
+        <div class="aq-card-body">
+            <InventoryGrid Items="Party.Bag.Items"
+                           Gear="Character.Gear"
+                           View="InventoryView.Compact"
+                           OnEquip="Equip"
+                           OnDragOut="StartDrag"
+                           OnDragEnded="EndDrag"
+                           OnDropHere="DropOnPack" />
+        </div>
+    </section>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
+
+    /// <summary>What is under the cursor mid-drag. Held here rather than in a
+    /// service because a drag does not outlive this tab — the moment the panel
+    /// changes, the drag is over and so is this field.</summary>
+    private Item? _carrying;
+
+    /// <summary>Where it came from, so dropping it back where it started can be
+    /// treated as a no-op instead of a round trip through the pack.</summary>
+    private Slot? _from;
+
+    private void StartDrag(Item item)
+    {
+        _carrying = item;
+        // Worn if the character is wearing this exact instance in its slot.
+        _from = ReferenceEquals(Character.Gear[item.Slot], item) ? item.Slot : null;
+    }
+
+    private void EndDrag()
+    {
+        _carrying = null;
+        _from = null;
+    }
+
+    private void DropOnSlot(Slot slot)
+    {
+        if (_carrying is not { } item) return;
+
+        // Already there: nothing to do, and going through Equip would take it off
+        // and put it back for no reason.
+        if (_from == slot) { EndDrag(); return; }
+
+        Party.Equip(Character, item);
+        EndDrag();
+    }
+
+    private void DropOnPack()
+    {
+        // Only means something for gear coming off the doll; an item dragged from
+        // the pack and dropped back into it has not moved.
+        if (_from is { } slot) Party.Unequip(Character, slot);
+        EndDrag();
+    }
+
+    private void Equip(Item item) => Party.Equip(Character, item);
+
+    private void Unequip(Slot slot) => Party.Unequip(Character, slot);
+}

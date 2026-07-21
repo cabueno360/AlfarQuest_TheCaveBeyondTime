@@ -34,6 +34,6 @@ public partial class World
         var step = Math.Max(1, Crystals.Count / 4);
         for (int i = 0; i < Crystals.Count; i += step)
             Interactables.Add(new Interactable(
-                "Rich Seam", Crystals[i].Pos, XpSource.RareCrystal, "Small Crystal", 2));
+                $"Rich Seam {i}", Crystals[i].Pos, ContainerKind.Find("crystal")!));
     }
 }

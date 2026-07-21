@@ -176,7 +176,10 @@ export function startGame(heroKeysCsv, audioUrl, host) {
     // Menu keys are bound here rather than on a Blazor element: the canvas holds
     // focus during play, so a DOM handler on the page would never see them.
     attachInput(el, unlockAudio, (action) => {
-        if (host) host.invokeMethodAsync("ToggleCharacterSheet", activeHeroKey);
+        // The action is passed on rather than discarded. It used to be ignored
+        // and every menu key toggled the character sheet, which meant Escape —
+        // the key for "close this" — opened one instead.
+        if (host) host.invokeMethodAsync("MenuKey", action, activeHeroKey);
     });
     onResize = () => sizeToParent();
     window.addEventListener("resize", onResize);

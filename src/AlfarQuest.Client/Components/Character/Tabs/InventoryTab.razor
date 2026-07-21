@@ -1,0 +1,79 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@inject PartyState Party
+@inject CharacterWindowState State
+
+@* The pack in full: toolbar, grid, and the gathered materials beside it.
+
+   Materials are a separate list rather than rows in the same grid because they
+   are counted, not carried one by one — four Stone is one entry, and forcing
+   them into item tiles would misrepresent what the party has. *@
+
+<div class="aq-tab-grid pack">
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
+            <span class="aq-cw-badge pack">@Party.Bag.Items.Count / @Party.Bag.Capacity</span>
+        </header>
+        <div class="aq-card-body">
+            <InventoryToolbar />
+
+            <InventoryGrid Items="Shown"
+                           Gear="Character.Gear"
+                           View="State.View"
+                           OnEquip="Equip"
+                           EmptyMessage="@EmptyMessage" />
+
+            @if (Shown.Count != Party.Bag.Items.Count)
+            {
+                @* Saying what the filter is hiding, so a pack that looks empty is
+                   never mistaken for a pack that is. *@
+                <p class="aq-pack-note">
+                    Showing @Shown.Count of @Party.Bag.Items.Count.
+                    <button type="button" class="aq-link-btn" @onclick="Reset">Clear filters</button>
+                </p>
+            }
+        </div>
+    </section>
+
+    <div class="aq-stack">
+        <section class="aq-card">
+            <header class="aq-card-head">
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> Materials</h3>
+            </header>
+            <div class="aq-card-body">
+                <MaterialsPanel Pouch="Party.Pouch" />
+            </div>
+        </section>
+
+        <section class="aq-card">
+            <header class="aq-card-head">
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
+            </header>
+            <div class="aq-card-body">
+                <MoneyPanel Wallet="Party.Purse" />
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
+
+    private IReadOnlyList<Item> Shown =>
+        [.. ItemFilter.Apply(Party.Bag.Items, State.Filter, State.Search, State.Sort)];
+
+    private string EmptyMessage => Party.Bag.Items.Count == 0
+        ? "The pack is empty."
+        : "Nothing here matches that.";
+
+    private void Equip(Item item) => Party.Equip(Character, item);
+
+    private void Reset()
+    {
+        State.Search = "";
+        State.Filter = ItemCategory.All;
+        State.Notify();
+    }
+}

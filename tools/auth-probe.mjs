@@ -6,6 +6,16 @@
 // Every check states the property it is defending, so a failure says what broke
 // rather than which line number did.
 
+// Run it like this — the limit has to be raised for the probe to get through its
+// twenty-odd credential calls, but left low enough that the loop at the bottom
+// still trips it:
+//
+//     Auth__SignInAttemptsPerWindow=40 dotnet run --project src/AlfarQuest.Api
+//     LIMIT=40 node tools/auth-probe.mjs
+//
+// At the shipped default of 8 the probe throttles itself halfway through and
+// reports failures in sign-out and password change that are nothing of the kind.
+
 const API = process.env.API ?? 'http://localhost:5080';
 
 let passed = 0, failed = 0;

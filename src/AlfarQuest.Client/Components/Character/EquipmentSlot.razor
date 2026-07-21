@@ -1,10 +1,36 @@
 @using AlfarQuest.Client.Models
 
-<div class="aq-slot @(Item is null ? "empty" : "filled")"
+@* One place on the paper doll.
+
+   Three ways in, because different people reach for different ones: click to
+   take off, drag an item onto it to wear, and a tooltip on hover. A slot that
+   only responded to one of those would be the kind of interface people call
+   "fiddly" without being able to say why.
+
+   --rarity drives the frame colour, so the grid reads at a glance without
+   anything having to write per-rarity CSS. *@
+
+<div class="aq-slot @StateClass"
      style="@(Item is null ? "" : $"--rarity:{RarityInfo.Of(Item.Rarity).Colour}")"
+     role="button"
+     tabindex="@(Available ? 0 : -1)"
+     aria-label="@AriaLabel"
+     aria-disabled="@(Available ? null : "true")"
      title="@(Item is null ? Info.Name : null)"
-     @onclick="Unequip">
+     draggable="@((Item is not null).ToString().ToLowerInvariant())"
+     @ondragstart="OnDragStart"
+     @ondragend="OnDragEnd"
+     @ondragover:preventDefault="true"
+     @ondragover="OnDragOver"
+     @ondragleave="OnDragLeave"
+     @ondrop:preventDefault="true"
+     @ondrop="OnDrop"
+     @onclick="Activate"
+     @onkeydown="OnKeyDown">
+
     <span class="aq-slot-icon">@(Item?.Icon ?? Info.Icon)</span>
+    <span class="aq-slot-tag">@Info.Name</span>
+
     @if (Item is not null)
     {
         <ItemTooltip Item="Item" />
@@ -14,7 +40,66 @@
 @code {
     [Parameter, EditorRequired] public required SlotInfo Info { get; set; }
     [Parameter] public Item? Item { get; set; }
+
+    /// <summary>Taking the item off. Fired by click and by Enter alike.</summary>
     [Parameter] public EventCallback<Slot> OnUnequip { get; set; }
 
-    private Task Unequip() => Item is null ? Task.CompletedTask : OnUnequip.InvokeAsync(Info.Slot);
+    /// <summary>An item was dropped here. The parent decides whether it fits —
+    /// this component knows where it sits, not what the rules are.</summary>
+    [Parameter] public EventCallback<Slot> OnDropItem { get; set; }
+
+    /// <summary>Dragging the worn item away, so the pack can accept it.</summary>
+    [Parameter] public EventCallback<Item> OnDragOut { get; set; }
+
+    [Parameter] public EventCallback OnDragEnded { get; set; }
+
+    /// <summary>The slot a drag is currently carrying, so a slot can light up
+    /// only when what is over it would actually go in.</summary>
+    [Parameter] public Slot? Incoming { get; set; }
+
+    private bool _over;
+
+    private bool Available => Info.Available;
+    private bool Accepts => Available && Incoming == Info.Slot;
+
+    private string StateClass => string.Join(' ', new[]
+    {
+        Item is null ? "empty" : "filled",
+        Available ? "" : "locked",
+        _over && Accepts ? "drop-ok" : "",
+        _over && Incoming is not null && !Accepts ? "drop-no" : "",
+        Incoming is not null && Accepts ? "target" : "",
+    }.Where(s => s.Length > 0));
+
+    private string AriaLabel => Item is null
+        ? $"{Info.Name}, empty"
+        : $"{Info.Name}: {Item.Name}. Activate to remove.";
+
+    private Task Activate() =>
+        Item is null || !Available ? Task.CompletedTask : OnUnequip.InvokeAsync(Info.Slot);
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key is "Enter" or " ") await Activate();
+    }
+
+    private Task OnDragStart() =>
+        Item is null ? Task.CompletedTask : OnDragOut.InvokeAsync(Item);
+
+    private Task OnDragEnd()
+    {
+        _over = false;
+        return OnDragEnded.InvokeAsync();
+    }
+
+    private void OnDragOver() => _over = true;
+    private void OnDragLeave() => _over = false;
+
+    private Task OnDrop()
+    {
+        _over = false;
+        // Refused here as well as by the parent: a locked slot must not even
+        // report a drop, or a future handler could quietly accept one.
+        return Accepts ? OnDropItem.InvokeAsync(Info.Slot) : Task.CompletedTask;
+    }
 }

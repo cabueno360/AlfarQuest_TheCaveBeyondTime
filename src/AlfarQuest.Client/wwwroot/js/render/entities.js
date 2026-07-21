@@ -5,6 +5,10 @@ import { ATLAS, animFrame, drawSprite, getOutsideFrames, getCharFrames } from ".
 import { CRYSTAL_CELLS } from "../world/tiles.js";
 import { ctx, hexA } from "../gfx.js";
 
+/// Draw actors from the outlined copy of their atlas. The rim itself is baked in
+/// at load time — see makeOutlined — so this costs nothing per frame.
+const OUTLINE = true;
+
 export function drawEntity(e) {
     switch (e.t) {
         case "crystal": drawCrystal(e); break;
@@ -83,17 +87,8 @@ function drawNpc(e) {
     const s = 1.15;
     const dw = f.w * s, dh = f.h * s;
 
-    ctx.fillStyle = "rgba(0,0,0,0.32)";
-    ctx.beginPath();
-    ctx.ellipse(e.x, e.y - 2, dw * 0.33, dw * 0.12, 0, 0, 7);
-    ctx.fill();
-
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    ctx.translate(e.x, 0);
-    if (facingLeft) ctx.scale(-1, 1);
-    ctx.drawImage(a.img, f.x, f.y, f.w, f.h, -dw / 2, e.y - dh, dw, dh);
-    ctx.restore();
+    groundShadow(e.x, e.y - 2, dw * 0.40, dw * 0.15);
+    drawFramed(a, f, e.x, e.y, dw, dh, facingLeft);
 
     // A quiet marker so a villager reads as approachable from a distance.
     if (e.inReach) {
@@ -118,14 +113,11 @@ function drawCreature(e) {
     const dw = f.w * s, dh = f.h * s;
     const foot = e.y + (e.r || 15) * 0.9;
 
-    ctx.fillStyle = "rgba(0,0,0,0.36)";
-    ctx.beginPath();
-    ctx.ellipse(e.x, foot - 2, dw * 0.34, dw * 0.12, 0, 0, 7);
-    ctx.fill();
+    groundShadow(e.x, foot - 2, dw * 0.42, dw * 0.15);
+    drawFramed(a, f, e.x, foot, dw, dh, false);
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(a.img, f.x, f.y, f.w, f.h, e.x - dw / 2, foot - dh, dw, dh);
     if (e.flash > 0) {
         ctx.globalAlpha = Math.min(0.8, e.flash * 6);
         ctx.fillStyle = "#ffffff";
@@ -158,13 +150,12 @@ function drawHusk(e) {
     const a = ATLAS.party;
     if (!a.ready) return;
 
-    ctx.fillStyle = "rgba(0,0,0,0.45)";
-    ctx.beginPath(); ctx.ellipse(x, y + r * 0.95, r * 0.7, r * 0.24, 0, 0, 7); ctx.fill();
+    groundShadow(x, y + r * 0.95, r * 0.9, r * 0.32);
 
     // Keyed by list index, not position: husks move, so a position-derived key
     // would mint a new clock every frame (no animation, and an unbounded Map).
     const f = animFrame("husk:" + e._i, e, a.frames.husk, 9);
-    drawSprite(a, f, a.rows.husk, x, y + r * 0.95, 1, false, 1, e.flash);
+    drawSprite(a, f, a.rows.husk, x, y + r * 0.95, 1, false, 1, e.flash, OUTLINE);
 
     // the crystal that rides in them, glowing through the ribs
     ctx.save();
@@ -188,9 +179,7 @@ function drawHero(e) {
     const row = a.rows[e.name];
     if (!a.ready || row === undefined) return;
 
-    // contact shadow keeps the figure grounded on the mirrored floor
-    ctx.fillStyle = "rgba(0,0,0,0.45)";
-    ctx.beginPath(); ctx.ellipse(x, y + r * 0.95, r * 0.75, r * 0.26, 0, 0, 7); ctx.fill();
+    groundShadow(x, y + r * 0.95, r * 0.95, r * 0.34);
 
     // the active hero stands in a gilded rune circle
     if (e.active && !e.dead) {
@@ -218,7 +207,42 @@ function drawHero(e) {
     // Ability outranks the basic attack: DoAbility can fire on the same frame
     // as an attack, and the channel pose is the more dramatic of the two.
     if (e.abl > 0) f = a.ability.col;
-    drawSprite(a, f, row, x, y + r * 0.95, 1, Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash);
+    drawSprite(a, f, row, x, y + r * 0.95, 1, Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash, OUTLINE);
+}
+
+/// Stamps a packed frame with a dark rim behind it.
+///
+/// NPCs and wildlife are addressed by rectangle rather than by grid cell, so
+/// they cannot go through drawSprite — but they stand on the same busy ground
+/// and need the same separation, so the rim is written once here instead of
+/// three times at the call sites.
+function drawFramed(a, f, cx, footY, dw, dh, flip) {
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.translate(cx, 0);
+    if (flip) ctx.scale(-1, 1);
+
+    ctx.drawImage(a.outlined ?? a.img, f.x, f.y, f.w, f.h, -dw / 2, footY - dh, dw, dh);
+    ctx.restore();
+}
+
+/// A soft pool of shade under an actor.
+///
+/// A flat ellipse read as a sticker on ground this busy; a gradient reads as
+/// shade. It is doing more work than it looks: the dark ring immediately around
+/// the feet is most of what separates a figure from the tiles it stands on.
+function groundShadow(x, y, rx, ry) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, rx);
+    g.addColorStop(0, "rgba(0,0,0,0.55)");
+    g.addColorStop(0.6, "rgba(0,0,0,0.34)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, ry / rx);
+    ctx.translate(-x, -y);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, rx, 0, 7); ctx.fill();
+    ctx.restore();
 }
 
 function drawProjectile(e) {
@@ -244,8 +268,29 @@ function drawNova(e) {
 }
 
 function drawParticle(e) {
-    ctx.fillStyle = hexA(e.c, Math.min(1, e.life * 3));
-    ctx.fillRect(e.x - 2, e.y - 2, 4, 4);
+    // Fades and shrinks against its own lifetime, which the engine sends as
+    // t01. A fixed fade made a mote meant to last three seconds vanish in the
+    // first third of it and a spark meant to last a quarter never fade at all.
+    const t = e.t01 ?? 1;
+    const size = Math.max(1, (e.r || 3) * (0.35 + t * 0.65));
+    const alpha = Math.min(1, t * 1.6);
+
+    ctx.save();
+    if (e.add) {
+        // Additive: overlapping sparks build into light rather than into mud.
+        // Wrong for dust, which is why the effect decides and not this function.
+        //
+        // No shadowBlur. A per-particle blur is a filter pass each, and there can
+        // be hundreds on screen; the glow it bought is most of the way there from
+        // the overlap itself plus one larger, fainter square underneath.
+        ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = hexA(e.c, alpha * 0.25);
+        const halo = size * 2.4;
+        ctx.fillRect(e.x - halo / 2, e.y - halo / 2, halo, halo);
+    }
+    ctx.fillStyle = hexA(e.c, alpha);
+    ctx.fillRect(e.x - size / 2, e.y - size / 2, size, size);
+    ctx.restore();
 }
 
 function drawExit(e) {

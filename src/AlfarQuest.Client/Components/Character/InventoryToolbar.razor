@@ -1,0 +1,111 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services.Character
+@inject CharacterWindowState State
+
+@* Search, category, sort and view.
+
+   Everything it changes lives in CharacterWindowState, so a typed search and a
+   chosen filter survive closing the window — which is the brief's requirement,
+   and also just what anyone expects of a filter they set thirty seconds ago. *@
+
+<div class="aq-packbar">
+    <div class="aq-search">
+        <span class="aq-search-icon" aria-hidden="true">⌕</span>
+        @* type="text", not "search": Chrome clears a search input on Escape by
+           itself, which silently emptied a filter the player had set.
+
+           Arrow keys must reach the caret, not the tab strip listening above, so
+           keys are stopped here — and Escape is handled below, or stopping them
+           would leave the only way out of the window dead while typing. *@
+        <input type="text"
+               class="aq-input"
+               inputmode="search"
+               placeholder="Search the pack…"
+               aria-label="Search the pack"
+               value="@State.Search"
+               @oninput="OnSearch"
+               @onkeydown="OnKeyDown"
+               @onkeydown:stopPropagation="true" />
+        @if (State.Search.Length > 0)
+        {
+            <button type="button" class="aq-search-clear" aria-label="Clear search"
+                    @onclick="ClearSearch">✕</button>
+        }
+    </div>
+
+    <div class="aq-chips" role="group" aria-label="Filter by category">
+        @foreach (var c in ItemCategoryInfo.All)
+        {
+            <button type="button"
+                    class="aq-chip @(State.Filter == c.Category ? "on" : "")"
+                    aria-pressed="@(State.Filter == c.Category ? "true" : "false")"
+                    @onclick="() => SetFilter(c.Category)">
+                <span aria-hidden="true">@c.Icon</span> @c.Name
+            </button>
+        }
+    </div>
+
+    <div class="aq-packbar-right">
+        <label class="aq-sort">
+            <span>Sort</span>
+            <select class="aq-select" aria-label="Sort the pack"
+                    value="@State.Sort" @onchange="OnSort">
+                <option value="@InventorySortOrder.Rarity">Rarity</option>
+                <option value="@InventorySortOrder.Name">Name</option>
+                <option value="@InventorySortOrder.Slot">Slot</option>
+            </select>
+        </label>
+
+        <div class="aq-viewtoggle" role="group" aria-label="View">
+            <button type="button" class="@(State.View == InventoryView.Grid ? "on" : "")"
+                    aria-pressed="@(State.View == InventoryView.Grid ? "true" : "false")"
+                    title="Grid view" @onclick="() => SetView(InventoryView.Grid)">▦</button>
+            <button type="button" class="@(State.View == InventoryView.Compact ? "on" : "")"
+                    aria-pressed="@(State.View == InventoryView.Compact ? "true" : "false")"
+                    title="Compact view" @onclick="() => SetView(InventoryView.Compact)">☰</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    /// <summary>Escape clears the search, or closes the window when there is
+    /// nothing to clear. One key, the narrower meaning first — which is what
+    /// every search box a player has ever used does.</summary>
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key != "Escape") return;
+
+        if (State.Search.Length > 0) ClearSearch();
+        else State.RequestClose();
+    }
+
+    private void OnSearch(ChangeEventArgs e)
+    {
+        State.Search = e.Value?.ToString() ?? "";
+        State.Notify();
+    }
+
+    private void ClearSearch()
+    {
+        State.Search = "";
+        State.Notify();
+    }
+
+    private void SetFilter(ItemCategory category)
+    {
+        State.Filter = category;
+        State.Notify();
+    }
+
+    private void SetView(InventoryView view)
+    {
+        State.View = view;
+        State.Notify();
+    }
+
+    private void OnSort(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<InventorySortOrder>(e.Value?.ToString(), out var sort)) State.Sort = sort;
+        State.Notify();
+    }
+}

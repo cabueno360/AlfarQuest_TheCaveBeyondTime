@@ -12,6 +12,8 @@ public class GameDbContext : DbContext
     public DbSet<SaveSkill> SaveSkills => Set<SaveSkill>();
     public DbSet<SaveClaim> SaveClaims => Set<SaveClaim>();
     public DbSet<SaveTally> SaveTallies => Set<SaveTally>();
+    public DbSet<SaveContainer> SaveContainers => Set<SaveContainer>();
+    public DbSet<SaveContainerItem> SaveContainerItems => Set<SaveContainerItem>();
     public DbSet<SaveEquipment> SaveEquipment => Set<SaveEquipment>();
 
     public DbSet<PlayerAccount> Accounts => Set<PlayerAccount>();
@@ -47,6 +49,20 @@ public class GameDbContext : DbContext
             .HasForeignKey(t => t.PlayerSaveId)
             .OnDelete(DeleteBehavior.Cascade);
         b.Entity<SaveTally>().Property(t => t.Kind).HasMaxLength(16);
+
+        b.Entity<PlayerSave>()
+            .HasMany(s => s.Containers)
+            .WithOne()
+            .HasForeignKey(c => c.PlayerSaveId)
+            .OnDelete(DeleteBehavior.Cascade);
+        b.Entity<SaveContainer>().Property(c => c.ContainerKey).HasMaxLength(64);
+        b.Entity<SaveContainer>()
+            .HasMany(c => c.Remaining)
+            .WithOne()
+            .HasForeignKey(i => i.SaveContainerId)
+            .OnDelete(DeleteBehavior.Cascade);
+        b.Entity<SaveContainerItem>().Property(i => i.Kind).HasMaxLength(16);
+        b.Entity<SaveContainerItem>().Property(i => i.TallyKey).HasMaxLength(40);
         b.Entity<SaveTally>().Property(t => t.TallyKey).HasMaxLength(40);
 
         b.Entity<PlayerSave>()

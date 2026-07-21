@@ -21,6 +21,16 @@ public static class SaveMappings
         {
             Kind = t.Kind, Key = t.TallyKey, Count = t.Count,
         })],
+        Containers = [.. s.Containers.Select(c => new SavedContainerDto
+        {
+            Key = c.ContainerKey,
+            OpenedAt = c.OpenedAt,
+            Coin = c.Coin,
+            Remaining = [.. c.Remaining.Select(i => new SaveTallyDto
+            {
+                Kind = i.Kind, Key = i.TallyKey, Count = i.Count,
+            })],
+        })],
     };
 
     public static SaveHeroDto ToDto(this SaveHero p) => new()

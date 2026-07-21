@@ -1,7 +1,7 @@
 /* The gate: what an anonymous visitor sees, and the documents linked from it. */
 
 .aq-landing {
-    position: relative; min-height: calc(100vh - 3.4rem);
+    position: relative; min-height: calc(100vh - var(--aq-topnav-h));
     display: flex; align-items: center; justify-content: center;
     padding: 2.5rem 1.25rem; text-align: center; overflow: hidden;
 }

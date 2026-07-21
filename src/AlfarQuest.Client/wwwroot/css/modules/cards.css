@@ -1,0 +1,49 @@
+/* The framed section.
+
+   Shared, because the profile page and the character window both want the same
+   card and neither should own it. It lived in profile.css first; the character
+   window redesign needed it too, and copying it would have been two places to
+   fix one border — while redefining it in a second module would have made
+   whichever loaded last silently win.
+
+   Listed as shared in tools/css-collisions.mjs, so using it from anywhere is
+   deliberate rather than a clash. */
+
+.aq-card {
+    background: linear-gradient(180deg, rgba(24, 19, 48, .88), rgba(9, 7, 22, .94));
+    border: 1px solid rgba(185, 199, 255, .18); border-radius: 16px; overflow: hidden;
+}
+.aq-card.wide { grid-column: 1 / -1; }
+
+.aq-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .85rem 1.15rem; border-bottom: 1px solid rgba(185, 199, 255, .14);
+    background: rgba(185, 199, 255, .05);
+}
+.aq-card-title {
+    display: flex; align-items: center; gap: .55rem; margin: 0;
+    font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 500;
+    letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-crystal);
+}
+.aq-card-icon { color: var(--aq-gold); }
+.aq-card-body { padding: 1.15rem; }
+.aq-card-more { margin: 1rem 0 0; }
+
+/* ---------- pieces the character window adds ---------- */
+
+/* A short note in the header — "drag to wear", "find a craftsman". Right-aligned
+   against the title so it reads as a caption rather than a second heading. */
+.aq-card-hint {
+    font-size: .72rem; font-style: italic; color: var(--aq-muted);
+    text-align: right; max-width: 22ch;
+}
+
+/* A sub-heading inside a card body, for a card that holds more than one list. */
+.aq-card-sub {
+    margin: 1rem 0 .4rem; font-family: 'Cinzel', serif; font-size: .68rem;
+    letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-card-body > .aq-card-sub:first-child { margin-top: 0; }
+
+/* Cards stacked in one column of a two-column tab. */
+.aq-stack { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }

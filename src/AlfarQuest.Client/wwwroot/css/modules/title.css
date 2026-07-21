@@ -4,7 +4,7 @@
 /* Minus the top bar, which now sits above it — at a full 100vh the hero select
    would push a scrollbar onto a screen that has nothing below the fold. */
 .aq-menu {
-    position: relative; min-height: calc(100vh - 3.4rem); display: flex; align-items: center;
+    position: relative; min-height: calc(100vh - var(--aq-topnav-h)); display: flex; align-items: center;
     justify-content: center; padding: 2rem 1.25rem; text-align: center; overflow: hidden;
 }
 /* Key art, pushed back with blur + darkness so it sets mood without fighting

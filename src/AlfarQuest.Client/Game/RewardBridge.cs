@@ -57,6 +57,23 @@ public static class RewardBridge
 
     public static void Claim(string key) => OnClaimed?.Invoke(key);
 
+    /// <summary>What has happened to each container, and what is still in it.
+    ///
+    /// Separate from the claim list because a claim is a fact — this was found —
+    /// while a container carries a remainder that changes every time the player
+    /// takes something out of it.</summary>
+    public static Func<IReadOnlyDictionary<string, ContainerSave>>? ContainerStates;
+
+    /// <summary>Records a container's current state. Called by the engine when
+    /// one is opened and by the interface after every take, because taking is the
+    /// interface's to do and the remainder is what has to be written down.</summary>
+    public static Action<ContainerSave>? OnContainerSaved;
+
+    public static IReadOnlyDictionary<string, ContainerSave> Containers() =>
+        ContainerStates?.Invoke() ?? new Dictionary<string, ContainerSave>();
+
+    public static void SaveContainer(ContainerSave state) => OnContainerSaved?.Invoke(state);
+
     /// <summary>For tests that need a clean slate between runs.</summary>
     public static void ResetCounters() => (Awarded, Delivered, TotalXp) = (0, 0, 0);
 }

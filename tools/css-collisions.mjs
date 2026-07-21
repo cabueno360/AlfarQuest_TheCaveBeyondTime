@@ -20,7 +20,7 @@ const DIR = 'src/AlfarQuest.Client/wwwroot/css/modules';
 
 // Modules that exist to be used from anywhere. A name defined here and used
 // elsewhere is the point, not a collision.
-const SHARED = new Set(['base.css', 'buttons.css', 'forms.css', 'feedback.css']);
+const SHARED = new Set(['base.css', 'buttons.css', 'forms.css', 'feedback.css', 'cards.css']);
 
 const owners = new Map();          // class name -> [modules that define it]
 

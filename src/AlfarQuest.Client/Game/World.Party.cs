@@ -8,6 +8,9 @@ namespace AlfarQuest.Client.Game;
 // =====================================================================
 public partial class World
 {
+    /// <summary>Distance walked since the last puff of dust.</summary>
+    float _stride;
+
     void UpdateActiveHero(Hero h, float dt, InputState input, Vec worldAim)
     {
         // Mid-sentence the hero stands still, so the balloon stays over the
@@ -27,10 +30,25 @@ public partial class World
             h.DashVel = move * h.Def.Speed * 3.4f;
             h.DashCool = h.DashCooldown;
             h.IFrames = 0.28f;               // dodge i-frames
-            Burst(h.Pos, "#ffffff", 8);
+            // No water branch: water is impassable, so a hero never wades. The
+            // catalogue keeps a water_step effect for when a shallow tile exists,
+            // but nothing calls it and pretending otherwise would be a dead one.
+            Play("dash_dust", h.Pos, move * -1f);
         }
         h.DashVel *= 0.82f;
         h.Pos = MoveBlocked(h.Pos, move * speed * dt + h.DashVel * dt, 14f);
+
+        // Dust off the heels, paced by distance rather than by time so it does
+        // not thicken when the hero is standing still turning on the spot.
+        if (move.Len() > 0.1f)
+        {
+            _stride += speed * dt;
+            if (_stride > 26f)
+            {
+                _stride = 0;
+                Play("footfall", h.Pos + new Vec(0, 6), move * -1f, 0.6f);
+            }
+        }
         if (move.Len() > 0.1f) h.Facing = (float)Math.Atan2(move.Y, move.X);
 
         var aimDir = (worldAim - h.Pos).Norm();

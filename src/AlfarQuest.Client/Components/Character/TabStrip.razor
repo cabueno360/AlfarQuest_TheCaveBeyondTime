@@ -1,0 +1,80 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services.Character
+@inject CharacterWindowState State
+
+@* The tab strip. Rendered from CharacterTab.All, so a future tab is one row in
+   that catalogue and nothing here changes.
+
+   role="tablist" with real aria wiring: a strip of styled divs looks identical
+   and tells a screen reader nothing about what it is or which one is open. *@
+
+@* stopPropagation because the window listens for the same arrows. Without it a
+   single press was handled twice and skipped a tab. *@
+<div class="aq-tabs" role="tablist" aria-label="Character sections"
+     @onkeydown="OnKeyDown" @onkeydown:stopPropagation="true">
+    @foreach (var tab in CharacterTab.All)
+    {
+        <button type="button"
+                role="tab"
+                id="@($"aq-tab-{tab.Key}")"
+                class="aq-tab @(State.Tab == tab.Key ? "on" : "") @(tab.Available ? "" : "soon")"
+                aria-selected="@(State.Tab == tab.Key ? "true" : "false")"
+                aria-controls="aq-tabpanel"
+                disabled="@(!tab.Available)"
+                tabindex="@(State.Tab == tab.Key ? 0 : -1)"
+                @onclick="() => Select(tab)">
+            <span class="aq-tab-icon" aria-hidden="true">@tab.Icon</span>
+            <span class="aq-tab-name">@tab.Name</span>
+            @if (!tab.Available)
+            {
+                <span class="aq-soon">soon</span>
+            }
+        </button>
+    }
+    @* Slides under the open tab. One element rather than a border on each,
+       so the accent travels instead of blinking from one tab to the next. *@
+    <span class="aq-tab-underline" style="@UnderlineStyle" aria-hidden="true"></span>
+</div>
+
+@code {
+    /// <summary>Only one tab is in the tab order at a time, and the arrows move
+    /// between them. That is the WAI-ARIA pattern for a tablist: Tab enters and
+    /// leaves the strip, arrows choose within it — otherwise reaching the panel
+    /// means tabbing through every section first.</summary>
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        var keys = CharacterTab.Navigable;
+        var at = keys.ToList().IndexOf(State.Tab);
+        if (at < 0) return;
+
+        var to = e.Key switch
+        {
+            "ArrowRight" => (at + 1) % keys.Count,
+            "ArrowLeft" => (at - 1 + keys.Count) % keys.Count,
+            "Home" => 0,
+            "End" => keys.Count - 1,
+            _ => -1,
+        };
+
+        if (to >= 0) State.GoTo(keys[to]);
+    }
+
+    private void Select(CharacterTab tab)
+    {
+        if (tab.Available) State.GoTo(tab.Key);
+    }
+
+    /// <summary>Position and width of the travelling underline, as a fraction of
+    /// the strip. Computed from the tab's index rather than measured in JS, which
+    /// keeps this a pure render with no layout read.</summary>
+    private string UnderlineStyle
+    {
+        get
+        {
+            var index = CharacterTab.All.ToList().FindIndex(t => t.Key == State.Tab);
+            if (index < 0) return "opacity:0";
+            var width = 100f / CharacterTab.All.Count;
+            return $"left:{index * width}%;width:{width}%";
+        }
+    }
+}

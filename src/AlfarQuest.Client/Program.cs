@@ -20,6 +20,13 @@ builder.Services.AddSingleton<GameApiClient>();
 // Shared by the game page and every menu that freezes or reads the party.
 builder.Services.AddSingleton<GameClock>();
 builder.Services.AddSingleton<PartyState>();
+// Singleton so the character window reopens on the tab it was left on, with the
+// search and filters still set — component state would not survive it closing.
+builder.Services.AddSingleton<AlfarQuest.Client.Services.Character.CharacterWindowState>();
+// What is inside the container the player has open. Singleton because it holds
+// the engine's own loot stack by reference — a second instance would be a second
+// opinion about what is left in the chest.
+builder.Services.AddSingleton<LootState>();
 
 builder.Services.AddAuthorizationCore();
 

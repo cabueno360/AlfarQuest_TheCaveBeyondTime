@@ -1,0 +1,94 @@
+/* The loot window.
+
+   Small, and off to the side of nothing in particular — opening a barrel is a
+   small event, and a modal the size of the character sheet would make searching
+   one feel like an interruption rather than a reward.
+
+   The frame takes its accent from --rarity, set per container, so a gilded chest
+   announces itself without anything having to check which chest it is. */
+
+.aq-loot-scrim {
+    position: fixed; inset: 0; z-index: 70;
+    background: rgba(4, 3, 12, .35);
+}
+
+.aq-loot {
+    position: fixed; z-index: 80;
+    left: 50%; bottom: 12vh; transform: translateX(-50%);
+    width: min(420px, calc(100vw - 2rem));
+    background: linear-gradient(180deg, rgba(26, 21, 52, .97), rgba(9, 7, 22, .98));
+    border: 1px solid color-mix(in srgb, var(--rarity, #d8b45a) 55%, transparent);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .7),
+                0 0 34px -8px var(--rarity, #d8b45a);
+    animation: aq-loot-in .2s cubic-bezier(.2, .9, .3, 1.2);
+}
+@keyframes aq-loot-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.96); }
+    to { opacity: 1; transform: translateX(-50%); }
+}
+
+.aq-loot-head {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: .7rem; padding: .7rem .9rem;
+    border-bottom: 1px solid rgba(185, 199, 255, .14);
+}
+.aq-loot-mark { font-size: 1.4rem; filter: drop-shadow(0 0 8px var(--rarity, transparent)); }
+.aq-loot-name {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 1rem;
+    color: var(--rarity, var(--aq-gold-soft));
+}
+.aq-loot-tier {
+    margin: 0; font-size: .68rem; letter-spacing: .1rem; text-transform: uppercase;
+    color: var(--aq-muted);
+}
+.aq-loot-close {
+    background: none; border: none; cursor: pointer; color: var(--aq-muted);
+    font-size: .95rem; padding: .2rem .3rem;
+}
+.aq-loot-close:hover { color: var(--aq-text); }
+
+.aq-loot-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+    gap: .45rem; padding: .8rem .9rem;
+}
+
+.aq-loot-cell {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    gap: .15rem; padding: .5rem .3rem; cursor: pointer; font: inherit;
+    border-radius: 10px; color: var(--aq-text);
+    background: color-mix(in srgb, var(--rarity, #b8b6c8) 12%, rgba(0, 0, 0, .45));
+    border: 1px solid color-mix(in srgb, var(--rarity, #b8b6c8) 55%, transparent);
+    transition: transform .12s ease, box-shadow .15s ease;
+}
+.aq-loot-cell:hover { transform: translateY(-3px); box-shadow: 0 0 18px -4px var(--rarity, transparent); }
+.aq-loot-cell:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+.aq-loot-cell.coin { --rarity: #f0d99a; }
+
+.aq-loot-icon { font-size: 1.4rem; line-height: 1; }
+.aq-loot-qty {
+    font-variant-numeric: tabular-nums; font-size: .82rem; font-weight: 600;
+    color: var(--aq-gold-soft);
+}
+.aq-loot-label {
+    font-size: .62rem; color: var(--aq-muted); text-align: center; line-height: 1.15;
+    overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+
+.aq-loot-warn {
+    margin: 0; padding: 0 .9rem .6rem; font-size: .78rem; font-style: italic;
+    color: #e8c48a;
+}
+
+.aq-loot-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: .7rem;
+    padding: .6rem .9rem; border-top: 1px solid rgba(185, 199, 255, .14);
+}
+.aq-loot-hint { font-size: .7rem; font-style: italic; color: var(--aq-muted); }
+.aq-loot-all { padding: .45rem 1.3rem; font-size: .82rem; }
+
+@media (prefers-reduced-motion: reduce) {
+    .aq-loot { animation: none; }
+    .aq-loot-cell { transition: none; }
+}

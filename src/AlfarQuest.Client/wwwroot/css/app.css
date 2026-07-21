@@ -6,6 +6,7 @@
 @import "modules/buttons.css";
 @import "modules/forms.css";
 @import "modules/feedback.css";
+@import "modules/cards.css";
 @import "modules/nav.css";
 @import "modules/auth.css";
 @import "modules/landing.css";
@@ -14,3 +15,4 @@
 @import "modules/game.css";
 @import "modules/character.css";
 @import "modules/levelup.css";
+@import "modules/loot.css";

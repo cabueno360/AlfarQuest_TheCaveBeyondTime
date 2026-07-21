@@ -1,0 +1,115 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@implements IDisposable
+@inject LootState Loot
+@inject PartyState Party
+
+@* What was inside.
+
+   Small and beside the point of the screen rather than a full-window takeover:
+   opening a barrel is a small event, and a modal the size of the character sheet
+   would make searching one feel like a chore. Escape closes; whatever is left
+   stays in the container. *@
+
+@if (Loot.Open is { } open)
+{
+    <div class="aq-loot-scrim" @onclick="Close"></div>
+
+    <section class="aq-loot" role="dialog" aria-modal="true"
+             aria-label="@($"{open.Kind.Name} contents")"
+             style="--rarity:@RarityInfo.Of(open.Kind.Tier).Colour"
+             @onkeydown="OnKeyDown">
+
+        <header class="aq-loot-head">
+            <span class="aq-loot-mark" aria-hidden="true">@Icon(open.Kind)</span>
+            <div>
+                <h2 class="aq-loot-name">@open.Kind.Name</h2>
+                <p class="aq-loot-tier">@RarityInfo.Of(open.Kind.Tier).Name</p>
+            </div>
+            <button class="aq-loot-close" aria-label="Close" @onclick="Close">✕</button>
+        </header>
+
+        <div class="aq-loot-grid" role="list">
+            @if (open.Contents.Coin > 0)
+            {
+                <button type="button" class="aq-loot-cell coin" role="listitem"
+                        aria-label="@($"{open.Contents.Coin} gold. Take.")"
+                        @onclick="Loot.TakeCoin">
+                    <span class="aq-loot-icon">◈</span>
+                    <span class="aq-loot-qty">@open.Contents.Coin</span>
+                    <span class="aq-loot-label">Gold</span>
+                </button>
+            }
+
+            @for (var i = 0; i < open.Contents.Materials.Count; i++)
+            {
+                var index = i;
+                var (id, n) = open.Contents.Materials[i];
+                var mat = Material.Find(id);
+                <button type="button" class="aq-loot-cell" role="listitem"
+                        aria-label="@($"{n} {mat?.Name ?? id}. Take.")"
+                        @onclick="() => Loot.TakeMaterial(index)">
+                    <span class="aq-loot-icon" style="color:@(mat?.Colour ?? "#b8b6c8")">@(mat?.Icon ?? "◆")</span>
+                    <span class="aq-loot-qty">@n</span>
+                    <span class="aq-loot-label">@(mat?.Name ?? id)</span>
+                </button>
+            }
+
+            @for (var i = 0; i < open.Contents.Items.Count; i++)
+            {
+                var index = i;
+                var item = ItemCatalog.Find(open.Contents.Items[i]);
+                if (item is null) { continue; }
+                <button type="button" class="aq-loot-cell gear" role="listitem"
+                        style="--rarity:@RarityInfo.Of(item.Rarity).Colour"
+                        aria-label="@($"{item.Name}, {RarityInfo.Of(item.Rarity).Name}. Take.")"
+                        @onclick="() => Loot.TakeItem(index)">
+                    <span class="aq-loot-icon">@item.Icon</span>
+                    <span class="aq-loot-label">@item.Name</span>
+                    @* The same tooltip the pack and the paper doll use, so an
+                       item reads identically wherever it is seen. *@
+                    <ItemTooltip Item="item" />
+                </button>
+            }
+        </div>
+
+        @if (Loot.Full)
+        {
+            <p class="aq-loot-warn">Your pack is full — what will not fit stays here.</p>
+        }
+
+        <footer class="aq-loot-foot">
+            <span class="aq-loot-hint">Click to take · Esc closes</span>
+            <button type="button" class="aq-btn aq-loot-all" @onclick="Loot.TakeAll">Take All</button>
+        </footer>
+    </section>
+}
+
+@code {
+    protected override void OnInitialized() => Loot.Changed += Refresh;
+
+    public void Dispose() => Loot.Changed -= Refresh;
+
+    private void Refresh() => InvokeAsync(StateHasChanged);
+
+    private void Close() => Loot.Close();
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Close();
+    }
+
+    /// <summary>A glyph for the container itself. Read from the verb rather than
+    /// from the id, so a new kind that opens gets a chest and a new kind that is
+    /// mined gets a pick without anything being registered.</summary>
+    private static string Icon(ContainerKind kind) => kind.Verb switch
+    {
+        "Mine" => "⛏",
+        "Gather" => "❦",
+        "Prise" => "◆",
+        "Read" or "Examine" => "📜",
+        "Search" => "🔎",
+        _ => "🧰",
+    };
+}

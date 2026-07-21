@@ -34,6 +34,12 @@ public sealed record CreatureType
     /// rate and announces itself.</summary>
     public bool MiniBoss { get; init; }
 
+    /// <summary>What it is made of. Decides what flies off when it is struck —
+    /// a blade landing on crystal should not look like the same blade landing on
+    /// a body, and the effect id is derived from this rather than switched on the
+    /// species.</summary>
+    public string Material { get; init; } = "flesh";
+
     /// <summary>Whether its blows are magical. Magic is turned aside by Wisdom
     /// rather than by armour, so a party built entirely for physical defence has
     /// something it is genuinely weak to.</summary>
@@ -48,6 +54,7 @@ public static class CreatureCatalog
         new() { Id = "slime", Kind = "mobSlime", Name = "Crystal Slime", Biome = Biome.Forest,
                 MaxHp = 30, Damage = 6, Speed = 42, Scale = 0.8f, PatrolTiles = 3, AggroTiles = 5,
                 Xp = 15,
+                Material = "crystal",
                 Loot = [("Small Crystal", 0.35f), ("Coins", 0.5f)] },
         new() { Id = "beast", Kind = "mobBeast", Name = "Crystal Beast", Biome = Biome.Forest,
                 MaxHp = 58, Damage = 11, Speed = 68, Scale = 0.9f, PatrolTiles = 8, AggroTiles = 7,
@@ -60,6 +67,7 @@ public static class CreatureCatalog
                 PatrolTiles = 6, AggroTiles = 6,
                 Xp = 8,
                 Magical = true,
+                Material = "crystal",
                 Loot = [("Spider Silk", 0.45f), ("Herbs", 0.3f)] },
 
         // --- mountain ---
@@ -71,6 +79,7 @@ public static class CreatureCatalog
         new() { Id = "walker", Kind = "mobWalker", Name = "Crystal Walker", Biome = Biome.Mountain,
                 MaxHp = 74, Damage = 13, Speed = 46, Scale = 0.95f, PatrolTiles = 4, AggroTiles = 6,
                 Xp = 30,
+                Material = "stone",
                 Loot = [("Stone", 0.7f), ("Small Crystal", 0.25f)] },
 
         // --- the last stretch before the mine ---
@@ -82,6 +91,7 @@ public static class CreatureCatalog
                 MaxHp = 96, Damage = 15, Speed = 38, Radius = 18, Scale = 1f,
                 PatrolTiles = 3, AggroTiles = 5,
                 Xp = 40,
+                Material = "stone",
                 Loot = [("Stone", 0.5f), ("Small Crystal", 0.5f)] },
 
         // --- the cave keeps its husks ---
@@ -89,6 +99,7 @@ public static class CreatureCatalog
                 MaxHp = 42, Damage = 8, Speed = 54, PatrolTiles = 0, AggroTiles = 999,
                 Xp = 12,
                 Magical = true,
+                Material = "crystal",
                 Loot = [("Small Crystal", 0.4f)] },
     ];
 

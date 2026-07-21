@@ -6,9 +6,13 @@
    cannot end up showing a sign-out button to someone who is not signed in. *@
 
 <header class="aq-topnav">
-    <a class="aq-topnav-brand" href="/">
-        <span class="aq-topnav-mark" aria-hidden="true">◆</span>
-        <span>Alfar Quest</span>
+    @* The wordmark is art, not a font. The text beside it is the fallback if the
+       file is missing, so a fresh clone still shows a name rather than a broken
+       image — the same arrangement the title screen uses. *@
+    <a class="aq-topnav-brand" href="/" aria-label="Alfar Quest — home">
+        <img class="aq-topnav-logo" src="assets/ui/wordmark.png" alt="Alfar Quest"
+             onerror="this.closest('.aq-topnav-brand').classList.add('no-art')" />
+        <span class="aq-topnav-wordmark">Alfar Quest</span>
     </a>
 
     <nav class="aq-topnav-links" aria-label="Main">

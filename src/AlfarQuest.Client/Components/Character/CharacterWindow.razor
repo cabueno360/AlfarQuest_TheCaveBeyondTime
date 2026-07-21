@@ -1,75 +1,155 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@using AlfarQuest.Client.Components.Character.Tabs
+@implements IDisposable
+@inject PartyState Party
+@inject CharacterWindowState State
 
-@* Composition only — every panel is its own component, and nothing here knows
-   how a stat is calculated. *@
+@* The shell: frame, header, tab strip, one panel.
+
+   Composition only. It knows which tab is open and nothing about what any of
+   them contains — which is what makes adding a tab a matter of one catalogue row
+   and one component.
+
+   The panels are switched rather than stacked. The old window put every section
+   in one column and ran to several screens of scrolling; the brief's complaint
+   was exactly that. *@
+
 @if (Party.Selected is { } c)
 {
     <PauseOverlay Visible="Visible" OnDismiss="Close" />
 
+    @* inert while hidden. The window stays in the DOM so it can animate in and
+       out, but a hidden dialog that still holds focus is a trap: closing it from
+       the search box left the caret inside, and because the game's key handler
+       ignores keystrokes aimed at a text field, C stopped reopening the window
+       and WASD typed into it instead of moving the hero.
+
+       inert is the one attribute that means "not focusable, not clickable, not
+       read out" — opacity and pointer-events say nothing about focus. *@
     <section class="aq-cw @(Visible ? "shown" : "")"
-             role="dialog" aria-modal="true" aria-label="Character">
+             inert="@(Visible ? null : "")"
+             role="dialog" aria-modal="true" aria-label="Character"
+             @onkeydown="OnKeyDown">
         <div class="aq-cw-frame">
-            <button class="aq-cw-close" title="Close (C or Esc)" @onclick="Close">✕</button>
+            <header class="aq-cw-top">
+                <CharacterPortrait Character="c" />
 
-            <div class="aq-cw-cols">
-                <aside class="aq-cw-left">
-                    <CharacterPortrait Character="c" />
-                    <CharacterHeader Character="c" />
+                <div class="aq-cw-ident">
+                    <h2 class="aq-cw-who">@c.Name</h2>
+                    <p class="aq-cw-what">
+                        <span class="aq-cw-cls">@c.Class</span>
+                        <span aria-hidden="true">·</span>
+                        <span>@c.Race</span>
+                        <span aria-hidden="true">·</span>
+                        <span class="aq-cw-lvl">Level @c.Level</span>
+                    </p>
                     <ExperienceBar Level="c.Level" Xp="c.Xp" />
-                    <VitalsPanel Character="c" />
-                    <MoneyPanel Wallet="Party.Purse" />
-                </aside>
+                </div>
 
-                <div class="aq-cw-right">
-                    <EquipmentPanel Character="c" OnUnequip="slot => Unequip(c, slot)" />
-                    <InventoryPanel Bag="Party.Bag" Gear="c.Gear" OnEquip="item => Equip(c, item)" />
-                    <MaterialsPanel Pouch="Party.Pouch" />
-                    <CraftingPanel Pouch="Party.Pouch" Purse="Party.Purse"
-                                   AtStation="AtCraftsman" OnCraft="Craft" />
-                    <AttributesPanel Character="c" OnRaise="k => Raise(c, k)" />
-                    <CombatStatsPanel Character="c" />
-                    <SkillsPanel Character="c" OnLearn="s => Learn(c, s)" />
+                @* Switching hero without leaving the window: the party is the
+                   point of this game, and closing the sheet to change who it is
+                   about would be a strange way to run it. *@
+                <div class="aq-cw-swap" role="group" aria-label="Party member">
+                    @foreach (var member in Party.Members)
+                    {
+                        <button type="button"
+                                class="aq-cw-swap-btn @(member == c ? "on" : "")"
+                                title="@member.Name"
+                                aria-pressed="@(member == c ? "true" : "false")"
+                                @onclick="() => Party.Select(member.Key)">
+                            @member.Class
+                        </button>
+                    }
+                </div>
+
+                <button class="aq-cw-close" title="Close (C or Esc)" aria-label="Close"
+                        @onclick="Close">✕</button>
+            </header>
+
+            <TabStrip />
+
+            <div class="aq-cw-panel-host" id="aq-tabpanel" role="tabpanel"
+                 aria-labelledby="@($"aq-tab-{State.Tab}")">
+                @* Keyed on the tab so Blazor tears the old panel down and builds
+                   the new one, which is what replays the entrance animation. The
+                   state that has to survive that lives in CharacterWindowState. *@
+                <div class="aq-cw-page" @key="State.Tab">
+                    @switch (State.Tab)
+                    {
+                        case "character": <OverviewTab Character="c" /> break;
+                        case "equipment": <EquipmentTab Character="c" /> break;
+                        case "skills":    <SkillsTab Character="c" /> break;
+                        case "inventory": <InventoryTab Character="c" /> break;
+                        case "stats":     <StatsTab Character="c" /> break;
+                        case "crafting":  <CraftingTab AtStation="AtCraftsman" /> break;
+                    }
                 </div>
             </div>
 
             <footer class="aq-cw-footer">
                 @if (c.AttributePoints > 0)
                 {
-                    <span class="aq-cw-points">@c.AttributePoints attribute points</span>
+                    <button type="button" class="aq-cw-points"
+                            @onclick="@(() => State.GoTo("stats"))">
+                        @c.AttributePoints attribute points to spend
+                    </button>
                 }
                 @if (c.SkillPoints > 0)
                 {
-                    <span class="aq-cw-points skill">@c.SkillPoints skill points</span>
+                    <button type="button" class="aq-cw-points skill"
+                            @onclick="@(() => State.GoTo("skills"))">
+                        @c.SkillPoints skill points to spend
+                    </button>
                 }
-                <span class="aq-cw-hint">C or Esc to close</span>
+                <span class="aq-cw-hint">← → switch tabs · Esc closes</span>
             </footer>
         </div>
     </section>
 }
 
 @code {
-    [Inject] private PartyState Party { get; set; } = default!;
     [Parameter] public bool Visible { get; set; }
     [Parameter] public bool AtCraftsman { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
 
-    protected override void OnInitialized() => Party.Changed += StateHasChanged;
-    public void Dispose() => Party.Changed -= StateHasChanged;
+    protected override void OnInitialized()
+    {
+        Party.Changed += Refresh;
+        State.Changed += Refresh;
+        State.CloseRequested += OnCloseRequested;
+    }
+
+    public void Dispose()
+    {
+        Party.Changed -= Refresh;
+        State.Changed -= Refresh;
+        State.CloseRequested -= OnCloseRequested;
+    }
+
+    private void OnCloseRequested() => _ = InvokeAsync(Close);
+
+    private void Refresh() => InvokeAsync(StateHasChanged);
 
     private Task Close() => OnClose.InvokeAsync();
 
-    /// <summary>Spending a point re-publishes the sheet, so both this window and
-    /// the simulation pick up the new numbers from the one change.</summary>
-    private void Raise(Models.Character c, AttributeKind kind) => Party.Raise(c, kind);
+    /// <summary>Escape closes; the arrows move between tabs from anywhere in the
+    /// window, not only while the strip has focus.</summary>
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") { await Close(); return; }
 
-    private void Learn(Models.Character c, Skill skill) => Party.Learn(c, skill);
+        // Not while typing — the search box is inside this window, and stealing
+        // its arrow keys would make the caret unmovable.
+        if (e.Key is not ("ArrowRight" or "ArrowLeft")) return;
 
-    /// <summary>Clicking a worn item takes it off; every derived number and the
-    /// simulation follow from the same change.</summary>
-    private void Unequip(Models.Character c, Slot slot) => Party.Unequip(c, slot);
+        var keys = CharacterTab.Navigable;
+        var at = keys.ToList().IndexOf(State.Tab);
+        if (at < 0) return;
 
-    private void Equip(Models.Character c, Item item) => Party.Equip(c, item);
-
-    private void Craft(Recipe r) => Party.Craft(r);
+        State.GoTo(e.Key == "ArrowRight"
+            ? keys[(at + 1) % keys.Count]
+            : keys[(at - 1 + keys.Count) % keys.Count]);
+    }
 }

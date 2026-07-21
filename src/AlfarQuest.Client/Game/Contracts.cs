@@ -31,6 +31,11 @@ public class REnt
 {
     public string t = ""; public float x, y, r, f, life, flash, iframe, hp, mhp, atk, abl, s = 1;
     public string? c, a, name; public bool hero, active, dead;
+
+    /// <summary>Particles only: the fraction of life left, and whether to draw
+    /// with lighter compositing. Sent rather than derived, because the client has
+    /// no idea how long a mote was meant to live.</summary>
+    public float t01 = 1; public bool add;
 }
 
 public class RProp { public float x, y, s; public int cx, cy, v; public string k = ""; public bool flip; }
@@ -57,6 +62,15 @@ public class RHud
     // separate "nothing was awarded" from "something was awarded and nobody
     // listened", and they show whether the one-shot rewards are staying claimed.
     public int xpAwards, xpTotal, claimsHeld, rewardsLeft;
+
+    /// <summary>Seconds the simulation is held after an impact. Sent so the HUD
+    /// could show it while tuning; the freeze itself is the engine's doing.</summary>
+    public float hitStop;
+
+    /// <summary>Live particle count, against the engine's own ceiling. A
+    /// diagnostic in the same spirit as the drop counters: it separates "the
+    /// effect did not fire" from "it fired and was trimmed".</summary>
+    public int particles, particleCap, particlesEmitted;
 }
 
 public class RHero

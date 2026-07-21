@@ -27,6 +27,11 @@ public sealed class PartyState
     /// the world can be rebuilt while the same party is loaded.</summary>
     public HashSet<string> ClaimedRewards { get; } = [];
 
+    /// <summary>What has happened to each container the party has opened, keyed by
+    /// its name — including what is still inside it. Written by the engine when
+    /// one is opened and by the loot window after every take.</summary>
+    public Dictionary<string, ContainerSave> Containers { get; } = [];
+
     public event Action? Changed;
 
     public PartyState()
@@ -70,6 +75,13 @@ public sealed class PartyState
             if (ClaimedRewards.Add(key)) Changed?.Invoke();
         };
 
+        RewardBridge.ContainerStates = () => Containers;
+        RewardBridge.OnContainerSaved = state =>
+        {
+            Containers[state.Key] = state;
+            Changed?.Invoke();
+        };
+
         // Experience arrives from the simulation. The whole party gains it: they
         // all walked in, and levelling only the hero who landed the killing blow
         // would punish switching, which the game is built around.
@@ -98,6 +110,8 @@ public sealed class PartyState
                 DamageReduction: StatCalculator.DamageReduction(
                     StatCalculator.PhysicalDefense(c.Total) + c.Gear.Total().Armour),
                 MagicResistance: StatCalculator.MagicResistance(c.Total),
+                CritChance: StatCalculator.CritChance(c.Total) + c.Gear.Total().CritChance,
+                CritDamage: StatCalculator.CritDamage(c.Total),
                 MaxMana: StatCalculator.MaxMana(c.Total),
                 MaxStamina: StatCalculator.MaxStamina(c.Total),
                 ManaRegen: StatCalculator.ManaRegen(c.Total),

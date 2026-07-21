@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using AlfarQuest.Client.Components.Game
 @using AlfarQuest.Client.Components.Character
+@using AlfarQuest.Client.Components.World
 
 @* The game itself, and the only page that loads it.
 
@@ -27,4 +28,8 @@
        hands off to the sheet, the celebration is on top until it is dismissed. *@
     <LevelUpWindow Event="CurrentLevelUp" Remaining="Party.PendingLevelUps.Count"
                    OnContinue="DismissLevelUp" />
+
+    @* What is inside whatever was just opened. Below the level-up in the markup:
+       a chest that levelled someone should show the level first. *@
+    <LootWindow />
 </div>

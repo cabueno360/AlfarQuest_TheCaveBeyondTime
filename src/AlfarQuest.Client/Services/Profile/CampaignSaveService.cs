@@ -37,6 +37,15 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         party.ClaimedRewards.Clear();
         foreach (var key in save.ClaimedRewards) party.ClaimedRewards.Add(key);
 
+        party.Containers.Clear();
+        foreach (var c in save.Containers)
+            party.Containers[c.Key] = new ContainerSave(
+                c.Key, c.OpenedAt, c.Coin,
+                [.. c.Remaining.Where(r => r.Kind == TallyKind.Material)
+                    .Select(r => new MaterialStack(r.Key, r.Count))],
+                [.. c.Remaining.Where(r => r.Kind == TallyKind.Item)
+                    .SelectMany(r => Enumerable.Repeat(r.Key, r.Count))]);
+
         RestoreBelongings(save.Belongings);
 
         foreach (var hero in save.Party)
@@ -74,6 +83,7 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
             Region = region,
             Party = [.. party.Members.Select(ToDto)],
             ClaimedRewards = [.. party.ClaimedRewards],
+            Containers = [.. party.Containers.Values.Select(ToDto)],
             Belongings = [.. Belongings()],
         });
 
@@ -128,6 +138,27 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         foreach (var group in party.Bag.Items.GroupBy(i => i.Id))
             yield return new SaveTallyDto { Kind = TallyKind.PackItem, Key = group.Key, Count = group.Count() };
     }
+
+    /// <summary>A container's state, with its remainder flattened to keyed
+    /// counts. Items are grouped rather than listed one per row: a chest with
+    /// three of the same ring is one row saying three.</summary>
+    private static SavedContainerDto ToDto(ContainerSave c) => new()
+    {
+        Key = c.Key,
+        OpenedAt = c.OpenedAt,
+        Coin = c.Coin,
+        Remaining =
+        [
+            .. c.Materials.Select(m => new SaveTallyDto
+            {
+                Kind = TallyKind.Material, Key = m.Id, Count = m.Count,
+            }),
+            .. c.Items.GroupBy(id => id).Select(g => new SaveTallyDto
+            {
+                Kind = TallyKind.Item, Key = g.Key, Count = g.Count(),
+            }),
+        ],
+    };
 
     private static SaveHeroDto ToDto(Models.Character c) => new()
     {

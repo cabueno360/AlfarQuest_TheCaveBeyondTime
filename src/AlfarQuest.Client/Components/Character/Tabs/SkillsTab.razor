@@ -1,0 +1,147 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@inject PartyState Party
+@inject CharacterWindowState State
+
+@* Skills: the one active ability, then the passives as a grid.
+
+   The brief asks each skill tile to show a cooldown and a mana cost. Only one
+   thing in this game has either — the class ultimate — so it gets its own card
+   with the real numbers, read from the same catalogue the engine fires from.
+   The rest are passive modifiers, and printing "Cooldown: 0s" on a passive would
+   be filling a template rather than describing the game. *@
+
+<div class="aq-tab-grid skills">
+    <div class="aq-stack">
+        <section class="aq-card ability">
+            <header class="aq-card-head">
+                <h3 class="aq-card-title">
+                    <span class="aq-card-icon" aria-hidden="true">@Signature.Icon</span> Signature Ability
+                </h3>
+                <span class="aq-card-hint">K or right-click</span>
+            </header>
+            <div class="aq-card-body">
+                <h4 class="aq-ability-name" style="color:@Signature.Colour">@Signature.Name</h4>
+                <p class="aq-ability-desc">@Signature.Description</p>
+
+                <dl class="aq-ability-stats">
+                    <div><dt>Cooldown</dt><dd>@Signature.Cooldown.ToString("0.#")s</dd></div>
+                    <div><dt>Mana cost</dt><dd class="mana">@Signature.ManaCost</dd></div>
+                    <div><dt>Damage</dt><dd>@ScaledDamage</dd></div>
+                    <div><dt>Radius</dt><dd>@ScaledRadius</dd></div>
+                    @if (Signature.PartyHeal > 0)
+                    {
+                        <div><dt>Party heal</dt><dd class="heal">@Signature.PartyHeal</dd></div>
+                    }
+                </dl>
+
+                @if (Character.MaxMana > 0 && Character.Mana < Signature.ManaCost)
+                {
+                    <p class="aq-ability-warn">
+                        Not enough mana right now — @($"{Character.Mana:0}") of @Signature.ManaCost.
+                    </p>
+                }
+            </div>
+        </section>
+
+        @if (Detail is null)
+        {
+            @* The column would otherwise be empty half the time, which reads as
+               something failing to load rather than as space waiting to be used. *@
+            <section class="aq-card muted">
+                <div class="aq-card-body">
+                    <p class="aq-hint">Choose a skill to read what it does and raise it.</p>
+                </div>
+            </section>
+        }
+        else if (Detail is { } skill)
+        {
+            <section class="aq-card">
+                <header class="aq-card-head">
+                    <h3 class="aq-card-title">
+                        <span class="aq-card-icon" aria-hidden="true">@skill.Icon</span> @skill.Name
+                    </h3>
+                    <span class="aq-cw-badge">@skill.Category</span>
+                </header>
+                <div class="aq-card-body">
+                    <p class="aq-ability-desc">@skill.Description</p>
+                    <p class="aq-skill-next">
+                        @(Character.RankOf(skill) >= skill.MaxLevel
+                            ? "Mastered."
+                            : $"Next rank: {skill.NextBonus(Character.RankOf(skill))}")
+                    </p>
+
+                    @if (skill.PerRank is null)
+                    {
+                        @* Said plainly rather than hidden. A skill that costs a
+                           point and changes nothing should announce itself. *@
+                        <p class="aq-ability-warn">This skill has no effect in the simulation yet.</p>
+                    }
+
+                    <button type="button" class="aq-btn"
+                            disabled="@(!Character.CanLearn(skill))"
+                            @onclick="() => Learn(skill)">
+                        @(Character.RankOf(skill) >= skill.MaxLevel
+                            ? "Mastered"
+                            : $"Raise · {skill.CostFor(Character.RankOf(skill))} point(s)")
+                    </button>
+                </div>
+            </section>
+        }
+    </div>
+
+    <section class="aq-card">
+        <header class="aq-card-head">
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">✦</span> Skills</h3>
+            @if (Character.SkillPoints > 0)
+            {
+                <span class="aq-cw-badge skill">@Character.SkillPoints to spend</span>
+            }
+        </header>
+        <div class="aq-card-body">
+            @foreach (var group in SkillCatalog.ForClass(Character.Class))
+            {
+                <h4 class="aq-card-sub">@group.Key</h4>
+                <div class="aq-skillgrid">
+                    @foreach (var s in group)
+                    {
+                        <SkillTile Skill="s"
+                                   Rank="Character.RankOf(s)"
+                                   CanLearn="Character.CanLearn(s)"
+                                   Selected="@(State.SelectedSkillId == s.Id)"
+                                   OnSelect="Select" />
+                    }
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
+
+    private Ability Signature => Ability.For(Character.Class);
+
+    /// <summary>The selected skill, resolved by id every render so it survives
+    /// the catalogue being re-read — and so a stale id from an older build simply
+    /// selects nothing instead of throwing.</summary>
+    private Skill? Detail => SkillCatalog.All.FirstOrDefault(s => s.Id == State.SelectedSkillId
+                                                                  && s.AvailableTo(Character.Class));
+
+    // What the ability will actually do for this hero, with their skills applied
+    // — the same multipliers the engine uses, not the raw catalogue figure.
+    private string ScaledDamage =>
+        $"{Signature.Damage * (1f + Character.SkillEffects().AbilityDamage):0}";
+
+    private string ScaledRadius =>
+        $"{Signature.Radius + Character.SkillEffects().AbilityRadius:0}";
+
+    private void Select(Skill s)
+    {
+        State.SelectedSkillId = State.SelectedSkillId == s.Id ? null : s.Id;
+        State.Notify();
+    }
+
+    private void Learn(Skill s) => Party.Learn(Character, s);
+}

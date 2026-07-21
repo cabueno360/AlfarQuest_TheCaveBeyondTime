@@ -5,18 +5,32 @@
 .aq-topnav {
     position: sticky; top: 0; z-index: 40;
     display: flex; align-items: center; justify-content: space-between;
-    gap: 1rem; padding: .7rem clamp(.9rem, 3vw, 2rem);
+    gap: 1rem; height: var(--aq-topnav-h); padding: 0 clamp(.9rem, 3vw, 2rem);
     background: linear-gradient(180deg, rgba(10, 8, 24, .96), rgba(10, 8, 24, .82));
     border-bottom: 1px solid rgba(185, 199, 255, .14);
     backdrop-filter: blur(8px);
 }
 
 .aq-topnav-brand {
-    display: flex; align-items: center; gap: .55rem; text-decoration: none;
+    display: flex; align-items: center; text-decoration: none;
     font-family: 'Cinzel', serif; letter-spacing: .13rem; font-size: .95rem;
     color: var(--aq-gold-soft);
+    transition: filter .16s ease, transform .16s ease;
 }
-.aq-topnav-mark { color: var(--aq-crystal); }
+.aq-topnav-brand:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.aq-topnav-brand:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 4px; border-radius: 6px; }
+
+/* Sized by height, not width: the bar's height is what it has to fit inside,
+   and the wordmark's own aspect ratio decides the rest. */
+.aq-topnav-logo {
+    display: block; height: 38px; width: auto;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .6));
+}
+.aq-topnav-wordmark { display: none; }
+.aq-topnav-brand.no-art .aq-topnav-logo { display: none; }
+.aq-topnav-brand.no-art .aq-topnav-wordmark { display: inline; }
+
+@media (max-width: 520px) { .aq-topnav-logo { height: 30px; } }
 
 .aq-topnav-links { display: flex; align-items: center; gap: .4rem; }
 .aq-topnav-link {

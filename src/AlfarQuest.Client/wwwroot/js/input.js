@@ -16,6 +16,21 @@ let handlers = null;
 
 const PREVENT = ["arrowup", "arrowdown", "arrowleft", "arrowright", " "];
 
+/// Whether the keystroke belongs to something the player is typing in.
+///
+/// This listener is on the document, so before the character window had a search
+/// box every key in the game was safely ours. It is not any more: typing "c" in
+/// that box closed the window, "e" talked to whoever was nearby, and space and
+/// the arrow keys never reached the caret at all because they are preventDefault-ed
+/// below. A game that captures the keyboard globally has to stop at the edge of a
+/// text field.
+function isTyping(target) {
+    if (!target) return false;
+    if (target.isContentEditable) return true;
+    const tag = target.tagName;
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
 function latchPress(k) {
     if (k === "1" || k === "2" || k === "3") latch.switchTo = +k;
     else if (k === "k") latch.ability = true;
@@ -29,6 +44,7 @@ const MENU_KEYS = { c: "character", escape: "close" };
 
 export function attachInput(canvas, onFirstClick, onMenuKey) {
     const onKeyDown = (e) => {
+        if (isTyping(e.target)) return;
         const k = e.key.toLowerCase();
         if (!keys[k]) {
             latchPress(k);                    // guard: held keys repeat keydown
@@ -37,6 +53,9 @@ export function attachInput(canvas, onFirstClick, onMenuKey) {
         keys[k] = true;
         if (PREVENT.includes(k)) e.preventDefault();
     };
+    // Not guarded by isTyping: a key pressed before focus entered a field must
+    // still be released, or the hero walks into a wall for as long as the box has
+    // focus.
     const onKeyUp = (e) => { keys[e.key.toLowerCase()] = false; };
     const onMove = (e) => {
         const r = canvas.getBoundingClientRect();

@@ -19,6 +19,7 @@ public sealed class SaveService(GameDbContext db)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
+            .Include(s => s.Containers).ThenInclude(c => c.Remaining)
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == id && s.PlayerAccountId == owner, ct) is { } save
             ? save.ToDto()
@@ -30,6 +31,7 @@ public sealed class SaveService(GameDbContext db)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
+            .Include(s => s.Containers).ThenInclude(c => c.Remaining)
                 .AsNoTracking()
                 .Where(s => s.PlayerAccountId == owner)
                 .OrderByDescending(s => s.UpdatedAt)
@@ -61,6 +63,23 @@ public sealed class SaveService(GameDbContext db)
         // Bounded for the same reason, and non-negative: these arrive from a
         // browser, so they are a claim about the party's belongings rather than a
         // fact about them.
+        // Bounded and sanitised for the same reason as everything else here: it
+        // arrives from a browser, so it is a claim about the world rather than a
+        // fact about it.
+        save.Containers = [.. dto.Containers
+            .Where(c => c.Key.Length is > 0 and <= 64)
+            .Take(500)
+            .Select(c => new SaveContainer
+            {
+                ContainerKey = c.Key,
+                OpenedAt = c.OpenedAt,
+                Coin = Math.Max(0, c.Coin),
+                Remaining = [.. c.Remaining
+                    .Where(i => i.Count > 0 && i.Key.Length is > 0 and <= 40)
+                    .Take(40)
+                    .Select(i => new SaveContainerItem { Kind = i.Kind, TallyKey = i.Key, Count = i.Count })],
+            })];
+
         save.Belongings = [.. dto.Belongings
             .Where(t => t.Count > 0 && t.Key.Length is > 0 and <= 40)
             .Take(500)
@@ -76,6 +95,7 @@ public sealed class SaveService(GameDbContext db)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
+            .Include(s => s.Containers).ThenInclude(c => c.Remaining)
             .FirstOrDefaultAsync(s => s.Id == id && s.PlayerAccountId == owner, ct);
         if (save is null) return null;
 
@@ -88,9 +108,12 @@ public sealed class SaveService(GameDbContext db)
         db.SaveHeroes.RemoveRange(save.Party);
         db.SaveClaims.RemoveRange(save.Claims);
         db.SaveTallies.RemoveRange(save.Belongings);
+        db.SaveContainerItems.RemoveRange(save.Containers.SelectMany(c => c.Remaining));
+        db.SaveContainers.RemoveRange(save.Containers);
         save.Party.Clear();
         save.Claims.Clear();
         save.Belongings.Clear();
+        save.Containers.Clear();
         return save;
     }
 

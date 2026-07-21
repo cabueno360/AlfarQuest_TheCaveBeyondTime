@@ -91,6 +91,18 @@ public partial class World
         TorchTime += dt;
         Shake = Math.Max(0, Shake - dt * 4f);
 
+        // Hit-stop: the world holds still for a fraction of a second after an
+        // impact so the blow lands instead of passing through. Particles and the
+        // camera keep running — freezing those too would read as a stutter
+        // rather than as weight — so only the simulation's clock is stopped.
+        if (HitStop > 0)
+        {
+            HitStop = Math.Max(0, HitStop - dt);
+            UpdateParticles(dt);
+            UpdateFloaters(dt);
+            return;
+        }
+
         // --- hero switching ---
         if (input.switchTo is >= 1 and <= 3 && input.switchTo <= Party.Count)
         {
@@ -156,12 +168,17 @@ public partial class World
                     // that husk's collision resolve, clamp and flash decay.
                     if (target.BlockChance > 0 && _rng.NextDouble() < target.BlockChance)
                     {
-                        Burst(target.Pos, "#cfd6ff", 4);
+                        Play("block", target.Pos, (target.Pos - k.Pos).Norm());
+                        Floaters.Add(new FloatText(target.Pos + new Vec(0, -20), "block", "#cfd6ff"));
                     }
                     else
                     {
-                        target.Hp -= target.Absorb(k.Def.Damage, k.Def.Magical);
+                        var taken = target.Absorb(k.Def.Damage, k.Def.Magical);
+                        target.Hp -= taken;
                         target.Flash = 0.15f;
+                        Play("hit_flesh", target.Pos, (target.Pos - k.Pos).Norm());
+                        Floaters.Add(new FloatText(target.Pos + new Vec(0, -22),
+                                                   $"-{taken:0}", "#e2687a"));
                         Shake = Math.Max(Shake, 0.35f);
                     }
                     k.HitCool = 0.8f;
@@ -181,7 +198,7 @@ public partial class World
         {
             s.Pos += s.Vel * dt;
             s.Life -= dt;
-            if (IsWallAt(s.Pos.X, s.Pos.Y)) { Burst(s.Pos, s.Color, 4); s.Life = 0; }
+            if (IsWallAt(s.Pos.X, s.Pos.Y)) { Play("hit_stone", s.Pos, s.Vel.Norm()); s.Life = 0; }
             foreach (var k in Husks)
             {
                 if ((k.Pos - s.Pos).Len() < 22 + k.R)
@@ -200,8 +217,8 @@ public partial class World
         Slashes.RemoveAll(sl => sl.Life <= 0);
 
         // --- particles ---
-        foreach (var p in Fx) { p.Pos += p.Vel * dt; p.Vel *= 0.9f; p.Life -= dt; }
-        Fx.RemoveAll(p => p.Life <= 0);
+        UpdateParticles(dt);
+        UpdateAmbient(dt);
 
         // --- camera follows active hero ---
         var focus = Party[Active].Alive ? Party[Active].Pos : Camera;

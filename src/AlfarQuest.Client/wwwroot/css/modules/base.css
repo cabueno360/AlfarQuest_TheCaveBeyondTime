@@ -9,6 +9,12 @@
     --aq-gold-soft: #f0d99a;
     --aq-text: #e8e6f2;
     --aq-muted: #9a95b6;
+
+    /* The top bar's height, declared once. Two pages subtract it from the
+       viewport so their hero fills the rest of the screen, and both used to
+       carry their own guess at it — which meant growing the bar put a scrollbar
+       on pages that had nothing more to show. */
+    --aq-topnav-h: 56px;
 }
 
 * { box-sizing: border-box; }

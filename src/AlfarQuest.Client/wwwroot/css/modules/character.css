@@ -1,5 +1,9 @@
 /* Character window. Semi-transparent by design: the delver is opening a journal,
-   not leaving the world, so the cave stays faintly visible behind it. */
+   not leaving the world, so the cave stays faintly visible behind it.
+
+   The frame is a fixed-height grid — header, tabs, panel, footer — and only the
+   panel scrolls. That is what replaced a single column that ran to several
+   screens: the chrome stays put and each tab is sized to fit. */
 
 .aq-pause-overlay {
     position: fixed; inset: 0; z-index: 40;
@@ -14,97 +18,200 @@
     position: fixed; inset: 0; z-index: 50;
     display: flex; align-items: center; justify-content: center;
     padding: 2vh 2vw; pointer-events: none;
-    opacity: 0; transform: translateY(10px) scale(.985);
-    transition: opacity .24s ease, transform .24s ease;
+    opacity: 0; transform: translateY(14px) scale(.97);
+    transition: opacity .26s ease, transform .26s cubic-bezier(.2, .9, .3, 1.15);
 }
 .aq-cw.shown { opacity: 1; transform: none; pointer-events: auto; }
 
 .aq-cw-frame {
-    position: relative; width: min(1080px, 96vw); max-height: 92vh; overflow: auto;
-    padding: 1.4rem 1.6rem 1rem;
-    background: linear-gradient(180deg, rgba(26, 21, 52, .90), rgba(9, 7, 22, .93));
-    border: 1px solid rgba(216, 180, 90, .38); border-radius: 14px;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .5) inset;
+    position: relative;
+    /* Capped rather than fluid: on an ultrawide a full-width sheet puts the
+       paper doll and the pack a head-turn apart. */
+    width: min(1360px, 96vw);
+    height: min(880px, 92vh);
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .93), rgba(9, 7, 22, .96));
+    border: 1px solid rgba(216, 180, 90, .38); border-radius: 16px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, .75), 0 0 0 1px rgba(0, 0, 0, .5) inset;
+    overflow: hidden;
+}
+
+/* ---------- header ---------- */
+.aq-cw-top {
+    display: grid; grid-template-columns: 84px minmax(0, 1fr) auto;
+    align-items: center; gap: 1.1rem;
+    padding: 1rem 3rem 1rem 1.2rem;
+    border-bottom: 1px solid rgba(185, 199, 255, .12);
+    background: rgba(185, 199, 255, .04);
+}
+.aq-cw-ident { min-width: 0; }
+.aq-cw-who {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 1.25rem;
+    color: var(--aq-crystal-2); overflow-wrap: anywhere;
+}
+.aq-cw-what {
+    margin: .1rem 0 .5rem; display: flex; flex-wrap: wrap; gap: .45rem;
+    font-size: .82rem; color: var(--aq-muted);
+}
+.aq-cw-cls { color: var(--aq-gold-soft); }
+.aq-cw-lvl { color: var(--aq-crystal); }
+
+.aq-cw-swap { display: flex; gap: .35rem; }
+.aq-cw-swap-btn {
+    font-family: 'Cinzel', serif; font-size: .7rem; letter-spacing: .08rem;
+    padding: .35rem .7rem; border-radius: 999px; cursor: pointer;
+    color: var(--aq-muted); background: rgba(185, 199, 255, .06);
+    border: 1px solid rgba(185, 199, 255, .18);
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.aq-cw-swap-btn:hover { color: var(--aq-text); background: rgba(185, 199, 255, .14); }
+.aq-cw-swap-btn.on {
+    color: #2a2008; border-color: transparent;
+    background: linear-gradient(180deg, #f0d99a, #d8b45a);
 }
 
 .aq-cw-close {
-    position: absolute; top: .7rem; right: .8rem;
+    position: absolute; top: .8rem; right: 1rem;
     background: none; border: none; cursor: pointer; font-size: 1rem;
     color: var(--aq-muted); transition: color .15s ease, transform .15s ease;
 }
 .aq-cw-close:hover { color: var(--aq-gold-soft); transform: scale(1.15); }
 
-.aq-cw-cols { display: grid; grid-template-columns: 300px 1fr; gap: 1.6rem; }
-@media (max-width: 820px) { .aq-cw-cols { grid-template-columns: 1fr; } }
+/* The header portrait is a strip, not the tall panel it used to be — the doll
+   shows the full one. */
+.aq-cw-top .aq-cw-portrait { height: 84px; width: 84px; border-radius: 10px; }
 
-.aq-cw-left { display: flex; flex-direction: column; gap: .9rem; }
-
-.aq-cw-portrait { position: relative; height: 220px; border-radius: 10px; overflow: hidden;
-    background: rgba(0, 0, 0, .35); }
+.aq-cw-portrait { position: relative; overflow: hidden; background: rgba(0, 0, 0, .35); }
 .aq-cw-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 10%; display: block; }
 .aq-cw-portrait-stub { display: none; position: absolute; inset: 0; opacity: .35; }
 .aq-cw-portrait.no-art img { display: none; }
 .aq-cw-portrait.no-art .aq-cw-portrait-stub { display: block; }
-.aq-cw-portrait-frame { position: absolute; inset: 0; pointer-events: none;
-    box-shadow: inset 0 -40px 50px -20px rgba(9, 7, 22, .95), inset 0 0 0 1px rgba(216, 180, 90, .25); }
+.aq-cw-portrait-frame {
+    position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 -40px 50px -20px rgba(9, 7, 22, .95), inset 0 0 0 1px rgba(216, 180, 90, .25);
+}
 
-.aq-cw-header { text-align: left; }
-.aq-cw-name { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--aq-crystal-2); margin: 0; }
-.aq-cw-title { font-style: italic; font-size: .82rem; color: var(--aq-gold-soft); margin: .1rem 0 .5rem; }
-.aq-cw-idents { display: flex; gap: 1.1rem; margin: 0; }
-.aq-cw-idents div { display: flex; flex-direction: column; }
-.aq-cw-idents dt { font-size: .62rem; letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-muted); }
-.aq-cw-idents dd { margin: 0; font-family: 'Cinzel', serif; font-size: .95rem; color: var(--aq-text); }
+/* ---------- tabs ---------- */
+.aq-tabs {
+    position: relative; display: flex; gap: 0;
+    padding: 0 .6rem; border-bottom: 1px solid rgba(185, 199, 255, .14);
+    background: rgba(9, 7, 22, .5);
+    overflow-x: auto; scrollbar-width: none;
+}
+.aq-tabs::-webkit-scrollbar { display: none; }
 
-.aq-cw-xp-head { display: flex; justify-content: space-between; font-size: .72rem;
-    letter-spacing: .08rem; text-transform: uppercase; color: var(--aq-muted); margin-bottom: .25rem; }
+.aq-tab {
+    flex: 1 0 auto; display: flex; align-items: center; justify-content: center;
+    gap: .45rem; padding: .7rem 1.1rem; cursor: pointer; white-space: nowrap;
+    font-family: 'Cinzel', serif; font-size: .78rem; letter-spacing: .1rem;
+    color: var(--aq-muted); background: none; border: none;
+    transition: color .16s ease, background .16s ease;
+}
+.aq-tab:hover:not(:disabled) { color: var(--aq-text); background: rgba(185, 199, 255, .07); }
+.aq-tab.on { color: var(--aq-gold-soft); background: rgba(216, 180, 90, .10); }
+.aq-tab:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: -3px; }
+.aq-tab.soon { opacity: .45; cursor: not-allowed; }
+.aq-tab-icon { font-size: .95rem; }
+
+/* One underline that slides, rather than a border appearing on each tab: the
+   accent travels between them instead of blinking across. */
+.aq-tab-underline {
+    position: absolute; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--aq-gold), transparent);
+    transition: left .22s cubic-bezier(.4, 0, .2, 1), width .22s cubic-bezier(.4, 0, .2, 1);
+    pointer-events: none;
+}
+
+/* ---------- panel ---------- */
+.aq-cw-panel-host { overflow-y: auto; overflow-x: hidden; padding: 1.1rem 1.2rem; }
+.aq-cw-page { animation: aq-tab-in .2s ease-out; }
+@keyframes aq-tab-in {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Every tab lays itself out with one of these. Named for the shape rather than
+   the tab, so a future tab picks the one that fits instead of adding a rule. */
+.aq-tab-grid { display: grid; gap: 1.1rem; align-items: start; }
+.aq-tab-stack { display: flex; flex-direction: column; gap: 1.1rem; }
+.aq-tab-grid.two    { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.aq-tab-grid.doll   { grid-template-columns: minmax(440px, 1.15fr) minmax(300px, 1fr); }
+.aq-tab-grid.pack   { grid-template-columns: minmax(420px, 1.5fr) minmax(260px, 1fr); }
+.aq-tab-grid.skills { grid-template-columns: minmax(300px, .8fr) minmax(400px, 1.4fr); }
+.aq-tab-grid.three  { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+@media (max-width: 1080px) {
+    .aq-tab-grid.doll,
+    .aq-tab-grid.pack,
+    .aq-tab-grid.skills { grid-template-columns: 1fr; }
+}
+
+/* ---------- footer ---------- */
+.aq-cw-footer {
+    display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+    padding: .6rem 1.2rem; border-top: 1px solid rgba(185, 199, 255, .12);
+    background: rgba(9, 7, 22, .5);
+}
+.aq-cw-points {
+    font-size: .74rem; letter-spacing: .06rem; color: #2a2008; cursor: pointer;
+    background: linear-gradient(180deg, #f0d99a, #d8b45a);
+    padding: .26rem .7rem; border-radius: 999px; border: none;
+    transition: filter .15s ease, transform .12s ease;
+}
+.aq-cw-points:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.aq-cw-points.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
+.aq-cw-hint { margin-left: auto; font-size: .72rem; color: var(--aq-muted); font-style: italic; }
+
+/* ---------- bars, badges, shared bits ---------- */
+.aq-cw-xp-head {
+    display: flex; justify-content: space-between; font-size: .72rem;
+    letter-spacing: .08rem; text-transform: uppercase; color: var(--aq-muted); margin-bottom: .25rem;
+}
 .aq-cw-xp-num { font-variant-numeric: tabular-nums; color: var(--aq-text); }
 .aq-cw-xp-foot { margin: .3rem 0 0; font-size: .72rem; font-style: italic; color: var(--aq-muted); }
 
-.aq-cw-bar { height: 9px; border-radius: 999px; background: rgba(0, 0, 0, .5);
-    overflow: hidden; border: 1px solid rgba(185, 199, 255, .14); }
+.aq-cw-bar {
+    height: 9px; border-radius: 999px; background: rgba(0, 0, 0, .5);
+    overflow: hidden; border: 1px solid rgba(185, 199, 255, .14);
+}
 .aq-cw-bar-fill { height: 100%; border-radius: 999px; transition: width .32s ease; }
 .aq-cw-bar-fill.xp   { background: linear-gradient(90deg, #d8b45a, #f0d99a); }
 .aq-cw-bar-fill.hp   { background: linear-gradient(90deg, #4e9c5e, #7fd694); }
 .aq-cw-bar-fill.mana { background: linear-gradient(90deg, #3f6fb5, #7fb6ff); }
 .aq-cw-bar-fill.stam { background: linear-gradient(90deg, #9c7b3f, #d8c07a); }
 
-.aq-cw-vitals { display: flex; flex-direction: column; gap: .55rem; }
-
-.aq-cw-money { display: flex; gap: 1rem; padding-top: .2rem; }
+.aq-cw-vitals { display: flex; flex-direction: column; gap: .6rem; }
+.aq-cw-money { display: flex; gap: 1rem; flex-wrap: wrap; }
 .aq-cw-coin { display: flex; align-items: baseline; gap: .3rem; }
 .aq-cw-coin-sym { font-size: 1rem; }
 .aq-cw-coin-amt { font-variant-numeric: tabular-nums; color: var(--aq-text); font-size: .9rem; }
 
-.aq-cw-right { min-height: 260px; }
-.aq-cw-soon { color: var(--aq-muted); font-style: italic; }
-
-.aq-cw-footer { display: flex; align-items: center; gap: .9rem; margin-top: 1rem;
-    padding-top: .7rem; border-top: 1px solid rgba(185, 199, 255, .12); }
-.aq-cw-points { font-size: .74rem; letter-spacing: .06rem; color: #2a2008;
-    background: linear-gradient(180deg, #f0d99a, #d8b45a); padding: .22rem .55rem; border-radius: 999px; }
-.aq-cw-points.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
-.aq-cw-hint { margin-left: auto; font-size: .72rem; color: var(--aq-muted); font-style: italic; }
-
-/* ---- panels: attributes and combat ---- */
-.aq-cw-right { display: flex; flex-direction: column; gap: 1.1rem; }
-
-.aq-cw-panel { }
-.aq-cw-panel-title {
-    display: flex; align-items: center; gap: .6rem; margin: 0 0 .55rem;
-    font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .14rem;
-    text-transform: uppercase; color: var(--aq-gold-soft);
-    padding-bottom: .35rem; border-bottom: 1px solid rgba(216, 180, 90, .22);
-}
 .aq-cw-badge {
     font-family: 'EB Garamond', serif; font-size: .66rem; letter-spacing: .04rem;
-    text-transform: none; color: #2a2008;
-    background: linear-gradient(180deg, #f0d99a, #d8b45a);
-    padding: .12rem .5rem; border-radius: 999px;
+    color: #2a2008; background: linear-gradient(180deg, #f0d99a, #d8b45a);
+    padding: .12rem .5rem; border-radius: 999px; white-space: nowrap;
 }
+.aq-cw-badge.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
+.aq-cw-badge.pack {
+    background: none; color: var(--aq-muted); border: 1px solid rgba(185, 199, 255, .2);
+    font-variant-numeric: tabular-nums;
+}
+.aq-cw-soon { color: var(--aq-muted); font-style: italic; }
 
-.aq-attrs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem .9rem; }
-@media (max-width: 640px) { .aq-attrs { grid-template-columns: 1fr; } }
+.aq-spend { width: 100%; margin-top: 1rem; }
+.aq-flavour { margin: .8rem 0 0; font-style: italic; font-size: .85rem; color: var(--aq-crystal); line-height: 1.5; }
+.aq-flavour.dim { color: var(--aq-muted); font-size: .8rem; }
+
+.aq-ledger { display: flex; flex-direction: column; gap: .3rem; margin: 0; }
+.aq-ledger div { display: flex; justify-content: space-between; gap: 1rem; padding: .18rem 0;
+    border-bottom: 1px dotted rgba(185, 199, 255, .1); }
+.aq-ledger dt { font-size: .8rem; color: var(--aq-muted); }
+.aq-ledger dd { margin: 0; font-size: .86rem; font-variant-numeric: tabular-nums; }
+.aq-ledger dd.hi { color: var(--aq-gold-soft); }
+
+/* ---------- attributes ---------- */
+.aq-attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .35rem .9rem; }
 
 .aq-attr {
     display: grid; grid-template-columns: 2.4rem 1fr auto auto; align-items: center; gap: .5rem;
@@ -112,9 +219,7 @@
     transition: background .18s ease;
 }
 .aq-attr:hover { background: rgba(185, 199, 255, .07); }
-/* Brief flash so the player sees which number moved. */
 .aq-attr.raised { background: rgba(216, 180, 90, .22); }
-
 .aq-attr-abbr { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .06rem; color: var(--aq-muted); }
 .aq-attr-name { font-size: .86rem; color: var(--aq-text); }
 .aq-attr-val { font-variant-numeric: tabular-nums; font-size: .95rem; color: var(--aq-crystal-2); }
@@ -132,8 +237,8 @@
 .aq-mini-btn:hover:not(:disabled) { background: rgba(216, 180, 90, .34); transform: scale(1.12); }
 .aq-mini-btn:disabled { opacity: .22; cursor: default; }
 
-.aq-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .2rem .9rem; }
-@media (max-width: 640px) { .aq-stats { grid-template-columns: 1fr; } }
+/* ---------- derived stats ---------- */
+.aq-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .2rem .9rem; }
 .aq-stat {
     display: flex; justify-content: space-between; align-items: baseline; gap: .6rem;
     padding: .22rem .45rem; border-radius: 6px; cursor: help;
@@ -142,89 +247,197 @@
 .aq-stat:hover { background: rgba(185, 199, 255, .07); }
 .aq-stat-name { font-size: .82rem; color: var(--aq-muted); }
 .aq-stat-val { font-variant-numeric: tabular-nums; font-size: .88rem; color: var(--aq-text); }
+/* A stat the interface names but nothing feeds yet. Dimmed rather than hidden,
+   so the dash is read as "not yet" instead of as a broken number. */
+.aq-stat.pending { opacity: .45; }
+.aq-stat.pending .aq-stat-val { color: var(--aq-muted); }
 
-/* ---- equipment ---- */
-.aq-slots { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
-@media (max-width: 640px) { .aq-slots { grid-template-columns: repeat(4, 1fr); } }
-
-.aq-slot {
-    position: relative; aspect-ratio: 1; display: grid; place-items: center;
-    border-radius: 8px; font-size: 1.15rem;
-    border: 1px solid rgba(185, 199, 255, .16); background: rgba(0, 0, 0, .3);
-    transition: border-color .15s ease, transform .12s ease, background .15s ease;
+/* ---------- paper doll ---------- */
+.aq-doll {
+    display: grid; grid-template-columns: auto minmax(0, 240px) auto;
+    gap: 1.2rem; align-items: start; justify-content: center;
 }
-.aq-slot.empty { color: rgba(185, 199, 255, .3); }
+.aq-doll-col { display: flex; flex-direction: column; gap: .5rem; }
+.aq-doll-figure { display: flex; flex-direction: column; align-items: center; gap: .5rem; min-width: 0; }
+.aq-doll-figure .aq-cw-portrait { width: 100%; max-width: 190px; aspect-ratio: 3 / 4; border-radius: 10px; }
+.aq-doll-name { margin: 0; font-family: 'Cinzel', serif; font-size: .95rem; text-align: center; }
+.aq-doll-sub { margin: 0; font-size: .74rem; color: var(--aq-muted); text-align: center; }
+.aq-doll-hands { display: flex; gap: .5rem; margin-top: .4rem; }
+.aq-doll-future { display: flex; gap: .5rem; opacity: .5; }
+
+@media (max-width: 560px) {
+    .aq-doll { grid-template-columns: repeat(4, 1fr); }
+    .aq-doll-col { flex-direction: row; flex-wrap: wrap; grid-column: 1 / -1; }
+    .aq-doll-figure { grid-column: 1 / -1; }
+}
+
+/* ---------- slots ---------- */
+.aq-slot {
+    position: relative; width: 70px; height: 66px;
+    display: grid; place-items: center; grid-template-rows: 1fr auto;
+    border-radius: 9px; font-size: 1.3rem; padding: .25rem;
+    border: 1px solid rgba(185, 199, 255, .16); background: rgba(0, 0, 0, .32);
+    transition: border-color .15s ease, transform .12s ease, background .15s ease, box-shadow .15s ease;
+}
+.aq-slot.empty { color: rgba(185, 199, 255, .28); }
 .aq-slot.filled {
     cursor: pointer; color: var(--aq-text);
     border-color: var(--rarity, #b8b6c8);
-    background: color-mix(in srgb, var(--rarity, #b8b6c8) 12%, rgba(0, 0, 0, .45));
-    box-shadow: 0 0 12px -4px var(--rarity, transparent);
+    background: color-mix(in srgb, var(--rarity, #b8b6c8) 14%, rgba(0, 0, 0, .45));
+    box-shadow: 0 0 14px -5px var(--rarity, transparent);
 }
-.aq-slot.filled:hover { transform: translateY(-2px); }
+.aq-slot.filled:hover { transform: translateY(-2px); box-shadow: 0 0 18px -3px var(--rarity, transparent); }
+.aq-slot:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+.aq-slot.locked { opacity: .4; cursor: not-allowed; }
 
-/* Tooltip lives inside the slot so it follows it, and is inert until hover. */
+/* Where the thing being dragged could go, and where it could not. Both states
+   are shown: highlighting only the valid ones leaves the player guessing why
+   nothing lit up. */
+.aq-slot.target { border-color: rgba(216, 180, 90, .55); background: rgba(216, 180, 90, .10); }
+.aq-slot.drop-ok { border-color: var(--aq-gold); background: rgba(216, 180, 90, .22); transform: scale(1.06); }
+.aq-slot.drop-no { border-color: #d98a8a; background: rgba(180, 60, 60, .18); }
+
+.aq-slot-tag {
+    font-size: .5rem; letter-spacing: .04rem; text-transform: uppercase;
+    color: var(--aq-muted); line-height: 1; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.aq-slot.filled .aq-slot-tag { color: color-mix(in srgb, var(--rarity, #b8b6c8) 70%, var(--aq-muted)); }
+
+/* ---------- tooltip ---------- */
 .aq-tip {
     position: absolute; bottom: calc(100% + .45rem); left: 50%; transform: translate(-50%, 4px);
-    z-index: 5; width: max-content; max-width: 230px; text-align: left;
+    z-index: 5; width: max-content; max-width: 240px; text-align: left;
     padding: .55rem .7rem; border-radius: 9px; pointer-events: none;
-    background: rgba(9, 7, 22, .97); border: 1px solid rgba(216, 180, 90, .35);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, .65);
+    background: rgba(9, 7, 22, .98); border: 1px solid rgba(216, 180, 90, .35);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .7);
     opacity: 0; transition: opacity .16s ease, transform .16s ease;
 }
-.aq-slot:hover .aq-tip { opacity: 1; transform: translate(-50%, 0); }
+.aq-slot:hover .aq-tip, .aq-pack-item:hover .aq-tip { opacity: 1; transform: translate(-50%, 0); }
 .aq-tip-name { font-family: 'Cinzel', serif; font-size: .9rem; }
 .aq-tip-kind { font-size: .68rem; color: var(--aq-muted); margin-bottom: .35rem; }
 .aq-tip-bonuses { list-style: none; margin: 0; padding: 0; }
 .aq-tip-bonuses li { font-size: .76rem; color: #7fd694; }
+.aq-tip-bonuses li.up   { color: #7fd694; }
+.aq-tip-bonuses li.down { color: #d98a8a; }
+.aq-tip-bonuses li.same { color: var(--aq-muted); }
 .aq-tip-flavour { margin: .4rem 0 0; font-size: .72rem; font-style: italic; color: var(--aq-muted); }
-
-/* ---- skills ---- */
-.aq-cw-badge.skill { background: linear-gradient(180deg, #9fe4ff, #5aa8d8); }
-.aq-skill-cat {
-    margin: .7rem 0 .35rem; font-family: 'Cinzel', serif; font-size: .68rem;
-    letter-spacing: .12rem; text-transform: uppercase; color: var(--aq-muted);
-}
-.aq-skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
-@media (max-width: 720px) { .aq-skills { grid-template-columns: 1fr; } }
-
-.aq-skill {
-    display: grid; grid-template-columns: 1.6rem 1fr auto; align-items: center; gap: .5rem;
-    padding: .4rem .5rem; border-radius: 8px; cursor: help;
-    background: rgba(185, 199, 255, .04); border: 1px solid rgba(185, 199, 255, .10);
-    transition: background .15s ease, border-color .15s ease;
-}
-.aq-skill:hover { background: rgba(185, 199, 255, .09); border-color: rgba(185, 199, 255, .2); }
-.aq-skill.maxed { border-color: rgba(216, 180, 90, .4); }
-.aq-skill-icon { font-size: 1rem; }
-.aq-skill-head { display: flex; justify-content: space-between; gap: .5rem; }
-.aq-skill-name { font-size: .84rem; color: var(--aq-text); }
-.aq-skill-rank { font-size: .72rem; font-variant-numeric: tabular-nums; color: var(--aq-muted); }
-.aq-skill-pips { display: flex; gap: 3px; margin: .2rem 0; }
-.aq-pip { width: 14px; height: 4px; border-radius: 2px; background: rgba(185, 199, 255, .16); }
-.aq-pip.on { background: linear-gradient(90deg, #5aa8d8, #9fe4ff); }
-.aq-skill-next { margin: 0; font-size: .7rem; font-style: italic; color: var(--aq-muted); }
-
-/* ---- pack ---- */
-.aq-cw-badge.pack {
-    background: none; color: var(--aq-muted); border: 1px solid rgba(185, 199, 255, .2);
-    font-variant-numeric: tabular-nums;
-}
-.aq-slots.pack { grid-template-columns: repeat(8, 1fr); }
-@media (max-width: 640px) { .aq-slots.pack { grid-template-columns: repeat(6, 1fr); } }
-.aq-slots.pack .aq-slot { cursor: pointer; }
-
-.aq-tip.compare { max-width: 250px; }
+.aq-tip.compare { max-width: 260px; }
 .aq-tip-vs {
     margin: .45rem 0 .2rem; padding-top: .35rem; font-size: .68rem; font-style: italic;
     color: var(--aq-muted); border-top: 1px dashed rgba(185, 199, 255, .18);
 }
-.aq-tip-bonuses li.up   { color: #7fd694; }
-.aq-tip-bonuses li.down { color: #d98a8a; }
-.aq-tip-bonuses li.same { color: var(--aq-muted); }
 
-/* ---- materials ---- */
-.aq-mats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem .8rem; }
-@media (max-width: 720px) { .aq-mats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ---------- the pack ---------- */
+.aq-packbar {
+    display: grid; grid-template-columns: minmax(160px, 1fr) auto;
+    gap: .6rem 1rem; align-items: center; margin-bottom: .9rem;
+}
+.aq-packbar .aq-chips { grid-column: 1 / -1; }
+
+.aq-search { position: relative; display: flex; align-items: center; }
+.aq-search-icon { position: absolute; left: .6rem; color: var(--aq-muted); pointer-events: none; }
+.aq-search .aq-input { padding-left: 1.9rem; padding-right: 2rem; }
+.aq-search-clear {
+    position: absolute; right: .45rem; background: none; border: none; cursor: pointer;
+    color: var(--aq-muted); font-size: .8rem; padding: .2rem;
+}
+.aq-search-clear:hover { color: var(--aq-text); }
+
+.aq-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.aq-chip {
+    font-size: .72rem; padding: .25rem .6rem; border-radius: 999px; cursor: pointer;
+    color: var(--aq-muted); background: rgba(185, 199, 255, .06);
+    border: 1px solid rgba(185, 199, 255, .16);
+    transition: color .14s ease, background .14s ease, border-color .14s ease;
+}
+.aq-chip:hover { color: var(--aq-text); background: rgba(185, 199, 255, .13); }
+.aq-chip.on { color: #2a2008; border-color: transparent; background: linear-gradient(180deg, #f0d99a, #d8b45a); }
+
+.aq-packbar-right { display: flex; align-items: center; gap: .7rem; }
+.aq-sort { display: flex; align-items: center; gap: .4rem; font-size: .74rem; color: var(--aq-muted); }
+.aq-select {
+    font: inherit; font-size: .78rem; padding: .3rem .5rem; border-radius: 8px;
+    color: var(--aq-text); background: rgba(8, 6, 20, .8);
+    border: 1px solid rgba(185, 199, 255, .22); cursor: pointer;
+}
+.aq-viewtoggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid rgba(185, 199, 255, .2); }
+.aq-viewtoggle button {
+    background: none; border: none; cursor: pointer; padding: .3rem .55rem;
+    color: var(--aq-muted); font-size: .85rem; transition: background .14s ease, color .14s ease;
+}
+.aq-viewtoggle button:hover { color: var(--aq-text); background: rgba(185, 199, 255, .1); }
+.aq-viewtoggle button.on { color: #2a2008; background: linear-gradient(180deg, #f0d99a, #d8b45a); }
+
+.aq-pack.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: .45rem; }
+.aq-pack.compact { display: flex; flex-direction: column; gap: .3rem; }
+
+.aq-pack-item {
+    position: relative; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--rarity, rgba(185, 199, 255, .16));
+    background: color-mix(in srgb, var(--rarity, #b8b6c8) 12%, rgba(0, 0, 0, .42));
+    transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+}
+.aq-pack-item:hover { transform: translateY(-2px); box-shadow: 0 0 16px -4px var(--rarity, transparent); }
+.aq-pack-item:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+.aq-pack-item.on { box-shadow: 0 0 0 2px var(--aq-gold) inset; }
+
+.aq-pack.grid .aq-pack-item { aspect-ratio: 1; display: grid; place-items: center; font-size: 1.3rem; }
+.aq-pack.compact .aq-pack-item {
+    display: grid; grid-template-columns: 1.6rem 1fr auto; align-items: center;
+    gap: .55rem; padding: .35rem .55rem;
+}
+.aq-pack-name { font-size: .84rem; color: var(--aq-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aq-pack-slot { font-size: .68rem; color: var(--aq-muted); }
+.aq-empty-pack { color: var(--aq-muted); font-style: italic; margin: 0; grid-column: 1 / -1; }
+.aq-pack-note { margin: .7rem 0 0; font-size: .76rem; color: var(--aq-muted); }
+.aq-link-btn {
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: var(--aq-gold-soft); font: inherit; font-size: .76rem;
+    border-bottom: 1px solid rgba(216, 180, 90, .4);
+}
+
+/* ---------- skills ---------- */
+.aq-skillgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .5rem; }
+.aq-skilltile {
+    display: flex; flex-direction: column; align-items: center; gap: .25rem;
+    padding: .6rem .4rem; border-radius: 10px; cursor: pointer; position: relative;
+    background: rgba(185, 199, 255, .04); border: 1px solid rgba(185, 199, 255, .12);
+    color: var(--aq-muted); font: inherit;
+    transition: background .15s ease, border-color .15s ease, transform .12s ease;
+}
+.aq-skilltile:hover { background: rgba(185, 199, 255, .1); transform: translateY(-2px); }
+.aq-skilltile:focus-visible { outline: 2px solid var(--aq-gold); outline-offset: 2px; }
+.aq-skilltile.known { color: var(--aq-text); border-color: rgba(185, 199, 255, .26); }
+.aq-skilltile.maxed { border-color: rgba(216, 180, 90, .45); background: rgba(216, 180, 90, .08); }
+.aq-skilltile.on { border-color: var(--aq-gold); box-shadow: 0 0 16px -5px var(--aq-gold); }
+.aq-skilltile-icon { font-size: 1.5rem; }
+.aq-skilltile-name { font-size: .76rem; text-align: center; line-height: 1.2; }
+.aq-skilltile-rank { font-size: .68rem; font-variant-numeric: tabular-nums; color: var(--aq-muted); }
+.aq-skilltile-rank.maxed { color: var(--aq-gold-soft); }
+.aq-skilltile-pips { display: flex; gap: 3px; }
+.aq-skilltile-ready {
+    position: absolute; top: .35rem; right: .4rem; font-size: .5rem; color: #7fd694;
+}
+.aq-pip { width: 12px; height: 3px; border-radius: 2px; background: rgba(185, 199, 255, .16); }
+.aq-pip.on { background: linear-gradient(90deg, #5aa8d8, #9fe4ff); }
+.aq-skill-next { margin: .5rem 0; font-size: .78rem; font-style: italic; color: var(--aq-crystal); }
+
+.aq-card.ability { border-color: rgba(216, 180, 90, .32); }
+.aq-card.muted { border-style: dashed; background: none; }
+.aq-ability-name { margin: 0 0 .3rem; font-family: 'Cinzel', serif; font-size: 1.05rem; }
+.aq-ability-desc { margin: 0 0 .7rem; font-size: .84rem; line-height: 1.5; color: var(--aq-crystal); }
+.aq-ability-stats { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem .9rem; margin: 0; }
+.aq-ability-stats div { display: flex; justify-content: space-between; gap: .5rem;
+    border-bottom: 1px dotted rgba(185, 199, 255, .1); padding: .16rem 0; }
+.aq-ability-stats dt { font-size: .76rem; color: var(--aq-muted); }
+.aq-ability-stats dd { margin: 0; font-size: .82rem; font-variant-numeric: tabular-nums; }
+.aq-ability-stats dd.mana { color: #7fb6ff; }
+.aq-ability-stats dd.heal { color: #7fd694; }
+.aq-ability-warn { margin: .7rem 0 0; font-size: .78rem; color: #e8c48a; font-style: italic; }
+
+/* ---------- materials and crafting ---------- */
+.aq-mats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .25rem .8rem; }
 .aq-mat {
     display: grid; grid-template-columns: 1.2rem 1fr auto; align-items: baseline; gap: .45rem;
     padding: .2rem .4rem; border-radius: 6px; cursor: help;
@@ -235,7 +448,6 @@
 .aq-mat-name { font-size: .8rem; color: var(--aq-muted); }
 .aq-mat-count { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--aq-text); }
 
-/* ---- crafting ---- */
 .aq-recipes { display: flex; flex-direction: column; gap: .35rem; }
 .aq-recipe {
     display: grid; grid-template-columns: 1.6rem 1fr auto; align-items: center; gap: .55rem;
@@ -250,3 +462,27 @@
 .aq-recipe-cost .have  { color: #7fd694; }
 .aq-recipe-cost .short { color: #d98a8a; }
 .aq-recipe-where { font-size: .7rem; font-style: italic; color: var(--aq-muted); }
+
+/* ---------- shorter screens ----------
+   A laptop at 768px tall has roughly 430px of panel once the chrome is taken
+   out, and the paper doll at full size wants more than that. Everything shrinks
+   together rather than the panel simply scrolling, because the doll is a shape
+   to be read at a glance and half of it is not a shape. */
+@media (max-height: 820px) {
+    .aq-cw-frame { height: 96vh; }
+    .aq-cw-top { padding: .7rem 3rem .7rem 1rem; }
+    .aq-cw-top .aq-cw-portrait { height: 64px; width: 64px; }
+    .aq-cw-who { font-size: 1.1rem; }
+    .aq-cw-panel-host { padding: .8rem .9rem; }
+
+    .aq-slot { width: 62px; height: 58px; font-size: 1.15rem; }
+    .aq-doll { gap: .8rem; }
+    .aq-doll-col { gap: .35rem; }
+    .aq-doll-figure .aq-cw-portrait { max-width: 140px; }
+    .aq-doll-hands, .aq-doll-future { gap: .35rem; }
+    .aq-card-body { padding: .85rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aq-cw, .aq-cw-page, .aq-tab-underline, .aq-slot, .aq-pack-item, .aq-skilltile { transition: none; animation: none; }
+}

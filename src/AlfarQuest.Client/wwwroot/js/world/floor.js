@@ -65,6 +65,19 @@ export function buildOutdoorCanvas(s) {
                 g.fillRect(tx * T, ty * T + T, T, T * 0.9);
             }
         }
+
+    // A wash of warm light over the finished ground.
+    //
+    // A flat blend toward one colour lifts the floor AND compresses its own
+    // contrast by the same fraction — new = (1-a)·old + a·tint — which is what
+    // was actually wanted. The tiles are a checkerboard of dirt and grass with
+    // flowers scattered through them, and at full contrast a green-brown Thief
+    // standing on green-brown ground disappeared into it.
+    //
+    // Kept low. Past about a quarter the ground stops reading as ground.
+    g.fillStyle = "rgba(236, 226, 200, 0.20)";
+    g.fillRect(0, 0, c.width, c.height);
+
     return c;
 }
 

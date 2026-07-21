@@ -152,10 +152,40 @@ public class Slash
     public Slash(Vec p, float a, string c, float life) { Pos = p; Angle = a; Color = c; Life = life; }
 }
 
+/// <summary>One mote of an effect.
+///
+/// Carries its own physics rather than deriving it from a shared constant: a
+/// rock fragment falls hard, an ember drifts upward and a mote of forest light
+/// barely moves at all, and one gravity for all three would make every effect
+/// the same effect wearing a different colour.</summary>
 public class Particle
 {
-    public Vec Pos, Vel; public string Color; public float Life;
-    public Particle(Vec p, Vec v, string c, float life) { Pos = p; Vel = v; Color = c; Life = life; }
+    public Vec Pos, Vel;
+    public string Color;
+    public float Life;
+
+    /// <summary>What it started with, so the renderer can fade and shrink it
+    /// against its own span instead of a fixed one.</summary>
+    public float MaxLife;
+
+    public float Size;
+
+    /// <summary>Pixels per second squared. Negative rises — embers and souls.</summary>
+    public float Gravity;
+
+    /// <summary>Velocity kept each frame. 1 is frictionless; 0.88 settles fast.</summary>
+    public float Drag;
+
+    /// <summary>Drawn with lighter compositing, so overlapping motes build into
+    /// light rather than into mud. Right for sparks and magic, wrong for dust.</summary>
+    public bool Additive;
+
+    public Particle(Vec p, Vec v, string c, float life,
+                    float size = 3f, float gravity = 0f, float drag = 1f, bool additive = false)
+    {
+        Pos = p; Vel = v; Color = c; Life = MaxLife = life;
+        Size = size; Gravity = gravity; Drag = drag; Additive = additive;
+    }
 }
 
 public class Prop

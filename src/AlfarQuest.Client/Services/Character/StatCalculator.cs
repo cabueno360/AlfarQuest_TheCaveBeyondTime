@@ -107,4 +107,7 @@ public static class StatCalculator
 }
 
 /// <summary>One row of the derived-stats panel.</summary>
-public sealed record DerivedStat(string Name, string Value, string Description);
+/// <param name="Pending">True for a stat the interface names but nothing in the
+/// game feeds yet. Shown greyed with a dash — inventing a number for it would
+/// tell the player a system exists when it does not.</param>
+public sealed record DerivedStat(string Name, string Value, string Description, bool Pending = false);

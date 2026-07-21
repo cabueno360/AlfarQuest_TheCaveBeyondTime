@@ -1,0 +1,72 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services.Character
+
+@* The pack, as tiles or as rows.
+
+   One component for both views because they differ only in layout — two
+   components would be two places to fix a rarity colour or a drag handler.
+
+   Items are draggable so they can be dropped onto the paper doll, and clickable
+   so they can be worn without dragging. Whatever comes off goes back here, which
+   is why nothing a player owns can be lost by either. *@
+
+<div class="aq-pack @(View == InventoryView.Compact ? "compact" : "grid")"
+     role="list"
+     @ondragover:preventDefault="true"
+     @ondrop:preventDefault="true"
+     @ondrop="OnDropHere">
+
+    @if (Items.Count == 0)
+    {
+        <p class="aq-empty-pack">@EmptyMessage</p>
+    }
+    else
+    {
+        @foreach (var item in Items)
+        {
+            <div class="aq-pack-item @(Selected == item.Id ? "on" : "")"
+                 role="listitem"
+                 style="--rarity:@RarityInfo.Of(item.Rarity).Colour"
+                 draggable="true"
+                 tabindex="0"
+                 aria-label="@($"{item.Name}, {RarityInfo.Of(item.Rarity).Name} {SlotInfo.Of(item.Slot).Name}")"
+                 @ondragstart="() => OnDragOut.InvokeAsync(item)"
+                 @ondragend="() => OnDragEnded.InvokeAsync()"
+                 @onclick="() => OnEquip.InvokeAsync(item)"
+                 @onkeydown="e => OnKey(e, item)">
+
+                <span class="aq-pack-icon">@item.Icon</span>
+
+                @if (View == InventoryView.Compact)
+                {
+                    <span class="aq-pack-name">@item.Name</span>
+                    <span class="aq-pack-slot">@SlotInfo.Of(item.Slot).Name</span>
+                }
+
+                @* The comparison against what is already worn, so "is this
+                   better" is answered where the question is asked. *@
+                <ItemCompare Candidate="item" Worn="Gear[item.Slot]" />
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required IReadOnlyList<Item> Items { get; set; }
+    [Parameter, EditorRequired] public required Loadout Gear { get; set; }
+    [Parameter] public InventoryView View { get; set; } = InventoryView.Grid;
+    [Parameter] public string? Selected { get; set; }
+    [Parameter] public string EmptyMessage { get; set; } = "The pack is empty.";
+
+    [Parameter] public EventCallback<Item> OnEquip { get; set; }
+    [Parameter] public EventCallback<Item> OnDragOut { get; set; }
+    [Parameter] public EventCallback OnDragEnded { get; set; }
+
+    /// <summary>Something worn was dragged back into the pack.</summary>
+    [Parameter] public EventCallback OnDropHere { get; set; }
+
+    private async Task OnKey(KeyboardEventArgs e, Item item)
+    {
+        if (e.Key is "Enter" or " ") await OnEquip.InvokeAsync(item);
+    }
+}

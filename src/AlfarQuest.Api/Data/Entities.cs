@@ -28,6 +28,29 @@ public class PlayerSave
     public List<SaveHero> Party { get; set; } = new();
     public List<SaveClaim> Claims { get; set; } = [];
     public List<SaveTally> Belongings { get; set; } = [];
+    public List<SaveContainer> Containers { get; set; } = [];
+}
+
+/// <summary>One container this save has opened. The remainder is a child table
+/// rather than a blob, for the same reason the belongings are: "what is still
+/// sitting unclaimed in the world" is a question worth being able to ask.</summary>
+public class SaveContainer
+{
+    public int Id { get; set; }
+    public int PlayerSaveId { get; set; }
+    public string ContainerKey { get; set; } = "";
+    public DateTime OpenedAt { get; set; }
+    public int Coin { get; set; }
+    public List<SaveContainerItem> Remaining { get; set; } = [];
+}
+
+public class SaveContainerItem
+{
+    public int Id { get; set; }
+    public int SaveContainerId { get; set; }
+    public string Kind { get; set; } = "";
+    public string TallyKey { get; set; } = "";
+    public int Count { get; set; }
 }
 
 /// <summary>Coin, materials and pack contents. One table with a Kind rather than
