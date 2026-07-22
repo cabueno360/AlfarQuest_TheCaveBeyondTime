@@ -13,6 +13,16 @@ public class Hero
     public Vec Pos;
     public float Hp, Facing, Cool, AbilityCool, DashCool, IFrames, Flash, AttackAnim, AbilityAnim;
 
+    // ---- companion AI (unused while this hero is the one being steered) ----
+    /// <summary>Seconds before this companion will act on a threat — a human beat
+    /// between a monster appearing and the swing. Re-rolled after every attack and
+    /// whenever there is nothing to fight, so reactions never become instant.</summary>
+    public float ReactCool;
+    /// <summary>A loose wobble added to the formation slot, re-rolled every few
+    /// seconds, so the party drifts rather than locking into a rigid triangle.</summary>
+    public Vec SlotDrift;
+    public float SlotDriftCool;
+
     /// <summary>Live pools, owned here like Hp. They used to be shown full on the
     /// character sheet because nothing spent them — the sheet was reporting a
     /// resource that did not exist.</summary>
@@ -120,11 +130,25 @@ public class Husk
     public float Hp, MaxHp, Speed, R, HitCool, Flash;
     public CreatureType Def;
 
-    /// <summary>Patrol wanders near home; Chase follows the party; Return walks
-    /// back once the party is out of reach. Kept explicit rather than inferred
-    /// from distances so the transitions are readable and testable.</summary>
+    /// <summary>Its current AI state — see <see cref="AiState"/>. Set from the
+    /// species' demeanor at birth and stepped by StepAi.</summary>
     public AiState State = AiState.Patrol;
     public float Think;                 // seconds until the next patrol decision
+
+    /// <summary>Counts down while it is committed by a neighbour's cry — a struck
+    /// creature rouses those around it, and for a few seconds they will chase
+    /// further than they normally would. This is what keeps group aggro local: it
+    /// expires, so it cannot chain across the map.</summary>
+    public float Alerted;
+
+    /// <summary>Seconds until its one trick is ready again. Nothing to do with the
+    /// bite, which is gated separately by <see cref="HitCool"/>.</summary>
+    public float AbilityCool;
+
+    /// <summary>Who struck last, so the kill pays the hero who landed the killing
+    /// blow rather than the whole party. Null until something hits it — a death
+    /// with no striker (a future trap) falls back to the steered hero.</summary>
+    public string? LastHitBy;
 
     public Husk(Vec p) : this(p, CreatureCatalog.Of("husk")) { }
 
@@ -135,15 +159,34 @@ public class Husk
         MaxHp = Hp = def.MaxHp;
         Speed = def.Speed;
         R = def.Radius;
+        // Sleepers and ambushers begin still and unnoticed; everything else is
+        // already up and about.
+        State = def.Demeanor is Demeanor.Sleeper or Demeanor.Ambusher
+            ? AiState.Sleep : AiState.Patrol;
     }
 }
 
-public enum AiState { Patrol, Chase, Return }
+/// <summary>Sleep sits still until roused; Patrol wanders near home; Chase
+/// follows the party; Return walks back once they are out of reach; Flee runs
+/// from them when badly hurt. Kept explicit rather than inferred from distances
+/// so the transitions are readable and testable.</summary>
+public enum AiState { Patrol, Chase, Return, Sleep, Flee }
 
 public class Projectile
 {
     public Vec Pos, Vel; public int Damage; public string Color; public float Life;
-    public Projectile(Vec p, Vec v, int dmg, string c, float life) { Pos = p; Vel = v; Damage = dmg; Color = c; Life = life; }
+    /// <summary>The hero who loosed it, carried so a kill by a bolt pays its
+    /// owner and not whoever happens to be steering when it lands. Empty for a
+    /// monster's bolt, which flies the other way.</summary>
+    public string Owner = "";
+
+    /// <summary>Turned aside by Wisdom rather than armour. Set on the magical
+    /// monster bolts, so a party built only for physical defence still fears
+    /// them.</summary>
+    public bool Magical;
+
+    public Projectile(Vec p, Vec v, int dmg, string c, float life, string owner = "", bool magical = false)
+    { Pos = p; Vel = v; Damage = dmg; Color = c; Life = life; Owner = owner; Magical = magical; }
 }
 
 public class Slash

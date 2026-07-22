@@ -77,12 +77,47 @@ public class RHud
     /// diagnostic in the same spirit as the drop counters: it separates "the
     /// effect did not fire" from "it fired and was trimmed".</summary>
     public int particles, particleCap, particlesEmitted;
+
+    /// <summary>A live census of the creatures on the field, so a test can see the
+    /// AI working without pixels: how many sleep, how many hunt, how many hostile
+    /// bolts are in the air, and which species are present.</summary>
+    public int asleep, chasing, fleeing, bolts;
+    public string enemyKinds = "";
+
+    /// <summary>The nearest creature to the steered hero — how far in tiles, the
+    /// unit direction to it, and what it is. Purely a seam so a test can walk
+    /// toward a fight rather than wander into a cliff; the game never reads these.</summary>
+    public float nearestTiles = 999f, nearDx, nearDy;
+    public string nearKind = "", nearState = "", nearAbility = "";
+
+    /// <summary>The nearest creature that casts a ranged bolt (slime, swarm,
+    /// spider) — distance in tiles and the way to it. Lets a test provoke a
+    /// caster specifically rather than wander onto a bruiser.</summary>
+    public float casterTiles = 999f, casterDx, casterDy;
+
+    /// <summary>Whether the steered hero is standing where creatures will not
+    /// follow. A test that finds itself in one knows to walk out before expecting
+    /// a fight.</summary>
+    public bool inSafeZone;
+
+    /// <summary>The steered hero's tile, so a test can tell "not moving" from
+    /// "moving but hemmed in".</summary>
+    public int heroTx, heroTy;
+
+    /// <summary>Cumulative counts, never reset: every monster ability performed and
+    /// every hostile bolt loosed this session. A live count misses an instant bolt;
+    /// a running total does not.</summary>
+    public int castsFired, boltsFired;
 }
 
 public class RHero
 {
     public string key = "", name = "", cls = "", color = "";
     public float hp, mhp, mana, mmana, stam, mstam;
+    /// <summary>This hero's own level and experience. Individual now — the party
+    /// no longer shares a level — so each row carries its own, and the HUD shows
+    /// whichever hero is being steered.</summary>
+    public int level = 1, xp, xpNext = 100;
     public bool active, dead, abilityReady;
     /// <summary>False when the ultimate is off cooldown but unaffordable, so the
     /// HUD can say "waiting on mana" rather than showing a ready prompt that does

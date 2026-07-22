@@ -18,7 +18,7 @@ public partial class World
 
         if (h.Def.Attack == Lore.AttackKind.Ranged)
         {
-            Shots.Add(new Projectile(h.Pos + dir * 24f, dir * 640f, h.Damage, h.Def.ColorAccent, 1.1f));
+            Shots.Add(new Projectile(h.Pos + dir * 24f, dir * 640f, h.Damage, h.Def.ColorAccent, 1.1f, h.Def.Key));
             // The loose of the shot. The bolt landing raises its own sound where it
             // lands, which may be a wall or a body a screen away.
             PlaySound("bow", h.Pos, 0.7f);
@@ -111,6 +111,10 @@ public partial class World
         var crit = canCrit && m.CritChance > 0 && _rng.NextDouble() < m.CritChance;
         var damage = crit ? (int)MathF.Round(baseDamage * MathF.Max(1f, m.CritDamage)) : baseDamage;
 
+        // Whoever lands the last blow owns the kill. XP is individual now — the
+        // hero who finishes a creature levels for it, and nobody else does.
+        k.LastHitBy = h.Def.Key;
+        Alert(k, k.Pos);           // its cry rouses whatever is nearby
         k.Hp -= damage;
         k.Flash = crit ? 0.28f : 0.15f;
         k.Knock += push * (crit ? 190f : 90f);

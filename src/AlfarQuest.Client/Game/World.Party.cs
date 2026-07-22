@@ -99,28 +99,84 @@ public partial class World
         }
     }
 
+    /// <summary>How near a threat must be to the leader before a companion will
+    /// bother with it. Companions assist; they do not go adventuring off across
+    /// the map after something that wandered past.</summary>
+    const float AssistTiles = 5f;
+
+    /// <summary>A companion's turn. The point of all the timers and jitter below
+    /// is that they are not a second player — they hang back, react a beat late,
+    /// miss sometimes, and drift out of formation rather than holding a rigid
+    /// triangle. A perfect auto-fighter made the leader feel like a passenger.</summary>
     void UpdateCompanion(Hero h, float dt, int slot)
     {
         var lead = Party[Active];
-        var target = lead.Pos + CompanionSlots[Math.Min(slot, CompanionSlots.Length - 1)];
-        var toSlot = target - h.Pos;
-        float dist = toSlot.Len();
-        // Dead zone stops them jittering on the spot; easing in over the last
-        // stretch keeps them from snapping into formation.
-        if (dist > 14f)
+        h.ReactCool = MathF.Max(0, h.ReactCool - dt);
+
+        // Re-roll the loose formation offset every few seconds — sometimes left,
+        // sometimes right, sometimes a little behind — so spacing looks alive.
+        h.SlotDriftCool -= dt;
+        if (h.SlotDriftCool <= 0)
         {
-            float speed = h.Speed * 0.9f * Math.Min(1f, dist / 46f);
-            h.Pos = MoveBlocked(h.Pos, toSlot.Norm() * speed * dt, 14f);
+            h.SlotDriftCool = 2.5f + (float)_rng.NextDouble() * 3f;
+            float a = (float)_rng.NextDouble() * MathF.Tau;
+            float r = (float)_rng.NextDouble() * 26f;
+            h.SlotDrift = new Vec(MathF.Cos(a) * r, MathF.Sin(a) * r);
+        }
+        var slotPos = lead.Pos + CompanionSlots[Math.Min(slot, CompanionSlots.Length - 1)] + h.SlotDrift;
+
+        // Only a threat near the party counts. One that has wandered off is left
+        // alone, and the companion just keeps up.
+        var k = NearestHusk(h.Pos);
+        bool near = k is not null && (k.Pos - lead.Pos).Len() < AssistTiles * TILE;
+        if (!near)
+        {
+            // Nothing worth fighting: hold the drifting slot, and keep a fresh
+            // reaction primed so the next threat still costs a beat.
+            h.ReactCool = MathF.Max(h.ReactCool, 0.4f + (float)_rng.NextDouble() * 1.6f);
+            MoveTowardSlot(h, slotPos, dt);
+            return;
         }
 
-        // auto-fight the nearest husk in range
-        var k = NearestHusk(h.Pos);
-        if (k is not null)
+        var threat = k!;
+        float d = (threat.Pos - h.Pos).Len();
+
+        // Out of reach: close some of the gap — but not at a sprint, and not
+        // past the assist leash, which the `near` check already bounds.
+        if (d > h.Def.Range * 0.9f)
         {
-            var dir = (k.Pos - h.Pos).Norm();
-            float d = (k.Pos - h.Pos).Len();
-            if (d < h.Def.Range && h.Cool <= 0) { h.Facing = (float)Math.Atan2(dir.Y, dir.X); DoAttack(h, dir); }
+            var approach = (threat.Pos - h.Pos).Norm();
+            h.Pos = MoveBlocked(h.Pos, approach * h.Speed * 0.7f * dt, 14f);
+            return;
         }
+
+        // In reach, but a human does not swing the instant a target is in range.
+        // While the reaction is running, reposition instead of attacking.
+        if (h.ReactCool > 0 || h.Cool > 0) { MoveTowardSlot(h, slotPos, dt); return; }
+
+        // Sometimes step aside rather than commit — the pause that makes the
+        // rhythm feel unscripted.
+        if (_rng.NextDouble() < 0.15) { MoveTowardSlot(h, slotPos, dt); h.ReactCool = 0.3f; return; }
+
+        // Attack, imperfectly. The aim is nudged off-true, so the swing sometimes
+        // lands wide or the bolt sails past a target that moved — a companion that
+        // never missed read as a machine. Then a fresh reaction beat before the
+        // next one.
+        var aim = Jitter((threat.Pos - h.Pos).Norm(), 0.2f);
+        h.Facing = MathF.Atan2(aim.Y, aim.X);
+        DoAttack(h, aim);
+        h.ReactCool = 0.4f + (float)_rng.NextDouble() * 1.6f;
+    }
+
+    /// <summary>Eases a hero toward a point with a dead zone, so companions settle
+    /// instead of jittering on the spot or snapping into formation.</summary>
+    void MoveTowardSlot(Hero h, Vec slotPos, float dt)
+    {
+        var toSlot = slotPos - h.Pos;
+        float dist = toSlot.Len();
+        if (dist <= 14f) return;
+        float speed = h.Speed * 0.9f * Math.Min(1f, dist / 46f);
+        h.Pos = MoveBlocked(h.Pos, toSlot.Norm() * speed * dt, 14f);
     }
 
     // ---- helpers ----

@@ -31,6 +31,23 @@ public static class GameEngine
         return JsonSerializer.Serialize(_world.TakeSnapshot(), Json);
     }
 
+    // The creature catalogue, as data, so a test can assert the bestiary is
+    // varied and lore-placed without spawning anything. No world needed — it is
+    // static.
+    [JSInvokable]
+    public static string Bestiary() => JsonSerializer.Serialize(
+        CreatureCatalog.All.Select(c => new
+        {
+            id = c.Id, name = c.Name, biome = c.Biome.ToString(),
+            demeanor = c.Demeanor.ToString(), ability = c.Ability.ToString(),
+            fleeBelow = c.FleeBelow, protective = c.Protective, xp = c.Xp,
+        }), Json);
+
+    // A test seam: stage a controlled encounter on open ground. Never called from
+    // play — see World.Debug.
+    [JSInvokable]
+    public static void DebugEncounter() => _world?.DebugEncounter();
+
     // Called every animation frame. inputJson is an InputState.
     // Returns a serialized RenderState for game.js to draw.
     [JSInvokable]

@@ -82,10 +82,11 @@ public sealed class PartyState
             Changed?.Invoke();
         };
 
-        // Experience arrives from the simulation. The whole party gains it: they
-        // all walked in, and levelling only the hero who landed the killing blow
-        // would punish switching, which the game is built around.
-        RewardBridge.OnXp = (xp, _, lead) => GainXp(xp, lead);
+        // Experience arrives from the simulation, credited to one hero — whoever
+        // landed the killing blow, or whoever picked up the loot. Progression is
+        // individual now: each hero grows at their own pace, and switching leaders
+        // never syncs their levels.
+        RewardBridge.OnXp = (xp, _, earner) => GainXp(xp, earner);
 
         CharacterStats.Lookup = key =>
         {
@@ -188,37 +189,55 @@ public sealed class PartyState
     /// the queue itself.</summary>
     public event Action? LevelledUp;
 
-    /// <summary>Awards experience to every hero and records who grew.</summary>
-    /// <param name="leadHeroKey">Whoever the player is steering. Their level-up is
-    /// the one that gets the window.</param>
+    /// <summary>The fraction of a kill's XP that companions who did not land it
+    /// still earn. Zero disables assist experience entirely, which is the default:
+    /// a kill belongs to whoever finished it. The architecture is here so a future
+    /// setting can turn it on — Leader 100%, Companions 30% — without touching the
+    /// award path.</summary>
+    public static float AssistShare = 0f;
+
+    /// <summary>Awards experience to the hero who earned it, and records who grew.
+    ///
+    /// Individual progression: the earner gets it in full, and companions get only
+    /// the assist share (zero by default). The party used to share every award,
+    /// which kept levels in lock-step and made switching heroes weightless — the
+    /// opposite of what the game now wants.</summary>
+    /// <param name="earnerKey">Whoever landed the killing blow, or picked up the
+    /// reward. Their level-up is the one that gets the window.</param>
     /// <returns>How many heroes levelled — the engine uses it to decide whether
     /// to celebrate, and knows nothing else about progression.</returns>
-    public int GainXp(int xp, string leadHeroKey = "")
+    public int GainXp(int xp, string earnerKey = "")
     {
         if (xp <= 0 || Members.Count == 0) return 0;
 
-        // Everyone gains, and everyone who crosses a threshold levels. What is
-        // NOT party-wide is the interruption: three heroes levelling on one kill
-        // once queued three popups back to back, which turned the reward into a
-        // chore. One window, for the hero on screen, naming the others.
+        var earner = Find(earnerKey) ?? Selected ?? Members[0];
         var grew = new List<Models.Character>();
         var fromLevel = new Dictionary<string, int>();
 
-        foreach (var c in Members)
+        void Give(Models.Character c, int amount)
         {
+            if (amount <= 0) return;
             var before = c.Level;
-            c.GainXp(xp);
-            if (c.Level == before) continue;
-
+            c.GainXp(amount);
+            if (c.Level == before) return;
             grew.Add(c);
             fromLevel[c.Key] = before;
         }
 
+        Give(earner, xp);
+        // The assist share, off by default. When enabled, everyone else on the
+        // roster earns a slice — the disabled-but-supported system the spec asks
+        // for. Rounded down so a 30% share of a small kill is not free levels.
+        if (AssistShare > 0f)
+            foreach (var c in Members)
+                if (c != earner) Give(c, (int)MathF.Floor(xp * AssistShare));
+
         if (grew.Count > 0)
         {
-            // The steered hero if they grew, otherwise whoever did — a lower-level
-            // companion can cross a threshold on XP that left the lead short.
-            var star = grew.FirstOrDefault(c => c.Key == leadHeroKey) ?? grew[0];
+            // The earner if they grew, otherwise whoever did — with assist off this
+            // is always the earner, but the fallback keeps the window honest if a
+            // future assist share levels a companion and not the lead.
+            var star = grew.FirstOrDefault(c => c.Key == earner.Key) ?? grew[0];
             var from = fromLevel[star.Key];
             var levels = star.Level - from;
 

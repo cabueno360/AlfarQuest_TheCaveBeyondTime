@@ -59,6 +59,11 @@ public partial class World
         foreach (var s in Shots)
             ents.Add(new REnt { t = "proj", x = s.Pos.X, y = s.Pos.Y, r = 6, c = s.Color, f = (float)Math.Atan2(s.Vel.Y, s.Vel.X) });
 
+        // Drawn the same way as the heroes' shots — a bolt is a bolt — but from
+        // their own colours, so the poison reads green and the missile violet.
+        foreach (var b in Bolts)
+            ents.Add(new REnt { t = "proj", x = b.Pos.X, y = b.Pos.Y, r = 6, c = b.Color, f = (float)Math.Atan2(b.Vel.Y, b.Vel.X) });
+
         foreach (var sl in Slashes)
             ents.Add(new REnt { t = sl.Nova ? "nova" : "slash", x = sl.Pos.X, y = sl.Pos.Y, f = sl.Angle, c = sl.Color, life = sl.Life, r = sl.Radius });
 
@@ -86,6 +91,21 @@ public partial class World
         {
             phase = Phase,
             enemies = Husks.Count,
+            asleep = Husks.Count(k => k.State == AiState.Sleep),
+            chasing = Husks.Count(k => k.State == AiState.Chase),
+            fleeing = Husks.Count(k => k.State == AiState.Flee),
+            bolts = Bolts.Count,
+            enemyKinds = string.Join(",", Husks.Select(k => k.Def.Id).Distinct()),
+            nearestTiles = NearestCreatureTiles(out var nd, out var nk),
+            nearDx = nd.X, nearDy = nd.Y,
+            nearKind = nk?.Def.Id ?? "", nearState = nk?.State.ToString() ?? "",
+            nearAbility = nk?.Def.Ability.ToString() ?? "",
+            casterTiles = NearestCasterTiles(out var cd), casterDx = cd.X, casterDy = cd.Y,
+            inSafeZone = Party.Count > 0 && Active < Party.Count
+                         && InSafeZone(Party[Active].Pos.X, Party[Active].Pos.Y),
+            heroTx = Party.Count > 0 && Active < Party.Count ? (int)(Party[Active].Pos.X / TILE) : 0,
+            heroTy = Party.Count > 0 && Active < Party.Count ? (int)(Party[Active].Pos.Y / TILE) : 0,
+            castsFired = MonsterCastsFired, boltsFired = MonsterBoltsFired,
             stage = Stage,
             level = Level,
             region = RegionName,
@@ -126,6 +146,11 @@ public partial class World
                 key = h.Def.Key, name = h.Def.Name, cls = h.Def.HeroClass, hp = Math.Max(0, h.Hp), mhp = h.MaxHp,
                 mana = Math.Max(0, h.Mana), mmana = h.MaxMana,
                 stam = Math.Max(0, h.Stamina), mstam = h.MaxStamina,
+                // Each hero's own progression, so switching shows theirs and a test
+                // can prove a kill paid one hero and not the others.
+                level = CharacterStats.ProgressOf(h.Def.Key).Level,
+                xp = CharacterStats.ProgressOf(h.Def.Key).Xp,
+                xpNext = CharacterStats.ProgressOf(h.Def.Key).XpNext,
                 active = i == Active, dead = !h.Alive, color = h.Def.ColorAccent,
                 abilityReady = h.AbilityCool <= 0 && h.Mana >= h.AbilityCost,
                 abilityAffordable = h.Mana >= h.AbilityCost,

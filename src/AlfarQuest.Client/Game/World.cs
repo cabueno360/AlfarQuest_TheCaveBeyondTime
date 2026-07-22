@@ -43,6 +43,11 @@ public partial class World
 
     public List<Projectile> Shots = new();
 
+    /// <summary>Hostile projectiles — the monsters' spit, bolts and missiles.
+    /// Kept apart from the heroes' <see cref="Shots"/> so each only ever harms the
+    /// other side, without a friendly-fire flag on every projectile.</summary>
+    public List<Projectile> Bolts = new();
+
     public List<Slash> Slashes = new();
 
     public List<Particle> Fx = new();
@@ -157,33 +162,20 @@ public partial class World
         foreach (var k in Husks)
         {
             k.HitCool = Math.Max(0, k.HitCool - dt);
+            k.AbilityCool = Math.Max(0, k.AbilityCool - dt);
             var target = NearestHero(k.Pos);
             var dir = StepAi(k, target, dt);
             k.Pos = MoveBlocked(k.Pos, dir * k.Speed * dt + k.Knock, 13f);
             k.Knock *= 0.86f;
             if (target is not null)
             {
-                if ((target.Pos - k.Pos).Len() < 30 && k.HitCool <= 0 && target.IFrames <= 0)
+                // The one trick takes priority over the bite on the frame it
+                // fires — a caster keeps its distance, a pounder leads with the
+                // pound — and only while actually hunting, never mid-patrol.
+                bool cast = k.State == AiState.Chase && MonsterAct(k, target);
+                if (!cast && (target.Pos - k.Pos).Len() < 30 && k.HitCool <= 0 && target.IFrames <= 0)
                 {
-                    // Steady Guard turns some blows aside entirely. Written as a
-                    // branch rather than `continue`: this sits inside the husk
-                    // loop, and skipping the rest of the iteration would also skip
-                    // that husk's collision resolve, clamp and flash decay.
-                    if (target.BlockChance > 0 && _rng.NextDouble() < target.BlockChance)
-                    {
-                        Play("block", target.Pos, (target.Pos - k.Pos).Norm());
-                        Floaters.Add(new FloatText(target.Pos + new Vec(0, -20), "block", "#cfd6ff"));
-                    }
-                    else
-                    {
-                        var taken = target.Absorb(k.Def.Damage, k.Def.Magical);
-                        target.Hp -= taken;
-                        target.Flash = 0.15f;
-                        Play("hit_flesh", target.Pos, (target.Pos - k.Pos).Norm());
-                        Floaters.Add(new FloatText(target.Pos + new Vec(0, -22),
-                                                   $"-{taken:0}", "#e2687a"));
-                        Shake = Math.Max(Shake, 0.35f);
-                    }
+                    HurtHero(target, k.Def.Damage, (target.Pos - k.Pos).Norm(), k.Def.Magical);
                     k.HitCool = 0.8f;
                 }
             }
@@ -214,6 +206,8 @@ public partial class World
             {
                 if ((k.Pos - s.Pos).Len() < 22 + k.R)
                 {
+                    if (!string.IsNullOrEmpty(s.Owner)) k.LastHitBy = s.Owner;
+                    Alert(k, k.Pos);           // a struck creature rouses its neighbours
                     k.Hp -= s.Damage; k.Flash = 0.15f;
                     k.Knock += s.Vel.Norm() * 46f;
                     Burst(s.Pos, s.Color, 6);
@@ -222,6 +216,9 @@ public partial class World
             }
         }
         Shots.RemoveAll(s => s.Life <= 0 || Outside(s.Pos));
+
+        // --- hostile bolts (the monsters' spit and missiles) ---
+        UpdateBolts(dt);
 
         // --- slashes (melee arcs, damage applied on spawn; here just fade) ---
         foreach (var sl in Slashes) sl.Life -= dt;

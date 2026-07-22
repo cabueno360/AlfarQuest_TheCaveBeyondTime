@@ -49,14 +49,23 @@ public partial class World
 
     // ---- awarding ---------------------------------------------------
 
-    /// <summary>Pays XP, floats the text, and celebrates if it levelled anyone.
-    /// Every reward in the game funnels through here, so the feedback is
-    /// identical whatever earned it.</summary>
+    /// <summary>The hero who earns a reward that has no striker — a discovery
+    /// walked into, a chest opened. Whoever is being steered gets it, because they
+    /// are the one who did the thing.</summary>
+    string SteeredKey => Party.Count > 0 && Active < Party.Count ? Party[Active].Def.Key : "";
+
+    /// <summary>Pays XP to the steered hero. For loot and discoveries, whose owner
+    /// is simply whoever picked them up.</summary>
     void Award(int xp, XpSource source, Vec at, string? label = null)
+        => AwardTo(SteeredKey, xp, source, at, label);
+
+    /// <summary>Pays XP to one named hero, floats the text, and celebrates if it
+    /// levelled them. Every reward funnels through here, so the feedback is
+    /// identical whatever earned it — only who is credited changes.</summary>
+    void AwardTo(string heroKey, int xp, XpSource source, Vec at, string? label = null)
     {
         var award = XpAward.For(source);
-        var lead = Party.Count > 0 && Active < Party.Count ? Party[Active].Def.Key : "";
-        var levels = RewardBridge.Grant(xp, source, lead);
+        var levels = RewardBridge.Grant(xp, source, heroKey);
 
         Floaters.Add(new FloatText(at, label ?? award.Label, award.Colour));
         Floaters.Add(new FloatText(at + new Vec(0, -16), $"+{xp} XP", "#cfe8ff"));
@@ -254,6 +263,10 @@ public partial class World
             ? (XpSource.MiniBoss, Math.Max(k.Def.Xp, XpAward.Value(XpSource.MiniBoss)))
             : (XpSource.Kill, k.Def.Xp);
 
-        Award(xp, source, k.Pos, k.Def.MiniBoss ? XpAward.For(XpSource.MiniBoss).Label : "");
+        // The killing blow decides it. A creature that died with no striker on
+        // record — nothing does this yet, but a trap or a hazard would — pays the
+        // steered hero rather than nobody.
+        var killer = k.LastHitBy ?? SteeredKey;
+        AwardTo(killer, xp, source, k.Pos, k.Def.MiniBoss ? XpAward.For(XpSource.MiniBoss).Label : "");
     }
 }

@@ -333,6 +333,19 @@ export function sfxCount() { return sfxPlayed(); }
 /// played.
 export function lastSounds() { return lastState?.sounds ?? []; }
 
+/// The creature catalogue as data. A seam for the probe to assert the bestiary is
+/// varied and lore-placed, without depending on what happened to spawn.
+export function bestiary() {
+    try { return JSON.parse(DotNet.invokeMethod(ASM, "Bestiary")); } catch { return []; }
+}
+
+/// Stages a controlled encounter — the party on open ground, creatures around it,
+/// already hunting. A test seam so the AI can be watched on a deterministic stage
+/// rather than wherever a headless walk happened to end up. Never used in play.
+export function debugEncounter() {
+    try { DotNet.invokeMethod(ASM, "DebugEncounter"); } catch { /* engine not up */ }
+}
+
 /// Every sound family raised since the last reset. A sparse event lives in the
 /// payload for one frame, so a polling probe misses it; this accumulates.
 const _familiesSeen = new Set();
