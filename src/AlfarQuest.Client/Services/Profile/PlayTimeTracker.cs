@@ -76,7 +76,9 @@ public sealed class PlayTimeTracker(PartyState party, ProfileService profiles)
         {
             CurrentCharacter = party.Selected?.Name,
             HighestLevel = party.Members.Count == 0 ? 0 : party.Members.Max(m => m.Level),
-            TotalGold = party.Purse["gold"],
+            // Gold is per hero now; the profile's total is the party's purse across
+            // all of them (or the shared pool, if that mode is on).
+            TotalGold = party.SharedGold ? party.SharedPurse["gold"] : party.Members.Sum(m => m.Purse["gold"]),
             TotalPlayTimeSeconds = unreported,
         });
     }

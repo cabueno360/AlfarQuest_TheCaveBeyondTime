@@ -26,16 +26,30 @@
         }
         else
         {
+            @if (HasSave)
+            {
+                @* The save at a glance — where the party stands, and when. Per-hero
+                   level and gear ride on the cards below. *@
+                <dl class="aq-save-strip">
+                    <div><dt>Location</dt><dd>@Location</dd></div>
+                    <div><dt>Last played</dt><dd>@LastPlayed</dd></div>
+                    <div><dt>Party time</dt><dd>@PartyPlayTime</dd></div>
+                </dl>
+            }
+
             <div class="aq-heroes">
                 @foreach (var hero in Heroes)
                 {
                     <HeroCard Hero="hero"
+                              Progress="ProgressFor(hero.Key)"
                               Selected="@(Lead == hero.Key)"
                               SelectedChanged="SelectLead" />
                 }
             </div>
 
-            <button class="aq-btn aq-begin" @onclick="Begin">Begin the Descent</button>
+            <button class="aq-btn aq-begin" @onclick="Begin">
+                @(HasSave ? "Continue the Descent" : "Begin the Descent")
+            </button>
 
             <button type="button" class="aq-mute" title="Mute / unmute the intro"
                     @onclick="ToggleMusic">@(Muted ? "🔇" : "🔊") <span>Intro theme</span></button>

@@ -34,6 +34,10 @@ public class Hero
     public float MaxHp => Def.BaseHp + CharacterStats.For(Def.Key).BonusMaxHp;
     public Vec DashVel;
     public bool Alive => Hp > 0;
+
+    /// <summary>Whether this hero's death has already been tallied, so a hero that
+    /// stays down does not count as dying on every frame.</summary>
+    public bool DeathCounted;
     public Hero(Lore.HeroDef def, Vec pos)
     {
         Def = def; Pos = pos;

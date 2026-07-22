@@ -15,6 +15,7 @@ public class GameDbContext : DbContext
     public DbSet<SaveContainer> SaveContainers => Set<SaveContainer>();
     public DbSet<SaveContainerItem> SaveContainerItems => Set<SaveContainerItem>();
     public DbSet<SaveEquipment> SaveEquipment => Set<SaveEquipment>();
+    public DbSet<SaveHeroTally> SaveHeroTallies => Set<SaveHeroTally>();
 
     public DbSet<PlayerAccount> Accounts => Set<PlayerAccount>();
     public DbSet<PlayerSession> Sessions => Set<PlayerSession>();
@@ -42,6 +43,14 @@ public class GameDbContext : DbContext
             .HasForeignKey(e => e.SaveHeroId)
             .OnDelete(DeleteBehavior.Cascade);
         b.Entity<SaveEquipment>().Property(e => e.ItemId).HasMaxLength(40);
+
+        b.Entity<SaveHero>()
+            .HasMany(h => h.Belongings)
+            .WithOne()
+            .HasForeignKey(t => t.SaveHeroId)
+            .OnDelete(DeleteBehavior.Cascade);
+        b.Entity<SaveHeroTally>().Property(t => t.Kind).HasMaxLength(20);
+        b.Entity<SaveHeroTally>().Property(t => t.TallyKey).HasMaxLength(60);
 
         b.Entity<PlayerSave>()
             .HasMany(s => s.Belongings)

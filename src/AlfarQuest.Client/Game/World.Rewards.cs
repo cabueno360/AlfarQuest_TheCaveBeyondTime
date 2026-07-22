@@ -164,6 +164,7 @@ public partial class World
 
             Claim(thing.Name);
             Record(thing);
+            StatBridge.Record(SteeredKey, HeroStats.Kind.TreasuresOpened);
             Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
         }
 
@@ -179,7 +180,7 @@ public partial class World
         // Offered to the interface. If nothing is listening — a test, or before
         // the party loads — the contents go straight to the party instead, so the
         // simulation never depends on a window existing.
-        if (!ContainerBridge.Offer(new OpenedContainer(thing.Name, thing.Kind, contents)))
+        if (!ContainerBridge.Offer(new OpenedContainer(thing.Name, thing.Kind, contents, SteeredKey)))
             TakeEverything(thing);
 
         return true;
@@ -191,9 +192,10 @@ public partial class World
     {
         if (thing.Contents is not { } c) return;
 
-        if (c.Coin > 0) LootBridge.Drop("Coins", c.Coin);
-        foreach (var (id, n) in c.Materials) LootBridge.Drop(id, n);
-        foreach (var id in c.Items) LootBridge.Drop(id, 1);
+        var owner = SteeredKey;
+        if (c.Coin > 0) LootBridge.Drop("Coins", c.Coin, owner);
+        foreach (var (id, n) in c.Materials) LootBridge.Drop(id, n, owner);
+        foreach (var id in c.Items) LootBridge.Drop(id, 1, owner);
         c.Clear();
         Record(thing);
     }
@@ -267,6 +269,8 @@ public partial class World
         // record — nothing does this yet, but a trap or a hazard would — pays the
         // steered hero rather than nobody.
         var killer = k.LastHitBy ?? SteeredKey;
+        StatBridge.Record(killer, HeroStats.Kind.EnemiesDefeated);
+        if (k.Def.MiniBoss) StatBridge.Record(killer, HeroStats.Kind.BossesDefeated);
         AwardTo(killer, xp, source, k.Pos, k.Def.MiniBoss ? XpAward.For(XpSource.MiniBoss).Label : "");
     }
 }

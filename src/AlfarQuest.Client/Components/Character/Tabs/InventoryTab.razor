@@ -14,7 +14,7 @@
     <section class="aq-card">
         <header class="aq-card-head">
             <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
-            <span class="aq-cw-badge pack">@Party.Bag.Items.Count / @Party.Bag.Capacity</span>
+            <span class="aq-cw-badge pack">@Character.Bag.Items.Count / @Character.Bag.Capacity</span>
         </header>
         <div class="aq-card-body">
             <InventoryToolbar />
@@ -25,12 +25,12 @@
                            OnEquip="Equip"
                            EmptyMessage="@EmptyMessage" />
 
-            @if (Shown.Count != Party.Bag.Items.Count)
+            @if (Shown.Count != Character.Bag.Items.Count)
             {
                 @* Saying what the filter is hiding, so a pack that looks empty is
                    never mistaken for a pack that is. *@
                 <p class="aq-pack-note">
-                    Showing @Shown.Count of @Party.Bag.Items.Count.
+                    Showing @Shown.Count of @Character.Bag.Items.Count.
                     <button type="button" class="aq-link-btn" @onclick="Reset">Clear filters</button>
                 </p>
             }
@@ -52,7 +52,7 @@
                 <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
             </header>
             <div class="aq-card-body">
-                <MoneyPanel Wallet="Party.Purse" />
+                <MoneyPanel Wallet="Party.PurseFor(Character)" />
             </div>
         </section>
     </div>
@@ -62,9 +62,9 @@
     [Parameter, EditorRequired] public required Models.Character Character { get; set; }
 
     private IReadOnlyList<Item> Shown =>
-        [.. ItemFilter.Apply(Party.Bag.Items, State.Filter, State.Search, State.Sort)];
+        [.. ItemFilter.Apply(Character.Bag.Items, State.Filter, State.Search, State.Sort)];
 
-    private string EmptyMessage => Party.Bag.Items.Count == 0
+    private string EmptyMessage => Character.Bag.Items.Count == 0
         ? "The pack is empty."
         : "Nothing here matches that.";
 

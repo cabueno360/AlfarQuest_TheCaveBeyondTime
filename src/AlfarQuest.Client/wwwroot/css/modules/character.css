@@ -210,6 +210,15 @@
 .aq-ledger dd { margin: 0; font-size: .86rem; font-variant-numeric: tabular-nums; }
 .aq-ledger dd.hi { color: var(--aq-gold-soft); }
 
+/* The per-hero record — same rhythm as the ledger, a shade denser because it has
+   more rows and none of them is a headline. */
+.aq-record { display: flex; flex-direction: column; gap: .15rem; margin: .2rem 0 0; }
+.aq-record div { display: flex; justify-content: space-between; gap: 1rem; padding: .12rem 0;
+    border-bottom: 1px dotted rgba(185, 199, 255, .08); }
+.aq-record dt { font-size: .76rem; color: var(--aq-muted); }
+.aq-record dd { margin: 0; font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--aq-text); }
+.aq-record dd.hi { color: var(--aq-gold-soft); }
+
 /* ---------- attributes ---------- */
 .aq-attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .35rem .9rem; }
 

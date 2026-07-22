@@ -50,6 +50,25 @@ public static class SaveMappings
         },
         Skills = [.. p.Skills.Select(s => new SavedSkillDto { SkillId = s.SkillId, Rank = s.Rank })],
         Equipped = [.. p.Equipped.Select(e => e.ItemId)],
+        // The hero's own pack and purse are one child table split by kind on the
+        // way out — pack items and coin, sharing the tally shape.
+        Inventory = [.. p.Belongings.Where(t => t.Kind == TallyKind.PackItem)
+            .Select(t => new SaveTallyDto { Kind = t.Kind, Key = t.TallyKey, Count = t.Count })],
+        Purse = [.. p.Belongings.Where(t => t.Kind == TallyKind.Currency)
+            .Select(t => new SaveTallyDto { Kind = t.Kind, Key = t.TallyKey, Count = t.Count })],
+        Statistics = new HeroStatsDto
+        {
+            EnemiesDefeated = p.StatEnemiesDefeated,
+            BossesDefeated = p.StatBossesDefeated,
+            Deaths = p.StatDeaths,
+            DamageDealt = p.StatDamageDealt,
+            DamageTaken = p.StatDamageTaken,
+            TreasuresOpened = p.StatTreasuresOpened,
+            ItemsCollected = p.StatItemsCollected,
+            GoldEarned = p.StatGoldEarned,
+            DistanceWalked = p.StatDistanceWalked,
+            PlaySeconds = p.StatPlaySeconds,
+        },
     };
 
     public static SaveHero ToEntity(this SaveHeroDto p) => new()
@@ -64,8 +83,24 @@ public static class SaveMappings
         SpentWisdom = p.Spent.Wisdom,
         SpentDefense = p.Spent.Defense,
         SpentLuck = p.Spent.Luck,
+        StatEnemiesDefeated = p.Statistics.EnemiesDefeated,
+        StatBossesDefeated = p.Statistics.BossesDefeated,
+        StatDeaths = p.Statistics.Deaths,
+        StatDamageDealt = p.Statistics.DamageDealt,
+        StatDamageTaken = p.Statistics.DamageTaken,
+        StatTreasuresOpened = p.Statistics.TreasuresOpened,
+        StatItemsCollected = p.Statistics.ItemsCollected,
+        StatGoldEarned = p.Statistics.GoldEarned,
+        StatDistanceWalked = p.Statistics.DistanceWalked,
+        StatPlaySeconds = p.Statistics.PlaySeconds,
         Skills = [.. p.Skills.Select(s => new SaveSkill { SkillId = s.SkillId, Rank = s.Rank })],
         Equipped = [.. p.Equipped.Select(id => new SaveEquipment { ItemId = id })],
+        // Pack and purse folded back into one child table, tagged by kind.
+        Belongings =
+        [
+            .. p.Inventory.Select(t => new SaveHeroTally { Kind = TallyKind.PackItem, TallyKey = t.Key, Count = t.Count }),
+            .. p.Purse.Select(t => new SaveHeroTally { Kind = TallyKind.Currency, TallyKey = t.Key, Count = t.Count }),
+        ],
     };
 
     public static HeroDto ToDto(this HeroEntity h) => new()

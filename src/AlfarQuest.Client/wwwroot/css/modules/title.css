@@ -93,6 +93,31 @@
 .aq-hero-title { color: var(--aq-gold-soft); font-size: .82rem; font-style: italic; letter-spacing: .03rem; }
 .aq-hero-desc { color: var(--aq-muted); font-size: .86rem; margin-top: .55rem; line-height: 1.45; }
 
+/* The save at a glance, above the roster. */
+.aq-save-strip { display: flex; justify-content: center; gap: 2.2rem; flex-wrap: wrap;
+    margin: 0 0 1.4rem; padding: .7rem 1.2rem; list-style: none;
+    background: rgba(12, 10, 26, .5); border: 1px solid rgba(185, 199, 255, .14);
+    border-radius: 12px; }
+.aq-save-strip div { display: flex; flex-direction: column; align-items: center; gap: .1rem; margin: 0; }
+.aq-save-strip dt { font-size: .68rem; letter-spacing: .1rem; text-transform: uppercase; color: var(--aq-muted); }
+.aq-save-strip dd { margin: 0; font-family: 'Cinzel', serif; font-size: .92rem; color: var(--aq-gold-soft); }
+
+/* Per-hero saved progression on the card: a level pip on the portrait, an XP bar
+   and a row of worn-gear icons. */
+.aq-hero-level { position: absolute; top: .5rem; right: .5rem; z-index: 2;
+    font-family: 'Cinzel', serif; font-size: .74rem; font-weight: 600; letter-spacing: .04rem;
+    color: #1a1533; background: var(--aq-gold-soft); padding: .12rem .5rem; border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+.aq-hero-xp { height: 5px; margin-top: .5rem; border-radius: 999px; overflow: hidden;
+    background: rgba(185, 199, 255, .16); }
+.aq-hero-xp-bar { display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #6fd0ff, #d8b45a); }
+.aq-hero-gear { display: flex; gap: .3rem; margin-top: .55rem; flex-wrap: wrap; min-height: 1.5rem; }
+.aq-hero-gear-slot { display: inline-flex; align-items: center; justify-content: center;
+    width: 1.5rem; height: 1.5rem; font-size: .9rem; border-radius: 6px;
+    background: rgba(0,0,0,.4); border: 1px solid rgba(185, 199, 255, .18); }
+.aq-hero-gear-empty { font-size: .78rem; font-style: italic; color: var(--aq-muted); }
+
 .aq-lead-badge {
     position: absolute; top: .7rem; right: .7rem; opacity: 0;
     font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .12rem;

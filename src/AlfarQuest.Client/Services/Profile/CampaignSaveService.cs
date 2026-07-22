@@ -57,6 +57,14 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
                 ToAttributes(hero.Spent),
                 hero.Skills.Select(s => (s.SkillId, s.Rank)));
 
+            // This hero's own pack, purse and record.
+            c.RestoreInventory(hero.Inventory
+                .Where(t => t.Kind == TallyKind.PackItem)
+                .SelectMany(t => ItemCatalog.Find(t.Key) is { } item
+                    ? Enumerable.Repeat(item, t.Count) : []));
+            c.RestoreGold(hero.Purse.Select(t => (t.Key, (long)t.Count)));
+            c.RestoreStats(FromStatsDto(hero.Statistics));
+
             // Worn gear last, so it lands on a sheet whose attributes are already
             // the saved ones — the item's bonuses fold into totals either way, but
             // restoring in this order keeps a half-applied sheet from ever existing.
@@ -99,16 +107,19 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
     /// two sets of boots and an extra 120 gold every time they came back.</summary>
     private void RestoreBelongings(IReadOnlyList<SaveTallyDto> tallies)
     {
-        party.Purse.Clear();
+        // Only the shared things live at the party level now: the material pouch,
+        // the shared stash, and — if that mode is on — the shared gold pool. Each
+        // hero's own purse and pack are restored per hero, above.
         party.Pouch.Clear();
-        party.Bag.Clear();
+        party.Stash.Clear();
+        party.SharedPurse.Clear();
 
         foreach (var t in tallies)
         {
             switch (t.Kind)
             {
                 case TallyKind.Currency:
-                    party.Purse.Set(t.Key, t.Count);
+                    party.SharedPurse.Set(t.Key, t.Count);
                     break;
 
                 case TallyKind.Material:
@@ -116,27 +127,29 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
                     break;
 
                 case TallyKind.PackItem:
-                    // An id the game no longer defines is skipped, not fatal: a
-                    // retired item should cost the player that item, not the save.
+                    // The shared stash. An id the game no longer defines is skipped,
+                    // not fatal: a retired item should cost that item, not the save.
                     if (ItemCatalog.Find(t.Key) is { } item)
-                        for (var i = 0; i < t.Count; i++) party.Bag.Add(item);
+                        for (var i = 0; i < t.Count; i++) party.Stash.Add(item);
                     break;
             }
         }
     }
 
-    /// <summary>Coin, materials and pack, flattened to keyed counts. The pack is
-    /// grouped because it is a list that may hold the same item twice.</summary>
+    /// <summary>The shared belongings, flattened to keyed counts: the material
+    /// pouch, the shared stash, and the shared gold pool when that mode is on.
+    /// Each hero's own purse and pack are written per hero, not here.</summary>
     private IEnumerable<SaveTallyDto> Belongings()
     {
-        foreach (var (currency, amount) in party.Purse.Held())
-            yield return new SaveTallyDto { Kind = TallyKind.Currency, Key = currency.Key, Count = (int)amount };
-
         foreach (var (material, count) in party.Pouch.Held())
             yield return new SaveTallyDto { Kind = TallyKind.Material, Key = material.Id, Count = count };
 
-        foreach (var group in party.Bag.Items.GroupBy(i => i.Id))
+        foreach (var group in party.Stash.Items.GroupBy(i => i.Id))
             yield return new SaveTallyDto { Kind = TallyKind.PackItem, Key = group.Key, Count = group.Count() };
+
+        if (party.SharedGold)
+            foreach (var (currency, amount) in party.SharedPurse.Held())
+                yield return new SaveTallyDto { Kind = TallyKind.Currency, Key = currency.Key, Count = (int)amount };
     }
 
     /// <summary>A container's state, with its remainder flattened to keyed
@@ -181,6 +194,50 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         },
         Skills = [.. c.Skills.Learned().Select(s => new SavedSkillDto { SkillId = s.SkillId, Rank = s.Rank })],
         Equipped = [.. c.Gear.Worn.Select(i => i.Id)],
+        // The hero's own pack, purse and record — the individual half of the save.
+        Inventory =
+        [
+            .. c.Bag.Items.GroupBy(i => i.Id).Select(g => new SaveTallyDto
+            {
+                Kind = TallyKind.PackItem, Key = g.Key, Count = g.Count(),
+            }),
+        ],
+        Purse =
+        [
+            .. c.Purse.Held().Select(h => new SaveTallyDto
+            {
+                Kind = TallyKind.Currency, Key = h.Currency.Key, Count = (int)h.Amount,
+            }),
+        ],
+        Statistics = ToStatsDto(c.Stats),
+    };
+
+    private static HeroStatsDto ToStatsDto(HeroStats s) => new()
+    {
+        EnemiesDefeated = s.EnemiesDefeated,
+        BossesDefeated = s.BossesDefeated,
+        Deaths = s.Deaths,
+        DamageDealt = s.DamageDealt,
+        DamageTaken = s.DamageTaken,
+        TreasuresOpened = s.TreasuresOpened,
+        ItemsCollected = s.ItemsCollected,
+        GoldEarned = s.GoldEarned,
+        DistanceWalked = s.DistanceWalked,
+        PlaySeconds = s.PlaySeconds,
+    };
+
+    private static HeroStats FromStatsDto(HeroStatsDto d) => new()
+    {
+        EnemiesDefeated = d.EnemiesDefeated,
+        BossesDefeated = d.BossesDefeated,
+        Deaths = d.Deaths,
+        DamageDealt = d.DamageDealt,
+        DamageTaken = d.DamageTaken,
+        TreasuresOpened = d.TreasuresOpened,
+        ItemsCollected = d.ItemsCollected,
+        GoldEarned = d.GoldEarned,
+        DistanceWalked = d.DistanceWalked,
+        PlaySeconds = d.PlaySeconds,
     };
 
     private static Attributes ToAttributes(SpentAttributesDto s) => new()

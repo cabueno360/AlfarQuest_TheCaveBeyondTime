@@ -22,7 +22,10 @@ public partial class World
             var count = item == "Coins"
                 ? 3 + _rng.Next(9)
                 : 1 + (int)MathF.Floor(yield + (float)_rng.NextDouble() * yield);
-            LootBridge.Drop(item, count);
+            // To whoever is being steered — the one who walked up to the kill and
+            // its spoils. XP goes to the killer; the loot goes to the one holding
+            // the reins, which is usually but not always the same hero.
+            LootBridge.Drop(item, count, SteeredKey);
             Floaters.Add(new FloatText(k.Pos, item == "Coins" ? $"+{count} coins" : $"+{item}",
                                        item == "Coins" ? "#f0d99a" : "#9fe4ff"));
         }

@@ -48,4 +48,6 @@ public static class ContainerBridge
 
 /// <param name="Key">The container's unique name, so taking from it can be
 /// written back against the right one.</param>
-public sealed record OpenedContainer(string Key, ContainerKind Kind, LootStack Contents);
+/// <param name="Owner">The hero who opened it, so what is taken goes into their
+/// pack and purse — loot belongs to whoever reached the chest.</param>
+public sealed record OpenedContainer(string Key, ContainerKind Kind, LootStack Contents, string Owner = "");

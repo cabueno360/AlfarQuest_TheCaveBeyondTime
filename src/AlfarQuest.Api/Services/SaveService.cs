@@ -17,6 +17,7 @@ public sealed class SaveService(GameDbContext db)
         await db.Saves
             .Include(s => s.Party).ThenInclude(h => h.Skills)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
+            .Include(s => s.Party).ThenInclude(h => h.Belongings)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
             .Include(s => s.Containers).ThenInclude(c => c.Remaining)
@@ -29,6 +30,7 @@ public sealed class SaveService(GameDbContext db)
         [.. (await db.Saves
                 .Include(s => s.Party).ThenInclude(h => h.Skills)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
+            .Include(s => s.Party).ThenInclude(h => h.Belongings)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
             .Include(s => s.Containers).ThenInclude(c => c.Remaining)
@@ -93,6 +95,7 @@ public sealed class SaveService(GameDbContext db)
     {
         var save = await db.Saves.Include(s => s.Party).ThenInclude(h => h.Skills)
             .Include(s => s.Party).ThenInclude(h => h.Equipped)
+            .Include(s => s.Party).ThenInclude(h => h.Belongings)
             .Include(s => s.Claims)
             .Include(s => s.Belongings)
             .Include(s => s.Containers).ThenInclude(c => c.Remaining)
@@ -105,6 +108,7 @@ public sealed class SaveService(GameDbContext db)
         // at SaveChanges, and the grandchildren of the hero rows go first of all.
         db.SaveSkills.RemoveRange(save.Party.SelectMany(h => h.Skills));
         db.SaveEquipment.RemoveRange(save.Party.SelectMany(h => h.Equipped));
+        db.SaveHeroTallies.RemoveRange(save.Party.SelectMany(h => h.Belongings));
         db.SaveHeroes.RemoveRange(save.Party);
         db.SaveClaims.RemoveRange(save.Claims);
         db.SaveTallies.RemoveRange(save.Belongings);

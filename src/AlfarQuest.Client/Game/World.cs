@@ -1,3 +1,5 @@
+using AlfarQuest.Client.Models;
+
 namespace AlfarQuest.Client.Game;
 
 // =====================================================================
@@ -129,7 +131,14 @@ public partial class World
         for (int i = 0; i < Party.Count; i++)
         {
             var h = Party[i];
-            if (!h.Alive) continue;
+            if (!h.Alive)
+            {
+                // Tallied once, on the frame they fall — not every frame they lie
+                // there. Reset when they are back up, so a later death counts too.
+                if (!h.DeathCounted) { h.DeathCounted = true; StatBridge.Record(h.Def.Key, HeroStats.Kind.Deaths); }
+                continue;
+            }
+            h.DeathCounted = false;
             bool isActive = i == Active;
             h.Cool = Math.Max(0, h.Cool - dt);
             h.AbilityCool = Math.Max(0, h.AbilityCool - dt);
@@ -206,7 +215,14 @@ public partial class World
             {
                 if ((k.Pos - s.Pos).Len() < 22 + k.R)
                 {
-                    if (!string.IsNullOrEmpty(s.Owner)) k.LastHitBy = s.Owner;
+                    if (!string.IsNullOrEmpty(s.Owner))
+                    {
+                        k.LastHitBy = s.Owner;
+                        // Ranged damage counts too — the bolt goes straight to Hp
+                        // here rather than through Strike, so the tally has to be
+                        // taken at the point of impact.
+                        StatBridge.Record(s.Owner, HeroStats.Kind.DamageDealt, s.Damage);
+                    }
                     Alert(k, k.Pos);           // a struck creature rouses its neighbours
                     k.Hp -= s.Damage; k.Flash = 0.15f;
                     k.Knock += s.Vel.Norm() * 46f;

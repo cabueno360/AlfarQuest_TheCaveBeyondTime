@@ -8,7 +8,10 @@ namespace AlfarQuest.Client.Game;
 /// loot is simply discarded, so the simulation never depends on the UI.</summary>
 public static class LootBridge
 {
-    public static Action<string, int>? OnDrop;
+    /// <summary>item id, count, and the hero the drop belongs to — whoever was
+    /// being steered when it fell. Loot is individual now, so the owner travels
+    /// with every drop rather than the receiver guessing.</summary>
+    public static Action<string, int, string>? OnDrop;
 
     /// <summary>Counters so a test can tell "nothing dropped" apart from "the
     /// drop happened and nobody was listening" — two very different bugs that
@@ -16,11 +19,11 @@ public static class LootBridge
     public static int Attempted { get; private set; }
     public static int Delivered { get; private set; }
 
-    public static void Drop(string item, int count = 1)
+    public static void Drop(string item, int count, string ownerKey)
     {
         Attempted++;
         if (OnDrop is null) return;
-        OnDrop(item, count);
+        OnDrop(item, count, ownerKey);
         Delivered++;
     }
 }

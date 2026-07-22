@@ -33,10 +33,10 @@
     <section class="aq-card">
         <header class="aq-card-head">
             <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
-            <span class="aq-cw-badge pack">@Party.Bag.Items.Count / @Party.Bag.Capacity</span>
+            <span class="aq-cw-badge pack">@Character.Bag.Items.Count / @Character.Bag.Capacity</span>
         </header>
         <div class="aq-card-body">
-            <InventoryGrid Items="Party.Bag.Items"
+            <InventoryGrid Items="Character.Bag.Items"
                            Gear="Character.Gear"
                            View="InventoryView.Compact"
                            OnEquip="Equip"

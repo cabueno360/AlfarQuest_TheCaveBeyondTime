@@ -43,6 +43,16 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var db = scope.ServiceProvider.GetRequiredService<GameDbContext>();
+        // A development escape hatch: the schema is created with EnsureCreated,
+        // which never alters an existing database, so a change to the model needs
+        // the dev database rebuilt. Guarded by config and off by default — it
+        // deletes everything, so it must never fire in production. Set
+        // Dev__ResetDatabase=true for one run after a schema change.
+        if (builder.Configuration.GetValue<bool>("Dev:ResetDatabase"))
+        {
+            app.Logger.LogWarning("Dev:ResetDatabase is set — dropping and recreating the schema.");
+            db.Database.EnsureDeleted();
+        }
         db.Database.EnsureCreated();
     }
     catch (Exception ex)

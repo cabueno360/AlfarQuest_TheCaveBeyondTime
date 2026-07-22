@@ -12,14 +12,33 @@ public sealed class PartyState
     private readonly Dictionary<string, Models.Character> _byKey = [];
 
     public IReadOnlyList<Models.Character> Members { get; private set; } = [];
-    /// <summary>Shared across the party — coin is not carried per hero.</summary>
-    public Wallet Purse { get; } = new();
 
-    /// <summary>Likewise the pack: one party, one set of saddlebags.</summary>
-    public Inventory Bag { get; } = new();
-
-    /// <summary>Gathered materials, separate from worn gear.</summary>
+    /// <summary>Gathered crafting materials — kept shared on purpose. Crafting is a
+    /// party workbench, and splitting the ore between three packs would mean
+    /// shuffling it back together before anything could be made. Inventory and
+    /// gold are individual (on each <see cref="Models.Character"/>); materials are
+    /// not.</summary>
     public Satchel Pouch { get; } = new();
+
+    /// <summary>A store neither hero owns, that any of them can reach — the
+    /// architecture the brief asks for. Off by default: nothing routes here and no
+    /// window shows it yet, but the container exists so turning it on is a feature
+    /// flag, not a rewrite.</summary>
+    public Inventory Stash { get; } = new(48);
+
+    /// <summary>When true, every hero draws from one purse instead of their own —
+    /// the optional shared-gold mode. Off by default: gold is individual. Flipping
+    /// it changes where <see cref="PurseFor"/> points, and nothing else.</summary>
+    public bool SharedGold { get; set; }
+
+    /// <summary>The one purse used when <see cref="SharedGold"/> is on.</summary>
+    public Wallet SharedPurse { get; } = new();
+
+    /// <summary>Which purse a hero spends from and earns into — their own, or the
+    /// shared pool when that mode is on. Every gold path goes through here so the
+    /// two modes never disagree.</summary>
+    public Wallet PurseFor(Models.Character c) => SharedGold ? SharedPurse : c.Purse;
+
     public Models.Character? Selected { get; private set; }
 
     /// <summary>Names of the one-shot rewards this player has taken in the
@@ -40,11 +59,34 @@ public sealed class PartyState
         // here, so nothing else has to remember to keep the two in step.
         // Drops arrive from the simulation and are sorted here: coin to the purse,
         // everything else to the pouch.
-        LootBridge.OnDrop = (item, count) =>
+        // A drop names its owner — whoever was being steered when it fell. Coin
+        // and gear go to that hero (their purse, their pack); materials go to the
+        // shared pouch, because crafting is a party thing. An owner the party does
+        // not know falls back to the selected hero, so a headless run still lands
+        // its loot somewhere real.
+        LootBridge.OnDrop = (item, count, ownerKey) =>
         {
-            if (item == "Coins") Purse.Add("gold", count);
-            else Pouch.Add(item, count);
+            var owner = Find(ownerKey) ?? Selected ?? Members.FirstOrDefault();
+            if (item == "Coins")
+            {
+                if (owner is not null) { PurseFor(owner).Add("gold", count); owner.Stats.Add(HeroStats.Kind.GoldEarned, count); }
+            }
+            else if (Material.Find(item) is not null)
+            {
+                Pouch.Add(item, count);      // materials and keys are shared
+            }
+            else if (ItemCatalog.Find(item) is { } gear && owner is not null)
+            {
+                for (var i = 0; i < count; i++) if (owner.Bag.Add(gear)) owner.Stats.Add(HeroStats.Kind.ItemsCollected, 1);
+            }
             Changed?.Invoke();
+        };
+
+        // Deeds counted against the hero who did them — the engine names the hero
+        // and the statistic, this files it. Individual, never shared.
+        StatBridge.OnStat = (heroKey, kind, amount) =>
+        {
+            if (Find(heroKey) is { } c) { c.Stats.Add(kind, amount); Changed?.Invoke(); }
         };
 
         CharacterStats.PartyFortune = () =>
@@ -124,11 +166,6 @@ public sealed class PartyState
     {
         Members = [.. heroKeys.Select(k => _byKey.TryGetValue(k, out var c) ? c : Create(k))];
         Selected ??= Members.FirstOrDefault();
-        if (Purse["gold"] == 0)
-        {
-            Purse.Set("gold", 120);              // a delver's starting purse
-            foreach (var item in StartingGear.Spares) Bag.Add(item);
-        }
         Changed?.Invoke();
     }
 
@@ -136,6 +173,11 @@ public sealed class PartyState
     {
         var c = new Models.Character(Lore.ByKey(key));
         foreach (var item in StartingGear.For(c.Class)) c.Gear.Equip(item);
+        // Each hero sets out with their own purse and their own loose gear — the
+        // pack and the coin are individual now, so the starting kit is too. A save
+        // that loads afterwards replaces all of it.
+        c.Purse.Set("gold", 120);
+        foreach (var item in StartingGear.Spares) c.Bag.Add(item);
         _byKey[key] = c;
         return c;
     }
@@ -260,17 +302,18 @@ public sealed class PartyState
         return true;
     }
 
-    /// <summary>Moves an item from the pack onto the character. Whatever was in
-    /// that slot goes back into the pack rather than vanishing.</summary>
+    /// <summary>Moves an item from the hero's own pack onto them. Whatever was in
+    /// that slot goes back into that same pack rather than vanishing — a hero
+    /// equips from and unequips to their own inventory, never a shared one.</summary>
     public void Equip(Models.Character c, Item item)
     {
-        if (!Bag.Remove(item)) return;
+        if (!c.Bag.Remove(item)) return;
         var displaced = c.Gear.Equip(item);
-        if (displaced is not null && !Bag.Add(displaced))
+        if (displaced is not null && !c.Bag.Add(displaced))
         {
             // Pack is full: put it back rather than destroy the player's gear.
             c.Gear.Equip(displaced);
-            Bag.Add(item);
+            c.Bag.Add(item);
             return;
         }
         Changed?.Invoke();
@@ -279,22 +322,25 @@ public sealed class PartyState
     public void Unequip(Models.Character c, Slot slot)
     {
         if (c.Gear[slot] is not { } item) return;
-        if (!Bag.Add(item)) return;              // no room: leave it worn
+        if (!c.Bag.Add(item)) return;            // no room: leave it worn
         c.Gear.Unequip(slot);
         Changed?.Invoke();
     }
 
-    /// <summary>Spends the materials and coin, and puts the result in the pack.
+    /// <summary>Spends the shared materials and the crafter's coin, and puts the
+    /// result in the crafter's pack. The crafter is the hero whose sheet is open.
     /// Returns false and changes nothing if anything is short — a partial craft
     /// that ate the materials and produced nothing would be the worst outcome.</summary>
     public bool Craft(Recipe r)
     {
-        if (!r.Affordable(Pouch, Purse)) return false;
-        if (Bag.IsFull) return false;
+        if (Selected is not { } crafter) return false;
+        var purse = PurseFor(crafter);
+        if (!r.Affordable(Pouch, purse)) return false;
+        if (crafter.Bag.IsFull) return false;
 
         foreach (var (mat, n) in r.Cost) Pouch.Add(mat, -n);
-        Purse.Add("gold", -r.CoinCost);
-        Bag.Add(r.Output);
+        purse.Add("gold", -r.CoinCost);
+        crafter.Bag.Add(r.Output);
         Changed?.Invoke();
         return true;
     }

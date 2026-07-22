@@ -71,6 +71,35 @@ public record SaveHeroDto
     /// belong to the game's data, so a rebalance reaches saved gear instead of
     /// being pocketed by it.</summary>
     public IReadOnlyList<string> Equipped { get; init; } = [];
+
+    /// <summary>This hero's own pack, as (item id, count) tallies. Individual now —
+    /// what one hero carries is not what another does.</summary>
+    public IReadOnlyList<SaveTallyDto> Inventory { get; init; } = [];
+
+    /// <summary>This hero's own coin, keyed by currency. Individual, so switching
+    /// leaders shows their purse and not a shared pool.</summary>
+    public IReadOnlyList<SaveTallyDto> Purse { get; init; } = [];
+
+    /// <summary>This hero's record — enemies felled, damage traded, treasures
+    /// opened. Never shared.</summary>
+    public HeroStatsDto Statistics { get; init; } = new();
+}
+
+/// <summary>A hero's tally of deeds. A flat record like <see cref="SpentAttributesDto"/>
+/// so the wire format is compiler-checked and a renamed statistic is a build
+/// error, not a silently dropped column.</summary>
+public record HeroStatsDto
+{
+    public long EnemiesDefeated { get; init; }
+    public long BossesDefeated { get; init; }
+    public long Deaths { get; init; }
+    public long DamageDealt { get; init; }
+    public long DamageTaken { get; init; }
+    public long TreasuresOpened { get; init; }
+    public long ItemsCollected { get; init; }
+    public long GoldEarned { get; init; }
+    public long DistanceWalked { get; init; }
+    public long PlaySeconds { get; init; }
 }
 
 /// <summary>A keyed count belonging to a save.

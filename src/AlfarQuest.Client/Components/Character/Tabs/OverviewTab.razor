@@ -44,7 +44,18 @@
             </dl>
 
             <h4 class="aq-card-sub">Purse</h4>
-            <MoneyPanel Wallet="Party.Purse" />
+            <MoneyPanel Wallet="Party.PurseFor(Character)" />
+
+            <h4 class="aq-card-sub">Record</h4>
+            @* This hero's own deeds — never the party's. A veteran's record and a
+               fresh recruit's stand apart, which is the point of the whole
+               individual-progression change. *@
+            <dl class="aq-record">
+                @foreach (var (label, value) in Character.Stats.Lines())
+                {
+                    <div><dt>@label</dt><dd class="@(value > 0 ? "hi" : "")">@value.ToString("N0")</dd></div>
+                }
+            </dl>
 
             <p class="aq-flavour">@Character.Title</p>
             <p class="aq-flavour dim">@Character.Description</p>

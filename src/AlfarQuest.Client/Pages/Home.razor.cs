@@ -27,7 +27,57 @@ public sealed partial class Home : IAsyncDisposable
     private bool Muted;
     private IJSObjectReference? _music;
 
-    protected override async Task OnInitializedAsync() => Heroes = await Api.GetHeroesAsync();
+    /// <summary>The newest save, if any, so the roster can show each hero at the
+    /// level and gear the player left them — the selection screen the brief asks
+    /// for, where progression is visible before the descent.</summary>
+    private SaveGameDto? _save;
+    private IReadOnlyDictionary<string, SaveHeroDto> _progress =
+        new Dictionary<string, SaveHeroDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Heroes = await Api.GetHeroesAsync();
+
+        // Best-effort: a new player has no save, and the roster simply shows fresh
+        // recruits. A failure here must never keep the player off the title screen.
+        try
+        {
+            var saves = await Api.MySavesAsync();
+            _save = saves.Count > 0 ? saves[0] : null;
+            _progress = _save?.Party.ToDictionary(h => h.HeroKey) ?? _progress;
+        }
+        catch { /* no save, or the server is briefly unreachable */ }
+    }
+
+    private SaveHeroDto? ProgressFor(string key) => _progress.GetValueOrDefault(key);
+
+    /// <summary>Where the party stands and when it last did — the save-level lines
+    /// the selection screen shows above the roster. Null when there is no save to
+    /// summarise, so the markup can leave the strip out for a new player.</summary>
+    private bool HasSave => _save is not null;
+    private string Location => Prettify(_save?.Region);
+    private string LastPlayed => _save is null ? "—" : Ago(_save.UpdatedAt);
+    private string PartyPlayTime => _save is null ? "—" : Duration(_save.PlaytimeSeconds);
+
+    private static string Prettify(string? region) => string.IsNullOrWhiteSpace(region)
+        ? "The approach"
+        : string.Join(' ', region.Replace('_', ' ').Split(' ',
+            StringSplitOptions.RemoveEmptyEntries).Select(w => char.ToUpper(w[0]) + w[1..]));
+
+    private static string Ago(DateTime whenUtc)
+    {
+        var d = DateTime.UtcNow - whenUtc;
+        if (d.TotalMinutes < 1) return "just now";
+        if (d.TotalHours < 1) return $"{(int)d.TotalMinutes} min ago";
+        if (d.TotalDays < 1) return $"{(int)d.TotalHours} h ago";
+        return $"{(int)d.TotalDays} d ago";
+    }
+
+    private static string Duration(long seconds)
+    {
+        var t = TimeSpan.FromSeconds(seconds);
+        return t.TotalHours >= 1 ? $"{(int)t.TotalHours}h {t.Minutes}m" : $"{t.Minutes}m";
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

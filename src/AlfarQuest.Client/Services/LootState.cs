@@ -43,10 +43,17 @@ public sealed class LootState(PartyState party)
         Changed?.Invoke();
     }
 
+    /// <summary>The hero who opened the container, and so owns what comes out of
+    /// it. Falls back to the selected hero if the container carried no owner —
+    /// a container opened before the party loaded, in a test.</summary>
+    private Models.Character? Owner =>
+        (Open is { } c ? party.Find(c.Owner) : null) ?? party.Selected;
+
     public void TakeCoin()
     {
-        if (Open is not { } c || c.Contents.Coin <= 0) return;
-        party.Purse.Add("gold", c.Contents.Coin);
+        if (Open is not { } c || c.Contents.Coin <= 0 || Owner is not { } o) return;
+        party.PurseFor(o).Add("gold", c.Contents.Coin);
+        o.Stats.Add(HeroStats.Kind.GoldEarned, c.Contents.Coin);
         c.Contents.TakeCoin();
         Announce();
     }
@@ -69,7 +76,8 @@ public sealed class LootState(PartyState party)
         // the container forever.
         if (item is null) { c.Contents.TakeItem(index); Announce(); return; }
 
-        if (!party.Bag.Add(item)) { Full = true; Changed?.Invoke(); return; }
+        if (Owner is not { } o || !o.Bag.Add(item)) { Full = true; Changed?.Invoke(); return; }
+        o.Stats.Add(HeroStats.Kind.ItemsCollected, 1);
         c.Contents.TakeItem(index);
         Announce();
     }

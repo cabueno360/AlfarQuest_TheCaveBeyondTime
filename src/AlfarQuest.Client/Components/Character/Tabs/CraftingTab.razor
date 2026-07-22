@@ -16,7 +16,7 @@
             }
         </header>
         <div class="aq-card-body">
-            <CraftingPanel Pouch="Party.Pouch" Purse="Party.Purse"
+            <CraftingPanel Pouch="Party.Pouch" Purse="Party.PurseFor(Character)"
                            AtStation="AtStation" OnCraft="Craft" />
         </div>
     </section>
@@ -36,14 +36,17 @@
                 <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
             </header>
             <div class="aq-card-body">
-                <MoneyPanel Wallet="Party.Purse" />
+                <MoneyPanel Wallet="Party.PurseFor(Character)" />
             </div>
         </section>
     </div>
 </div>
 
 @code {
+    [Parameter, EditorRequired] public required Models.Character Character { get; set; }
     [Parameter] public bool AtStation { get; set; }
 
+    // The crafter is whoever's sheet is open — the material cost comes from the
+    // shared pouch, the coin from this hero's purse, the result into their pack.
     private void Craft(Recipe r) => Party.Craft(r);
 }

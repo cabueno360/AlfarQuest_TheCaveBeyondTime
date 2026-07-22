@@ -137,6 +137,7 @@ public partial class World
 
         var taken = h.Absorb(damage, magical);
         h.Hp -= taken;
+        StatBridge.Record(h.Def.Key, HeroStats.Kind.DamageTaken, (long)MathF.Round(taken));
         h.Flash = 0.15f;
         h.IFrames = MathF.Max(h.IFrames, 0.12f);   // a brief mercy window, so bolts can't stunlock
         Play(magical ? "frost" : "hit_flesh", h.Pos, push);

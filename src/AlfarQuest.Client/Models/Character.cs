@@ -30,6 +30,14 @@ public sealed class Character(Lore.HeroDef def)
     public Loadout Gear { get; } = new();
     public SkillBook Skills { get; } = new();
 
+    /// <summary>This hero's own pack, gold and record. Individual now — what a hero
+    /// picks up, earns and does belongs to them, and switching leaders shows the
+    /// new one's, not a shared pool. Materials stay shared on the party (they feed
+    /// crafting, which is a party workbench), so they are not here.</summary>
+    public Inventory Bag { get; } = new();
+    public Wallet Purse { get; } = new();
+    public HeroStats Stats { get; } = new();
+
     public Attributes Base => Baselines.For(Def.HeroClass);
 
     /// <summary>Everything the sheet is worth: class baseline, points spent, and
@@ -102,6 +110,23 @@ public sealed class Character(Lore.HeroDef def)
         Skills.Clear();
         foreach (var (id, rank) in skills) Skills.Set(id, rank);
     }
+
+    /// <summary>Puts this hero's saved pack, gold and record back. Replaces rather
+    /// than adds — a fresh sheet was handed a starting purse and kit before a save
+    /// loads, and adding would leave a returning hero with two of everything.</summary>
+    public void RestoreInventory(IEnumerable<Item> items)
+    {
+        Bag.Clear();
+        foreach (var item in items) Bag.Add(item);
+    }
+
+    public void RestoreGold(IEnumerable<(string Key, long Amount)> amounts)
+    {
+        Purse.Clear();
+        foreach (var (key, amount) in amounts) Purse.Set(key, amount);
+    }
+
+    public void RestoreStats(HeroStats stats) => Stats.CopyFrom(stats);
 
     public void GainXp(int amount)
     {

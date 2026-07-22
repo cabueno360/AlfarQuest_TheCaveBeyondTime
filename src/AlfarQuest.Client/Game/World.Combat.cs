@@ -114,6 +114,7 @@ public partial class World
         // Whoever lands the last blow owns the kill. XP is individual now — the
         // hero who finishes a creature levels for it, and nobody else does.
         k.LastHitBy = h.Def.Key;
+        StatBridge.Record(h.Def.Key, HeroStats.Kind.DamageDealt, damage);
         Alert(k, k.Pos);           // its cry rouses whatever is nearby
         k.Hp -= damage;
         k.Flash = crit ? 0.28f : 0.15f;

@@ -444,11 +444,12 @@ check('it recorded the points that were spent',
 check('it recorded the claimed rewards',
   (saved?.claimedRewards ?? []).includes('Ashwold Camp'), JSON.stringify(saved?.claimedRewards));
 
-const savedGold = saved?.belongings?.find(t => t.kind === 'currency' && t.key === 'gold')?.count;
-const savedPack = (saved?.belongings ?? []).filter(t => t.kind === 'pack')
-  .reduce((n, t) => n + t.count, 0);
-check('it recorded the purse', savedGold > 0, `${savedGold} gold`);
-check('it recorded the pack', savedPack === 5, `${savedPack} items`);
+// Inventory and gold are individual now, so they ride on the hero, not on the
+// party-level belongings (which hold only the shared materials).
+const savedGold = savedMage?.purse?.find(t => t.key === 'gold')?.count ?? 0;
+const savedPack = (savedMage?.inventory ?? []).reduce((n, t) => n + t.count, 0);
+check('it recorded the mage\'s purse', savedGold > 0, `${savedGold} gold`);
+check('it recorded the mage\'s pack', savedPack === 5, `${savedPack} items`);
 check('it recorded the worn gear', (savedMage?.equipped ?? []).length === 3,
   JSON.stringify(savedMage?.equipped));
 

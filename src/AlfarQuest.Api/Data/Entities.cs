@@ -99,8 +99,38 @@ public class SaveHero
     public int SpentDefense { get; set; }
     public int SpentLuck { get; set; }
 
+    // This hero's record, per statistic. Columns rather than a blob for the same
+    // reason as the spent points above — "how far has anyone got the Thief" is a
+    // question a JSON column cannot answer.
+    public long StatEnemiesDefeated { get; set; }
+    public long StatBossesDefeated { get; set; }
+    public long StatDeaths { get; set; }
+    public long StatDamageDealt { get; set; }
+    public long StatDamageTaken { get; set; }
+    public long StatTreasuresOpened { get; set; }
+    public long StatItemsCollected { get; set; }
+    public long StatGoldEarned { get; set; }
+    public long StatDistanceWalked { get; set; }
+    public long StatPlaySeconds { get; set; }
+
     public List<SaveSkill> Skills { get; set; } = [];
     public List<SaveEquipment> Equipped { get; set; } = [];
+
+    /// <summary>This hero's own pack and purse, as keyed counts — the same shape as
+    /// the party's shared <see cref="SaveTally"/>, but hung off the hero because
+    /// inventory and gold are individual now.</summary>
+    public List<SaveHeroTally> Belongings { get; set; } = [];
+}
+
+/// <summary>A hero's own pack item or coin, keyed and counted. Mirrors
+/// <see cref="SaveTally"/> but scoped to a hero rather than the whole save.</summary>
+public class SaveHeroTally
+{
+    public int Id { get; set; }
+    public int SaveHeroId { get; set; }
+    public string Kind { get; set; } = "";
+    public string TallyKey { get; set; } = "";
+    public int Count { get; set; }
 }
 
 /// <summary>One item a hero is wearing. Only the id: the item's stats live in the
