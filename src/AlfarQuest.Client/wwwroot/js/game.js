@@ -18,6 +18,8 @@ import { buildFloorCanvas, drawFloor } from "./world/floor.js";
 import { buildScenery } from "./world/scenery.js";
 import { drawEntity, drawDecal } from "./render/entities.js";
 import { drawHud, drawFloaters } from "./render/hud.js";
+import { createMusic } from "./music.js";
+import { initSfx, playSounds, setSfxMuted, stopSfx, sfxPlayed } from "./sfx.js";
 
 const ASM = "AlfarQuest.Client";
 
@@ -28,7 +30,14 @@ let raf = 0, running = false, last = 0;
 let paused = false;
 let activeHeroKey = "";      // whoever the player is currently steering
 let lastState = null;       // last frame, so menus can read pools without ticking
-let audio = null, muted = false;
+// Sound on or off for the whole session. The music and effect modules each hold
+// their own gain, but the synthesised level-up chime is made here and needs to
+// know too — kept in step by toggleMute.
+let muted = false;
+// Music is per-session: created by startGame, dropped by stopGame. The stage
+// each track belongs to is remembered so the frame loop can ask for the right
+// one every frame without knowing which is already playing.
+let music = null, tracks = null;
 let onResize = null;
 
 let scenery = null;      // cave scenery, scattered client-side
@@ -164,18 +173,29 @@ function loop(now) {
     }
     lastState = state;
     activeHeroKey = state.hud?.party?.find(p => p.active)?.key || activeHeroKey;
+    // Asked every frame and answered once: play() with the track already on is
+    // deliberately nothing, so this costs a string comparison.
+    const track = tracks?.[state.hud?.stage];
+    if (track) music?.play(track);
+    // The frame's sound events — swings, hits, footfalls, a chest opening. The
+    // engine has already faded each for distance; this just turns them into
+    // voices. Empty on a quiet frame, which is most of them.
+    playSounds(state.sounds);
+    // Accumulated for the probe: a sound is in the payload for a single frame, so
+    // polling snapshots misses sparse events. This rolling set does not.
+    if (state.sounds) for (const s of state.sounds) _familiesSeen.add(s.f);
     render(state);
     raf = requestAnimationFrame(loop);
 }
 
-export function startGame(heroKeysCsv, audioUrl, host) {
+export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
     const el = document.getElementById("gameCanvas");
     if (!el) return;
     initGfx(el);
 
     // Menu keys are bound here rather than on a Blazor element: the canvas holds
     // focus during play, so a DOM handler on the page would never see them.
-    attachInput(el, unlockAudio, (action) => {
+    attachInput(el, (action) => {
         // The action is passed on rather than discarded. It used to be ignored
         // and every menu key toggled the character sheet, which meant Escape —
         // the key for "close this" — opened one instead.
@@ -186,10 +206,15 @@ export function startGame(heroKeysCsv, audioUrl, host) {
 
     loadAtlases(() => { floorCanvas = null; });
 
-    audio = new Audio(audioUrl);
-    audio.loop = true;
-    audio.volume = 0.55;
-    unlockAudio(); // startGame is triggered by a click, so this is usually allowed
+    // Above ground and below it are different places and get different music.
+    // Which one is playing is decided by the world's own stage every frame, not
+    // by a transition handler, so loading a save straight into the mine starts
+    // on the right track rather than switching a moment after arriving.
+    tracks = { 1: approachUrl, 2: cavernUrl };
+    music = createMusic(0.55);
+    // Starts decoding the effect library now, so the first swing has its sound
+    // ready rather than a beat late.
+    initSfx();
 
     DotNet.invokeMethod(ASM, "Init", heroKeysCsv, el.width, el.height);
     running = true;
@@ -201,7 +226,8 @@ export function stopGame() {
     running = false;
     cancelAnimationFrame(raf);
     resetLatch();                       // don't carry a press into the next delve
-    if (audio) { audio.pause(); audio = null; }
+    music?.stop(); music = null; tracks = null;
+    stopSfx();
     detachInput();
     window.removeEventListener("resize", onResize);
 }
@@ -287,11 +313,28 @@ export function hudSnapshot() {
 }
 
 export function toggleMute() {
-    muted = !muted;
-    if (audio) audio.muted = muted;
+    // One button for the whole session's sound: the music and the effects mute
+    // and unmute together. Keyed off the music's state so the two never drift
+    // into one being on while the other is off.
+    muted = music ? music.toggleMuted() : !muted;
+    setSfxMuted(muted);
     return muted;
 }
 
-function unlockAudio() {
-    if (audio && audio.paused && !muted) audio.play().catch(() => { /* will retry on next click */ });
-}
+/// Which track the world's stage has called for. A seam for the probe.
+export function nowPlaying() { return music?.url ?? null; }
+
+/// How many effect voices have started this session. A seam for the probe to
+/// prove a swing reached the speakers, not just the render payload.
+export function sfxCount() { return sfxPlayed(); }
+
+/// The last frame's sound events, before the audio layer touched them. Lets the
+/// probe check the engine raised the right family, separately from whether it
+/// played.
+export function lastSounds() { return lastState?.sounds ?? []; }
+
+/// Every sound family raised since the last reset. A sparse event lives in the
+/// payload for one frame, so a polling probe misses it; this accumulates.
+const _familiesSeen = new Set();
+export function soundFamiliesSeen() { return [..._familiesSeen]; }
+export function resetSoundFamilies() { _familiesSeen.clear(); }

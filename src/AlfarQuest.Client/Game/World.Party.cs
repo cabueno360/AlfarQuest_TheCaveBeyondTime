@@ -47,6 +47,10 @@ public partial class World
             {
                 _stride = 0;
                 Play("footfall", h.Pos + new Vec(0, 6), move * -1f, 0.6f);
+                // The footstep's sound is the one thing about it the catalogue
+                // cannot choose: it depends on the ground. Stone underfoot in the
+                // cave, dirt on the approach. Kept low — a step is not an event.
+                PlaySound(Stage == 2 ? "step_stone" : "step_dirt", h.Pos, 0.4f);
             }
         }
         if (move.Len() > 0.1f) h.Facing = (float)Math.Atan2(move.Y, move.X);

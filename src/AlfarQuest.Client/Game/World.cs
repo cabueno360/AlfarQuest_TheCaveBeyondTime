@@ -90,6 +90,9 @@ public partial class World
     {
         TorchTime += dt;
         Shake = Math.Max(0, Shake - dt * 4f);
+        // Emptied here so the sounds raised during this tick are exactly what the
+        // frame's render payload carries — see World.Sfx.
+        BeginSfxFrame(dt);
 
         // Hit-stop: the world holds still for a fraction of a second after an
         // impact so the blow lands instead of passing through. Particles and the
@@ -189,7 +192,15 @@ public partial class World
             k.Flash = Math.Max(0, k.Flash - dt);
         }
         // Roll before removing: the corpse still knows what species it was.
-        foreach (var dead in Husks.Where(k => k.Hp <= 0)) { AwardKill(dead); RollLoot(dead); }
+        foreach (var dead in Husks.Where(k => k.Hp <= 0))
+        {
+            AwardKill(dead);
+            RollLoot(dead);
+            // A death threw nothing until now — the catalogue had the effects but
+            // nobody played them. Flesh falls to dust; anything conjured comes
+            // apart into light. The sound rides along with each.
+            Play(dead.Def.Material == "flesh" ? "death_dust" : "death_magic", dead.Pos);
+        }
         Husks.RemoveAll(k => k.Hp <= 0);
         UpdateFloaters(dt);
 

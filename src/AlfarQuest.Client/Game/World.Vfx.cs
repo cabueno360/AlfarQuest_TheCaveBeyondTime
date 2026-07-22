@@ -52,6 +52,9 @@ public partial class World
         // Taken, not added: two hits in one frame should not stack into a
         // noticeable freeze.
         if (spec.HitStop > 0) HitStop = MathF.Max(HitStop, spec.HitStop);
+        // The effect's own sound, if it named one. Louder when it was scaled up,
+        // gently, so a big swing is not also twice the volume.
+        if (spec.Sound is { } snd) PlaySound(snd, at, MathF.Min(1f, 0.6f + scale * 0.3f));
     }
 
     void Emit(VfxSpec spec, Vec at, Vec? towards, float scale)

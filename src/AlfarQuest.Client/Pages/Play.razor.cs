@@ -10,6 +10,10 @@ namespace AlfarQuest.Client.Pages;
 
 public sealed partial class Play : IAsyncDisposable
 {
+    // Above ground and below it. Which one plays is decided by the world's own
+    // stage, frame by frame, rather than by a transition — so entering the mine
+    // and loading a save that is already in it sound the same.
+    private const string ApproachTrack = "audio/the-cleric-game.mp3";
     private const string CavernTrack = "audio/ballad-of-the-wandering.mp3";
 
     [Inject] private IJSRuntime JS { get; set; } = default!;
@@ -59,6 +63,7 @@ public sealed partial class Play : IAsyncDisposable
         _self = DotNetObjectReference.Create(this);
         await _module.InvokeVoidAsync("startGame",
             string.Join(',', GameSession.PartyKeys),
+            Nav.BaseUri + ApproachTrack,
             Nav.BaseUri + CavernTrack,
             _self);
     }

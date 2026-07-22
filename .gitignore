@@ -460,3 +460,9 @@ tools/shots/
 # settings.local.json is one machine's own permissions.
 .claude/settings.local.json
 
+
+# The raw TomMusic SFX pack (~371 MB: WAV duplicates of the OGG set, multi-MB
+# ambience loops, a cover image). Kept on disk for reference and excluded from
+# publish in the client .csproj; only the curated wwwroot/audio/sfx/ folder — the
+# ~50 OGG files the game actually plays — is tracked.
+src/AlfarQuest.Client/wwwroot/audio/fx/

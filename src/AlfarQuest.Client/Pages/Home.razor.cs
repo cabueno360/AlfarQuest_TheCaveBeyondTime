@@ -8,7 +8,10 @@ namespace AlfarQuest.Client.Pages;
 
 public sealed partial class Home : IAsyncDisposable
 {
+    // The intro plays once and hands over to the theme, which loops until the
+    // player leaves for the world.
     private const string IntroTrack = "audio/crystal-deep-intro.wav";
+    private const string ThemeTrack = "audio/into-the-crystal-deep.mp3";
     private const double IntroVolume = 0.5;
 
     // Canonical party order. The chosen lead is moved to the front; the other
@@ -30,7 +33,7 @@ public sealed partial class Home : IAsyncDisposable
     {
         if (!firstRender) return;
         _music = await JS.InvokeAsync<IJSObjectReference>("import", "./js/titlemusic.js");
-        await _music.InvokeVoidAsync("playIntro", IntroTrack, IntroVolume);
+        await _music.InvokeVoidAsync("playIntro", IntroTrack, ThemeTrack, IntroVolume);
     }
 
     private void SelectLead(string key) => Lead = key;

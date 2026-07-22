@@ -16,4 +16,12 @@
     <ProjectReference Include="..\AlfarQuest.Shared\AlfarQuest.Shared.csproj" />
   </ItemGroup>
 
+  <!-- The raw sound pack — 300-odd files, most of them WAV duplicates of the OGG
+       set and multi-megabyte ambience loops — is kept in the tree for reference
+       but must never ship. Only the curated wwwroot/audio/sfx/ folder does. -->
+  <ItemGroup>
+    <Content Remove="wwwroot\audio\fx\**" />
+    <None Include="wwwroot\audio\fx\**" CopyToPublishDirectory="Never" CopyToOutputDirectory="Never" />
+  </ItemGroup>
+
 </Project>

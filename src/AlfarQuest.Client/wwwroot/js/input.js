@@ -42,7 +42,7 @@ function latchPress(k) {
 // gameplay latch stays purely about actions, and so rebinding is one map.
 const MENU_KEYS = { c: "character", escape: "close" };
 
-export function attachInput(canvas, onFirstClick, onMenuKey) {
+export function attachInput(canvas, onMenuKey) {
     const onKeyDown = (e) => {
         if (isTyping(e.target)) return;
         const k = e.key.toLowerCase();
@@ -64,7 +64,6 @@ export function attachInput(canvas, onFirstClick, onMenuKey) {
     const onDown = (e) => {
         if (e.button === 0) mouseDown = true;
         if (e.button === 2) { rightDown = true; latch.ability = true; }
-        onFirstClick?.();
     };
     const onUp = (e) => {
         if (e.button === 0) mouseDown = false;

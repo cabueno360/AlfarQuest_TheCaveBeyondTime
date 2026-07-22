@@ -12,7 +12,13 @@ public class InputState
     public float viewW = 1280, viewH = 720;
 }
 
-public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); }
+public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); public List<RSound> sounds = new(); }
+
+/// <summary>One sound the frame asked for: a family (a folder of interchangeable
+/// takes, picked from at random on the JS side) and how loud, already faded for
+/// distance. Not a file path — the engine names the event, the audio layer owns
+/// which clip and how to pool it.</summary>
+public class RSound { public string f = ""; public float v = 1f; }
 
 public class RVec { public float x, y; }
 

@@ -137,6 +137,9 @@ public partial class World
                                  chamberW = ChamberW, chamberH = ChamberH, level = Level,
                                  tile = TILE, stage = Stage, rev = Rev,
                                  ents = ents, lights = lights, hud = hud,
+                                 // A shallow copy: the frame owns this list, and the next
+                                 // Update clears the original out from under it.
+                                 sounds = new List<RSound>(_sounds),
                                  floats = Floaters.ConvertAll(f => new RFloat {
                                      x = f.Pos.X, y = f.Pos.Y, life = f.Life, text = f.Text, c = f.Colour }) };
     }

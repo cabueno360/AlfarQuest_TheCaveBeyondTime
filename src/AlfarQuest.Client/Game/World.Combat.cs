@@ -19,10 +19,16 @@ public partial class World
         if (h.Def.Attack == Lore.AttackKind.Ranged)
         {
             Shots.Add(new Projectile(h.Pos + dir * 24f, dir * 640f, h.Damage, h.Def.ColorAccent, 1.1f));
+            // The loose of the shot. The bolt landing raises its own sound where it
+            // lands, which may be a wall or a body a screen away.
+            PlaySound("bow", h.Pos, 0.7f);
         }
         else // melee cone
         {
             Slashes.Add(new Slash(h.Pos, h.Facing, h.Def.ColorAccent, 0.18f));
+            // The swing itself, whether or not it connects. A whiff that is silent
+            // reads as a dropped input.
+            PlaySound("swing", h.Pos, 0.7f);
             foreach (var k in Husks)
             {
                 var to = k.Pos - h.Pos;

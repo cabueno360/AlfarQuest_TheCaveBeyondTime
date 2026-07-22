@@ -173,9 +173,18 @@ console.log('\n=== levelling up ===');
 let pointsBeforeSpending = 0;
 let pointsSpent = 0;
 
+// Earn the level here rather than inherit it. This section used to arrive
+// already levelled because an earlier section had played for fifteen seconds;
+// once that moved, the level had to be grinded for on the spot. So the lead
+// swings while it walks — j held — and the sweep is wide enough to keep finding
+// fresh enemies and discovery zones instead of pacing an emptied patch.
 let levelled = (await page.locator('.aq-levelup').count()) > 0;
-for (let i = 0; i < 14 && !levelled; i++) {
-  await walk(i % 2 ? 'w' : 'd', 1500);
+const grind = [['d', 1500], ['w', 1500], ['a', 1200], ['s', 1200]];
+for (let i = 0; i < 44 && !levelled; i++) {
+  const [key, ms] = grind[i % grind.length];
+  await page.keyboard.down('j');
+  await walk(key, ms);
+  await page.keyboard.up('j');
   levelled = (await page.locator('.aq-levelup').count()) > 0;
 }
 
@@ -315,16 +324,24 @@ await shot('p9-pools');
 await page.keyboard.press('c');
 await settle(900);
 
+// A level-up landing here would freeze the world, and a frozen dash spends
+// nothing — the failure looked like a broken dash but was a paused game. Clear
+// it, and make sure the sheet is not holding the clock either, before measuring.
+await clearLevelUp();
+if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(700); }
+
+// Read the drop the instant the dash lands, not after a loop. Stamina regenerates
+// at eight-plus a second, so four dashes spread over a second-and-a-bit can leave
+// the pool back at full — the measurement, not the dash, was the problem.
 const beforeDash = (await lead()).stam;
-for (let i = 0; i < 4; i++) {
-  await page.keyboard.down('w');
-  await page.keyboard.press('Shift');
-  await settle(320);
-  await page.keyboard.up('w');
-}
+await page.keyboard.down('w');
+await settle(180);
+await page.keyboard.press('Shift');
+await settle(90);
 const afterDash = (await lead()).stam;
+await page.keyboard.up('w');
 check('dashing spent stamina', afterDash < beforeDash,
-  `${beforeDash.toFixed(0)} → ${afterDash.toFixed(0)}`);
+  `${beforeDash?.toFixed(0)} → ${afterDash?.toFixed(0)} the instant it fired`);
 
 console.log('\n=== belongings ===');
 
@@ -353,12 +370,26 @@ check('the pack has something in it', /^[1-9]/.test(packBefore), packBefore);
 check('the purse has coin', goldBefore !== '0', goldBefore);
 
 await openTab('inventory');
-await page.locator('.aq-pack-item').first().click();
-await settle(900);
-const packAfterEquip = await packCount();
-const wornAfterEquip = await wornIcons();
-check('equipping took the item out of the pack', packAfterEquip !== packBefore,
-  `${packBefore} → ${packAfterEquip}`);
+// Hoisted so the survives-leaving checks further down have something to compare
+// against whether or not an item was equipped here.
+let wornAfterEquip = await wornIcons();
+let packAfterEquip = packBefore;
+// Guarded rather than assumed: the pack holds whatever the rolls delivered, and
+// a run that looted only coin and ore has nothing equippable in it. Clicking a
+// item that is not there crashed the whole probe on a legitimate empty pack, so
+// the equip test runs only when there is something to equip and says so when
+// there is not.
+const equippable = await page.locator('.aq-pack-item').count();
+if (equippable > 0) {
+  await page.locator('.aq-pack-item').first().click();
+  await settle(900);
+  packAfterEquip = await packCount();
+  wornAfterEquip = await wornIcons();
+  check('equipping took the item out of the pack', packAfterEquip !== packBefore,
+    `${packBefore} → ${packAfterEquip}`);
+} else {
+  console.log('  (no equippable item in the pack this run — skipping the equip step)');
+}
 
 console.log('\n=== progression survives leaving ===');
 
