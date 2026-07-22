@@ -24,7 +24,9 @@ public partial class World
         for (int i = 0; i < Party.Count; i++)
         {
             Party[i].Pos = start + new Vec((i - 1) * 40f, 0);
-            Party[i].Cool = Party[i].AbilityCool = Party[i].DashCool = 0f;
+            Party[i].Cool = Party[i].AbilityCool = Party[i].DashCool = Party[i].PotionCool = 0f;
+            Array.Clear(Party[i].SkillCool);
+            Party[i].Effects.Clear();
             Party[i].AttackAnim = Party[i].AbilityAnim = Party[i].IFrames = Party[i].Flash = 0f;
         }
         Camera = start;
@@ -48,7 +50,9 @@ public partial class World
         for (int i = 0; i < Party.Count; i++)
         {
             Party[i].Pos = start + new Vec((i - 1) * 40f, 0);
-            Party[i].Cool = Party[i].AbilityCool = Party[i].DashCool = 0f;
+            Party[i].Cool = Party[i].AbilityCool = Party[i].DashCool = Party[i].PotionCool = 0f;
+            Array.Clear(Party[i].SkillCool);
+            Party[i].Effects.Clear();
             Party[i].AttackAnim = Party[i].AbilityAnim = Party[i].IFrames = Party[i].Flash = 0f;
             // A breather between levels, but the fallen stay fallen.
             if (Party[i].Alive) Party[i].Hp = Math.Min(Party[i].MaxHp, Party[i].Hp + 45f);

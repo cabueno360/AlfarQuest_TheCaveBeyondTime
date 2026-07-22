@@ -169,7 +169,8 @@ public sealed class PartyState
                 WeaponSpeedFactor: weapon.SpeedFactor,
                 WeaponDamage: weapon.Damage,
                 Accuracy: StatCalculator.Accuracy(c.Total),
-                DodgeChance: StatCalculator.Dodge(c.Total));
+                DodgeChance: StatCalculator.Dodge(c.Total),
+                SpellPower: c.Total.Intelligence * 1.4f);
         };
     }
 

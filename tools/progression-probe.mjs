@@ -267,38 +267,48 @@ if ((await page.locator('.aq-cw.shown').count()) > 0) {
   await settle(900);
 }
 
-const lead = async () => (await hud())?.party?.[0];
+const lead = async () => (await hud())?.party?.find(p => p.active) ?? (await hud())?.party?.[0];
+const slot1 = async () => (await hud())?.hotbar?.find(s => s.slot === 1);
+// A level-up hand-off opens the sheet, which pauses the world — and a paused
+// world spends no mana and refills none. Close it before every measurement.
+const ensureRunning = async () => {
+  await clearLevelUp();
+  if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(500); }
+};
 
-await clearLevelUp();
+await ensureRunning();
 const beforeCast = await lead();
 check('the lead hero has a mana pool', beforeCast?.mmana > 0, `${beforeCast?.mana}/${beforeCast?.mmana}`);
 check('it starts full', Math.abs(beforeCast.mana - beforeCast.mmana) < 1, `${beforeCast.mana}/${beforeCast.mmana}`);
-check('the ultimate reads as ready', beforeCast?.abilityReady === true);
+// The first skill is learned from level 1, so it is the honest thing to drain the
+// pool with — the ultimate now unlocks later.
+check('the first skill reads as ready', (await slot1())?.ready === true);
 
-await page.keyboard.press('k');
+await page.keyboard.press('1');
 await settle(400);
 const afterCast = await lead();
-check('casting spent mana', afterCast.mana < beforeCast.mana - 20,
+check('casting a skill spent mana', afterCast.mana < beforeCast.mana - 1,
   `${beforeCast.mana.toFixed(0)} → ${afterCast.mana.toFixed(0)}`);
-check('the ultimate is no longer ready', afterCast.abilityReady === false);
+check('the skill is no longer ready — it is on cooldown', (await slot1())?.ready === false);
 
-// Cast until the pool runs dry. The gap has to clear the 6s cooldown, or the
-// presses land on cooldown and the pool quietly refills between them — which is
-// what an earlier version of this check measured, and why it reported that mana
-// was never spent.
+// Cast the two learned skills each cycle so the pool drains faster than a cheap
+// bolt alone can empty it. The settle clears both short cooldowns, so the presses
+// land rather than falling on cooldown while the pool quietly refills.
 let drained = await lead();
-for (let i = 0; i < 6 && drained.mana >= 40; i++) {
-  await clearLevelUp();
-  await page.keyboard.press('k');
-  await settle(6300);
+for (let i = 0; i < 12 && drained.mana >= 14; i++) {
+  await ensureRunning();
+  await page.keyboard.press('1');
+  await settle(150);
+  await page.keyboard.press('2');
+  await settle(3100);
   drained = await lead();
 }
-await clearLevelUp();
-check('sustained casting empties the pool', drained.mana < 40,
+await ensureRunning();
+check('sustained casting empties the pool', drained.mana < 25,
   `${drained.mana.toFixed(0)}/${drained.mmana.toFixed(0)} after casting`);
-check('an unaffordable ultimate is reported, not silently ignored',
-  drained.abilityAffordable === false,
-  `mana ${drained.mana.toFixed(0)}, affordable ${drained.abilityAffordable}`);
+check('an unaffordable skill is reported, not silently ignored',
+  (await hud()).hotbar.some(s => s.unlocked && !s.affordable),
+  `mana ${drained.mana.toFixed(0)}, costs ${(await hud()).hotbar.filter(s => s.unlocked).map(s => s.manaCost).join('/')}`);
 
 await settle(4000);
 const regenerated = await lead();

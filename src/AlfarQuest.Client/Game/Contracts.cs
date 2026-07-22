@@ -6,8 +6,10 @@ namespace AlfarQuest.Client.Game;
 // =====================================================================
 public class InputState
 {
-    public bool up, down, left, right, attack, ability, dash, interact;
-    public int switchTo;            // 0 = none, 1..3 = party slot
+    public bool up, down, left, right, attack, ability, dash, interact, potion;
+    public int switchTo;            // 0 = none, 1..3 = party slot (F1-F3)
+    public int cycle;               // -1 previous hero, +1 next (Tab / Shift+Tab)
+    public int castSlot;            // 0 = none, 1..4 = hotbar skill
     public float mouseX, mouseY;    // screen space
     public float viewW = 1280, viewH = 720;
 }
@@ -114,6 +116,25 @@ public class RHud
     /// rolls a range. The live count of stunned creatures rides alongside.</summary>
     public int crits, misses, blocks, dodges, stuns, stunnedNow;
     public int[] recentHits = [];
+
+    /// <summary>The active hero's action hotbar — the four skills, each with its
+    /// cooldown and whether it can be cast right now — plus the potion. Rebuilt for
+    /// whoever is being steered, so switching heroes changes the whole bar.</summary>
+    public List<RSkill> hotbar = new();
+    public float potionCdFrac;
+    public bool potionReady;
+}
+
+/// <summary>One hotbar slot as the HUD needs it: what it is, its shortcut, how
+/// much of its cooldown is left (1 = just cast, 0 = ready), and whether it can be
+/// pressed — learned yet, off cooldown, and affordable.</summary>
+public class RSkill
+{
+    public int slot;
+    public string name = "", icon = "", shortcut = "", desc = "";
+    public float cdFrac;
+    public int manaCost, unlockLevel;
+    public bool unlocked, affordable, ready;
 }
 
 public class RHero

@@ -8,13 +8,18 @@
 //  has actually seen them; held state is OR-ed in on top, so holding a key
 //  still re-triggers on cooldown exactly as before.
 // =====================================================================
+import { hotbarSlotAt } from "./render/hotbar.js";
+
 const keys = {};
 const mouse = { x: 0, y: 0 };
 let mouseDown = false, rightDown = false;
-let latch = { switchTo: 0, ability: false, dash: false, interact: false };
+const freshLatch = () => ({ switchTo: 0, cycle: 0, castSlot: 0, ability: false, dash: false, interact: false, potion: false });
+let latch = freshLatch();
 let handlers = null;
 
-const PREVENT = ["arrowup", "arrowdown", "arrowleft", "arrowright", " "];
+// Tab would move focus off the canvas, and the number row and Q must not scroll
+// or type anywhere; all of them are ours while the game holds the keyboard.
+const PREVENT = ["arrowup", "arrowdown", "arrowleft", "arrowright", " ", "tab"];
 
 /// Whether the keystroke belongs to something the player is typing in.
 ///
@@ -31,9 +36,15 @@ function isTyping(target) {
     return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
 }
 
-function latchPress(k) {
-    if (k === "1" || k === "2" || k === "3") latch.switchTo = +k;
-    else if (k === "k") latch.ability = true;
+function latchPress(k, shift) {
+    // The number row casts the active hero's four skills now; switching heroes
+    // moved to Tab (cycle) and the function keys (direct), so the fingers on the
+    // skills are not the fingers on the party.
+    if (k === "1" || k === "2" || k === "3" || k === "4") latch.castSlot = +k;
+    else if (k === "f1" || k === "f2" || k === "f3") latch.switchTo = +k.slice(1);
+    else if (k === "tab") latch.cycle = shift ? -1 : 1;
+    else if (k === "k") latch.castSlot = 4;            // legacy: the ultimate
+    else if (k === "q") latch.potion = true;
     else if (k === "shift" || k === " ") latch.dash = true;
     else if (k === "e") latch.interact = true;
 }
@@ -47,11 +58,13 @@ export function attachInput(canvas, onMenuKey) {
         if (isTyping(e.target)) return;
         const k = e.key.toLowerCase();
         if (!keys[k]) {
-            latchPress(k);                    // guard: held keys repeat keydown
+            latchPress(k, e.shiftKey);         // guard: held keys repeat keydown
             if (MENU_KEYS[k]) onMenuKey?.(MENU_KEYS[k]);
         }
         keys[k] = true;
-        if (PREVENT.includes(k)) e.preventDefault();
+        // Tab and the function keys have no "held" meaning and repeat, so they are
+        // not tracked in `keys`; everything else is.
+        if (PREVENT.includes(k) || k.startsWith("f")) e.preventDefault();
     };
     // Not guarded by isTyping: a key pressed before focus entered a field must
     // still be released, or the hero walks into a wall for as long as the box has
@@ -62,7 +75,14 @@ export function attachInput(canvas, onMenuKey) {
         mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
     };
     const onDown = (e) => {
-        if (e.button === 0) mouseDown = true;
+        if (e.button === 0) {
+            // A left-click on a hotbar slot works the slot rather than swinging,
+            // so the bar is a set of buttons and not just a readout.
+            const slot = hotbarSlotAt(mouse.x, mouse.y);
+            if (slot === "potion") latch.potion = true;
+            else if (slot > 0) latch.castSlot = slot;
+            else mouseDown = true;
+        }
         if (e.button === 2) { rightDown = true; latch.ability = true; }
     };
     const onUp = (e) => {
@@ -93,7 +113,11 @@ export function detachInput() {
     resetLatch();
 }
 
-export const resetLatch = () => { latch = { switchTo: 0, ability: false, dash: false, interact: false }; };
+export const resetLatch = () => { latch = freshLatch(); };
+
+/// The cursor in canvas space, for the hotbar's hover — read by the game loop
+/// and handed to the renderer, so hotbar.js need not reach back into input.
+export const mousePos = () => mouse;
 
 // Reads the frame's input and consumes the latch in one go, so a press can
 // never be delivered twice.
@@ -105,12 +129,19 @@ export function readInput(viewW, viewH) {
         right: !!(keys["d"] || keys["arrowright"]),
         attack: !!(keys["j"] || mouseDown),      // level-triggered: hold to keep firing
         interact: latch.interact,                // edge-triggered: one talk per press
-        ability: !!(keys["k"] || rightDown || latch.ability),
+        ability: !!(rightDown || latch.ability),
         dash: !!(keys["shift"] || keys[" "] || latch.dash),
-        switchTo: latch.switchTo || (keys["1"] ? 1 : keys["2"] ? 2 : keys["3"] ? 3 : 0),
+        potion: latch.potion,
+        switchTo: latch.switchTo,                // F1-F3, edge-triggered
+        cycle: latch.cycle,                      // Tab / Shift+Tab
+        // A skill cast is edge-triggered — one press, one cast — held so a fast
+        // tap between frames is never lost, then the number keys as a fallback for
+        // a key held down.
+        castSlot: latch.castSlot || (keys["1"] ? 1 : keys["2"] ? 2 : keys["3"] ? 3 : keys["4"] ? 4 : 0),
         mouseX: mouse.x, mouseY: mouse.y,
         viewW, viewH,
     };
-    latch.switchTo = 0; latch.ability = false; latch.dash = false; latch.interact = false;
+    latch.switchTo = 0; latch.cycle = 0; latch.castSlot = 0;
+    latch.ability = false; latch.dash = false; latch.interact = false; latch.potion = false;
     return state;
 }

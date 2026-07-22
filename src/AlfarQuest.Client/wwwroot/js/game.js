@@ -12,7 +12,8 @@
 //  80x80 outdoor map, which pinned the game at 6 fps.
 // =====================================================================
 import { initGfx, sizeToParent, canvas, ctx, lightCanvas, lctx, hexA } from "./gfx.js";
-import { attachInput, detachInput, readInput, resetLatch } from "./input.js";
+import { attachInput, detachInput, readInput, resetLatch, mousePos } from "./input.js";
+import { setHotbarMouse } from "./render/hotbar.js";
 import { ATLAS, loadAtlases } from "./atlas.js";
 import { buildFloorCanvas, drawFloor } from "./world/floor.js";
 import { buildScenery } from "./world/scenery.js";
@@ -173,6 +174,9 @@ function loop(now) {
     }
     lastState = state;
     activeHeroKey = state.hud?.party?.find(p => p.active)?.key || activeHeroKey;
+    // Hand the cursor to the hotbar so it can raise a tooltip on hover.
+    const mp = mousePos();
+    setHotbarMouse(mp.x, mp.y);
     // Asked every frame and answered once: play() with the track already on is
     // deliberately nothing, so this costs a string comparison.
     const track = tracks?.[state.hud?.stage];

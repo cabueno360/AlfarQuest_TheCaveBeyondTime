@@ -58,8 +58,15 @@ public partial class World
         var aimDir = (worldAim - h.Pos).Norm();
         if (aimDir.Len() > 0.01f) h.Facing = (float)Math.Atan2(aimDir.Y, aimDir.X);
 
+        // Skills aim where the mouse is; held here so a cast reads the same aim
+        // the swing does.
+        _castAim = worldAim;
+
         if (input.attack && h.Cool <= 0) DoAttack(h, aimDir);
-        if (input.ability && h.AbilityCool <= 0) TryAbility(h);
+        // 1–4 cast the hotbar skills; right mouse is a quick second cast of slot 1.
+        if (input.castSlot is >= 1 and <= 4) CastSkill(h, input.castSlot);
+        else if (input.ability) CastSkill(h, 1);
+        if (input.potion) UsePotion(h);
     }
 
     // Where each companion tries to stand, relative to the leader. Without

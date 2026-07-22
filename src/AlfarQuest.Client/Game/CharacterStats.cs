@@ -82,6 +82,9 @@ public readonly record struct HeroModifiers(
     // a hit that lands can now miss, and a blow that connects can be slipped.
     float Accuracy = 60f,
     float DodgeChance = 0,
+    // Intelligence turned into magic-skill power, so a caster's spells grow with
+    // the mind the way a fighter's blows grow with the arm.
+    float SpellPower = 0,
     // What the basic attack deals, so a creature can resist it.
     Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {

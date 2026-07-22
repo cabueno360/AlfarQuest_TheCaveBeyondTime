@@ -110,6 +110,10 @@ public partial class World
             dodges = DodgeCount, stuns = StunCount,
             stunnedNow = Husks.Count(k => k.Immobilised),
             recentHits = [.. RecentHits],
+            hotbar = ActiveHotbar(),
+            potionCdFrac = Party.Count > 0 && Active < Party.Count
+                ? Math.Clamp(Party[Active].PotionCool / PotionCooldown, 0f, 1f) : 0f,
+            potionReady = Party.Count > 0 && Active < Party.Count && Party[Active].PotionCool <= 0,
             stage = Stage,
             level = Level,
             region = RegionName,
@@ -164,8 +168,10 @@ public partial class World
                 dodge = CharacterStats.For(h.Def.Key).DodgeChance,
                 accuracy = CharacterStats.For(h.Def.Key).Accuracy,
                 active = i == Active, dead = !h.Alive, color = h.Def.ColorAccent,
-                abilityReady = h.AbilityCool <= 0 && h.Mana >= h.AbilityCost,
-                abilityAffordable = h.Mana >= h.AbilityCost,
+                // The party panel's badge tracks the ultimate — slot 4 — now that
+                // the single ability became four skills.
+                abilityReady = UltimateReady(h),
+                abilityAffordable = Models.ActiveSkill.At(h.Def.HeroClass, 4) is { } u4 && h.Mana >= u4.ManaCost,
                 slot = i + 1
             }).ToList()
         };

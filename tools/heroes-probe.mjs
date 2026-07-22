@@ -94,7 +94,7 @@ console.log('\n=== each hero has their own pack ===');
 // Steer the mage (slot 1), open their sheet, read their pack, then equip one
 // item — which moves it out of the MAGE's pack and onto the mage. A shared pack
 // would then look emptier for everyone; an individual one only for the mage.
-await page.keyboard.press('1');
+await page.keyboard.press('F1');
 await settle(300);
 await openSheet();
 await tab('inventory');
@@ -108,7 +108,7 @@ check('equipping takes it out of the mage\'s pack', mageAfter !== mageBefore,
 
 // Now the cleric (slot 2): their pack must be untouched by what the mage did.
 await closeSheet();
-await page.keyboard.press('2');
+await page.keyboard.press('F2');
 await settle(300);
 await openSheet();
 await tab('inventory');
@@ -123,7 +123,7 @@ console.log('\n=== loot goes to whoever is steering ===');
 // hero holding the reins — the mage — and the kills are tallied against them.
 // Several rounds rather than one, so a run of unlucky no-coin drops does not
 // leave the mage's purse untouched.
-await page.keyboard.press('1');
+await page.keyboard.press('F1');
 await settle(300);
 for (let round = 0; round < 4; round++) await fightEncounter();
 

@@ -119,7 +119,7 @@ check('those events started voices', after > before, `${before} → ${after} voi
 // slot 2 of the default party); switch to it and confirm the sound becomes the
 // swing, not the bolt — proof the weapon, not a constant, chooses the sound. The
 // swing sounds on every melee attack whether or not it lands.
-await page.keyboard.press('2');
+await page.keyboard.press('F2');
 await settle(500);
 const activeMelee = (await hud())?.party?.find(h => h.active)?.key;
 const meleeFamilies = await familiesDuring(() => hold('j', 2000));

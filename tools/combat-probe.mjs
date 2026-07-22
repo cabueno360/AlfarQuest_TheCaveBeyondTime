@@ -138,7 +138,7 @@ const beatOn = async (beats, until = null) => {
 
 // The cleric's hammer: slow, heavy, and the only thing that stuns. Beat until one
 // lands — it is a one-in-five chance per hit, so a fixed count would flake.
-await page.keyboard.press('2');
+await page.keyboard.press('F2');
 await settle(300);
 const stunBase = start?.stuns ?? 0;
 await beatOn(80, h => h && h.stuns > stunBase && new Set(h.recentHits).size >= 5);
@@ -154,7 +154,7 @@ check('its rolls sat inside the weapon range',
 
 // The thief's bow: fast and light, so it looses far more shots and gets far more
 // rolls against the evasive dummy — which is where a miss finally shows.
-await page.keyboard.press('3');
+await page.keyboard.press('F3');
 await settle(300);
 await beatOn(28);
 const end = await hud();

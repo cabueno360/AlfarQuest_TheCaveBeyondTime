@@ -57,67 +57,6 @@ public partial class World
         }
     }
 
-    /// <summary>Casts the ultimate if it can be paid for.
-    ///
-    /// The check lives here rather than at the call site so there is one place
-    /// that knows an ability costs mana. Failing is quiet but visible: no
-    /// cooldown is spent, and the hero says why — a button that does nothing at
-    /// all reads as a broken game.</summary>
-    void TryAbility(Hero h)
-    {
-        if (!h.SpendMana(h.AbilityCost))
-        {
-            Floaters.Add(new FloatText(h.Pos + new Vec(0, -30), "Not enough mana", "#8fb0ff"));
-            // A short beat before it can be tried again, so holding the key does
-            // not paint the screen with the same message sixty times a second.
-            h.AbilityCool = 0.6f;
-            return;
-        }
-
-        DoAbility(h);
-    }
-
-    void DoAbility(Hero h)
-    {
-        // Read from the catalogue rather than switched on the class name here.
-        // These numbers are also what the Skills tab shows, and a copy of them in
-        // the interface would have drifted the first time one was tuned.
-        var ability = Ability.For(h.Def.HeroClass);
-
-        h.AbilityCool = ability.Cooldown;
-        // Held slightly longer than the nova it spawns (Slash life 0.4s) so the
-        // channel pose outlasts its own shockwave instead of snapping back mid-blast.
-        h.AbilityAnim = 0.45f;
-        float radius = ability.Radius + h.AbilityRadiusBonus;
-        int dmg = (int)MathF.Round(ability.Damage * h.AbilityDamageMultiplier);
-        string col = ability.Colour;
-
-        // Each class's ultimate deals its own school — fire, holy light, ice —
-        // so a creature that resists one still fears another.
-        var abilityType = h.Def.HeroClass switch
-        {
-            "Mage" => DamageType.Fire,
-            "Cleric" => DamageType.Holy,
-            _ => DamageType.Ice,
-        };
-        Slashes.Add(new Slash(h.Pos, 0, col, 0.4f) { Nova = true, Radius = radius });
-        foreach (var k in Husks)
-        {
-            var to = k.Pos - h.Pos;
-            if (to.Len() < radius)
-            {
-                // The ultimate does not roll criticals or miss: it already is the
-                // big moment, and it fills a radius rather than aiming at one thing.
-                Strike(h, k, dmg, to.Norm(), abilityType, canCrit: false, canMiss: false, canStun: false);
-                k.Knock += to.Norm() * 160f;
-            }
-        }
-        if (ability.PartyHeal > 0)
-            foreach (var m in Party) if (m.Alive) m.Hp = Math.Min(m.MaxHp, m.Hp + ability.PartyHeal);
-        // The school decides how it looks, so a new class ability picks its own
-        // rather than being drawn by whatever the nova code happened to do.
-        Play(h.Def.HeroClass switch { "Mage" => "fire", "Cleric" => "holy", _ => "frost" }, h.Pos);
-    }
 
     /// <summary>One blow landing on one creature.
     ///

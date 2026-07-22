@@ -13,6 +13,14 @@ public class Hero
     public Vec Pos;
     public float Hp, Facing, Cool, AbilityCool, DashCool, IFrames, Flash, AttackAnim, AbilityAnim;
 
+    /// <summary>Each hotbar skill's own cooldown, indexed by slot 1–4 (0 unused).
+    /// The single ultimate became four skills, so one timer became four.</summary>
+    public readonly float[] SkillCool = new float[5];
+
+    /// <summary>The healing draught's cooldown. Its own thing, not a skill —
+    /// every class has it, and it costs no mana.</summary>
+    public float PotionCool;
+
     // ---- companion AI (unused while this hero is the one being steered) ----
     /// <summary>Seconds before this companion will act on a threat — a human beat
     /// between a monster appearing and the swing. Re-rolled after every attack and
@@ -202,6 +210,20 @@ public class Husk
         get { foreach (var e in Effects) if (e.Immobilises && e.Remaining > 0) return true; return false; }
     }
 
+    /// <summary>How much a slow is dragging on it, 0–1 — the strongest one wins.
+    /// A frost shard leaves the creature crawling.</summary>
+    public float Slow
+    {
+        get
+        {
+            float s = 0;
+            foreach (var e in Effects)
+                if (e.Behaviour == Models.StatusBehaviour.SlowMovement && e.Remaining > 0)
+                    s = MathF.Max(s, e.Magnitude);
+            return MathF.Min(0.9f, s);
+        }
+    }
+
     /// <summary>Never moved by anything — knockback included. Only the test
     /// training dummy sets this, so a hero can keep swinging at a target that does
     /// not fly out of reach on the first hit.</summary>
@@ -243,8 +265,17 @@ public class Projectile
     public bool Magical;
 
     /// <summary>An effect the bolt leaves on whatever it hits — the spider's spit
-    /// carries venom. Null for a plain bolt.</summary>
+    /// carries venom, a poison arrow the same. Null for a plain bolt.</summary>
     public Models.StatusEffectKind? OnHit;
+
+    /// <summary>A skill bolt's own damage type, overriding the weapon's — a
+    /// Firebolt deals Fire whatever the mage holds. Null on an ordinary shot,
+    /// which takes the shooter's weapon type.</summary>
+    public Models.DamageType? SkillType;
+
+    /// <summary>Whether this bolt can roll a critical. Off for spreads, which are
+    /// already several hits.</summary>
+    public bool CanCrit = true;
 
     public Projectile(Vec p, Vec v, int dmg, string c, float life, string owner = "", bool magical = false,
                       Models.StatusEffectKind? onHit = null)

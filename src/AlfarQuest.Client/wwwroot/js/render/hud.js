@@ -4,6 +4,7 @@
 //  through the other.
 // =====================================================================
 import { ctx, canvas } from "../gfx.js";
+import { drawHotbar } from "./hotbar.js";
 
 // ---------------------------------------------------------------------
 //  HUD (drawn in screen space)
@@ -28,6 +29,10 @@ export function drawFloaters(floats, cam) {
 export function drawHud(hud) {
     if (!hud) return;
     const W = canvas.width, H = canvas.height;
+
+    // The action hotbar sits bottom-right, its own corner clear of the party
+    // panel (bottom-left) and the quit button (top-right).
+    drawHotbar(hud);
 
     // party panel — bottom left
     // 52px a row, not 44: each hero now carries a mana bar under the health one.

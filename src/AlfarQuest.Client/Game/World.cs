@@ -114,10 +114,21 @@ public partial class World
         }
 
         // --- hero switching ---
+        // F1-F3 pick a hero directly; Tab cycles to the next living one (Shift+Tab
+        // the previous). The number row belongs to the skills now.
         if (input.switchTo is >= 1 and <= 3 && input.switchTo <= Party.Count)
         {
             int idx = input.switchTo - 1;
             if (Party[idx].Alive) Active = idx;
+        }
+        else if (input.cycle != 0 && Party.Count > 0)
+        {
+            int n = Party.Count;
+            for (int step = 1; step <= n; step++)
+            {
+                int idx = ((Active + input.cycle * step) % n + n) % n;
+                if (Party[idx].Alive) { Active = idx; break; }
+            }
         }
         if (!Party[Active].Alive)
         {
@@ -143,6 +154,8 @@ public partial class World
             bool isActive = i == Active;
             h.Cool = Math.Max(0, h.Cool - dt);
             h.AbilityCool = Math.Max(0, h.AbilityCool - dt);
+            h.PotionCool = Math.Max(0, h.PotionCool - dt);
+            for (int s = 1; s <= 4; s++) h.SkillCool[s] = Math.Max(0, h.SkillCool[s] - dt);
             h.DashCool = Math.Max(0, h.DashCool - dt);
             h.IFrames = Math.Max(0, h.IFrames - dt);
             h.AttackAnim = Math.Max(0, h.AttackAnim - dt);
@@ -191,7 +204,7 @@ public partial class World
             }
 
             var dir = StepAi(k, target, dt);
-            k.Pos = MoveBlocked(k.Pos, dir * k.Speed * dt + k.Knock, 13f);
+            k.Pos = MoveBlocked(k.Pos, dir * k.Speed * (1f - k.Slow) * dt + k.Knock, 13f);
             k.Knock *= 0.86f;
             if (target is not null)
             {
@@ -234,11 +247,17 @@ public partial class World
                 {
                     // Through the same Strike the melee cone uses, so a bolt gets
                     // the crit roll, the evasion miss and the creature's resistance
-                    // exactly as a swing does. The owner supplies the damage type;
-                    // an ownerless bolt (a test) just deals its number.
+                    // exactly as a swing does. A skill bolt carries its own damage
+                    // type and may leave an effect; an ordinary shot takes the
+                    // owner's weapon type. An ownerless bolt (a test) just deals its
+                    // number.
                     var owner = Party.FirstOrDefault(p => p.Def.Key == s.Owner);
                     if (owner is not null)
-                        Strike(owner, k, s.Damage, s.Vel.Norm(), owner.DamageType, canStun: false);
+                    {
+                        Strike(owner, k, s.Damage, s.Vel.Norm(), s.SkillType ?? owner.DamageType,
+                               canCrit: s.CanCrit, canStun: false);
+                        if (s.OnHit is { } eff) ApplyEffect(k, eff, EffectSeconds(eff), EffectMagnitude(eff), s.Owner);
+                    }
                     else { k.Hp -= s.Damage; k.Flash = 0.15f; k.LastHitBy = s.Owner; }
                     k.Knock += s.Vel.Norm() * 46f;
                     Burst(s.Pos, s.Color, 6);
