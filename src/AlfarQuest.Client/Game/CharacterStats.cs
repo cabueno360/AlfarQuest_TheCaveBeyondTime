@@ -67,7 +67,24 @@ public readonly record struct HeroModifiers(
     float MaxMana = 0,
     float MaxStamina = 0,
     float ManaRegen = 0,
-    float StaminaRegen = 0)
+    float StaminaRegen = 0,
+    // The equipped weapon's profile, resolved from the item and the wearer's
+    // attributes so the engine rolls a real range rather than a fixed number.
+    // Min/Max are the final damage, bonuses already folded in.
+    float WeaponMin = 0,
+    float WeaponMax = 0,
+    float WeaponStunChance = 0,
+    // Melee reach in pixels (0 falls back to the class range) and a cooldown
+    // factor (1 is a plain sword; a hammer is slower, a dagger faster).
+    float AttackReach = 0,
+    float WeaponSpeedFactor = 1f,
+    // Defensive rolls that were computed for the sheet and applied to nothing —
+    // a hit that lands can now miss, and a blow that connects can be slipped.
+    float Accuracy = 60f,
+    float DodgeChance = 0,
+    // What the basic attack deals, so a creature can resist it.
+    Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {
-    public static readonly HeroModifiers None = new(0, 0, 0, 0);
+    public static readonly HeroModifiers None =
+        new(0, 0, 0, 0, WeaponMin: 4, WeaponMax: 8, WeaponSpeedFactor: 1f, Accuracy: 60f);
 }

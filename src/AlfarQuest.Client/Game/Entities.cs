@@ -38,6 +38,17 @@ public class Hero
     /// <summary>Whether this hero's death has already been tallied, so a hero that
     /// stays down does not count as dying on every frame.</summary>
     public bool DeathCounted;
+
+    /// <summary>Status effects on this hero — venom from a spider, and whatever
+    /// else the architecture grows to carry. Ticked by the engine.</summary>
+    public readonly List<Models.ActiveEffect> Effects = new();
+
+    /// <summary>Held fast by a stun or a freeze. Nothing does this to a hero yet,
+    /// but the check is here so the moment something can, it works.</summary>
+    public bool Immobilised
+    {
+        get { foreach (var e in Effects) if (e.Immobilises && e.Remaining > 0) return true; return false; }
+    }
     public Hero(Lore.HeroDef def, Vec pos)
     {
         Def = def; Pos = pos;
@@ -76,14 +87,36 @@ public class Hero
 
     static float Positive(float value, float fallback) => value > 0 ? value : fallback;
 
-    /// <summary>Damage this hero deals, including attribute bonuses.</summary>
+    /// <summary>The equipped weapon's rolled damage — a fresh number every swing,
+    /// between the weapon's min and max. This is the brief's first rule made real:
+    /// no attack deals a fixed amount.</summary>
+    public int RollDamage(Func<double> rnd)
+    {
+        var m = CharacterStats.For(Def.Key);
+        var min = m.WeaponMin; var max = MathF.Max(min, m.WeaponMax);
+        return (int)MathF.Round(min + (float)rnd() * (max - min));
+    }
+
+    /// <summary>The middle of the weapon's range, for anything that needs one
+    /// number rather than a roll — a display, or a fallback.</summary>
     public int Damage
     {
-        get
-        {
-            var m = CharacterStats.For(Def.Key);
-            return (int)MathF.Round((Def.Damage + m.BonusDamage) * (1f + m.DamageMultiplier));
-        }
+        get { var m = CharacterStats.For(Def.Key); return (int)MathF.Round((m.WeaponMin + m.WeaponMax) * 0.5f); }
+    }
+
+    /// <summary>The weapon's damage type, reach, stun chance and the wearer's
+    /// accuracy and dodge — read by combat so the equipped weapon and the
+    /// defensive attributes finally reach the fight.</summary>
+    public Models.DamageType DamageType => CharacterStats.For(Def.Key).WeaponDamage;
+    public float StunChance => CharacterStats.For(Def.Key).WeaponStunChance;
+    public float Accuracy => CharacterStats.For(Def.Key).Accuracy;
+    public float DodgeChance => CharacterStats.For(Def.Key).DodgeChance;
+
+    /// <summary>Melee reach. The weapon's, when it has one — a spear outreaches a
+    /// dagger — otherwise the class default.</summary>
+    public float Range
+    {
+        get { var r = CharacterStats.For(Def.Key).AttackReach; return r > 0 ? r : Def.Range; }
     }
 
     /// <summary>Incoming damage after armour, never below 1.
@@ -115,7 +148,10 @@ public class Hero
         get
         {
             var m = CharacterStats.For(Def.Key);
-            return MathF.Max(0.08f, (Def.AttackCooldown - m.CooldownReduction) / (1f + m.AttackSpeedMultiplier));
+            // The weapon's pace on top of the attribute and skill speed: a hammer
+            // (1.6) swings well over half again as slow as a dagger (0.62).
+            return MathF.Max(0.08f,
+                (Def.AttackCooldown - m.CooldownReduction) / (1f + m.AttackSpeedMultiplier) * m.WeaponSpeedFactor);
         }
     }
 
@@ -154,6 +190,23 @@ public class Husk
     /// with no striker (a future trap) falls back to the steered hero.</summary>
     public string? LastHitBy;
 
+    /// <summary>Status effects currently on it — a stun from a hammer, venom from
+    /// a spider. The engine ticks these; the list is the runtime half of the
+    /// architecture the catalogue describes.</summary>
+    public readonly List<Models.ActiveEffect> Effects = new();
+
+    /// <summary>Frozen in place by a stun or a freeze, so it can neither move nor
+    /// act this frame.</summary>
+    public bool Immobilised
+    {
+        get { foreach (var e in Effects) if (e.Immobilises && e.Remaining > 0) return true; return false; }
+    }
+
+    /// <summary>Never moved by anything — knockback included. Only the test
+    /// training dummy sets this, so a hero can keep swinging at a target that does
+    /// not fly out of reach on the first hit.</summary>
+    public bool Rooted;
+
     public Husk(Vec p) : this(p, CreatureCatalog.Of("husk")) { }
 
     public Husk(Vec p, CreatureType def)
@@ -189,8 +242,13 @@ public class Projectile
     /// them.</summary>
     public bool Magical;
 
-    public Projectile(Vec p, Vec v, int dmg, string c, float life, string owner = "", bool magical = false)
-    { Pos = p; Vel = v; Damage = dmg; Color = c; Life = life; Owner = owner; Magical = magical; }
+    /// <summary>An effect the bolt leaves on whatever it hits — the spider's spit
+    /// carries venom. Null for a plain bolt.</summary>
+    public Models.StatusEffectKind? OnHit;
+
+    public Projectile(Vec p, Vec v, int dmg, string c, float life, string owner = "", bool magical = false,
+                      Models.StatusEffectKind? onHit = null)
+    { Pos = p; Vel = v; Damage = dmg; Color = c; Life = life; Owner = owner; Magical = magical; OnHit = onHit; }
 }
 
 public class Slash

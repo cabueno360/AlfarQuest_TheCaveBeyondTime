@@ -1,3 +1,5 @@
+using AlfarQuest.Client.Models;
+
 namespace AlfarQuest.Client.Game;
 
 public enum Biome { Forest, River, Mountain, NearCave, Cave }
@@ -106,10 +108,36 @@ public sealed record CreatureType
     /// rather than by armour, so a party built entirely for physical defence has
     /// something it is genuinely weak to.</summary>
     public bool Magical { get; init; }
+
+    /// <summary>How readily it slips a blow. The quick, small things — bats, the
+    /// swarm — are hard to land on; the slow heavy ones are not. Read by the
+    /// attacker's accuracy roll.</summary>
+    public float Evasion { get; init; }
+
+    /// <summary>What it shrugs off, as (damage type, fraction removed). A negative
+    /// fraction is a weakness — it takes extra. Crystal turns a point aside but
+    /// shatters under a hammer; stone the reverse. Absent types read as zero, so
+    /// a new school of magic simply lands in full until someone tunes it.</summary>
+    public IReadOnlyDictionary<DamageType, float> Resist { get; init; } =
+        new Dictionary<DamageType, float>();
+
+    public float Resistance(DamageType type) => Math.Clamp(Resist.GetValueOrDefault(type), -1f, 0.9f);
 }
 
 public static class CreatureCatalog
 {
+    // Thematic resistance tables, shared by the species made of the same stuff.
+    // Crystal turns a point aside but rings apart under a blunt blow; stone is the
+    // opposite, hard to cut or pierce but crushed all the same.
+    static readonly IReadOnlyDictionary<DamageType, float> Crystal = new Dictionary<DamageType, float>
+    {
+        [DamageType.Piercing] = 0.35f, [DamageType.Ice] = 0.3f, [DamageType.Blunt] = -0.3f,
+    };
+    static readonly IReadOnlyDictionary<DamageType, float> Stone = new Dictionary<DamageType, float>
+    {
+        [DamageType.Slashing] = 0.35f, [DamageType.Piercing] = 0.25f, [DamageType.Blunt] = -0.35f,
+    };
+
     public static readonly IReadOnlyList<CreatureType> All =
     [
         // --- forest: the gentle introduction ---
@@ -120,13 +148,15 @@ public static class CreatureCatalog
                 Xp = 15,
                 Demeanor = Demeanor.Wanderer, FleeBelow = 0.25f,
                 Ability = MonsterAbility.CrystalBolt, AbilityRangeTiles = 4.5f, AbilityCooldown = 3.5f,
-                Material = "crystal",
+                Material = "crystal", Evasion = 0.06f,
+                Resist = Crystal,
                 Loot = [("Small Crystal", 0.35f), ("Coins", 0.5f)] },
         // Beasts run in support of one another — strike one and the pack turns.
         new() { Id = "beast", Kind = "mobBeast", Name = "Crystal Beast", Biome = Biome.Forest,
                 MaxHp = 58, Damage = 11, Speed = 68, Scale = 0.9f, PatrolTiles = 8, AggroTiles = 7,
                 Xp = 25,
                 Demeanor = Demeanor.Wanderer, Protective = true, AlertTiles = 4.5f,
+                Evasion = 0.08f,
                 Loot = [("Hide", 0.6f), ("Coins", 0.4f)] },
 
         // --- river: quick and fragile ---
@@ -138,7 +168,8 @@ public static class CreatureCatalog
                 Demeanor = Demeanor.Wanderer, FleeBelow = 0.4f, Protective = true, AlertTiles = 4f,
                 Ability = MonsterAbility.MagicMissile, AbilityRangeTiles = 5f, AbilityCooldown = 2.8f,
                 Magical = true,
-                Material = "crystal",
+                Material = "crystal", Evasion = 0.22f,
+                Resist = Crystal,
                 Loot = [("Spider Silk", 0.45f), ("Herbs", 0.3f)] },
 
         // --- mountain ---
@@ -150,6 +181,7 @@ public static class CreatureCatalog
                 Xp = 10,
                 Demeanor = Demeanor.Ambusher, Protective = true, AlertTiles = 5f,
                 Ability = MonsterAbility.Dash, AbilityRangeTiles = 6f, AbilityCooldown = 2.5f,
+                Evasion = 0.20f,
                 Loot = [("Bat Wing", 0.55f), ("Coins", 0.3f)] },
         // Walkers stand over the crystal seams and do not stray — a sentry that
         // pounds the ground when you close.
@@ -158,7 +190,7 @@ public static class CreatureCatalog
                 Xp = 30,
                 Demeanor = Demeanor.Sentry, AlertTiles = 3f,
                 Ability = MonsterAbility.Smash, AbilityRangeTiles = 2.4f, AbilityCooldown = 3.5f,
-                Material = "stone",
+                Material = "stone", Resist = Stone,
                 Loot = [("Stone", 0.7f), ("Small Crystal", 0.25f)] },
 
         // --- the last stretch before the mine ---
@@ -168,6 +200,7 @@ public static class CreatureCatalog
                 Xp = 18,
                 Demeanor = Demeanor.Ambusher, AlertTiles = 4f,
                 Ability = MonsterAbility.PoisonSpit, AbilityRangeTiles = 5.5f, AbilityCooldown = 3f,
+                Evasion = 0.12f,
                 Loot = [("Spider Silk", 0.7f), ("Small Crystal", 0.3f)] },
         // Worms lie buried until the ground shakes above them, then heave up and
         // smash. Slow, heavy, and worth the most out here.
@@ -177,7 +210,7 @@ public static class CreatureCatalog
                 Xp = 40,
                 Demeanor = Demeanor.Sleeper, AlertTiles = 3f,
                 Ability = MonsterAbility.Smash, AbilityRangeTiles = 2.6f, AbilityCooldown = 3f,
-                Material = "stone",
+                Material = "stone", Resist = Stone,
                 Loot = [("Stone", 0.5f), ("Small Crystal", 0.5f)] },
 
         // --- the cave keeps its husks ---
@@ -188,7 +221,7 @@ public static class CreatureCatalog
                 Xp = 12,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true,
-                Material = "crystal",
+                Material = "crystal", Resist = Crystal,
                 Loot = [("Small Crystal", 0.4f)] },
     ];
 

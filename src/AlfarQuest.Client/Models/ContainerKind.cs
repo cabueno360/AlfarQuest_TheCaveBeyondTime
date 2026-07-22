@@ -37,7 +37,9 @@ public sealed record ContainerKind(
                 LootEntry.Coin(12, 30, guaranteed: true),
                 LootEntry.Material("Stone", 1, 3, 0.5f),
                 LootEntry.Material("Hide", 1, 2, 0.35f),
-                LootEntry.Gear("helm_dented", 0.10f)),
+                LootEntry.Gear("helm_dented", 0.10f),
+                LootEntry.Gear("bow_hunting", 0.12f),
+                LootEntry.Gear("staff_oak", 0.12f)),
             XpSource.TreasureChest, Rarity.Common, RespawnHours: 24f),
 
         new("chest_iron", "Ironbound Chest", "Open", "crate", new LootTable(
@@ -45,20 +47,25 @@ public sealed record ContainerKind(
                 LootEntry.Material("Small Crystal", 1, 3, 0.6f),
                 LootEntry.Material("Spider Silk", 1, 2, 0.4f),
                 LootEntry.Gear("gloves_hide", 0.22f),
-                LootEntry.Gear("ring_copper", 0.12f)),
+                LootEntry.Gear("ring_copper", 0.12f),
+                LootEntry.Gear("sword_iron", 0.16f),
+                LootEntry.Gear("axe_war", 0.12f),
+                LootEntry.Gear("spear_long", 0.12f)),
             XpSource.TreasureChest, Rarity.Uncommon),
 
         new("chest_gold", "Gilded Chest", "Open", "crate", new LootTable(
                 LootEntry.Coin(90, 160, guaranteed: true),
                 LootEntry.Material("Small Crystal", 2, 5, 0.8f),
                 LootEntry.Gear("amulet_quiet", 0.30f),
-                LootEntry.Gear("blade_old", 0.25f)),
+                LootEntry.Gear("daggers_twin", 0.22f),
+                LootEntry.Gear("sword_steel", 0.15f)),
             XpSource.TreasureChest, Rarity.Rare),
 
         new("chest_ancient", "Ancient Chest", "Open", "ruin", new LootTable(
                 LootEntry.Coin(140, 240, guaranteed: true),
                 LootEntry.Material("Small Crystal", 3, 6, 0.9f),
                 LootEntry.Gear("shard_arm", 0.18f),          // ultra-rare
+                LootEntry.Gear("hammer_iron", 0.20f),
                 LootEntry.Gear("amulet_quiet", 0.40f)),
             XpSource.Relic, Rarity.Epic),
 
@@ -67,7 +74,8 @@ public sealed record ContainerKind(
         new("chest_locked", "Locked Strongbox", "Unlock", "crate", new LootTable(
                 LootEntry.Coin(180, 300, guaranteed: true),
                 LootEntry.Material("Small Crystal", 4, 8, guaranteed: true),
-                LootEntry.Gear("shard_arm", 0.35f)),
+                LootEntry.Gear("shard_arm", 0.35f),
+                LootEntry.Gear("sword_dawn", 0.25f)),
             XpSource.TreasureChest, Rarity.Legendary, RequiresKey: "Rusted Key"),
 
         // ---- ordinary containers: often empty, and that is the point

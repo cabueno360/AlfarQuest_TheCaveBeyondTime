@@ -27,6 +27,7 @@ public static class ItemCatalog
         var all = new Dictionary<string, Item>();
 
         foreach (var item in StartingGear.Everything) all[item.Id] = item;
+        foreach (var item in WeaponRack.All) all[item.Id] = item;
         foreach (var recipe in RecipeBook.All) all[recipe.Output.Id] = recipe.Output;
 
         return all;

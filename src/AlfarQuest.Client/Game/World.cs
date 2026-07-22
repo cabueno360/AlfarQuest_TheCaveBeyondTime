@@ -139,6 +139,7 @@ public partial class World
                 continue;
             }
             h.DeathCounted = false;
+            TickHeroEffects(h, dt);          // venom and the like gnaw here
             bool isActive = i == Active;
             h.Cool = Math.Max(0, h.Cool - dt);
             h.AbilityCool = Math.Max(0, h.AbilityCool - dt);
@@ -172,7 +173,23 @@ public partial class World
         {
             k.HitCool = Math.Max(0, k.HitCool - dt);
             k.AbilityCool = Math.Max(0, k.AbilityCool - dt);
+            TickHuskEffects(k, dt);
+            if (k.Rooted) k.Knock = new Vec(0, 0);   // the training dummy never budges
             var target = NearestHero(k.Pos);
+
+            // Stunned or frozen: it still slides on any knockback it was dealt, but
+            // it neither chooses a direction nor acts. The whole reason to carry a
+            // hammer.
+            if (k.Immobilised)
+            {
+                k.Pos = MoveBlocked(k.Pos, k.Knock, 13f);
+                k.Knock *= 0.86f;
+                k.Pos = ResolveCrystalCollision(k.Pos);
+                k.Pos = Clamp(k.Pos, TILE);
+                k.Flash = Math.Max(0, k.Flash - dt);
+                continue;
+            }
+
             var dir = StepAi(k, target, dt);
             k.Pos = MoveBlocked(k.Pos, dir * k.Speed * dt + k.Knock, 13f);
             k.Knock *= 0.86f;
@@ -215,16 +232,14 @@ public partial class World
             {
                 if ((k.Pos - s.Pos).Len() < 22 + k.R)
                 {
-                    if (!string.IsNullOrEmpty(s.Owner))
-                    {
-                        k.LastHitBy = s.Owner;
-                        // Ranged damage counts too — the bolt goes straight to Hp
-                        // here rather than through Strike, so the tally has to be
-                        // taken at the point of impact.
-                        StatBridge.Record(s.Owner, HeroStats.Kind.DamageDealt, s.Damage);
-                    }
-                    Alert(k, k.Pos);           // a struck creature rouses its neighbours
-                    k.Hp -= s.Damage; k.Flash = 0.15f;
+                    // Through the same Strike the melee cone uses, so a bolt gets
+                    // the crit roll, the evasion miss and the creature's resistance
+                    // exactly as a swing does. The owner supplies the damage type;
+                    // an ownerless bolt (a test) just deals its number.
+                    var owner = Party.FirstOrDefault(p => p.Def.Key == s.Owner);
+                    if (owner is not null)
+                        Strike(owner, k, s.Damage, s.Vel.Norm(), owner.DamageType, canStun: false);
+                    else { k.Hp -= s.Damage; k.Flash = 0.15f; k.LastHitBy = s.Owner; }
                     k.Knock += s.Vel.Norm() * 46f;
                     Burst(s.Pos, s.Color, 6);
                     s.Life = 0; break;

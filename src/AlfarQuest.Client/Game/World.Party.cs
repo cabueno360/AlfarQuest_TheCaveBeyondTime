@@ -143,7 +143,7 @@ public partial class World
 
         // Out of reach: close some of the gap — but not at a sprint, and not
         // past the assist leash, which the `near` check already bounds.
-        if (d > h.Def.Range * 0.9f)
+        if (d > h.Range * 0.9f)
         {
             var approach = (threat.Pos - h.Pos).Norm();
             h.Pos = MoveBlocked(h.Pos, approach * h.Speed * 0.7f * dt, 14f);

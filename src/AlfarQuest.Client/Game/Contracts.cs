@@ -108,6 +108,12 @@ public class RHud
     /// every hostile bolt loosed this session. A live count misses an instant bolt;
     /// a running total does not.</summary>
     public int castsFired, boltsFired;
+
+    /// <summary>Cumulative combat tallies — criticals, misses, blocks, dodges,
+    /// stuns — and the last few damage numbers dealt, so a test can see the weapon
+    /// rolls a range. The live count of stunned creatures rides alongside.</summary>
+    public int crits, misses, blocks, dodges, stuns, stunnedNow;
+    public int[] recentHits = [];
 }
 
 public class RHero
@@ -118,6 +124,15 @@ public class RHero
     /// no longer shares a level — so each row carries its own, and the HUD shows
     /// whichever hero is being steered.</summary>
     public int level = 1, xp, xpNext = 100;
+
+    /// <summary>The equipped weapon as combat sees it — its rolled damage range,
+    /// damage type, how fast it swings (1 is a plain sword), its stun chance — and
+    /// the wearer's dodge and accuracy. Enough for a test to tell a hammer from a
+    /// dagger without opening the sheet.</summary>
+    public int dmgMin, dmgMax;
+    public string dmgType = "";
+    public float weaponSpeed = 1f, stunChance, dodge, accuracy;
+
     public bool active, dead, abilityReady;
     /// <summary>False when the ultimate is off cooldown but unaffordable, so the
     /// HUD can say "waiting on mana" rather than showing a ready prompt that does

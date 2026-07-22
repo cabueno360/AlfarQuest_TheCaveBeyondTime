@@ -11,7 +11,8 @@ public static class StartingGear
         ["Mage"] =
         [
             new() { Id = "staff_ash", Name = "Ashen Staff", Slot = Slot.MainHand, Rarity = Rarity.Uncommon,
-                    Icon = "🪄", Damage = 6, Attributes = new() { Intelligence = 3 },
+                    Icon = "🪄", Weapon = WeaponType.Staff, DamageMin = 6, DamageMax = 12,
+                    DamageKind = DamageType.Fire, Attributes = new() { Intelligence = 3 },
                     Flavour = "Scorched at the grip, where the demon pushes back." },
             new() { Id = "robe_exile", Name = "Exile's Robe", Slot = Slot.Chest, Rarity = Rarity.Common,
                     Icon = "🧥", Armour = 4, Attributes = new() { Intelligence = 1 } },
@@ -19,7 +20,8 @@ public static class StartingGear
         ["Cleric"] =
         [
             new() { Id = "mace_gilded", Name = "Gilded Mace", Slot = Slot.MainHand, Rarity = Rarity.Rare,
-                    Icon = "🔨", Damage = 11, Attributes = new() { Strength = 2 },
+                    Icon = "🔨", Weapon = WeaponType.Hammer, DamageMin = 11, DamageMax = 18,
+                    Attributes = new() { Strength = 2 },
                     Flavour = "Blessed twice. He no longer remembers by whom." },
             new() { Id = "plate_blessed", Name = "Blessed Plate", Slot = Slot.Chest, Rarity = Rarity.Uncommon,
                     Icon = "🛡", Armour = 9, Attributes = new() { Vitality = 2 } },
@@ -29,7 +31,8 @@ public static class StartingGear
         ["Thief"] =
         [
             new() { Id = "crossbow", Name = "Seoshe Crossbow", Slot = Slot.MainHand, Rarity = Rarity.Uncommon,
-                    Icon = "🏹", Damage = 8, CritChance = 0.04f, Attributes = new() { Dexterity = 2 } },
+                    Icon = "🏹", Weapon = WeaponType.Bow, DamageMin = 8, DamageMax = 14,
+                    CritChance = 0.04f, Attributes = new() { Dexterity = 2 } },
             new() { Id = "shard_arm", Name = "Fused Shard", Slot = Slot.Ring1, Rarity = Rarity.Epic,
                     Icon = "💎", CritChance = 0.06f, Attributes = new() { Luck = 3, Agility = 1 },
                     Flavour = "It took the crew. It left this." },
@@ -50,7 +53,7 @@ public static class StartingGear
                 Icon = "◈", Attributes = new() { Intelligence = 3, Vitality = 1 },
                 Flavour = "It stops humming when something is near." },
         new() { Id = "blade_old", Name = "Old Shortblade", Slot = Slot.MainHand, Rarity = Rarity.Common,
-                Icon = "🗡", Damage = 4 },
+                Icon = "🗡", Weapon = WeaponType.Dagger, DamageMin = 4, DamageMax = 8 },
         new() { Id = "gloves_hide", Name = "Hide Gloves", Slot = Slot.Gloves, Rarity = Rarity.Common,
                 Icon = "🧤", Armour = 2, Attributes = new() { Dexterity = 1 } },
     ];

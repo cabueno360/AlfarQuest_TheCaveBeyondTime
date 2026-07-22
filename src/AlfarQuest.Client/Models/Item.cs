@@ -92,15 +92,44 @@ public sealed record Item
     /// <summary>Attribute bonuses, folded into the wearer's totals.</summary>
     public Attributes Attributes { get; init; } = new();
 
-    /// <summary>Flat combat bonuses that do not come from an attribute.</summary>
+    /// <summary>Flat combat bonuses that do not come from an attribute. For a
+    /// weapon <see cref="Damage"/> is left zero — its damage is a rolled range,
+    /// not a flat add — so this stays the province of rings and trinkets.</summary>
     public float Damage { get; init; }
     public float Armour { get; init; }
     public float CritChance { get; init; }
+
+    /// <summary>What kind of weapon this is, if it is one. Null for armour and
+    /// trinkets. Sets the whole feel: speed, reach, crit, stun, damage type.</summary>
+    public WeaponType? Weapon { get; init; }
+
+    /// <summary>The weapon's damage range, rolled fresh on every swing — the
+    /// brief's first rule, that no attack deals a fixed number. Zero on anything
+    /// that is not a weapon.</summary>
+    public int DamageMin { get; init; }
+    public int DamageMax { get; init; }
+
+    /// <summary>Overrides the weapon type's default damage type — a flaming sword
+    /// that deals Fire rather than Slashing. Null means "whatever the type
+    /// deals".</summary>
+    public DamageType? DamageKind { get; init; }
+
+    public bool IsWeapon => Weapon is not null;
+    public WeaponClass? WeaponInfo => Weapon is { } w ? WeaponClass.Of(w) : null;
+    public DamageType EffectiveDamage => DamageKind ?? WeaponInfo?.Damage ?? DamageType.Slashing;
 
     /// <summary>The lines a tooltip shows. Built here so every surface that
     /// describes an item words it identically.</summary>
     public IEnumerable<string> Bonuses()
     {
+        if (IsWeapon && DamageMax > 0)
+        {
+            var d = DamageTypeInfo.Of(EffectiveDamage);
+            yield return $"{DamageMin}–{DamageMax} {d.Name} Damage";
+            yield return $"{WeaponInfo!.Name} — {Speed(WeaponInfo.SpeedFactor)} attack";
+            if (WeaponInfo.CritBonus > 0) yield return $"+{WeaponInfo.CritBonus * 100:0}% Critical Chance";
+            if (WeaponInfo.StunChance > 0) yield return $"{WeaponInfo.StunChance * 100:0}% chance to stun";
+        }
         if (Damage != 0) yield return $"+{Damage:0} Physical Damage";
         if (Armour != 0) yield return $"+{Armour:0} Armour";
         if (CritChance != 0) yield return $"+{CritChance * 100:0.0}% Critical Chance";
@@ -110,4 +139,15 @@ public sealed record Item
             if (v != 0) yield return $"+{v} {a.Name}";
         }
     }
+
+    /// <summary>Turns a speed factor into a word a player reads faster than a
+    /// number — the tooltip does not need two decimal places to say "slow".</summary>
+    private static string Speed(float factor) => factor switch
+    {
+        <= 0.75f => "very fast",
+        <= 0.95f => "fast",
+        < 1.10f => "balanced",
+        < 1.45f => "slow",
+        _ => "very slow",
+    };
 }

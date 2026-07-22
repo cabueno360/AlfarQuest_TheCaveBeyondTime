@@ -7,6 +7,16 @@ namespace AlfarQuest.Client.Game;
 // =====================================================================
 public partial class World
 {
+    /// <summary>Cumulative combat tallies, never reset — every critical, miss,
+    /// block, dodge and stun this session. A running count catches an event that
+    /// lives for a single frame, which a live sample cannot.</summary>
+    public int CritCount, MissCount, BlockCount, DodgeCount, StunCount;
+
+    /// <summary>The last handful of damage numbers a hero dealt, so a test can see
+    /// that the weapon rolls a range rather than a fixed value. Capped — this is a
+    /// window, not a log.</summary>
+    public readonly List<int> RecentHits = new();
+
     void DoAttack(Hero h, Vec dir)
     {
         if (dir.Len() < 0.01f) dir = new Vec((float)Math.Cos(h.Facing), (float)Math.Sin(h.Facing));
@@ -16,14 +26,19 @@ public partial class World
         // cycle instead of latching on during sustained fire.
         h.AttackAnim = 0.22f;
 
+        // One roll for the swing — a fresh number between the weapon's min and max,
+        // so no two attacks land the same. The cone shares it; a single swing does
+        // one weapon's worth of damage to everything it catches.
+        var dmg = h.RollDamage(_rng.NextDouble);
+
         if (h.Def.Attack == Lore.AttackKind.Ranged)
         {
-            Shots.Add(new Projectile(h.Pos + dir * 24f, dir * 640f, h.Damage, h.Def.ColorAccent, 1.1f, h.Def.Key));
+            Shots.Add(new Projectile(h.Pos + dir * 24f, dir * 640f, dmg, h.Def.ColorAccent, 1.1f, h.Def.Key));
             // The loose of the shot. The bolt landing raises its own sound where it
             // lands, which may be a wall or a body a screen away.
-            PlaySound("bow", h.Pos, 0.7f);
+            PlaySound(h.DamageType == DamageType.Fire ? "magic_fire" : "bow", h.Pos, 0.7f);
         }
-        else // melee cone
+        else // melee cone, reaching as far as the weapon does — a spear outranges a dagger
         {
             Slashes.Add(new Slash(h.Pos, h.Facing, h.Def.ColorAccent, 0.18f));
             // The swing itself, whether or not it connects. A whiff that is silent
@@ -32,11 +47,11 @@ public partial class World
             foreach (var k in Husks)
             {
                 var to = k.Pos - h.Pos;
-                if (to.Len() < h.Def.Range + k.R)
+                if (to.Len() < h.Range + k.R)
                 {
                     float ang = (float)Math.Atan2(to.Y, to.X);
                     if (Math.Abs(AngleDiff(ang, h.Facing)) < 1.0f)
-                        Strike(h, k, h.Damage, to.Norm());
+                        Strike(h, k, dmg, to.Norm(), h.DamageType);
                 }
             }
         }
@@ -77,15 +92,23 @@ public partial class World
         int dmg = (int)MathF.Round(ability.Damage * h.AbilityDamageMultiplier);
         string col = ability.Colour;
 
+        // Each class's ultimate deals its own school — fire, holy light, ice —
+        // so a creature that resists one still fears another.
+        var abilityType = h.Def.HeroClass switch
+        {
+            "Mage" => DamageType.Fire,
+            "Cleric" => DamageType.Holy,
+            _ => DamageType.Ice,
+        };
         Slashes.Add(new Slash(h.Pos, 0, col, 0.4f) { Nova = true, Radius = radius });
         foreach (var k in Husks)
         {
             var to = k.Pos - h.Pos;
             if (to.Len() < radius)
             {
-                // The ultimate does not roll criticals: it already is the big
-                // moment, and a critical on top would be noise stacked on noise.
-                Strike(h, k, dmg, to.Norm(), canCrit: false);
+                // The ultimate does not roll criticals or miss: it already is the
+                // big moment, and it fills a radius rather than aiming at one thing.
+                Strike(h, k, dmg, to.Norm(), abilityType, canCrit: false, canMiss: false, canStun: false);
                 k.Knock += to.Norm() * 160f;
             }
         }
@@ -102,14 +125,37 @@ public partial class World
     /// the crossbow bolt, the ultimate — so the critical roll, the material's
     /// effect, the damage number and the knock are decided once. Three call sites
     /// each rolling their own critical is three chances for them to disagree.</summary>
-    void Strike(Hero h, Husk k, int baseDamage, Vec push, bool canCrit = true)
+    void Strike(Hero h, Husk k, int baseDamage, Vec push, DamageType type,
+                bool canCrit = true, bool canMiss = true, bool canStun = true)
     {
         var m = CharacterStats.For(h.Def.Key);
 
+        // Accuracy against the creature's evasion — the stat the sheet showed and
+        // combat ignored until now. Kept generous so stage one is not a game of
+        // whiffs, but present, so a fast thing is genuinely hard to land on and
+        // Dexterity genuinely steadies the hand.
+        if (canMiss)
+        {
+            var hit = Math.Clamp(0.90f + (m.Accuracy - 60f) * 0.005f - k.Def.Evasion, 0.55f, 0.99f);
+            if (_rng.NextDouble() > hit)
+            {
+                MissCount++;
+                Floaters.Add(new FloatText(k.Pos + new Vec(0, -18), "miss", "#9a95b6"));
+                return;
+            }
+        }
+
         // Criticals were computed for the character sheet and read by nothing.
-        // The sheet has promised a critical chance since the sheet existed.
         var crit = canCrit && m.CritChance > 0 && _rng.NextDouble() < m.CritChance;
-        var damage = crit ? (int)MathF.Round(baseDamage * MathF.Max(1f, m.CritDamage)) : baseDamage;
+        var raw = crit ? baseDamage * MathF.Max(1f, m.CritDamage) : baseDamage;
+
+        // What this creature turns aside, or takes extra of — the resistance table.
+        // Floored at one so nothing is ever wholly immune to a solid hit.
+        var damage = Math.Max(1, (int)MathF.Round(raw * (1f - k.Def.Resistance(type))));
+
+        if (crit) CritCount++;
+        RecentHits.Add(damage);
+        if (RecentHits.Count > 24) RecentHits.RemoveAt(0);
 
         // Whoever lands the last blow owns the kill. XP is individual now — the
         // hero who finishes a creature levels for it, and nobody else does.
@@ -125,6 +171,14 @@ public partial class World
             k.Pos + new Vec(0, -18),
             crit ? $"{damage}!" : $"{damage}",
             crit ? "#ffd77a" : "#e8e6f2"));
+
+        // The hammer's whole argument for being so slow: a chance to put the thing
+        // on the floor for a beat. The first real status effect.
+        if (canStun && m.WeaponStunChance > 0 && _rng.NextDouble() < m.WeaponStunChance)
+        {
+            StunCount++;
+            ApplyEffect(k, StatusEffectKind.Stun, 1.1f, 0f, h.Def.Key);
+        }
     }
 
     /// <summary>The effect a hit on this creature throws. Derived from its

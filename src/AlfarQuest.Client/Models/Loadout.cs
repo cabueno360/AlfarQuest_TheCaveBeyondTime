@@ -9,6 +9,11 @@ public sealed class Loadout
     public Item? this[Slot slot] => _worn.GetValueOrDefault(slot);
     public IEnumerable<Item> Worn => _worn.Values;
 
+    /// <summary>The weapon in hand, if any. What decides how the wearer fights —
+    /// its range, speed, crit and damage type — so the stat calculation reaches
+    /// for it directly rather than hunting the main-hand slot each time.</summary>
+    public Item? Weapon => this[Slot.MainHand] is { IsWeapon: true } w ? w : null;
+
     public Item? Equip(Item item)
     {
         var previous = this[item.Slot];

@@ -17,22 +17,24 @@ public static class StatCalculator
         var sk = c.SkillEffects();       // learned ranks
         var def = c.Def;
 
-        // Mirrors Hero.Damage exactly: (attributes + gear) scaled by skills. If
-        // these two ever drift, the sheet promises damage the engine will not
-        // deal — so the multiplication is written the same way in both places.
-        var physical = (PhysicalDamage(def.Damage, a) + gear.Damage) * (1f + sk.Damage);
-        var attackSpeed = AttackSpeed(def.AttackCooldown, a) * (1f + sk.AttackSpeed);
+        // Reads the same weapon profile the engine rolls from, so the sheet
+        // promises the exact range the blade deals — including the weapon's crit
+        // and the pace it swings at.
+        var weapon = Weapon(c);
+        var wname = c.Gear.Weapon?.WeaponInfo?.Name ?? "Bare hands";
+        var dtype = DamageTypeInfo.Of(weapon.Damage);
+        var attackSpeed = AttackSpeed(def.AttackCooldown, a) * (1f + sk.AttackSpeed) / MathF.Max(0.1f, weapon.SpeedFactor);
         var block = Math.Min(0.9f, Block(a) + sk.BlockChance);
         var regen = HealthRegen(a) + sk.HealthRegen;
         var armour = PhysicalDefense(a) + gear.Armour;
         return
         [
-            new("Physical Damage",  $"{physical:0}",                    "Strength, your weapon and skills."),
+            new("Weapon Damage",    $"{weapon.Min:0}–{weapon.Max:0} {dtype.Name}", $"{wname}, your attributes and skills."),
             new("Magic Damage",     $"{MagicDamage(def.Damage, a) * (1f + sk.AbilityDamage):0}", "Intelligence and skills."),
             new("Physical Defense", $"{armour:0}",                      "Defense and worn armour. Blunts every blow."),
             new("Damage Reduction", $"{DamageReduction(armour) * 100:0.0}%", "What that armour actually removes."),
             new("Magic Resistance", $"{MagicResistance(a) * 100:0.0}%",  "Wisdom turns aside magic."),
-            new("Critical Chance",  $"{(CritChance(a) + gear.CritChance) * 100:0.0}%", "Dexterity and Luck."),
+            new("Critical Chance",  $"{(CritChance(a) + gear.CritChance + weapon.CritBonus) * 100:0.0}%", "Dexterity, Luck and your weapon."),
             new("Critical Damage",  $"{CritDamage(a) * 100:0}%",         "How much a critical adds."),
             new("Attack Speed",     $"{attackSpeed:0.00}/s",             "Dexterity and skills shorten the cooldown."),
             new("Movement Speed",   $"{MoveSpeed(def.Speed, a):0}",      "Agility carries you further."),
@@ -45,6 +47,45 @@ public static class StatCalculator
             new("Stamina Regen",    $"{StaminaRegen(a):0.0}/s",           "Agility gets your wind back."),
             new("Find Rarity",      $"+{(LootChance(a) + sk.LootChance) * 100:0}%", "Luck, and what the dark gives up."),
         ];
+    }
+
+    /// <summary>The equipped weapon's damage range and feel, with the wearer's
+    /// attributes and skills already folded in — the engine rolls between Min and
+    /// Max and applies crit, so the whole "no fixed damage" rule lives here.
+    ///
+    /// A bare-handed hero falls back to a small range off their class base, so
+    /// losing your weapon weakens you rather than disarming the game.</summary>
+    public static WeaponProfile Weapon(Models.Character c)
+    {
+        var a = c.Total;
+        var gear = c.Gear.Total();
+        var sk = c.SkillEffects();
+        var w = c.Gear.Weapon;
+
+        float baseMin, baseMax, speed, reach, stun, critBonus;
+        DamageType type;
+        if (w is not null)
+        {
+            baseMin = w.DamageMin; baseMax = w.DamageMax; type = w.EffectiveDamage;
+            var info = w.WeaponInfo!;
+            speed = info.SpeedFactor; reach = info.Reach; stun = info.StunChance; critBonus = info.CritBonus;
+        }
+        else
+        {
+            baseMin = c.Def.Damage * 0.6f; baseMax = c.Def.Damage * 1.0f;
+            type = DamageType.Blunt; speed = 1f; reach = 0f; stun = 0f; critBonus = 0f;
+        }
+
+        // Magic weapons scale with Intelligence, everything else with Strength —
+        // and both take the flat damage off rings. Then skills multiply the lot,
+        // exactly as the sheet's Physical/Magic Damage rows do.
+        bool magic = DamageTypeInfo.Of(type).IsMagic;
+        float attrBonus = magic ? a.Intelligence * 2.1f : a.Strength * 1.6f;
+        float mult = 1f + sk.Damage;
+        return new WeaponProfile(
+            MathF.Max(1f, (baseMin + attrBonus + gear.Damage) * mult),
+            MathF.Max(1f, (baseMax + attrBonus + gear.Damage) * mult),
+            type, speed, reach, stun, critBonus);
     }
 
     // --- the formulas, each small enough to read at a glance ---
@@ -105,6 +146,11 @@ public static class StatCalculator
     public static float MaxMana(Attributes a) => 30 + a.Intelligence * 4f;
     public static float MaxStamina(Attributes a) => 40 + a.Vitality * 3f + a.Agility * 2f;
 }
+
+/// <summary>The equipped weapon's resolved damage, with the wearer folded in.
+/// Min/Max are the final range the engine rolls between.</summary>
+public readonly record struct WeaponProfile(
+    float Min, float Max, DamageType Damage, float SpeedFactor, float Reach, float StunChance, float CritBonus);
 
 /// <summary>One row of the derived-stats panel.</summary>
 /// <param name="Pending">True for a stat the interface names but nothing in the

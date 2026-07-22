@@ -41,7 +41,7 @@ public partial class World
             // them magical — the spit is slow and green, the crystal fast and
             // bright, the missile a wandering mote of raw magic.
             case MonsterAbility.PoisonSpit:
-                Bolt(k, dir, 320f, "#8fd24a", magical: false);
+                Bolt(k, dir, 320f, "#8fd24a", magical: false, onHit: StatusEffectKind.Poison);
                 break;
             case MonsterAbility.CrystalBolt:
                 Bolt(k, dir, 380f, "#9fe4ff", magical: false);
@@ -72,10 +72,10 @@ public partial class World
 
     /// <summary>Spawns one hostile projectile from a creature toward where it is
     /// facing the party.</summary>
-    void Bolt(Husk k, Vec dir, float speed, string colour, bool magical)
+    void Bolt(Husk k, Vec dir, float speed, string colour, bool magical, StatusEffectKind? onHit = null)
     {
         Bolts.Add(new Projectile(k.Pos + dir * (k.R + 6f), dir * speed, k.Def.Damage, colour, 2.4f,
-                                 owner: "", magical: magical));
+                                 owner: "", magical: magical, onHit: onHit));
         MonsterBoltsFired++;
         Play(magical ? "frost" : "hit_crystal", k.Pos + dir * k.R, dir, 0.5f);
     }
@@ -115,7 +115,7 @@ public partial class World
                 if (!h.Alive || h.IFrames > 0) continue;
                 if ((h.Pos - b.Pos).Len() > 16f) continue;
 
-                HurtHero(h, b.Damage, b.Vel.Norm(), b.Magical);
+                HurtHero(h, b.Damage, b.Vel.Norm(), b.Magical, b.OnHit);
                 b.Life = 0;
                 break;
             }
@@ -126,10 +126,22 @@ public partial class World
     /// <summary>One blow landing on a hero, from a bolt or a smash. Blocks, armour,
     /// magic resistance, the flash, the number and a shove all decided here so a
     /// monster's spit and a monster's melee treat the hero identically.</summary>
-    void HurtHero(Hero h, int damage, Vec push, bool magical)
+    void HurtHero(Hero h, int damage, Vec push, bool magical, StatusEffectKind? onHit = null)
     {
+        // Agility slips the blow entirely — the dodge the sheet has shown all
+        // along and combat never granted. Rolled first: you cannot block or be
+        // poisoned by a hit that never touched you.
+        if (h.DodgeChance > 0 && _rng.NextDouble() < h.DodgeChance)
+        {
+            DodgeCount++;
+            Floaters.Add(new FloatText(h.Pos + new Vec(0, -22), "DODGE", "#a8f0de"));
+            h.IFrames = MathF.Max(h.IFrames, 0.1f);
+            return;
+        }
+
         if (h.BlockChance > 0 && _rng.NextDouble() < h.BlockChance)
         {
+            BlockCount++;
             Play("block", h.Pos, push);
             Floaters.Add(new FloatText(h.Pos + new Vec(0, -20), "block", "#cfd6ff"));
             return;
@@ -143,6 +155,11 @@ public partial class World
         Play(magical ? "frost" : "hit_flesh", h.Pos, push);
         Floaters.Add(new FloatText(h.Pos + new Vec(0, -22), $"-{taken:0}", "#e2687a"));
         Shake = MathF.Max(Shake, 0.35f);
+
+        // Whatever the blow carried — venom from a spider's spit. Four points a
+        // second for four seconds, credited to no hero since the world dealt it.
+        if (onHit is { } eff)
+            ApplyEffect(h, eff, 4f, 4f, null);
     }
 
     /// <summary>A direction nudged off-true by up to <paramref name="amount"/>

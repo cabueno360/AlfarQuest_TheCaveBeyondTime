@@ -346,6 +346,18 @@ export function debugEncounter() {
     try { DotNet.invokeMethod(ASM, "DebugEncounter"); } catch { /* engine not up */ }
 }
 
+/// One immortal, evasive training dummy beside the party — a seam so a test can
+/// pile up attack rolls (misses, stuns, crits) without the target dying first.
+export function debugTrainingDummy() {
+    try { DotNet.invokeMethod(ASM, "DebugTrainingDummy"); } catch { /* engine not up */ }
+}
+
+/// The combat model as data — weapon types, damage schools, status effects, a few
+/// resistances. A seam for the probe to assert the depth without the world running.
+export function combatFacts() {
+    try { return JSON.parse(DotNet.invokeMethod(ASM, "CombatFacts")); } catch { return null; }
+}
+
 /// Every sound family raised since the last reset. A sparse event lives in the
 /// payload for one frame, so a polling probe misses it; this accumulates.
 const _familiesSeen = new Set();

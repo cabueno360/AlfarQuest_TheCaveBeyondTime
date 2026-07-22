@@ -47,6 +47,30 @@ public partial class World
             });
     }
 
+    /// <summary>Sets the party down beside one immortal, evasive target — a
+    /// training dummy. A live creature dies in a hit or two, far too few rolls for
+    /// a 20%-chance stun or an evasive miss to show; a dummy that cannot die gives
+    /// as many swings as a test needs.</summary>
+    public void DebugTrainingDummy()
+    {
+        if (Party.Count == 0 || Active >= Party.Count) return;
+
+        var here = FindOpenForestSpot();
+        foreach (var h in Party) { h.Pos = here; h.Hp = h.MaxHp; }
+        Camera = here;
+        Husks.Clear();
+        Bolts.Clear();
+
+        // Enormous health, hard to hit, and rooted so it neither wanders off nor
+        // hits back — a post to practise on, not a fight.
+        var dummy = CreatureCatalog.Of("beast") with
+        {
+            Id = "dummy", Name = "Training Dummy",
+            MaxHp = 1_000_000f, Evasion = 0.25f, Damage = 0, Speed = 0f, AggroTiles = 999f,
+        };
+        Husks.Add(new Husk(here + new Vec(38f, 0f), dummy) { State = AiState.Chase, Rooted = true });
+    }
+
     /// <summary>An open, walkable forest tile that is not in a safe zone — so the
     /// creatures set down beside it will actually hunt.</summary>
     Vec FindOpenForestSpot()

@@ -48,6 +48,38 @@ public static class GameEngine
     [JSInvokable]
     public static void DebugEncounter() => _world?.DebugEncounter();
 
+    // A test seam: one immortal, evasive target to accumulate attack rolls on.
+    [JSInvokable]
+    public static void DebugTrainingDummy() => _world?.DebugTrainingDummy();
+
+    // The combat model as data, so a test can assert the weapon types differ, the
+    // damage schools exist, the status architecture names them all, and the
+    // resistances land on the right types — none of which needs the world running.
+    [JSInvokable]
+    public static string CombatFacts() => JsonSerializer.Serialize(new
+    {
+        weapons = Models.WeaponClass.All.Select(w => new
+        {
+            type = w.Type.ToString(), name = w.Name, damage = w.Damage.ToString(),
+            speed = w.SpeedFactor, crit = w.CritBonus, reach = w.Reach, stun = w.StunChance,
+        }),
+        damageTypes = Models.DamageTypeInfo.All.Select(d => new
+        {
+            name = d.Name, category = d.Category.ToString(),
+        }),
+        statusEffects = Models.StatusEffectInfo.All.Select(e => new
+        {
+            name = e.Name, behaviour = e.Behaviour.ToString(),
+        }),
+        resistances = new
+        {
+            slimePiercing = CreatureCatalog.Of("slime").Resistance(Models.DamageType.Piercing),
+            slimeBlunt = CreatureCatalog.Of("slime").Resistance(Models.DamageType.Blunt),
+            wormSlashing = CreatureCatalog.Of("worm").Resistance(Models.DamageType.Slashing),
+            wormBlunt = CreatureCatalog.Of("worm").Resistance(Models.DamageType.Blunt),
+        },
+    }, Json);
+
     // Called every animation frame. inputJson is an InputState.
     // Returns a serialized RenderState for game.js to draw.
     [JSInvokable]

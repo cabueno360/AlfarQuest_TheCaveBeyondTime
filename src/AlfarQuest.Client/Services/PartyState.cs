@@ -134,6 +134,7 @@ public sealed class PartyState
         {
             if (Find(key) is not { } c) return HeroModifiers.None;
             var sk = c.SkillEffects();
+            var weapon = StatCalculator.Weapon(c);
             return new HeroModifiers(
                 BonusDamage: StatCalculator.PhysicalDamage(c.Def.Damage, c.Total) - c.Def.Damage + c.Gear.Total().Damage,
                 BonusMaxHp: StatCalculator.MaxHp(c.Def.BaseHp, c.Total) - c.Def.BaseHp,
@@ -153,12 +154,22 @@ public sealed class PartyState
                 DamageReduction: StatCalculator.DamageReduction(
                     StatCalculator.PhysicalDefense(c.Total) + c.Gear.Total().Armour),
                 MagicResistance: StatCalculator.MagicResistance(c.Total),
-                CritChance: StatCalculator.CritChance(c.Total) + c.Gear.Total().CritChance,
+                CritChance: StatCalculator.CritChance(c.Total) + c.Gear.Total().CritChance + weapon.CritBonus,
                 CritDamage: StatCalculator.CritDamage(c.Total),
                 MaxMana: StatCalculator.MaxMana(c.Total),
                 MaxStamina: StatCalculator.MaxStamina(c.Total),
                 ManaRegen: StatCalculator.ManaRegen(c.Total),
-                StaminaRegen: StatCalculator.StaminaRegen(c.Total));
+                StaminaRegen: StatCalculator.StaminaRegen(c.Total),
+                // The weapon the engine actually swings, and the defensive rolls
+                // that used to be sheet decoration.
+                WeaponMin: weapon.Min,
+                WeaponMax: weapon.Max,
+                WeaponStunChance: weapon.StunChance,
+                AttackReach: weapon.Reach,
+                WeaponSpeedFactor: weapon.SpeedFactor,
+                WeaponDamage: weapon.Damage,
+                Accuracy: StatCalculator.Accuracy(c.Total),
+                DodgeChance: StatCalculator.Dodge(c.Total));
         };
     }
 

@@ -108,8 +108,10 @@ const before = await sfxCount();
 const attackFamilies = await familiesDuring(() => hold('j', 2000));
 const after = await sfxCount();
 
+// The mage leads with a fire staff, so their basic attack is a magic cast, not a
+// bolt or a swing — the sound follows the weapon now.
 check('the engine raised an attack sound in the frame payload',
-  attackFamilies.includes('swing') || attackFamilies.includes('bow'),
+  ['swing', 'bow', 'magic_fire', 'magic_frost'].some(fam => attackFamilies.includes(fam)),
   attackFamilies.join(', ') || '(none)');
 check('those events started voices', after > before, `${before} → ${after} voices`);
 
