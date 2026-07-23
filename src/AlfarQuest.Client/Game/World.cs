@@ -82,10 +82,19 @@ public partial class World
         ("mine",     "lake",      2),   // back way into the workings
     };
 
+    /// <summary>Where the game opens. Stage 1 is the ring of hand-authored
+    /// regions now, and it begins in the village — Ashwold, at the gate in from
+    /// Seoshe, facing the bridge.</summary>
+    public const string StartRegion = "r1_ashwold";
+
     public World(string[] heroKeys, float viewW, float viewH)
     {
         ViewW = viewW; ViewH = viewH;
-        BuildOverworld();                 // Stage 1: the approach
+        // Open in the village. If the regions did not register — a map failed to
+        // fetch — fall back to the old generated approach, so there is always a
+        // world to stand in. See Overworld.Regions and docs/mapping-standard.md.
+        if (!LoadRegion(StartRegion))
+            BuildOverworld();
         int slot = 0;
         foreach (var key in heroKeys.Take(3))
             Party.Add(new Hero(Lore.ByKey(key), Spawn + new Vec((slot++ - 1) * 40f, 0)));

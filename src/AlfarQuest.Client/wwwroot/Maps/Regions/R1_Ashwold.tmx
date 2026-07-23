@@ -9,12 +9,13 @@
      overhang. NPCs and heroes stay on our own atlases as NPCSpawn objects. -->
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
      width="144" height="112" tilewidth="16" tileheight="16" infinite="0"
-     nextlayerid="330" nextobjectid="701">
+     nextlayerid="330" nextobjectid="703">
  <properties>
   <property name="Region" value="r1_ashwold"/>
   <property name="DisplayName" value="Ashwold"/>
   <property name="Stage" type="int" value="1"/>
   <property name="EngineTile" type="int" value="32"/>
+  <property name="Wildlife" type="int" value="26"/>
   <property name="NorthMap" value="r2_whispering_wood"/>
   <property name="EastMap" value="r4_kae_ychel_road"/>
  </properties>
@@ -37,13 +38,13 @@
   <data encoding="base64" compression="zlib">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</data>
  </layer>
  <layer id="302" name="GroundDetails" width="144" height="112">
-  <data encoding="base64" compression="zlib">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</data>
+  <data encoding="base64" compression="zlib">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</data>
  </layer>
  <layer id="303" name="Roads" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt3V1u00AQwHE7kXa3kpMrFPGhcAQe4IEjgKCIXgGQ7Nz/AVv1isloxkl2TSnq/yetkthx4jjj2VnbTZsGlu9jG8bWj+0bmwNXeju22D6012wOXOnj2EL70O7YHCiInzjHD/kHJf1XmPsv8g+udU/8YIX6JxE/qBh/UT+jtv6hfkZp/CTiB4X1c5r7rw9sDjD+wiPHD8cPUTN+T3P9Q/8F4gePPf5K1D+oHL8z/kJp/ESO/6Cy/mH8hdL4idTPKHQv6mfiBzXxQ/8F8g/+Rf3D+B2l8cP5U5Ti+CFq80/i+mdU1M+B44eoiJ98/HBq/B08SvqvHEMcBwIAAAAAAACg5es4OH6IEvI8BvGD0vjhPCpK8DuaqM0/XAeEmvwTuY4eFfGT+B1NrDB+J35QWj/nHMR1iCjNP/w9IUriJ4j44e95cI3D2PaidWN7w2YBAAAAFk3/j3k69nNsOP6DsnE8vweES30Z28+x/Zpvt2PctGPbzLc/xLz8vM9sNszeN39iZduexo9srWjvnmm/PvXpw3yb+/g8rRfTB2f+oJbvjcd6mbXk98rnGPK5qsFY3+l+EL+nsfQZWhEzrREvMrby49tn2q+n9rTJ84VRzYvOdPl8ea4oqmXz8muJxjrFM+uUjHXU5yhaFR+6/5Ixled9eobxI6/PXNqe+rsIounlkhN38nXXksR6ROe9gxHP0dgf5OtsVP7RfddWxVJ+LPPtIFp+/aPKxfp+Xsde5cWnet5f/p/G2Nr3k9rG+jsLzncWjOenlfPPzmmdutWfZZq+F8/fi8f75rTm2aoayMtDmwtysdwOyYnl5My/e6L9lxU7Xjwl57PGhX1cx9ua+edv+drYdY7ON3p+uDDnRWf/svpiuS/2qq7sjVx2VDXrUeXD3qh3rbzZN/b7DeI42EHte53aH/W5507tp3J/l9M74znyPf6X8ZfspzZGvpH5aXqsP7/cZp3YFtb+Kvevpfjy8pNePi7UHcmJT2t9glPDcD2m71Vzmm+s3KMf3xbWDVbNEIw+MDhjluDUrclZLjh97NJ4yIpljqOej5+NMdbaqP4r559rxl8HlZt0frfyjdU3evEWjXrVG/skp04JRp0i75N/lvsvK99sVd7ZFsbPJePitDCuvOS4RTpTk146zo5OjUb8+F5O399Up8xtun8z3+bpN2L61F6s+P4HlZOsXLVT9aa+1TXo3qhNz9W1O/Vecj7XYQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKDWb4qMZrs=</data>
+  <data encoding="base64" compression="zlib">eNrt3d2O20QUAOA4kWxXavYVqICqfYRewAWPAKJF9BUAKdn3v6itesTZo3F2M04L1X6fNIp/4sR1T86csZ3sbkfNn1M7T+00tT8cDq70dmpD97n96HBwpV+m1nef2weHg4b4GZb4kX9o6b/6pf+Sf7jWR/HDDeqfUfywYfylfmZr/aN+pjV+RvFDY/08Lv3Xzw4Hxl985fhx/pAt4/dxqX/0X4gfvvb4a1T/sHH8bvxFa/wMzv+wsf4x/qI1fgb1M40+hvpZ/LAlfvRfyD/8F/WP8Tut8eP6Ka2cP2Rr/hnd/8yG+rl3/pAN8VPOH87N9+Bp6b9KDDkPBAAAAABk5T4O5w9pEa9jiB9a48d1VFr4HU225h/3AbEl/wzuo2dD/Ix+R5MbjN/FD631c8lB7kOkNf/4PiEt8dOH+PF9Hq7xZmp3ob2c2muHBQAALpr/HvN87ud+5/wPbeN4vwfEU/0+tb+n9s/yeJjippvafnn8K6wrz/vNYWPx0+7fWDl0D+Mnti60d8+0X5/79PPyWPr4suwUlp9X1p/T9qfKfN7mVsp7lWsM5VrVubK/83Qffk/j0r+hCzHTVeIlxlaZ/+6Z9utj97DF64VDWjesLI/Pj9eKhrRt2f5Whso+DY/s01jZx3yNokvxkfuvGFNl3a/PMH7i/ZmXjmf+v+hDy9uNK3EXX/dWxrAfw8p795V4Hiqfh/g6+5R/ct91SLFU5mO+PYdWXv8+5eI8XfYx5vH/83ivXN+Zr+scV6bjsjgfl5Xn36X1+fll+laOKy3vW/4clH05pn0v04eUew6V/qwWV4/l4viZG1diOed1471vz/tdvc7J+Sav75+Y83Is9SkP5pg6pVoyz8dcdp9q1vuUD0+VereWN9fe7+w82JPHX7Gf2lfyTcxP8/yxkq9zDj/u1p9X1l2Kr3Elf8WcN6wsz/kv1yK1vrxfqWHcj7nuh93DfFPLPXn+luOvWJfmOjTXdv1K3TqubNev9LGXxkO1WNavPh4/+8pYa5/6r5J/bjn+elOpK1+mx2Ol1qzVgTn35dr0rlL31mreuzTtPqjL/Vct3xxS3jl8ofjh2/b9PGab65ClzdMvlsey/EVYPrdXDhsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABc5ROyu1/h</data>
  </layer>
  <layer id="304" name="Bridges" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt3EFOwzAQBVA7XrScggouwYJLgOAULfffkiiN4g5OitghvydZkZ2srNHYm5+UAAAAAAAAAAAAAAAAAAAAAABufY6j5JTydQx5nl/G9a/reLdNbHhOc83kvNZRyevaNB5tExte023NLP2nnr/YJnb6T3121c+ifvhF/ZRwdsVz7M02sXN+1ffnOIr7D3fqJ55XpTrHnF/seRrHMd32m6lmHsa1Q5qfJ9sEAAAAAAAAAAAA8G98pDnLeU5rnvNcrS3P5f2l+mZ5yn/2q84Hl0a2agi5mbgu/9m33KiRVg2VkP2M39Gn2E+GRj6vNHLD8X8G9Nt/yp18Vdl5t9QRfRruZINb/06J/WdQP933n7JxV67Pt63+I//p/hP7Sm70nty4T/t/Qd9e0887cuwz8f8F8U6kfvo15cunDPmUMV/y5PV8qZdjtXZI63waJ9sIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPzBNwmLEJg=</data>
+  <data encoding="base64" compression="zlib">eNrt3EFOwzAQBVA7XrScggouwaKXAJVTtNx/S6I0iju4KWKH/J5kRXa6skZjd/GTEgAAAAAAAAAAAAAAAAAAAADArc9xlJxSvo4hz/PLuP51HR+2iTte01wzOa91VPK6No1n28Qdx3RbM0v/qedvtomN/lOfXfWzqB9+UT8lnF3xHHu3TWycX/X9OY7i/sOD+onnVanOMecXW17GsU+3/WaqmadxbZfm58E2AQAAAAAAAAAAAPwbpzRnOc9pzXOeq7Xluby/VL9ZnvKf/arzwaWRrRpCbiauy3/2LTdqpFVDJWQ/4+/oU+wnQyOfVxq54fg9A/rtP+VBvqpsvFvqiD4ND7LBrW+nxP4zqJ9u1fny1l25Pt/u9R/5z77/f7X6Sm70nty4T/t+Qd+O6ecdOfaZ+P2CeCdSP/2a8uVThnzKmC958nq+1Mu+WtuldT6Ng20EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7gGzm8EQo=</data>
  </layer>
  <layer id="305" name="Water" width="144" height="112">
   <data encoding="base64" compression="zlib">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</data>
@@ -58,13 +59,13 @@
   <data encoding="base64" compression="zlib">eNrt1jkOwzAMBEA2/H/h40c+nhU2gstAShHAmgFYsJWIxUYAAAAAAAAAAAAwkz0jtvQOjLnrdi73M621/n7JJ0d6d+Z21g0c+eRI7847+sdojqB/jORG25kzN/QPufFLbugfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/a0YsNXvNlt6DPmfdzFFz11zuhy9azrTcgR4tZ1rugH6DfoN+g36DfgP6DQAAwJt9ADPFZHE=</data>
  </layer>
  <layer id="309" name="Buildings" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt3TeuFEEUBdDewOQdQgYrwErYHO9NjPcmxnuTgSDBJJDBMmBV3GQkhOb3uPr9Z6hzpJtUtTQTPJX6qZ9UTQMAAAAAAAAAAAAAAAAAAAAAAAAAAPRlXds069vZ96nTptTE5mRLsjXZlmxvJ9+nXvtSB/uTA8nB5FByODmSHG3H71O3c6mB88mF5GJyKbmcXEmutuP3qdu91MD95EHyMHmUPE6eJO8GTfN+sPL+U/VTvQ+pgY8j6uBT1n6kdn4OVt7/rH7o8Cu183tQrh/bkGc3qjn92pT92I7s7Ux2JbuTPcledaRfm6AfO5a148mJ5GRyKjmdnEnOqiH92ph+7FrWric3kpvJreR2cie5q36q7teG/VlXP/Ysa8+TF8nL5FXyOnmTvFU/Vfdrw/6sqx/7krWvI9a/Ze27+vkvTNpH/fvcuP6s7//HYvZRa/X9y3e35e+jSn7/Gr4vrUaf55xazD6q5Pevv9+XSvZ5zqnF7aOm7be6TPO+NOnvmg9Y7D5q2n6r7/9nPmDtTXou9NVvTfO7Jc9HnKN9nY/Ue44CAAAAAADAKLPOTc/7HMut9Ny0+cF6lJ6bNj9Yl9Jz0+YH61J6btr8YF1Kz02bH6xX6blp84MAAADLzb0ezMK9HszKvR7Mw70ezMO9HszDvR6sFt/ZAAAAAAAAAAAAAAAAAOjyB7sABq8=</data>
+  <data encoding="base64" compression="zlib">eNrt3ceq1GAYBuDcwOyz1J1egRWse3sva3sva3s96lpRLCi608vQq/IVRhDBKUnMyZn/eeAlQ/7AZPER5pt88FcVAAAAAAAAAAAAAAAAAAAAAAAAAADQl1V1Va2um69TpnWpifXJhmRjsinZXM++Trl2pQ52J3uSvcm+ZH9yIDlYT1+nbKdSA6eTM8nZ5FxyPrmQXKynr1O2W6mB28md5G5yL7mfPEge1tPXKdvL1MCrcR28zvHN+PPbHL+Oqurb6N/r79QPE3xP7fwY6cfot1+Dpv3aJGuyvlad6dfm7Me25PzWZFuyPdmR7FRH+rUZ+rFDOXc4OZIcTY4lx5MTyUk1VHS/9rs/m9SPXcq5y8mV5GpyLbme3Ehuqp+FMGsf9fd10/qzXx7l+sfJk+RpspQ8S54nL+pu749h9lFt+q33ue7D+NqPOX4af/6c45dan7fofdRyvf9q8r2eU8Pro7p8//Xn76Uu+zzPqeH2UV2+/5rl99K832s+YNh91Lz9Vt/3Zz5g+c36XJjn+dHX/ZkPoM//o2Boz0cAAAAAAAAWQ9O56bbXsbJ1PTdtfrAcXc9Nmx8sS9dz0+YHy9L13LT5wbJ0PTdtfrBcXc9Nmx8EAABY2ezrQRP29aAp+3rQhn09aMO+HrRhXw/+F+/ZAAAAAAAAAAAAAAAAAJjkJ3naC+0=</data>
  </layer>
  <layer id="310" name="Walls" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt3Veq1VAYhuE9A4167B67c7Aee29zsPdeB2EBC1jAMlG/e2HzZ0ey5azngfcmK3drkUJCMpkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwN82dZPJlrSYtqbNaVtXH6dtJ7IWTqcz6WQ6lc529XHa9iBr4Ul6mB6lx+lpVx+HL1kPX9O39L3rPw4A/7uFnL/WpfVpQ1qbNk45p23P2M60K+1OO9Ie58BmLWXuj6Zj6XA6ko5PWQ/nMnYxXUrn04V02fpp1q3M/b10O91Jd9P9KevhWcZepefpRXqZXls/TfuQ+f+YPqXPhbXwI/v8TL/Sb2uHHlz/MITrn+Wp+lxrRbZ1aVVanVamNT3mf9brn773eYyr+lxrb7YdSAfTvrQ/Heo5j7Nc//S9z2Nc1edaV7LtRrqarqXr6eYI81i9zxt6fGR21edabzL2Nr1L70ecm8p93r84PtKueR0fWT7mdXwEAAAAAAAAAJiH6vt+1f18X6gt1ff9qvv5vlBbqu/7VffzfaH2VN/3q+7n+0IAAAAAwJj814Mh/NeDIfzXg6H81wMAAAAAAAAAAAAAAACAvv4A35Z4uw==</data>
+  <data encoding="base64" compression="zlib">eNrt3VtOwlAYhdFOoWMUUVS8IaAOAjQRSQATwImyB+DDaQiX2LWS74XTN/6ctGnTVhUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJyPh7qqntMgPaan9FKXr8NP5mGRlmlVN18HAAD+1sv5813qp5t0m+6dU9PAPPPylWbp2+xwQMPM12t6S6M0Tu9mjgZ+My/rtElbs4P9B/sPeyi9r3WR37rpKnXSZbo+wgy4zjt/pfe1PrM2SdP0ccT/0HUeh3aq/ZH/41T7IwAAAAAAAAAAQJuUPu9Xepz3C7VP6fN+pcd5vxAAAAAAANAGvuvBvnzXAwAAAAAAAAAAAAAAAICmdvyJTq8=</data>
  </layer>
  <layer id="311" name="Objects" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt3Utym0AQAFAvKR0ltm+BTiOzkldZB62knDlFVaiiMOIzwDCg93ZKbNkC0+ru6UFvb7BvRbb8c/7JHFfYi8sK12t+Svs1/xWjIFlL5hB9z9WOU83Hj5G/w33g694HYuHX/+//ODnvkHLcOZ+We677gj+rz5S4chaDIAlD+Ue5cA1zj1AT5eILHDIe9RnqMal9gNBaaowYPd+QOGa9DNg6t/sShyCa78Svt732auRTsKxnvebbDq+1teLa547i5S/9NuilJx0WQz4dN3akSDCHaa+X1fnXUWqbixoNZl0z9Xr8tfXv9jYAc1x7YkgKfWu1GRxD39zxdSdzP/QzWwDh5qzXXF17cBiPJ32gkDxnqJbTpwUq7xNzkDlrVcXB407s1/dbv4wEfcsvDvk+8C7ecDC5WJWM5jx64bxAUNw6cn9nrRkB+8tgPutSwBa8hwOVLecDq5+trwRiz5puYgzQ0tx7YZ8EENOYHvBa9ZF4B6/tsVAMMMcIxIxJXXlRqZ8MAAAAkCx9GwDgFbXv5fCqe9djH+vq/szNx9X+uMuTx/UsefPrn82XO0fsgb/TdJQRz4X70pOi82lcDsR6xsyH382P8oLEpLgejjcHNXSvYPcSBmKYc18wvYR03J0LDmDM5/61117kS8AS+Yo+zzbcmwTGr8vv5X7O9cxMHXvr19c1b1Mps+7HVc5XZj/zv6Lj/7tyRCBejca2OY/PGiE1aqvw4xQyL9OVS14GPkewmUO15xLb88/t7y+dXw4Uf6bUWHIigHXJMSCOKfM9a+8nq3M3NSTsUwp7TsWPY9fssETOkw/0c+p+zy3z9x+SL6bsQy8P+dPiioV//641sZB17zrGbrFmbt8GAGyX8/TVLlPn9Oxl+OnZLEWzvu2qu9wniNTkL9ofiBXXpva8xtRthThCIpr71cfEkpj72x9Zdz4U2qdovn9byxmfzzhWpKCvLspHrpXNiUOp1i2p5UBT6+aQ5/8HHehjgg==</data>
+  <data encoding="base64" compression="zlib">eNrt3c1yokAQAOAcKR9lTd5Cn0Y5mdOeF0+6z7xF1VJFEeR3GAb8vpu7iYkQ2u6eHvz4gG3Ls/DP+SdzXGErLgtcr6dD2q/5rxgFyQqZQ3Q9VzNO1R8/B/4Oj56vO/bEwuv/7/88OO+Qctw5H8I91yPgz+oyJq6cxSBIQl/+UQSuYR4RaqKT+AK7jEdd+npMah9gai01RIye75Q4Zr0MWDu3u4pDEM134tfbVns18ikI61Wv+b7Ba22puPa1oXj5S78NOulJT4shX44bG5InmMM018uq/Gsvtc1FjQazrplqPf7W+Hd7G4A5bh0xJIW+tdoM9qFr7vi2kbkfupktgOnmrNfcXHuwG88XfaApeU5fLadPC5SOI3OQOWtV+c7jTuzX91u/jAR9yy92+T5wFG/YmZNYlYz6PHruvMCkuLXn/s5SMwL2l8F81qWANXgPB0przgeWP1tfCcSeJd3FGKChvvfCPgkgpiE94KXqI/EO3tszUAwwxwjEjElteVGhnwwAABBcV89HDQaMIWYAAO+oeS+Hd927HvtYl/dnrj8u98ddXjyuZsnrX/9qvtw5Ygv8naajiHgu3JeeFJ0Pw3IgljNkPvxhfpQ3JCbF9XS82am+ewW7lzAQw5z7guklpOPhXLADQz73r7n2Il8CQuQr+jzrcG8SGL4uv5X7OVczM1XsrV5f27xNqcjaH5c5X5H9zP/ylv9vyxGBeDUa6+Y8PmuE1Kitph+nKfMybbnkpedzBOs5VHMusTn/3Pz+wvllR/FnTI0lJwJYlhwD4hgz37P0frIqd1NDwjalsOdU/Nh3zQ4hcp5TTz+n6vfcM3//U/LFlH3q5SF/Ci4P/Pu3rYlNWfeuYuwaa+b2bQDAejlPV+0ydk7PXoafXs1S1OvbtrrLfYJIzelN+wOx4trYnteQui0XR0hEfb/6kFgSc3/7M2vPh6b2Kerv39ZyhuczjhUpuA74zK8l8qFU7v+31j7budd/X9085fn/AQqSZEo=</data>
  </layer>
  <layer id="312" name="Trees" width="144" height="112">
   <data encoding="base64" compression="zlib">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</data>
@@ -193,7 +194,7 @@
  <objectgroup id="322" name="EnemySpawn">
  </objectgroup>
  <objectgroup id="323" name="Warp">
-  <object id="667" name="the gate of Seoshe" x="104.00" y="488.00">
+  <object id="669" name="the gate of Seoshe" x="104.00" y="488.00">
    <properties>
     <property name="DestinationMap" value="seoshe"/>
     <property name="DestinationSpawn" value="0.0,0.0"/>
@@ -205,7 +206,7 @@
   </object>
  </objectgroup>
  <objectgroup id="324" name="Interaction">
-  <object id="668" name="the gate of Ashwold" x="136.00" y="456.00">
+  <object id="670" name="the gate of Ashwold" x="136.00" y="456.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -215,7 +216,7 @@
    </properties>
    <point/>
   </object>
-  <object id="669" name="the notice post" x="648.00" y="488.00">
+  <object id="671" name="the notice post" x="648.00" y="488.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -225,7 +226,7 @@
    </properties>
    <point/>
   </object>
-  <object id="670" name="the well" x="616.00" y="504.00">
+  <object id="672" name="the well" x="616.00" y="504.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -235,7 +236,7 @@
    </properties>
    <point/>
   </object>
-  <object id="671" name="the shrine" x="536.00" y="184.00">
+  <object id="673" name="the shrine" x="536.00" y="184.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -245,7 +246,7 @@
    </properties>
    <point/>
   </object>
-  <object id="672" name="the graves" x="488.00" y="152.00">
+  <object id="674" name="the graves" x="488.00" y="152.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -255,7 +256,7 @@
    </properties>
    <point/>
   </object>
-  <object id="673" name="the ford" x="600.00" y="296.00">
+  <object id="675" name="the ford" x="600.00" y="296.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -265,7 +266,7 @@
    </properties>
    <point/>
   </object>
-  <object id="674" name="the mill" x="440.00" y="376.00">
+  <object id="676" name="the mill" x="440.00" y="376.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -275,7 +276,7 @@
    </properties>
    <point/>
   </object>
-  <object id="675" name="the boundary stone" x="968.00" y="760.00">
+  <object id="677" name="the boundary stone" x="968.00" y="760.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -285,7 +286,7 @@
    </properties>
    <point/>
   </object>
-  <object id="676" name="the broken wagon" x="904.00" y="552.00">
+  <object id="678" name="the broken wagon" x="904.00" y="552.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -6129,7 +6130,19 @@
    </properties>
    <point/>
   </object>
-  <object id="503" name="flowers" x="152.00" y="200.00">
+  <object id="503" name="flowers" x="136.00" y="504.00">
+   <properties>
+    <property name="Kind" value="flowers"/>
+    <property name="Variant" value="12"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="504" name="flowers" x="152.00" y="200.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="41"/>
@@ -6141,7 +6154,7 @@
    </properties>
    <point/>
   </object>
-  <object id="504" name="flowers" x="152.00" y="264.00">
+  <object id="505" name="flowers" x="152.00" y="264.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="16"/>
@@ -6153,7 +6166,7 @@
    </properties>
    <point/>
   </object>
-  <object id="505" name="flowers" x="152.00" y="440.00">
+  <object id="506" name="flowers" x="152.00" y="440.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="10"/>
@@ -6165,7 +6178,7 @@
    </properties>
    <point/>
   </object>
-  <object id="506" name="flowers" x="168.00" y="264.00">
+  <object id="507" name="flowers" x="168.00" y="264.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="42"/>
@@ -6177,7 +6190,7 @@
    </properties>
    <point/>
   </object>
-  <object id="507" name="bush" x="168.00" y="456.00">
+  <object id="508" name="bush" x="168.00" y="456.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="28"/>
@@ -6189,7 +6202,7 @@
    </properties>
    <point/>
   </object>
-  <object id="508" name="flowers" x="184.00" y="200.00">
+  <object id="509" name="flowers" x="184.00" y="200.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="45"/>
@@ -6201,7 +6214,7 @@
    </properties>
    <point/>
   </object>
-  <object id="509" name="log" x="184.00" y="456.00">
+  <object id="510" name="log" x="184.00" y="456.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="44"/>
@@ -6213,7 +6226,19 @@
    </properties>
    <point/>
   </object>
-  <object id="510" name="bush" x="200.00" y="280.00">
+  <object id="511" name="log" x="184.00" y="504.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="512" name="bush" x="200.00" y="280.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="41"/>
@@ -6225,7 +6250,7 @@
    </properties>
    <point/>
   </object>
-  <object id="511" name="flowers" x="216.00" y="232.00">
+  <object id="513" name="flowers" x="216.00" y="232.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="30"/>
@@ -6237,7 +6262,7 @@
    </properties>
    <point/>
   </object>
-  <object id="512" name="log" x="216.00" y="328.00">
+  <object id="514" name="log" x="216.00" y="328.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="16"/>
@@ -6249,7 +6274,7 @@
    </properties>
    <point/>
   </object>
-  <object id="513" name="bush" x="216.00" y="392.00">
+  <object id="515" name="bush" x="216.00" y="392.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="41"/>
@@ -6261,7 +6286,7 @@
    </properties>
    <point/>
   </object>
-  <object id="514" name="flowers" x="232.00" y="104.00">
+  <object id="516" name="flowers" x="232.00" y="104.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="53"/>
@@ -6273,7 +6298,7 @@
    </properties>
    <point/>
   </object>
-  <object id="515" name="bush" x="248.00" y="360.00">
+  <object id="517" name="bush" x="248.00" y="360.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="24"/>
@@ -6285,7 +6310,7 @@
    </properties>
    <point/>
   </object>
-  <object id="516" name="flowers" x="264.00" y="264.00">
+  <object id="518" name="flowers" x="264.00" y="264.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="19"/>
@@ -6297,7 +6322,7 @@
    </properties>
    <point/>
   </object>
-  <object id="517" name="bush" x="264.00" y="328.00">
+  <object id="519" name="bush" x="264.00" y="328.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="33"/>
@@ -6309,7 +6334,7 @@
    </properties>
    <point/>
   </object>
-  <object id="518" name="flowers" x="264.00" y="344.00">
+  <object id="520" name="flowers" x="264.00" y="344.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="38"/>
@@ -6321,7 +6346,7 @@
    </properties>
    <point/>
   </object>
-  <object id="519" name="flowers" x="264.00" y="376.00">
+  <object id="521" name="flowers" x="264.00" y="376.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="32"/>
@@ -6333,7 +6358,7 @@
    </properties>
    <point/>
   </object>
-  <object id="520" name="flowers" x="264.00" y="424.00">
+  <object id="522" name="flowers" x="264.00" y="424.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="26"/>
@@ -6345,7 +6370,7 @@
    </properties>
    <point/>
   </object>
-  <object id="521" name="log" x="280.00" y="376.00">
+  <object id="523" name="log" x="280.00" y="376.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="54"/>
@@ -6357,7 +6382,7 @@
    </properties>
    <point/>
   </object>
-  <object id="522" name="bush" x="8.00" y="664.00">
+  <object id="524" name="bush" x="8.00" y="664.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="60"/>
@@ -6369,7 +6394,7 @@
    </properties>
    <point/>
   </object>
-  <object id="523" name="log" x="8.00" y="712.00">
+  <object id="525" name="log" x="8.00" y="712.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="49"/>
@@ -6381,7 +6406,7 @@
    </properties>
    <point/>
   </object>
-  <object id="524" name="log" x="8.00" y="728.00">
+  <object id="526" name="log" x="8.00" y="728.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="20"/>
@@ -6393,7 +6418,7 @@
    </properties>
    <point/>
   </object>
-  <object id="525" name="bush" x="8.00" y="776.00">
+  <object id="527" name="bush" x="8.00" y="776.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="7"/>
@@ -6405,7 +6430,7 @@
    </properties>
    <point/>
   </object>
-  <object id="526" name="bush" x="24.00" y="568.00">
+  <object id="528" name="bush" x="24.00" y="568.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="7"/>
@@ -6417,7 +6442,7 @@
    </properties>
    <point/>
   </object>
-  <object id="527" name="rock" x="24.00" y="616.00">
+  <object id="529" name="rock" x="24.00" y="616.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="28"/>
@@ -6429,7 +6454,7 @@
    </properties>
    <point/>
   </object>
-  <object id="528" name="rock" x="24.00" y="872.00">
+  <object id="530" name="rock" x="24.00" y="872.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="53"/>
@@ -6441,7 +6466,7 @@
    </properties>
    <point/>
   </object>
-  <object id="529" name="bush" x="40.00" y="552.00">
+  <object id="531" name="bush" x="40.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="62"/>
@@ -6453,7 +6478,7 @@
    </properties>
    <point/>
   </object>
-  <object id="530" name="bush" x="40.00" y="632.00">
+  <object id="532" name="bush" x="40.00" y="632.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="11"/>
@@ -6465,7 +6490,7 @@
    </properties>
    <point/>
   </object>
-  <object id="531" name="rock" x="40.00" y="872.00">
+  <object id="533" name="rock" x="40.00" y="872.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="20"/>
@@ -6477,7 +6502,7 @@
    </properties>
    <point/>
   </object>
-  <object id="532" name="rock" x="56.00" y="584.00">
+  <object id="534" name="rock" x="56.00" y="584.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="61"/>
@@ -6489,7 +6514,7 @@
    </properties>
    <point/>
   </object>
-  <object id="533" name="log" x="72.00" y="552.00">
+  <object id="535" name="log" x="72.00" y="552.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="5"/>
@@ -6501,7 +6526,7 @@
    </properties>
    <point/>
   </object>
-  <object id="534" name="rock" x="72.00" y="648.00">
+  <object id="536" name="rock" x="72.00" y="648.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="50"/>
@@ -6513,7 +6538,7 @@
    </properties>
    <point/>
   </object>
-  <object id="535" name="log" x="72.00" y="664.00">
+  <object id="537" name="log" x="72.00" y="664.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="46"/>
@@ -6525,7 +6550,7 @@
    </properties>
    <point/>
   </object>
-  <object id="536" name="bush" x="72.00" y="680.00">
+  <object id="538" name="bush" x="72.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="12"/>
@@ -6537,7 +6562,7 @@
    </properties>
    <point/>
   </object>
-  <object id="537" name="bush" x="72.00" y="792.00">
+  <object id="539" name="bush" x="72.00" y="792.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="8"/>
@@ -6549,7 +6574,7 @@
    </properties>
    <point/>
   </object>
-  <object id="538" name="log" x="88.00" y="584.00">
+  <object id="540" name="log" x="88.00" y="584.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="1"/>
@@ -6561,7 +6586,7 @@
    </properties>
    <point/>
   </object>
-  <object id="539" name="rock" x="88.00" y="616.00">
+  <object id="541" name="rock" x="88.00" y="616.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="42"/>
@@ -6573,7 +6598,7 @@
    </properties>
    <point/>
   </object>
-  <object id="540" name="rock" x="88.00" y="792.00">
+  <object id="542" name="rock" x="88.00" y="792.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="1"/>
@@ -6585,7 +6610,7 @@
    </properties>
    <point/>
   </object>
-  <object id="541" name="bush" x="104.00" y="728.00">
+  <object id="543" name="bush" x="104.00" y="728.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="23"/>
@@ -6597,7 +6622,7 @@
    </properties>
    <point/>
   </object>
-  <object id="542" name="bush" x="104.00" y="760.00">
+  <object id="544" name="bush" x="104.00" y="760.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="57"/>
@@ -6609,7 +6634,7 @@
    </properties>
    <point/>
   </object>
-  <object id="543" name="bush" x="104.00" y="840.00">
+  <object id="545" name="bush" x="104.00" y="840.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="27"/>
@@ -6621,7 +6646,7 @@
    </properties>
    <point/>
   </object>
-  <object id="544" name="bush" x="104.00" y="888.00">
+  <object id="546" name="bush" x="104.00" y="888.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="18"/>
@@ -6633,7 +6658,7 @@
    </properties>
    <point/>
   </object>
-  <object id="545" name="log" x="120.00" y="600.00">
+  <object id="547" name="log" x="120.00" y="600.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="41"/>
@@ -6645,7 +6670,7 @@
    </properties>
    <point/>
   </object>
-  <object id="546" name="rock" x="120.00" y="872.00">
+  <object id="548" name="rock" x="120.00" y="872.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="38"/>
@@ -6657,7 +6682,7 @@
    </properties>
    <point/>
   </object>
-  <object id="547" name="bush" x="136.00" y="552.00">
+  <object id="549" name="bush" x="136.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="39"/>
@@ -6669,7 +6694,7 @@
    </properties>
    <point/>
   </object>
-  <object id="548" name="bush" x="136.00" y="808.00">
+  <object id="550" name="bush" x="136.00" y="808.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="62"/>
@@ -6681,7 +6706,7 @@
    </properties>
    <point/>
   </object>
-  <object id="549" name="bush" x="152.00" y="648.00">
+  <object id="551" name="bush" x="152.00" y="648.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="32"/>
@@ -6693,7 +6718,7 @@
    </properties>
    <point/>
   </object>
-  <object id="550" name="bush" x="152.00" y="680.00">
+  <object id="552" name="bush" x="152.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="11"/>
@@ -6705,7 +6730,7 @@
    </properties>
    <point/>
   </object>
-  <object id="551" name="rock" x="152.00" y="696.00">
+  <object id="553" name="rock" x="152.00" y="696.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="41"/>
@@ -6717,7 +6742,7 @@
    </properties>
    <point/>
   </object>
-  <object id="552" name="rock" x="152.00" y="792.00">
+  <object id="554" name="rock" x="152.00" y="792.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="40"/>
@@ -6729,7 +6754,7 @@
    </properties>
    <point/>
   </object>
-  <object id="553" name="rock" x="152.00" y="856.00">
+  <object id="555" name="rock" x="152.00" y="856.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="48"/>
@@ -6741,7 +6766,7 @@
    </properties>
    <point/>
   </object>
-  <object id="554" name="bush" x="168.00" y="632.00">
+  <object id="556" name="bush" x="168.00" y="632.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="48"/>
@@ -6753,7 +6778,7 @@
    </properties>
    <point/>
   </object>
-  <object id="555" name="bush" x="168.00" y="792.00">
+  <object id="557" name="bush" x="168.00" y="792.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="9"/>
@@ -6765,7 +6790,7 @@
    </properties>
    <point/>
   </object>
-  <object id="556" name="log" x="168.00" y="888.00">
+  <object id="558" name="log" x="168.00" y="888.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="28"/>
@@ -6777,7 +6802,7 @@
    </properties>
    <point/>
   </object>
-  <object id="557" name="rock" x="184.00" y="648.00">
+  <object id="559" name="rock" x="184.00" y="648.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="9"/>
@@ -6789,7 +6814,7 @@
    </properties>
    <point/>
   </object>
-  <object id="558" name="rock" x="184.00" y="728.00">
+  <object id="560" name="rock" x="184.00" y="728.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="36"/>
@@ -6801,7 +6826,7 @@
    </properties>
    <point/>
   </object>
-  <object id="559" name="bush" x="184.00" y="760.00">
+  <object id="561" name="bush" x="184.00" y="760.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="40"/>
@@ -6813,7 +6838,7 @@
    </properties>
    <point/>
   </object>
-  <object id="560" name="rock" x="184.00" y="888.00">
+  <object id="562" name="rock" x="184.00" y="888.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="43"/>
@@ -6825,7 +6850,7 @@
    </properties>
    <point/>
   </object>
-  <object id="561" name="rock" x="264.00" y="776.00">
+  <object id="563" name="rock" x="264.00" y="776.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="34"/>
@@ -6837,7 +6862,7 @@
    </properties>
    <point/>
   </object>
-  <object id="562" name="log" x="824.00" y="808.00">
+  <object id="564" name="log" x="824.00" y="808.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="5"/>
@@ -6849,7 +6874,7 @@
    </properties>
    <point/>
   </object>
-  <object id="563" name="flowers" x="840.00" y="808.00">
+  <object id="565" name="flowers" x="840.00" y="808.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="35"/>
@@ -6861,7 +6886,7 @@
    </properties>
    <point/>
   </object>
-  <object id="564" name="log" x="856.00" y="856.00">
+  <object id="566" name="log" x="856.00" y="856.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="26"/>
@@ -6873,7 +6898,7 @@
    </properties>
    <point/>
   </object>
-  <object id="565" name="log" x="856.00" y="888.00">
+  <object id="567" name="log" x="856.00" y="888.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="24"/>
@@ -6885,7 +6910,7 @@
    </properties>
    <point/>
   </object>
-  <object id="566" name="rock" x="904.00" y="712.00">
+  <object id="568" name="rock" x="904.00" y="712.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="45"/>
@@ -6897,7 +6922,7 @@
    </properties>
    <point/>
   </object>
-  <object id="567" name="bush" x="920.00" y="712.00">
+  <object id="569" name="bush" x="920.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="58"/>
@@ -6909,7 +6934,7 @@
    </properties>
    <point/>
   </object>
-  <object id="568" name="flowers" x="952.00" y="856.00">
+  <object id="570" name="flowers" x="952.00" y="856.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="38"/>
@@ -6921,7 +6946,7 @@
    </properties>
    <point/>
   </object>
-  <object id="569" name="bush" x="984.00" y="888.00">
+  <object id="571" name="bush" x="984.00" y="888.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="44"/>
@@ -6933,7 +6958,7 @@
    </properties>
    <point/>
   </object>
-  <object id="570" name="flowers" x="1032.00" y="872.00">
+  <object id="572" name="flowers" x="1032.00" y="872.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="36"/>
@@ -6945,7 +6970,7 @@
    </properties>
    <point/>
   </object>
-  <object id="571" name="log" x="1048.00" y="888.00">
+  <object id="573" name="log" x="1048.00" y="888.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="5"/>
@@ -6957,7 +6982,7 @@
    </properties>
    <point/>
   </object>
-  <object id="572" name="flowers" x="1064.00" y="808.00">
+  <object id="574" name="flowers" x="1064.00" y="808.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="59"/>
@@ -6969,7 +6994,7 @@
    </properties>
    <point/>
   </object>
-  <object id="573" name="log" x="1064.00" y="840.00">
+  <object id="575" name="log" x="1064.00" y="840.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="12"/>
@@ -6981,7 +7006,7 @@
    </properties>
    <point/>
   </object>
-  <object id="574" name="rock" x="1096.00" y="840.00">
+  <object id="576" name="rock" x="1096.00" y="840.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="26"/>
@@ -6993,7 +7018,7 @@
    </properties>
    <point/>
   </object>
-  <object id="575" name="rock" x="1112.00" y="792.00">
+  <object id="577" name="rock" x="1112.00" y="792.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="50"/>
@@ -7005,7 +7030,7 @@
    </properties>
    <point/>
   </object>
-  <object id="576" name="log" x="1112.00" y="872.00">
+  <object id="578" name="log" x="1112.00" y="872.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="43"/>
@@ -7017,7 +7042,7 @@
    </properties>
    <point/>
   </object>
-  <object id="577" name="log" x="1128.00" y="776.00">
+  <object id="579" name="log" x="1128.00" y="776.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="51"/>
@@ -7029,7 +7054,7 @@
    </properties>
    <point/>
   </object>
-  <object id="578" name="flowers" x="1128.00" y="840.00">
+  <object id="580" name="flowers" x="1128.00" y="840.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="5"/>
@@ -7041,7 +7066,7 @@
    </properties>
    <point/>
   </object>
-  <object id="579" name="rock" x="680.00" y="152.00">
+  <object id="581" name="rock" x="680.00" y="152.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="40"/>
@@ -7053,7 +7078,7 @@
    </properties>
    <point/>
   </object>
-  <object id="580" name="bush" x="696.00" y="136.00">
+  <object id="582" name="bush" x="696.00" y="136.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="23"/>
@@ -7065,7 +7090,7 @@
    </properties>
    <point/>
   </object>
-  <object id="581" name="rock" x="712.00" y="328.00">
+  <object id="583" name="rock" x="712.00" y="328.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="52"/>
@@ -7077,7 +7102,7 @@
    </properties>
    <point/>
   </object>
-  <object id="582" name="bush" x="760.00" y="184.00">
+  <object id="584" name="bush" x="760.00" y="184.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="20"/>
@@ -7089,7 +7114,7 @@
    </properties>
    <point/>
   </object>
-  <object id="583" name="bush" x="760.00" y="280.00">
+  <object id="585" name="bush" x="760.00" y="280.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="1"/>
@@ -7101,7 +7126,7 @@
    </properties>
    <point/>
   </object>
-  <object id="584" name="rock" x="888.00" y="296.00">
+  <object id="586" name="rock" x="888.00" y="296.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="22"/>
@@ -7113,7 +7138,7 @@
    </properties>
    <point/>
   </object>
-  <object id="585" name="bush" x="888.00" y="312.00">
+  <object id="587" name="bush" x="888.00" y="312.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="40"/>
@@ -7125,7 +7150,7 @@
    </properties>
    <point/>
   </object>
-  <object id="586" name="bush" x="888.00" y="328.00">
+  <object id="588" name="bush" x="888.00" y="328.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="24"/>
@@ -7137,7 +7162,7 @@
    </properties>
    <point/>
   </object>
-  <object id="587" name="rock" x="904.00" y="168.00">
+  <object id="589" name="rock" x="904.00" y="168.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="50"/>
@@ -7149,7 +7174,7 @@
    </properties>
    <point/>
   </object>
-  <object id="588" name="bush" x="920.00" y="312.00">
+  <object id="590" name="bush" x="920.00" y="312.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="46"/>
@@ -7161,7 +7186,7 @@
    </properties>
    <point/>
   </object>
-  <object id="589" name="rock" x="952.00" y="168.00">
+  <object id="591" name="rock" x="952.00" y="168.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="45"/>
@@ -7173,7 +7198,7 @@
    </properties>
    <point/>
   </object>
-  <object id="590" name="rock" x="952.00" y="296.00">
+  <object id="592" name="rock" x="952.00" y="296.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="6"/>
@@ -7185,7 +7210,7 @@
    </properties>
    <point/>
   </object>
-  <object id="591" name="bush" x="984.00" y="232.00">
+  <object id="593" name="bush" x="984.00" y="232.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="30"/>
@@ -7197,7 +7222,7 @@
    </properties>
    <point/>
   </object>
-  <object id="592" name="orePile" x="984.00" y="280.00">
+  <object id="594" name="orePile" x="984.00" y="280.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="56"/>
@@ -7209,7 +7234,7 @@
    </properties>
    <point/>
   </object>
-  <object id="593" name="rock" x="1016.00" y="152.00">
+  <object id="595" name="rock" x="1016.00" y="152.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="57"/>
@@ -7221,7 +7246,7 @@
    </properties>
    <point/>
   </object>
-  <object id="594" name="flowers" x="728.00" y="680.00">
+  <object id="596" name="flowers" x="728.00" y="680.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="10"/>
@@ -7233,7 +7258,7 @@
    </properties>
    <point/>
   </object>
-  <object id="595" name="flowers" x="808.00" y="696.00">
+  <object id="597" name="flowers" x="808.00" y="696.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="25"/>
@@ -7245,7 +7270,7 @@
    </properties>
    <point/>
   </object>
-  <object id="596" name="bush" x="824.00" y="568.00">
+  <object id="598" name="bush" x="824.00" y="568.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="15"/>
@@ -7257,7 +7282,7 @@
    </properties>
    <point/>
   </object>
-  <object id="597" name="flowers" x="824.00" y="664.00">
+  <object id="599" name="flowers" x="824.00" y="664.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="38"/>
@@ -7269,7 +7294,7 @@
    </properties>
    <point/>
   </object>
-  <object id="598" name="flowers" x="840.00" y="552.00">
+  <object id="600" name="flowers" x="840.00" y="552.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="28"/>
@@ -7281,7 +7306,7 @@
    </properties>
    <point/>
   </object>
-  <object id="599" name="flowers" x="840.00" y="584.00">
+  <object id="601" name="flowers" x="840.00" y="584.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="51"/>
@@ -7293,7 +7318,7 @@
    </properties>
    <point/>
   </object>
-  <object id="600" name="flowers" x="856.00" y="600.00">
+  <object id="602" name="flowers" x="856.00" y="600.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="39"/>
@@ -7305,7 +7330,7 @@
    </properties>
    <point/>
   </object>
-  <object id="601" name="flowers" x="904.00" y="584.00">
+  <object id="603" name="flowers" x="904.00" y="584.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="13"/>
@@ -7317,7 +7342,7 @@
    </properties>
    <point/>
   </object>
-  <object id="602" name="flowers" x="952.00" y="632.00">
+  <object id="604" name="flowers" x="952.00" y="632.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="2"/>
@@ -7329,7 +7354,7 @@
    </properties>
    <point/>
   </object>
-  <object id="603" name="bush" x="968.00" y="552.00">
+  <object id="605" name="bush" x="968.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="53"/>
@@ -7341,7 +7366,7 @@
    </properties>
    <point/>
   </object>
-  <object id="604" name="flowers" x="984.00" y="696.00">
+  <object id="606" name="flowers" x="984.00" y="696.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="3"/>
@@ -7353,7 +7378,7 @@
    </properties>
    <point/>
   </object>
-  <object id="605" name="bush" x="1032.00" y="568.00">
+  <object id="607" name="bush" x="1032.00" y="568.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="15"/>
@@ -7365,7 +7390,7 @@
    </properties>
    <point/>
   </object>
-  <object id="606" name="flowers" x="1048.00" y="584.00">
+  <object id="608" name="flowers" x="1048.00" y="584.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="51"/>
@@ -7377,7 +7402,7 @@
    </properties>
    <point/>
   </object>
-  <object id="607" name="log" x="264.00" y="776.00">
+  <object id="609" name="log" x="264.00" y="776.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="34"/>
@@ -7389,7 +7414,7 @@
    </properties>
    <point/>
   </object>
-  <object id="608" name="bush" x="312.00" y="840.00">
+  <object id="610" name="bush" x="312.00" y="840.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="33"/>
@@ -7401,7 +7426,7 @@
    </properties>
    <point/>
   </object>
-  <object id="609" name="flowers" x="328.00" y="872.00">
+  <object id="611" name="flowers" x="328.00" y="872.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="14"/>
@@ -7413,7 +7438,7 @@
    </properties>
    <point/>
   </object>
-  <object id="610" name="bush" x="344.00" y="872.00">
+  <object id="612" name="bush" x="344.00" y="872.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="28"/>
@@ -7425,7 +7450,7 @@
    </properties>
    <point/>
   </object>
-  <object id="611" name="flowers" x="344.00" y="888.00">
+  <object id="613" name="flowers" x="344.00" y="888.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="6"/>
@@ -7437,7 +7462,7 @@
    </properties>
    <point/>
   </object>
-  <object id="612" name="log" x="360.00" y="792.00">
+  <object id="614" name="log" x="360.00" y="792.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="33"/>
@@ -7449,7 +7474,7 @@
    </properties>
    <point/>
   </object>
-  <object id="613" name="log" x="376.00" y="760.00">
+  <object id="615" name="log" x="376.00" y="760.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="54"/>
@@ -7461,7 +7486,7 @@
    </properties>
    <point/>
   </object>
-  <object id="614" name="flowers" x="376.00" y="840.00">
+  <object id="616" name="flowers" x="376.00" y="840.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="24"/>
@@ -7473,7 +7498,7 @@
    </properties>
    <point/>
   </object>
-  <object id="615" name="flowers" x="376.00" y="872.00">
+  <object id="617" name="flowers" x="376.00" y="872.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="59"/>
@@ -7485,7 +7510,7 @@
    </properties>
    <point/>
   </object>
-  <object id="616" name="log" x="392.00" y="760.00">
+  <object id="618" name="log" x="392.00" y="760.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="34"/>
@@ -7497,7 +7522,7 @@
    </properties>
    <point/>
   </object>
-  <object id="617" name="flowers" x="472.00" y="840.00">
+  <object id="619" name="flowers" x="472.00" y="840.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="13"/>
@@ -7509,7 +7534,7 @@
    </properties>
    <point/>
   </object>
-  <object id="618" name="flowers" x="488.00" y="872.00">
+  <object id="620" name="flowers" x="488.00" y="872.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="23"/>
@@ -7521,7 +7546,7 @@
    </properties>
    <point/>
   </object>
-  <object id="619" name="bush" x="520.00" y="808.00">
+  <object id="621" name="bush" x="520.00" y="808.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="37"/>
@@ -7533,7 +7558,7 @@
    </properties>
    <point/>
   </object>
-  <object id="620" name="log" x="520.00" y="872.00">
+  <object id="622" name="log" x="520.00" y="872.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="7"/>
@@ -7545,7 +7570,7 @@
    </properties>
    <point/>
   </object>
-  <object id="621" name="log" x="600.00" y="712.00">
+  <object id="623" name="log" x="600.00" y="712.00">
    <properties>
     <property name="Kind" value="log"/>
     <property name="Variant" value="38"/>
@@ -7557,7 +7582,7 @@
    </properties>
    <point/>
   </object>
-  <object id="622" name="bush" x="616.00" y="888.00">
+  <object id="624" name="bush" x="616.00" y="888.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="11"/>
@@ -7569,7 +7594,7 @@
    </properties>
    <point/>
   </object>
-  <object id="623" name="flowers" x="632.00" y="712.00">
+  <object id="625" name="flowers" x="632.00" y="712.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="32"/>
@@ -7581,7 +7606,7 @@
    </properties>
    <point/>
   </object>
-  <object id="624" name="bush" x="648.00" y="744.00">
+  <object id="626" name="bush" x="648.00" y="744.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="0"/>
@@ -7593,7 +7618,7 @@
    </properties>
    <point/>
   </object>
-  <object id="625" name="flowers" x="648.00" y="856.00">
+  <object id="627" name="flowers" x="648.00" y="856.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="17"/>
@@ -7605,7 +7630,7 @@
    </properties>
    <point/>
   </object>
-  <object id="626" name="flowers" x="680.00" y="808.00">
+  <object id="628" name="flowers" x="680.00" y="808.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="28"/>
@@ -7617,7 +7642,7 @@
    </properties>
    <point/>
   </object>
-  <object id="627" name="bush" x="712.00" y="792.00">
+  <object id="629" name="bush" x="712.00" y="792.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="7"/>
@@ -7629,7 +7654,7 @@
    </properties>
    <point/>
   </object>
-  <object id="628" name="flowers" x="712.00" y="808.00">
+  <object id="630" name="flowers" x="712.00" y="808.00">
    <properties>
     <property name="Kind" value="flowers"/>
     <property name="Variant" value="54"/>
@@ -7641,7 +7666,7 @@
    </properties>
    <point/>
   </object>
-  <object id="629" name="bush" x="1016.00" y="840.00">
+  <object id="631" name="bush" x="1016.00" y="840.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="3"/>
@@ -7653,7 +7678,7 @@
    </properties>
    <point/>
   </object>
-  <object id="630" name="bush" x="1016.00" y="856.00">
+  <object id="632" name="bush" x="1016.00" y="856.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="1"/>
@@ -7665,7 +7690,7 @@
    </properties>
    <point/>
   </object>
-  <object id="631" name="bush" x="776.00" y="552.00">
+  <object id="633" name="bush" x="776.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="17"/>
@@ -7677,7 +7702,7 @@
    </properties>
    <point/>
   </object>
-  <object id="632" name="bush" x="792.00" y="552.00">
+  <object id="634" name="bush" x="792.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="21"/>
@@ -7689,7 +7714,7 @@
    </properties>
    <point/>
   </object>
-  <object id="633" name="bush" x="808.00" y="552.00">
+  <object id="635" name="bush" x="808.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="58"/>
@@ -7701,7 +7726,7 @@
    </properties>
    <point/>
   </object>
-  <object id="634" name="bush" x="824.00" y="552.00">
+  <object id="636" name="bush" x="824.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="21"/>
@@ -7713,7 +7738,7 @@
    </properties>
    <point/>
   </object>
-  <object id="635" name="bush" x="840.00" y="552.00">
+  <object id="637" name="bush" x="840.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="28"/>
@@ -7725,7 +7750,7 @@
    </properties>
    <point/>
   </object>
-  <object id="636" name="bush" x="856.00" y="552.00">
+  <object id="638" name="bush" x="856.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="44"/>
@@ -7737,7 +7762,7 @@
    </properties>
    <point/>
   </object>
-  <object id="637" name="bush" x="872.00" y="552.00">
+  <object id="639" name="bush" x="872.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="55"/>
@@ -7749,7 +7774,7 @@
    </properties>
    <point/>
   </object>
-  <object id="638" name="bush" x="888.00" y="552.00">
+  <object id="640" name="bush" x="888.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="33"/>
@@ -7761,7 +7786,7 @@
    </properties>
    <point/>
   </object>
-  <object id="639" name="bush" x="904.00" y="552.00">
+  <object id="641" name="bush" x="904.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="6"/>
@@ -7773,7 +7798,7 @@
    </properties>
    <point/>
   </object>
-  <object id="640" name="bush" x="920.00" y="552.00">
+  <object id="642" name="bush" x="920.00" y="552.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="57"/>
@@ -7785,7 +7810,7 @@
    </properties>
    <point/>
   </object>
-  <object id="641" name="bush" x="488.00" y="680.00">
+  <object id="643" name="bush" x="488.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="58"/>
@@ -7797,7 +7822,7 @@
    </properties>
    <point/>
   </object>
-  <object id="642" name="bush" x="504.00" y="680.00">
+  <object id="644" name="bush" x="504.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="39"/>
@@ -7809,7 +7834,7 @@
    </properties>
    <point/>
   </object>
-  <object id="643" name="bush" x="520.00" y="680.00">
+  <object id="645" name="bush" x="520.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="8"/>
@@ -7821,7 +7846,7 @@
    </properties>
    <point/>
   </object>
-  <object id="644" name="bush" x="536.00" y="680.00">
+  <object id="646" name="bush" x="536.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="29"/>
@@ -7833,7 +7858,7 @@
    </properties>
    <point/>
   </object>
-  <object id="645" name="bush" x="552.00" y="680.00">
+  <object id="647" name="bush" x="552.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="21"/>
@@ -7845,7 +7870,7 @@
    </properties>
    <point/>
   </object>
-  <object id="646" name="bush" x="568.00" y="680.00">
+  <object id="648" name="bush" x="568.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="53"/>
@@ -7857,7 +7882,7 @@
    </properties>
    <point/>
   </object>
-  <object id="647" name="bush" x="584.00" y="680.00">
+  <object id="649" name="bush" x="584.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="22"/>
@@ -7869,7 +7894,7 @@
    </properties>
    <point/>
   </object>
-  <object id="648" name="bush" x="600.00" y="680.00">
+  <object id="650" name="bush" x="600.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="58"/>
@@ -7881,7 +7906,7 @@
    </properties>
    <point/>
   </object>
-  <object id="649" name="bush" x="616.00" y="680.00">
+  <object id="651" name="bush" x="616.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="40"/>
@@ -7893,7 +7918,7 @@
    </properties>
    <point/>
   </object>
-  <object id="650" name="bush" x="632.00" y="680.00">
+  <object id="652" name="bush" x="632.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="44"/>
@@ -7905,7 +7930,7 @@
    </properties>
    <point/>
   </object>
-  <object id="651" name="bush" x="648.00" y="680.00">
+  <object id="653" name="bush" x="648.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="53"/>
@@ -7917,7 +7942,7 @@
    </properties>
    <point/>
   </object>
-  <object id="652" name="bush" x="664.00" y="680.00">
+  <object id="654" name="bush" x="664.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="35"/>
@@ -7929,7 +7954,7 @@
    </properties>
    <point/>
   </object>
-  <object id="653" name="bush" x="680.00" y="680.00">
+  <object id="655" name="bush" x="680.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="21"/>
@@ -7941,7 +7966,7 @@
    </properties>
    <point/>
   </object>
-  <object id="654" name="bush" x="696.00" y="680.00">
+  <object id="656" name="bush" x="696.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="46"/>
@@ -7953,7 +7978,7 @@
    </properties>
    <point/>
   </object>
-  <object id="655" name="bush" x="712.00" y="680.00">
+  <object id="657" name="bush" x="712.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="29"/>
@@ -7965,7 +7990,7 @@
    </properties>
    <point/>
   </object>
-  <object id="656" name="bush" x="728.00" y="680.00">
+  <object id="658" name="bush" x="728.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="10"/>
@@ -7977,7 +8002,7 @@
    </properties>
    <point/>
   </object>
-  <object id="657" name="bush" x="1016.00" y="840.00">
+  <object id="659" name="bush" x="1016.00" y="840.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="3"/>
@@ -7989,7 +8014,7 @@
    </properties>
    <point/>
   </object>
-  <object id="658" name="bush" x="1016.00" y="856.00">
+  <object id="660" name="bush" x="1016.00" y="856.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="1"/>
@@ -8001,7 +8026,7 @@
    </properties>
    <point/>
   </object>
-  <object id="659" name="bush" x="744.00" y="712.00">
+  <object id="661" name="bush" x="744.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="59"/>
@@ -8013,7 +8038,7 @@
    </properties>
    <point/>
   </object>
-  <object id="660" name="bush" x="776.00" y="712.00">
+  <object id="662" name="bush" x="776.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="16"/>
@@ -8025,7 +8050,7 @@
    </properties>
    <point/>
   </object>
-  <object id="661" name="bush" x="808.00" y="712.00">
+  <object id="663" name="bush" x="808.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="39"/>
@@ -8037,7 +8062,7 @@
    </properties>
    <point/>
   </object>
-  <object id="662" name="bush" x="840.00" y="712.00">
+  <object id="664" name="bush" x="840.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="11"/>
@@ -8049,7 +8074,7 @@
    </properties>
    <point/>
   </object>
-  <object id="663" name="bush" x="872.00" y="712.00">
+  <object id="665" name="bush" x="872.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="45"/>
@@ -8061,7 +8086,7 @@
    </properties>
    <point/>
   </object>
-  <object id="664" name="bush" x="904.00" y="712.00">
+  <object id="666" name="bush" x="904.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="45"/>
@@ -8073,7 +8098,7 @@
    </properties>
    <point/>
   </object>
-  <object id="665" name="bush" x="936.00" y="712.00">
+  <object id="667" name="bush" x="936.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="20"/>
@@ -8085,7 +8110,7 @@
    </properties>
    <point/>
   </object>
-  <object id="666" name="bush" x="968.00" y="712.00">
+  <object id="668" name="bush" x="968.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="22"/>
@@ -8099,73 +8124,73 @@
   </object>
  </objectgroup>
  <objectgroup id="326" name="TreasureSpawn">
-  <object id="677" name="The smith's stock" x="440.00" y="472.00">
+  <object id="679" name="The smith's stock" x="440.00" y="472.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="678" name="A slack tub" x="376.00" y="488.00">
+  <object id="680" name="A slack tub" x="376.00" y="488.00">
    <properties>
     <property name="ContainerKind" value="barrel"/>
    </properties>
    <point/>
   </object>
-  <object id="679" name="The inn's cellar hatch" x="712.00" y="392.00">
+  <object id="681" name="The inn's cellar hatch" x="712.00" y="392.00">
    <properties>
     <property name="ContainerKind" value="chest_wood"/>
    </properties>
    <point/>
   </object>
-  <object id="680" name="The carrier's load" x="728.00" y="408.00">
+  <object id="682" name="The carrier's load" x="728.00" y="408.00">
    <properties>
     <property name="ContainerKind" value="barrel"/>
    </properties>
    <point/>
   </object>
-  <object id="681" name="The provisioner's crate" x="776.00" y="440.00">
+  <object id="683" name="The provisioner's crate" x="776.00" y="440.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="682" name="The miller's store" x="456.00" y="360.00">
+  <object id="684" name="The miller's store" x="456.00" y="360.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="683" name="A fisher's creel" x="328.00" y="600.00">
+  <object id="685" name="A fisher's creel" x="328.00" y="600.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="684" name="The barn's corner" x="888.00" y="712.00">
+  <object id="686" name="The barn's corner" x="888.00" y="712.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="685" name="A hollow log" x="104.00" y="376.00">
+  <object id="687" name="A hollow log" x="104.00" y="376.00">
    <properties>
     <property name="ContainerKind" value="chest_wood"/>
    </properties>
    <point/>
   </object>
-  <object id="686" name="Under the boundary stone" x="984.00" y="776.00">
+  <object id="688" name="Under the boundary stone" x="984.00" y="776.00">
    <properties>
     <property name="ContainerKind" value="chest_iron"/>
    </properties>
    <point/>
   </object>
-  <object id="687" name="A washed-up crate" x="264.00" y="712.00">
+  <object id="689" name="A washed-up crate" x="264.00" y="712.00">
    <properties>
     <property name="ContainerKind" value="barrel"/>
    </properties>
    <point/>
   </object>
-  <object id="688" name="The abandoned wagon" x="904.00" y="552.00">
+  <object id="690" name="The abandoned wagon" x="904.00" y="552.00">
    <properties>
     <property name="ContainerKind" value="cart"/>
    </properties>
@@ -8173,56 +8198,56 @@
   </object>
  </objectgroup>
  <objectgroup id="327" name="Discovery">
-  <object id="689" name="Ashwold" x="616.00" y="504.00">
+  <object id="691" name="Ashwold" x="616.00" y="504.00">
    <properties>
     <property name="Radius" value="128.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="690" name="The Gate of Seoshe" x="120.00" y="488.00">
+  <object id="692" name="The Gate of Seoshe" x="120.00" y="488.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="691" name="The Ashwold Bridge" x="312.00" y="488.00">
+  <object id="693" name="The Ashwold Bridge" x="312.00" y="488.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="692" name="The Mill" x="424.00" y="360.00">
+  <object id="694" name="The Mill" x="424.00" y="360.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="693" name="The Shrine of the Light" x="536.00" y="184.00">
+  <object id="695" name="The Shrine of the Light" x="536.00" y="184.00">
    <properties>
     <property name="Radius" value="102.4"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="694" name="The Ford" x="600.00" y="296.00">
+  <object id="696" name="The Ford" x="600.00" y="296.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="695" name="The Forest Hollow" x="120.00" y="376.00">
+  <object id="697" name="The Forest Hollow" x="120.00" y="376.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="SecretArea"/>
    </properties>
    <point/>
   </object>
-  <object id="696" name="The Boundary Stone" x="968.00" y="760.00">
+  <object id="698" name="The Boundary Stone" x="968.00" y="760.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="SecretArea"/>
@@ -8231,13 +8256,13 @@
   </object>
  </objectgroup>
  <objectgroup id="328" name="SafeZone">
-  <object id="697" name="safe0" x="32.00" y="416.00" width="336.00" height="144.00">
+  <object id="699" name="safe0" x="32.00" y="416.00" width="336.00" height="144.00">
   </object>
-  <object id="698" name="safe1" x="352.00" y="320.00" width="512.00" height="368.00">
+  <object id="700" name="safe1" x="352.00" y="320.00" width="512.00" height="368.00">
   </object>
-  <object id="699" name="safe2" x="704.00" y="672.00" width="320.00" height="192.00">
+  <object id="701" name="safe2" x="704.00" y="672.00" width="320.00" height="192.00">
   </object>
-  <object id="700" name="safe3" x="400.00" y="96.00" width="240.00" height="224.00">
+  <object id="702" name="safe3" x="400.00" y="96.00" width="240.00" height="224.00">
   </object>
  </objectgroup>
  <objectgroup id="329" name="MusicZone">

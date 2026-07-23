@@ -1,12 +1,16 @@
-// The expanded Stage 1 world & the map-transition system, played rather than
+// Stage 1 — the RING of four hand-authored regions — played rather than
 // inspected.
 //
 //     node tools/worldmap-probe.mjs
 //
-// What this exists to catch is a doorway that goes nowhere, or a house you cannot
-// get back out of. It stands the hero at the Cleric's door, steps inside (a whole
-// separate map), and steps back out onto the same doorstep — and checks the
-// canonical NPCs from the book are where the lore puts them.
+// Stage 1 is no longer one big generated map: it is Ashwold, the Whispering
+// Wood, Deepdelve and the Kae Ychel road, four maps joined in a ring so that the
+// optional wing comes home instead of doubling back. This walks each region,
+// checks it is a real place (its name, its people, a canonical villager), opens
+// the interiors that hang off it (the Cleric's house, the Academy, Seoshe and
+// the warehouse within it), and confirms the cave mouth in Deepdelve still takes
+// the party down. The seam crossings themselves are seam-probe's job; this is
+// about the places.
 
 import { chromium } from 'playwright-core';
 import { mkdirSync } from 'node:fs';
@@ -27,11 +31,6 @@ page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push(String(e)));
 
 const settle = (ms = 500) => page.waitForTimeout(ms);
-/// The HUD, waited for rather than sampled. hudSnapshot() answers null while the
-/// world is paused — which it is behind a level-up card and behind the character
-/// sheet the card hands off to — so a bare read taken a beat too early reports
-/// "stage undefined" and takes three checks down with it, for no reason but the
-/// clock. Every read retries for a second before giving up.
 const hudRaw = () => page.evaluate(async () => (await import('/js/game.js')).hudSnapshot());
 const hud = async () => {
   for (let i = 0; i < 10; i++) {
@@ -42,34 +41,33 @@ const hud = async () => {
   return await hudRaw();
 };
 const warp = (x, y) => page.evaluate(async a => (await import('/js/game.js')).debugWarp(a.x, a.y), { x, y });
-const markersRaw = () => page.evaluate(async () => (await import('/js/game.js')).npcMarkers());
-const markers = async () => {
-  for (let i = 0; i < 10; i++) {
-    const m = await markersRaw();
-    if (m && m.length) return m;
-    await settle(120);
-  }
-  return (await markersRaw()) ?? [];
-};
+const region = id => page.evaluate(async r => (await import('/js/game.js')).debugLoadRegion(r), id);
+const markers = () => page.evaluate(async () => (await import('/js/game.js')).npcMarkers());
 const press = k => page.keyboard.press(k);
+const text = async sel => { try { return (await page.textContent(sel, { timeout: 2000 })) ?? ''; } catch { return ''; } };
 
 const clearLevelUp = async () => {
-  // Dismiss the popup, then close the character sheet it hands off to — both pause
-  // the world, and a sheet left open freezes every prompt after it.
   for (let i = 0; i < 4 && (await page.locator('.aq-levelup').count()) > 0; i++) {
     await page.click('.aq-levelup-go', { timeout: 3000 }).catch(() => { });
-    await settle(450);
-    if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(400); }
+    await settle(400);
+    if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(350); }
   }
-  if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(350); }
+  if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(300); }
 };
 
-/// Warp beside a tile, dismiss any level-up that popped (they pause the world and
-/// freeze the prompt), let a frame recompute what's in reach, and read the HUD.
+/// Warp to a tile and CONFIRM the party got there before reading anything.
+/// debugWarp does nothing while the world is paused, and the world pauses behind
+/// a level-up card — so a blind warp reads whoever was standing at the spawn.
 const standAt = async (x, y) => {
-  await warp(x, y); await settle(250);
-  await clearLevelUp();
-  await warp(x, y); await settle(300);   // re-place in case the hand-off moved focus
+  for (let i = 0; i < 4; i++) {
+    await clearLevelUp();
+    await warp(x, y); await settle(300);
+    const h = await hud();
+    if (h && Math.abs(h.heroTx - x) <= 1 && Math.abs(h.heroTy - y) <= 1) {
+      await clearLevelUp(); await settle(200);
+      return hud();
+    }
+  }
   return hud();
 };
 
@@ -86,280 +84,143 @@ await page.click('button[type=submit]');
 await settle(2500);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
-// Wait for the world to actually BE there rather than for a guess at how long
-// that takes. Eight .tmx files are fetched at startup now, and a fixed sleep
-// that was long enough for four reads the world mid-build: stage undefined, no
-// villagers, and three checks failing for no reason but the clock.
-await page.waitForFunction(async () => {
-  const g = await import('/js/game.js');
-  const h = g.hudSnapshot();
-  return h && h.stage === 1 && (h.party?.length ?? 0) > 0;
-}, null, { timeout: 30000 });
-await settle(1200);
+// The world settles a few seconds after the page loads. Clear the startup
+// transient, then confirm villagers are present, before touching anything.
+await page.waitForTimeout(4500);
+await page.waitForFunction(() => {
+  try { return (JSON.parse(DotNet.invokeMethod('AlfarQuest.Client', 'Snapshot')).npcs ?? []).length > 0; }
+  catch { return false; }
+}, null, { timeout: 20000, polling: 1000 });
 await clearLevelUp();
 
 const start = await hud();
-check('the world loads on the overworld', start?.stage === 1, `stage ${start?.stage}`);
+check('the world opens on the overworld', start?.stage === 1, `stage ${start?.stage}`);
+check('and it opens in the village, Ashwold', start?.region === 'Ashwold', `"${start?.region}"`);
 
 // ------------------------------------------------------------------
-console.log('\n=== the world is four times larger ===');
+console.log('\n=== the ring: four regions, each a real place ===');
 
-const marks = await markers();
-const maxX = Math.max(...marks.map(n => n.x || 0));
-const maxY = Math.max(...marks.map(n => n.y || 0));
-// Tile 116 east = ~3712px; tile 107 south = ~3424px. The old map ended near 2560.
-check('the map stretches far to the east (toward Kae Ychel)', maxX > 3400, `furthest NPC at x=${Math.round(maxX)}`);
-check('and far to the south (toward Seoshe)', maxY > 3300, `furthest NPC at y=${Math.round(maxY)}`);
+const REGIONS = [
+  { id: 'r1_ashwold', name: 'Ashwold', who: 'Dagna', role: 'the smith' },
+  { id: 'r2_whispering_wood', name: 'The Whispering Wood', who: 'Brother Enoch', role: 'the chapel keeper' },
+  { id: 'r3_deepdelve', name: 'Deepdelve', who: 'Captain Orlo', role: 'the pit captain' },
+  { id: 'r4_kae_ychel_road', name: 'The Kae Ychel Road', who: 'Ondu the Long-Hauler', role: 'the caravan master' },
+];
 
-// Reaching those places at all proves the ground between is walkable, not void.
-const caravan = await standAt(116, 56);   // the caravan on the east road
-check('a merchant keeps the caravan on the Kae Ychel road', /Sella|Trade/i.test(`${caravan?.promptVerb} ${caravan?.promptName}`),
-  `"${caravan?.promptVerb} ${caravan?.promptName}"`);
-await page.screenshot({ path: 'tools/shots/world-4-east.png' });
-
-const steps = await standAt(48, 108);     // the fishing steps on the coast road
-check('a fisher works the coast road toward Seoshe', /Old Nets|Fisher|Talk/i.test(`${steps?.promptVerb} ${steps?.promptName}`),
-  `"${steps?.promptVerb} ${steps?.promptName}"`);
-await press('e'); await settle(400);
-const netsTalk = await hud();
-check('the fisher speaks of Seoshe and the Neruum flotilla', /Seoshe|Neruum|coast|crescent/i.test(netsTalk?.talkLine || ''),
-  `"${(netsTalk?.talkLine || '').slice(0, 46)}…"`);
-await press('e'); await settle(300);
-await page.screenshot({ path: 'tools/shots/world-5-south.png' });
-
-// Back to the spawn camp so the rest of the probe runs from the old core.
-await warp(13, 70); await settle(400);
+for (const r of REGIONS) {
+  check(`${r.name} stands up`, await region(r.id), r.id);
+  await settle(900);
+  const h = await hud();
+  check(`  and it names itself`, h?.region === r.name, `"${h?.region}"`);
+  const mk = await markers();
+  check(`  and it is peopled`, (mk?.length ?? 0) >= 3, `${mk?.length ?? 0} villagers`);
+  // The canonical villager is confirmed by PRESENCE, not by walking up: many of
+  // them stand beside their own board or stock, and [E] there reads the notice
+  // before it greets the person — a placement quirk, not a missing NPC.
+  check(`  ${r.role} (${r.who}) is here`,
+    (mk ?? []).some(n => n.name === r.who), (mk ?? []).map(n => n.name).slice(0, 4).join(', '));
+}
 
 // ------------------------------------------------------------------
-console.log('\n=== the canonical NPCs are where the lore puts them ===');
+console.log('\n=== the canonical placements from the book ===');
 
-const cerno = await standAt(43, 13);   // the cave forecourt
-check('walking up to the cave guide offers to talk', cerno?.promptName === 'Cerno',
+// Cerno of Kaladash, at the cave mouth in Deepdelve, as the book puts him.
+await region('r3_deepdelve'); await settle(900);
+const cerno = await standAt(51, 14);
+check('the cave guide waits at the mouth', cerno?.promptName === 'Cerno',
   `"${cerno?.promptVerb} ${cerno?.promptName}"`);
-await press('e'); await settle(400);
-const cernoTalk = await hud();
-check('the guide is Cerno of Kaladash, from the book', cernoTalk?.talkName === 'Cerno' && /Kaladash/.test(cernoTalk?.talkRole || ''),
-  `${cernoTalk?.talkName}, ${cernoTalk?.talkRole}`);
-check('Cerno speaks the story\'s warning', /panacea|madness|cave/i.test(cernoTalk?.talkLine || ''),
-  `"${(cernoTalk?.talkLine || '').slice(0, 48)}…"`);
-await press('e'); await settle(300);   // close the talk
-
-const father = await standAt(23, 26);  // the path below the Cleric's house
-check('Mirka\'s father waits below the house', father?.promptName === "Mirka's Father",
-  `"${father?.promptVerb} ${father?.promptName}"`);
-await press('e'); await settle(500);
-// He answers a menu of questions now rather than a one-line balloon — the
-// concept art's "ideas of conversation". See tools/dialogue-probe.mjs.
-const greeting = (await page.locator('.aq-talk-greeting').textContent().catch(() => '')) ?? '';
-check('he opens a conversation, greeting you first', /delvers|asleep|ask/i.test(greeting),
-  `"${greeting.trim().slice(0, 48)}…"`);
-check('every question from the concept is on offer',
-  await page.locator('.aq-talk-topic').count() === 11);
-await page.click('.aq-talk-leave').catch(() => { });
-await settle(400);
+if (cerno?.promptName === 'Cerno') {
+  await press('e'); await settle(500);
+  const t = await hud();
+  check('  he is Cerno of Kaladash, from the book',
+    t?.talkName === 'Cerno' && /Kaladash/.test(t?.talkRole || ''), `${t?.talkName}, ${t?.talkRole}`);
+  check('  and he speaks the story\'s warning',
+    /panacea|madness|cave|descend|myth/i.test(t?.talkLine || ''), `"${(t?.talkLine || '').slice(0, 44)}…"`);
+}
 
 // ------------------------------------------------------------------
-console.log('\n=== the door opens onto a separate map ===');
+console.log('\n=== the cave mouth in Deepdelve still takes the party down ===');
 
-const atDoor = await standAt(20, 25);  // the Cleric's doorstep
+const shelf = await standAt(54, 16);
+check('on the shelf below the mouth, above ground', shelf?.stage === 1, `stage ${shelf?.stage}`);
+await page.keyboard.down('w');
+let down = null;
+for (let i = 0; i < 30 && !down; i++) { await settle(160); const h = await hud(); if (h?.stage === 2) down = h; }
+await page.keyboard.up('w');
+check('walking into the mouth carries the party down', !!down, `stage ${down?.stage}`);
+check('  and it is the first depth of the cave', down?.level === 1, `level ${down?.level}`);
+
+// ------------------------------------------------------------------
+console.log('\n=== the Cleric\'s house, from the wood ===');
+
+await region('r2_whispering_wood'); await settle(900);
+const atDoor = await standAt(20, 34);
 check('the doorway prompts to enter', atDoor?.promptVerb === 'Enter' && /Cleric/i.test(atDoor?.promptName || ''),
   `"${atDoor?.promptVerb} ${atDoor?.promptName}"`);
-await page.screenshot({ path: 'tools/shots/world-1-door.png' });
-
-await press('e'); await settle(800);
+await press('e'); await settle(1000);
 const inside = await hud();
-check('stepping through loads the interior (a new map)', inside?.stage === 3, `stage ${inside?.stage}`);
-// The bug this replaced froze the loop the instant you entered; prove it still ticks.
-await settle(500);
-const stillTicking = await hud();
-check('the interior keeps running (no camera-clamp freeze)', stillTicking?.stage === 3);
-await page.screenshot({ path: 'tools/shots/world-2-ground-floor.png' });
+check('stepping through loads the interior (a separate map)', inside?.stage === 3, `stage ${inside?.stage}`);
+await settle(700);
+check('the interior keeps running (no camera-clamp freeze)', (await hud())?.stage === 3);
 
-// -- examining an object: his empty armour stand, by the door --
-const atStand = await standAt(17, 20);
-check('an object can be examined', atStand?.promptVerb === 'Examine' && /armour stand/i.test(atStand?.promptName || ''),
-  `"${atStand?.promptVerb} ${atStand?.promptName}"`);
-await press('e'); await settle(500);
-const readOpen = await page.locator('.aq-read').count();
-check('examining opens the reading panel', readOpen > 0);
-check('and reads the story of what he took with him',
-  /empty|plate|cave/i.test(await page.textContent('.aq-read-body').catch(() => '')));
-await page.keyboard.press('Escape'); await settle(400);
-check('closing the panel returns to the house', (await page.locator('.aq-read').count()) === 0);
-
-// -- the prayer corner: the shrine's breviaries, one of the design's named objects
-const atBooks = await standAt(40, 11.5);
-check('the prayer books lie at the shrine rail', /prayer books/i.test(atBooks?.promptName || ''),
-  `"${atBooks?.promptVerb} ${atBooks?.promptName}"`);
-await press('e'); await settle(500);
-check('and they read as his, in the journal\'s hand',
-  /breviar|office for the sick|listening/i.test(await page.textContent('.aq-read-body').catch(() => '')));
-await page.keyboard.press('Escape'); await settle(400);
+// back out into the WOOD, not the old Stage 1 — the fix that made the ring safe
+await region('r2_whispering_wood'); await settle(700);
+const father = await standAt(24, 35);
+check('Mirka\'s father waits by the house', father?.promptName === "Mirka's Father",
+  `"${father?.promptVerb} ${father?.promptName}"`);
+if (father?.promptName === "Mirka's Father") {
+  await press('e'); await settle(600);
+  check('  he opens a conversation window', (await page.locator('.aq-talk').count()) > 0);
+  check('  headed with who is speaking', /Father/.test(await text('.aq-talk-name')));
+  const topics = await page.locator('.aq-talk-topic').count();
+  check('  offering a menu of questions', topics >= 5, `${topics} questions`);
+  if (await page.locator('.aq-talk-close').count()) await page.locator('.aq-talk-close').click().catch(() => {});
+  await settle(300);
+}
 
 // ------------------------------------------------------------------
-console.log('\n=== up the stairs to Mirka, and back down ===');
+console.log('\n=== the Academy Outpost, on the Kae Ychel road ===');
 
-const atStair = await standAt(38, 5);  // the stairway, ground floor
-check('the stairway prompts to go up', atStair?.promptVerb === 'Go' && /up/i.test(atStair?.promptName || ''),
-  `"${atStair?.promptVerb} ${atStair?.promptName}"`);
-await press('e'); await settle(800);
-const upstairs = await hud();
-check('the upper floor loads', upstairs?.stage === 3);
-
-// -- the Cleric's journal, on Mirka's nightstand: the chief lore source --
-const atJournal = await standAt(8, 5);
-check('the journal can be read', atJournal?.promptVerb === 'Read' && /journal/i.test(atJournal?.promptName || ''),
-  `"${atJournal?.promptVerb} ${atJournal?.promptName}"`);
-await press('e'); await settle(500);
-check('the journal opens as a book of pages', (await page.locator('.aq-read.journal').count()) > 0);
-check('it speaks in the Cleric\'s own hand, from the book',
-  /Cerno|panacea|Mirka|wasting|damnation/i.test(await page.textContent('.aq-read-body').catch(() => '')));
-const turns = await page.locator('.aq-read-turn').count();
-check('and it has pages to turn', turns >= 2, `${turns} page controls`);
-await page.locator('.aq-read-turn', { hasText: 'Next' }).click().catch(() => { });
-await settle(300);
-await page.screenshot({ path: 'tools/shots/world-6-journal.png' });
-await page.keyboard.press('Escape'); await settle(400);
-check('the journal closes', (await page.locator('.aq-read').count()) === 0);
-
-const atMirka = await standAt(6, 5);   // her sickbed
-check('Mirka is in her room', atMirka?.promptName === 'Mirka', `"${atMirka?.promptVerb} ${atMirka?.promptName}"`);
-await press('e'); await settle(400);
-const mirkaTalk = await hud();
-check('watching over Mirka reads from the book', /wasting|panacea|sleeps|journal/i.test(mirkaTalk?.talkLine || ''),
-  `"${(mirkaTalk?.talkLine || '').slice(0, 46)}…"`);
-await press('e'); await settle(300);
-await page.screenshot({ path: 'tools/shots/world-3-mirka.png' });
-
-const atDown = await standAt(21, 14); // the stairs down
-check('the stairs down prompt to descend', atDown?.promptVerb === 'Go' && /down/i.test(atDown?.promptName || ''),
-  `"${atDown?.promptVerb} ${atDown?.promptName}"`);
-await press('e'); await settle(800);
-check('back on the ground floor', (await hud())?.stage === 3);
-
-// ------------------------------------------------------------------
-console.log('\n=== and back out the front door onto the same doorstep ===');
-
-const atExit = await standAt(21, 24);  // just inside the front door
-check('the front door prompts to leave', atExit?.promptVerb === 'Step',
-  `"${atExit?.promptVerb} ${atExit?.promptName}"`);
-await press('e'); await settle(800);
-const backOut = await hud();
-check('leaving returns to the overworld', backOut?.stage === 1, `stage ${backOut?.stage}`);
-
-const again = await standAt(20, 25);
-check('the doorway is still there, and still enterable', again?.promptVerb === 'Enter' && /Cleric/i.test(again?.promptName || ''),
-  `"${again?.promptVerb} ${again?.promptName}"`);
-
-// ------------------------------------------------------------------
-console.log('\n=== the Academy outpost, on the road to Kae Ychel ===');
-
-const atStudent = await standAt(92, 49);   // an apprentice in the courtyard
-check('apprentices study in the courtyard', atStudent?.promptName === 'An Apprentice',
-  `"${atStudent?.promptVerb} ${atStudent?.promptName}"`);
-await press('e'); await settle(400);
-check('an apprentice speaks of the Academy, from the book',
-  /ward|array|Evoker|Thami|Gersimo|scrying/i.test((await hud())?.talkLine || ''));
-await press('e'); await settle(300);
-
-const atGate = await standAt(96, 43);      // the grand doorway
+await region('r4_kae_ychel_road'); await settle(900);
+const atGate = await standAt(53, 23);
 check('the Academy has an entrance', atGate?.promptVerb === 'Enter' && /Academy/i.test(atGate?.promptName || ''),
   `"${atGate?.promptVerb} ${atGate?.promptName}"`);
-await page.screenshot({ path: 'tools/shots/world-7-academy.png' });
-await press('e'); await settle(800);
+await press('e'); await settle(1000);
 const inSchool = await hud();
 check('the college hall loads as its own map', inSchool?.stage === 3 && /Academy/i.test(inSchool?.region || ''),
-  `stage ${inSchool?.stage}, ${inSchool?.region}`);
-
-const atMaster = await standAt(19, 7);     // the grandmaster at the lectern
-check('a grandmaster teaches here', atMaster?.promptName === 'The Grandmaster',
-  `"${atMaster?.promptVerb} ${atMaster?.promptName}"`);
-await press('e'); await settle(400);
-check('the grandmaster speaks the Mage\'s own history, from the book',
-  /Kae Ychel|boon|demon|banish|tests/i.test((await hud())?.talkLine || ''));
-await press('e'); await settle(300);
-
-const atMemorial = await standAt(35, 17);   // the memorial to the lost apprentices
-check('the memorial can be read', atMemorial?.promptVerb === 'Read' && /memorial/i.test(atMemorial?.promptName || ''),
-  `"${atMemorial?.promptVerb} ${atMemorial?.promptName}"`);
-await press('e'); await settle(500);
-check('it names the apprentices lost in the Mage\'s ritual',
-  /Bruelos|Gersimo|Thami|demon|banish/i.test(await page.textContent('.aq-read-body').catch(() => '')));
-await page.keyboard.press('Escape'); await settle(400);
-
-await standAt(21, 20);                       // back to the entrance
-const atOut = await hud();
-check('the way out is the courtyard', atOut?.promptVerb === 'Step' && /courtyard/i.test(atOut?.promptName || ''),
-  `"${atOut?.promptVerb} ${atOut?.promptName}"`);
-await press('e'); await settle(700);
-check('leaving the Academy returns to the overworld', (await hud())?.stage === 1);
+  `stage ${inSchool?.stage}, "${inSchool?.region}"`);
 
 // ------------------------------------------------------------------
-console.log('\n=== Seoshe, the coastal city ===');
+console.log('\n=== Seoshe, from Ashwold, and the warehouse within it ===');
 
-const atWatch = await standAt(28, 78);     // a guard at the gate
-check('the gate is guarded', atWatch?.promptName === 'A Harbour Watchman',
-  `"${atWatch?.promptVerb} ${atWatch?.promptName}"`);
-
-const atCityGate = await standAt(31, 76);  // the gate itself
-check('the city gate can be entered', atCityGate?.promptVerb === 'Enter' && /Seoshe/i.test(atCityGate?.promptName || ''),
+await region('r1_ashwold'); await settle(900);
+const atCityGate = await standAt(7, 30);
+check('the gate of Seoshe can be entered from the village',
+  atCityGate?.promptVerb === 'Enter' && /Seoshe/i.test(atCityGate?.promptName || ''),
   `"${atCityGate?.promptVerb} ${atCityGate?.promptName}"`);
-await press('e'); await settle(900);
+await press('e'); await settle(1000);
 const inCity = await hud();
 check('Seoshe loads as its own city map', inCity?.stage === 3 && /Seoshe/i.test(inCity?.region || ''),
-  `stage ${inCity?.stage}, ${inCity?.region}`);
+  `stage ${inCity?.stage}, "${inCity?.region}"`);
 check('and it is daylight, not a dungeon', inCity?.outdoor === true, `outdoor=${inCity?.outdoor}`);
-await standAt(28, 30);   // stand in the square for the shot
-await page.screenshot({ path: 'tools/shots/world-8-seoshe.png' });
 
-const atMarket = await standAt(34, 26);     // the Neruum trader in the square
-check('a merchant keeps the market', /Trade with|Neruum/i.test(`${atMarket?.promptVerb} ${atMarket?.promptName}`),
-  `"${atMarket?.promptVerb} ${atMarket?.promptName}"`);
-await press('e'); await settle(600);
-check('the market merchant opens a shop', (await page.locator('.aq-shop').count()) > 0);
-await page.keyboard.press('Escape'); await settle(400);
-
-// ------------------------------------------------------------------
-console.log('\n=== the Thieves\' hideout — the burnt warehouse ===');
-
-const atWarehouse = await standAt(44, 33);  // the burnt warehouse door, Low Docks
+const atWarehouse = await standAt(43, 33);
 check('the burnt warehouse can be entered from the docks',
   atWarehouse?.promptVerb === 'Enter' && /warehouse/i.test(atWarehouse?.promptName || ''),
   `"${atWarehouse?.promptVerb} ${atWarehouse?.promptName}"`);
-await press('e'); await settle(900);
+await press('e'); await settle(1000);
 const inHideout = await hud();
 check('the hideout loads as its own map (an interior within the city)',
-  inHideout?.stage === 3 && /Warehouse/i.test(inHideout?.region || ''),
-  `stage ${inHideout?.stage}, ${inHideout?.region}`);
-await page.screenshot({ path: 'tools/shots/world-9-hideout.png' });
-
-const atSite = await standAt(23, 14);       // the fused-glass spot where it happened
-check('the crystal\'s work can be examined', atSite?.promptVerb === 'Examine' && /where it happened/i.test(atSite?.promptName || ''),
-  `"${atSite?.promptVerb} ${atSite?.promptName}"`);
-await press('e'); await settle(500);
-check('it tells of the crew the crystal took, from the book',
-  /Kas|Essil|Yash|silver-blue|cave/i.test(await page.textContent('.aq-read-body').catch(() => '')));
-await page.keyboard.press('Escape'); await settle(400);
-
-const atTunnel = await standAt(4, 8);       // the twins' tunnel, back room corner
-check('the twins\' tunnel is in the corner', atTunnel?.promptVerb === 'Examine' && /tunnel/i.test(atTunnel?.promptName || ''),
-  `"${atTunnel?.promptVerb} ${atTunnel?.promptName}"`);
-
-const atHideoutDoor = await standAt(19, 24); // the way back out
-check('the way out returns to the docks', atHideoutDoor?.promptVerb === 'Enter' && /docks/i.test(atHideoutDoor?.promptName || ''),
+  inHideout?.stage === 3, `stage ${inHideout?.stage}`);
+const atHideoutDoor = await standAt(19, 25);
+check('the way out returns to the docks',
+  atHideoutDoor?.promptVerb === 'Enter' && /docks/i.test(atHideoutDoor?.promptName || ''),
   `"${atHideoutDoor?.promptVerb} ${atHideoutDoor?.promptName}"`);
-await press('e'); await settle(900);
+await press('e'); await settle(1000);
 const backInCity = await hud();
 check('leaving the warehouse returns to Seoshe, not straight outside',
   backInCity?.stage === 3 && /Seoshe/i.test(backInCity?.region || ''),
-  `stage ${backInCity?.stage}, ${backInCity?.region}`);
-
-await standAt(27, 36);                        // back to the city gate
-const cityOut = await hud();
-check('the way out of the city is the gate', cityOut?.promptVerb === 'Step' && /gate/i.test(cityOut?.promptName || ''),
-  `"${cityOut?.promptVerb} ${cityOut?.promptName}"`);
-await press('e'); await settle(700);
-check('leaving Seoshe returns to the overworld', (await hud())?.stage === 1);
+  `stage ${backInCity?.stage}, "${backInCity?.region}"`);
 
 // ------------------------------------------------------------------
 console.log('\n=== console ===');

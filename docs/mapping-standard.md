@@ -10,6 +10,26 @@ time without a flag day.
 
 ---
 
+## The look we are aiming for
+
+The reference is the top-down pixel style of Stardew/CrossCode-era art, and the
+project has screenshots of it. What that style does, and what our first attempt
+got wrong:
+
+| the reference | our first attempt |
+|---|---|
+| The ROOF is the building. A big solid gable fills most of the shape; you read the house as a roof from above with a sliver of wall under it | The roof was a thin peak outline and the wall below was the mass — the result read as an open-topped crate you could see into |
+| The facade is a SHORT solid strip — wall, door, one window — one or two tiles tall | The facade was four courses of open-looking planks, which read as a fence or a stock pen |
+| The roof OVERHANGS the wall on both sides and casts a shadow | Roof and wall were the same width, so nothing read as built |
+| Paths are NARROW — one or two tiles of worn dirt, curving | Roads were three cells wide, which at this zoom is a highway |
+| Density: fences, crops, small props, grass tufts and flowers pack the space between buildings | Large flat areas of one colour |
+
+**A house must read as a house at a glance.** If a screenshot shows something you
+would call a pen, a crate or a fence, it is wrong no matter how the tiles were
+picked. Check every building against a reference screenshot before shipping it.
+
+---
+
 ## Folder structure
 
 Everything lives under the client's `wwwroot`, so **what Tiled opens is exactly

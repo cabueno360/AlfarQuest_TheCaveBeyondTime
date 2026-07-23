@@ -40,6 +40,7 @@ public partial class World
         Npcs.Clear(); Interactables.Clear(); Discoveries.Clear();
 
         ReadTerrain(m);
+        ReadSafeZones(m);
         ReadProps(m);
         ReadNpcs(m);
         ReadCreatures(m);
@@ -47,6 +48,18 @@ public partial class World
         ReadContainers(m);
         ReadDiscoveries(m);
         ReadExaminables(m);
+
+        // The cave mouth first, because the wildlife pass keys its NearCave biome
+        // off it — the husks gather where the cold comes out.
+        if (m.Objects("CaveMouth").FirstOrDefault() is { } cm0) CaveMouth = FromMap(cm0.X, cm0.Y);
+
+        // Populate the wild parts of the map. A region says how many with a
+        // Wildlife property; the spawner keeps them out of the safe zones (read
+        // just above) and away from the doorstep, and picks each one from the
+        // biome of the ground it lands on. Zero, or an unmigrated map, leaves the
+        // place empty — the old Stage 1 spawned its own wildlife in its builder.
+        int wildlife = m.PropertyInt("Wildlife", 0);
+        if (wildlife > 0) SpawnWildlife(wildlife);
 
         // The map says what is here; the save says what this player has already
         // taken. Without this a chest emptied before a door was stepped through
@@ -138,6 +151,19 @@ public partial class World
                             : Any(roads) ? PATH
                             : FLOOR;
             }
+    }
+
+    /// <summary>The rectangles where creatures will not go, from the map. A region
+    /// carries its own — the village, the fields, the gate — so "where people live"
+    /// is the map's answer, not one fixed set of coordinates from the old Stage 1.
+    /// An object's x/y/width/height are map pixels; an engine tile is 16 of them
+    /// (a 32px cell over a 16px map).</summary>
+    void ReadSafeZones(TmxMap m)
+    {
+        _mapSafeZones.Clear();
+        foreach (var o in m.Objects("SafeZone"))
+            _mapSafeZones.Add(((int)(o.X / 16), (int)(o.Y / 16),
+                               (int)((o.X + o.Width) / 16), (int)((o.Y + o.Height) / 16)));
     }
 
     void ReadProps(TmxMap m)

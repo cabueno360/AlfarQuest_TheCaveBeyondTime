@@ -56,11 +56,16 @@ await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot
 // .tmx files are fetched at startup now; a fixed sleep that was long enough for
 // four reads the world mid-build and finds the generator's villagers standing
 // where the map's ought to be.
-await page.waitForFunction(async () => {
-  const g = await import('/js/game.js');
-  const h = g.hudSnapshot();
-  return h && h.stage === 1 && (h.party?.length ?? 0) > 0;
-}, null, { timeout: 30000 });
+// The world settles a few seconds after the page loads — the maps fetch and the
+// world builds through a brief transient. A plain WAIT past that transient is
+// more reliable than sampling through it: polling Snapshot hard during startup
+// can itself catch a half-built frame. Clear the transient, then confirm the
+// world has villagers with a slow, gentle poll.
+await page.waitForTimeout(4500);
+await page.waitForFunction(() => {
+  try { return (JSON.parse(DotNet.invokeMethod('AlfarQuest.Client', 'Snapshot')).npcs ?? []).length > 0; }
+  catch { return false; }
+}, null, { timeout: 20000, polling: 1000 });
 await settle(1500);
 await clearLevelUp();
 
@@ -87,8 +92,13 @@ const standAt = async (x, y) => {
 };
 
 console.log('\n=== the question menu ===');
-// Mirka's father stands on the path below the Cleric's house.
-await standAt(22, 26);
+// Mirka's father is in the Whispering Wood now, at the door of the Cleric's
+// house in the chapel vale — the region the ring puts that house in. Stand the
+// world up there and walk to him.
+await page.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r2_whispering_wood'));
+await settle(1200);
+await clearLevelUp();
+await standAt(24, 35);
 const before = await hud();
 check('Mirka\'s Father can be spoken to', before?.promptVerb === 'Talk to', `"${before?.promptVerb} ${before?.promptName}"`);
 
@@ -157,8 +167,10 @@ const after = await hud();
 check('and the hero is released', after?.promptVerb === 'Talk to', `"${after?.promptVerb} ${after?.promptName}"`);
 
 console.log('\n=== a villager with no menu still just talks ===');
-// The coast fisher has no topics — he should still use the canvas balloon.
-await standAt(48, 107);
+// The forester at the ford has no question topics — she should still use the
+// canvas balloon, not the window. Chosen over the collier, who stands among his
+// kiln stores where [E] would open a barrel before it greeted him.
+await standAt(33, 22);
 await page.keyboard.press('e');
 await settle(500);
 const plain = await hud();

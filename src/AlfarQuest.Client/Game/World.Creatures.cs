@@ -26,28 +26,44 @@ public partial class World
         (24, 71, 38, 80),   // the gate of Seoshe on the coast road
     ];
 
-    public static bool InSafeZone(float wx, float wy)
+    /// <summary>The safe zones a hand-authored region reads from its own map. When
+    /// this has entries they REPLACE the static table above — the static one is the
+    /// old Stage 1 and the generator fallback, whose coordinates mean nothing to a
+    /// region. Filled by BuildOverworldFromTmx from the map's SafeZone objects.</summary>
+    readonly List<(int X0, int Y0, int X1, int Y1)> _mapSafeZones = [];
+
+    /// <summary>Instance now, not static: a region carries its own safe zones, so
+    /// "where people live" is the standing map's answer rather than one fixed set
+    /// of rectangles. Falls back to the static table when no map has spoken.</summary>
+    public bool InSafeZone(float wx, float wy)
     {
         int tx = (int)(wx / TILE), ty = (int)(wy / TILE);
-        foreach (var (x0, y0, x1, y1) in SafeZones)
+        var zones = _mapSafeZones.Count > 0
+            ? (IReadOnlyList<(int, int, int, int)>)_mapSafeZones : SafeZones;
+        foreach (var (x0, y0, x1, y1) in zones)
             if (tx >= x0 && tx <= x1 && ty >= y0 && ty <= y1) return true;
         return false;
     }
 
-    /// <summary>Which biome a point belongs to, from the authored zone layout.
-    /// Read top-down: the mountain wins over everything, then the approach, then
-    /// the water, and the forest is what is left.</summary>
+    /// <summary>Which biome a point belongs to, read from the TERRAIN around it
+    /// rather than from fixed bands — so it is right on any map, not just the one
+    /// the bands were drawn for. The cave mouth has its own creatures; rock nearby
+    /// is mountain; water nearby is river; the rest is forest.</summary>
     Biome BiomeAt(float wx, float wy)
     {
-        int tx = (int)(wx / TILE), ty = (int)(wy / TILE);
-        // The bands reach well below the rock face on purpose. Keyed to y<=20 the
-        // mountain species had nowhere to stand — that strip is nearly all cliff,
-        // and the cleft below it is a safe zone — so walkers, spiders and worms
-        // never spawned at all. The trail approaching the mine is their ground.
-        if (ty <= 26 && tx is >= 30 and <= 54) return Biome.NearCave;
-        if (ty <= 34) return Biome.Mountain;
+        if ((CaveMouth.X != 0 || CaveMouth.Y != 0)
+            && (new Vec(wx, wy) - CaveMouth).Len() < TILE * 12) return Biome.NearCave;
+        if (RockNearby(wx, wy)) return Biome.Mountain;
         if (NearWater(wx, wy)) return Biome.River;
         return Biome.Forest;
+    }
+
+    bool RockNearby(float wx, float wy)
+    {
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dy = -3; dy <= 3; dy++)
+                if (TileAtWorld(wx + dx * TILE, wy + dy * TILE) == ROCK) return true;
+        return false;
     }
 
     bool NearWater(float wx, float wy)

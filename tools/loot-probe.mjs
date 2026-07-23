@@ -28,6 +28,7 @@ page.on('pageerror', e => errors.push(String(e)));
 
 const settle = (ms = 700) => page.waitForTimeout(ms);
 const hud = () => page.evaluate(async () => (await import('/js/game.js')).hudSnapshot());
+const warp = (x, y) => page.evaluate(async a => (await import('/js/game.js')).debugWarp(a.x, a.y), { x, y });
 const text = async sel => { try { return (await page.textContent(sel, { timeout: 2000 })) ?? ''; } catch { return ''; } };
 
 /// Dismisses a level-up if one opened. The party earns XP from every container,
@@ -89,10 +90,16 @@ await settle(8000);
 await clearLevelUp();
 
 const start = await hud();
-check('the world has things to interact with', start?.rewardsLeft > 20, `${start?.rewardsLeft} untouched`);
+// A region carries fewer rewards than the old 200x128 map: Ashwold has a
+// dozen containers and eight discoveries. The threshold is scaled to that.
+check('the world has things to interact with', start?.rewardsLeft >= 12, `${start?.rewardsLeft} untouched`);
 
 console.log('\n=== the prompt ===');
 
+// Start the sweep in the village, where the containers are — the smith's
+// stock, the inn cellar, the provisioner's crates — rather than out at the
+// gate where the party spawns.
+await warp(30, 29); await settle(500); await clearLevelUp();
 const near = await findContainer();
 check('walking up to something offers it', isContainer(near), near?.promptName ?? '(nothing in reach)');
 check('the prompt names the action, not just the thing',
@@ -234,6 +241,21 @@ check('each has a time it was opened',
 
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
+// Wait for the world to be REALLY up, not just apparently: the interactive
+// Blazor render restarts the game once at startup, so hudSnapshot flickers
+// stage-1 for a frame while a fresh Snapshot is still empty. Gate on the
+// authoritative thing — a fresh Snapshot with villagers in it. Every overworld
+// region has NPCs, so this is true exactly when the world is built and stable.
+// The world settles a few seconds after the page loads — the maps fetch and the
+// world builds through a brief transient. A plain WAIT past that transient is
+// more reliable than sampling through it: polling Snapshot hard during startup
+// can itself catch a half-built frame. Clear the transient, then confirm the
+// world has villagers with a slow, gentle poll.
+await page.waitForTimeout(4500);
+await page.waitForFunction(() => {
+  try { return (JSON.parse(DotNet.invokeMethod('AlfarQuest.Client', 'Snapshot')).npcs ?? []).length > 0; }
+  catch { return false; }
+}, null, { timeout: 20000, polling: 1000 });
 await settle(2500);
 const restored = await hud();
 

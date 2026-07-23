@@ -24,6 +24,11 @@ public sealed class TmxMap
     public string Property(string key, string fallback = "") =>
         Properties.TryGetValue(key, out var v) && v.Length > 0 ? v : fallback;
 
+    /// <summary>A map-level integer property, e.g. how much wildlife a region wants.</summary>
+    public int PropertyInt(string key, int fallback = 0) =>
+        Properties.TryGetValue(key, out var v)
+        && int.TryParse(v, NumberStyles.Integer, CultureInfo.InvariantCulture, out var i) ? i : fallback;
+
     /// <summary>Layer name → global tile ids, row-major, 0 for an empty cell.</summary>
     public Dictionary<string, int[]> TileLayers = [];
 

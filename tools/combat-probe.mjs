@@ -48,6 +48,22 @@ await settle(2600);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null,
                            null, { timeout: 25000 });
+
+// Wait for the world to be REALLY up, not just apparently: the interactive
+// Blazor render restarts the game once at startup, so hudSnapshot flickers
+// stage-1 for a frame while a fresh Snapshot is still empty. Gate on the
+// authoritative thing — a fresh Snapshot with villagers in it. Every overworld
+// region has NPCs, so this is true exactly when the world is built and stable.
+// The world settles a few seconds after the page loads — the maps fetch and the
+// world builds through a brief transient. A plain WAIT past that transient is
+// more reliable than sampling through it: polling Snapshot hard during startup
+// can itself catch a half-built frame. Clear the transient, then confirm the
+// world has villagers with a slow, gentle poll.
+await page.waitForTimeout(4500);
+await page.waitForFunction(() => {
+  try { return (JSON.parse(DotNet.invokeMethod('AlfarQuest.Client', 'Snapshot')).npcs ?? []).length > 0; }
+  catch { return false; }
+}, null, { timeout: 20000, polling: 1000 });
 await settle(2500);
 await clearLevelUp();
 

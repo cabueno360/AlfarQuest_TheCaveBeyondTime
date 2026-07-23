@@ -85,8 +85,17 @@ public partial class World
         Talking = null;
         Party[Active].Pos = npc.Pos + new Vec(28f, 0f);
         Camera = npc.Pos;
-        NpcInReach = npc;      // set now so Interact acts on them this instant
-        Interact();
+        // Open the shop DIRECTLY, not through Interact(). Interact resolves what
+        // is underfoot in priority order, and a container outranks a villager —
+        // so a merchant standing beside their own stock (the provisioner among
+        // her crates) would have the crate opened instead of the shop. Naming the
+        // merchant means trading with the merchant.
+        NpcInReach = npc;
+        if (IsMerchant(npc) && MerchantBridge.Offer(npc.Def.Id, Party[Active].Def.Key))
+        {
+            TradingWith = npc;
+            FaceHero(TradingWith);
+        }
     }
 
     /// <summary>Drops the steered hero onto a tile — a test seam so a probe can

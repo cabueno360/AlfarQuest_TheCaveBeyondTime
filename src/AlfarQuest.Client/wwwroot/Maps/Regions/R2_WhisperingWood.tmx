@@ -12,6 +12,7 @@
   <property name="DisplayName" value="The Whispering Wood"/>
   <property name="Stage" type="int" value="1"/>
   <property name="EngineTile" type="int" value="32"/>
+  <property name="Wildlife" type="int" value="40"/>
   <property name="SouthMap" value="r1_ashwold"/>
   <property name="EastMap" value="r3_deepdelve"/>
  </properties>
@@ -55,10 +56,10 @@
   <data encoding="base64" compression="zlib">eNrt2DkKwzAQBVA1vn+R5UZZjhV1KYyTgBbPOO+BCjXCDJ7hS6UAAMDbeSnlVNe1rsuy3sMn9/qP3Op61vVY1nsA2JN8Qwv5hpa5Ay1zh5z5Yms/Su98MysvRalftHyxtR+ld76ZlZei1G+W1r7M2ke951Br/bLmu9a+zNpHvedQa/1Gz8XefR79vL3yXtY59u283n0e/by98l7WOfbredHzytHz1Ox7XO/vi55Xjp6nZt/jRn9f9PeGbO8h/1a/6O8N2d5D1A8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4BheUZDI2Q==</data>
  </layer>
  <layer id="409" name="Buildings" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt2rtOFUEAx+F9gdNPqR0+Ad4SFe1FBVFRa8X7lVpIAAUvnUQbL4128hj6VP4TNZ6CkyXAyS6735f8khOGTDMTMmeYqgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgO44VKrqcGnvfLTTZNb4aDqWjqcT6WRpz3y01/ms63S6kC6mS2kmzabLpfn5aLdbWdPbaSHdSXfTvXQ/PSjNz0e7vciaLqXl9H5QVZtpJZ9X01ppfj7a7UPW9OPfdf2Rtd4a/Pn8KT/7XJqfj4PjZ9b616D+9yayD46U+vGdzkc/nMqeOJ3OpKl0Np0rOx+nv+ayD66kq+lamk/X0410s9SP028PswcepcfpSXqanqXnabHUj9NvL7MHXqX1tJFepzfp7dD3rFHj7+yf3vuSPfB1m33wrfz/njVq/Lv9wz58bwMYpe5eB7bj3obdGue9jfc/3TeOexvvf/pj+F7n3z3OXu5tvP/pl+F7neH/l+/23sb7n/7aj3ucLr//cZ4bvy6+/3GeO7h/z5rmPMdeOM/hPIfzHM5zAAAAAAAAAAAAAAAAAAAAAABAV/0GhF2Psg==</data>
+  <data encoding="base64" compression="zlib">eNrt2rtOFUEAx+F9gdNPqZ0+AYomKtrLRUVFrRWviGLtDe9KrY2XaKTTx4Cn8p9wEikkS/Cc7LL7fckvnDBkmpmQYZiqAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA7jhQqupgae98tNNE1vhIOpom07F0vLRnPtrrbNZ1Os2k2TSXzqXz6UJpfj7a7XrW9EZaTDfTrXQ73Ul3S/Pz0W6Ps6ZP0tP0LD1Pq+lFelman492+5g1/TRc11+Dqvo92Pr8Od/7Upqfj/1jI2u9Oaj/uUPZB4dL/fhu56MfTmRPnEyn0lQ6nc6U3Y/TX/PZBxfTpXQ5LaQr6Wq6VurH6bd72QNL6X5aTg/Sw7SSHpX6cfrtVfbA6/QmvU3v0vv0Ia2V+nH67Wv2wLfhPvierz+Gn3+Wv39n7TS+bv8wgr/bAHZSd68D/+Lehr0a572N9z/dN457G+9/+mPU9zbe//TL9nud7f8v3+u9jfc//TWKe5wuv/9xnhu/Lr7/cZ7bv7/PmuY8x/9wnsN5Duc5nOcAAAAAAAAAAAAAAAAAAAAAAICu+gOoFZJo</data>
  </layer>
  <layer id="410" name="Walls" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt2LdNBEEYhuHtAAbI8LYHbIa3PWAzvC0Ck2IkTKN8JdzBSSx3zyO90WgnmV/a0VQVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH+hq1RVST2pN3WnvlKf/ai36ZztXJpPM2k2LZT67Ee97eZsD9Ne2k8H6ajUZz/q7z7n+5Ae01Op334A8FOj+Q+Np4k0mcbSVGl8nc62nlnYSttpI22mndL4Op3tMrNwm67SdbpJd6XxdXjPPHykz/RVml8HAID/zrsNv+Hdht9o9btNf74dTENpOA2kEfPY1lr5brOY71fSalpKy2nN/NCg48zKeTpJp+ksXZgfmvCceXlJr+nN7NDB3Odwn8N9Dvc5AAAAAAAAAAAAAAAAAAAAAACgHX0DHFE96g==</data>
+  <data encoding="base64" compression="zlib">eNrt2LcNgjEUhVGv4BmJHTkOQWgJEmFR7giE5gfOkb7Kkhu/4smlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwT1q1lG7qpXbqpH5tzn003z7vu0nbtKvNuw8AAL7NLHvwMq3SPC3Suj5/DvfMwyVd062+fg4AAAC8x78Nn/JvQ1MMMn/jNEnDNEpTM8kLzpmXQzqmk9kBAPsc9jkAAAAAAAAAAAAAAAAAAAAAAOCnPADYtigM</data>
  </layer>
  <layer id="411" name="Objects" width="144" height="112">
   <data encoding="base64" compression="zlib">eNrt3U1O8zAQgGGWUY7SlluE0wCrsADWlFXSM6NKBAXLcfzvsfM+q+9DBQrU05nxxHl4AAAAAAAAAAAAAACU8NrZfQwAYvgmvgDQeBMeG4Y+zdf96tJ+j69Iv9f3ntco4OIcuGYeM6y5VHEt5nNfP8f1v+8xyff5PxHP0JDnCO/zV8PXuPRp84vanfpyMRyIxaYHfMn8mlZj2xKnfGPPTVjMCo3dur/Zul77JAah8Xxn/v3/2Mlc6wNrEBBta39q7OziUKn9rXs+dqMOA6o3GdbxGGGNvxAniuNvAPg7WdZS5wPWXB/UmTiwWdB7KzUZ0CbX3CJkn/y18bov93Un7IdBInVPa2+f/VnQmj5qTWbz85yJN2hM6FxbrDrtjRrr39wm1/ACfnHLJp/S7fHv1VZjw2uS+W/w2k4n1vt5rp/FprdyoR4CsjDNJM6r6yhscp+Qmu1KngCIl6p/sBWH1D3yk2dusOQ3cyNxJke+Rl8akjAvA0BirQR7ezmcS5xXzx1zmXnYy6GYlYYko6FGunZua2l5/GC5XnSPq6FnEzLXaHNNvu2s4PI4zvtBrWqZyZG+f5R7BmcrTquxi34PjhSTattzktS71uU9W3FNl/OYzosmR0LtXPdnan/Nh/TmR/pqQBFDl/fzUolRU07EISD7+sx99qlt/2XdOw7JUUx125R4rhKA/TqtvQdqqjt9arR1nkd+BGolACjPZR+5phpCzVOYuwTkiHmuWKozynLcv9M1H5wrnaEEWq7RWuuvTp2ssx8BYlI937/0dbacUQjo6fan1h8z7V/V1r/2iUPsUQH56gxfKe83kaOe4ywSQBbTuRJLn1Vdt1zzSM0FxMhX1vXVE3EFQEat1z2D45lFvojdwHHl6JN/c08uIMma3OrpSJ21iznfzDUqQPmcINc+dIo5v5pmB5lzBOKTOEcTmr+FnhG0FWvIuYD/UvSidXtwLa097lUPyF0bp77M55bE/dsBt/xk7zzDErFA8hka9xxuaPQsE6CkGs9W18Uqdc2HziHp7hHEWRzAsWz1uV+IBQACYoiPG7NAQLNi3uuiZG92SnymENflAuZ1YRNLUqyjlLWRGtOmTNd8AYjLeM8vy72yGmu4ZU5w5CzaPz+zmHHF</data>
@@ -96,7 +97,7 @@
   </object>
  </objectgroup>
  <objectgroup id="421" name="NPCSpawn">
-  <object id="2" name="mirkafather" x="328.00" y="552.00">
+  <object id="2" name="mirkafather" x="376.00" y="568.00">
    <properties>
     <property name="NpcId" value="mirkafather"/>
    </properties>

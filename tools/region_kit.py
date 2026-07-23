@@ -278,55 +278,73 @@ FACADE_ROWS = (7, 8, 9, 10)          # lintel, two courses, sill
 ROOFS = {"shingle": 0, "tile": 8}    # brown shingle; green glazed tile
 ROOF_ROWS = (0, 1, 2, 3, 4, 5)
 
-HOUSE_W, FACADE_H, ROOF_H = 8, 4, 6      # map tiles
-#  The roof is dropped onto the wall rather than stacked above it: its skirt
-#  overlaps the top three courses so the eaves land ON the wall, which is where
-#  eaves are. Stacked flush it floats, with a hand's width of grass showing
-#  between roof and house.
-ROOF_DROP = 3
-HOUSE_H = FACADE_H + ROOF_H - ROOF_DROP  # 7 map tiles; the wall alone is solid
+#  MEASURED, not guessed, and then LOOKED AT — the first version shipped houses
+#  the user rightly called open crates. What was wrong:
+#
+#    * The roof was treated as background and the wall as the mass. In the
+#      reference art the ROOF IS THE BUILDING: a big gable fills the shape and
+#      only a strip of facade shows beneath it.
+#    * The gable has a NOTCH in its bottom middle. That notch is where the front
+#      wall belongs, tucked under the ridge. Hanging a full-height wall below the
+#      whole roof instead left the notch showing grass — which is exactly what
+#      read as "you can see inside it".
+#
+#  Roofs.png rows 0-5 are whole gables, eight tiles wide: brown at cols 0-7,
+#  green glazed tile at 8-15. They CANNOT be stretched — the ridge is one pair of
+#  columns — so a longer building is a range of bays, as a real one is.
+#
+#  Walls.png repeats four materials every 6 columns. Rows 7-10 is the band that
+#  sits on the ground (rows 0-5 is a raised frame with legs). Only the bottom
+#  courses are used: a house shows a strip of wall, not a storey.
+MAT_BASE = {"log": 0, "plank": 6, "board": 12, "plaster": 18}
+ROOFS = {"shingle": 0, "tile": 8}
+
+HOUSE_W, ROOF_H = 8, 6
+FACADE_ROWS = (9, 10)           # two courses only: a house shows a STRIP of
+                                #   wall under its roof, not a storey. Three
+                                #   still read as a box with a lid on it.
+FACADE_W = 6                    # one tile narrower than the roof at each side,
+FACADE_X = 1                    #   so the eaves overhang
+FACADE_Y = 5                    # tucked up into the gable's notch
+HOUSE_H = FACADE_Y + len(FACADE_ROWS)      # 7 map tiles = 3.5 engine cells
 
 
 def house_tiles(material, roof, bays=1, storeys=1):
     """One building. Returns (wall_stamps, roof_stamps, (w, h)) in map tiles,
     origin at the top-left, as lists of (dx, dy, tileset, col, row).
 
-    `bays` puts gables side by side for a longer building — an inn range, a
-    barn — because the roof art is a fixed gable and a village of identical
-    single-gable boxes is exactly the repetition to avoid. `storeys` stacks the
-    wall courses, which is how the inn ends up taller than the cottages around
-    it without being wider.
-    """
+    The facade is the SOLID part — the engine reads the Walls layer for collision
+    — and it spans the building's width so the whole house blocks. The roof goes
+    on a layer that blocks nothing, so its eaves overhang the doorstep.
+
+    `bays` sets whole gables side by side for a longer building; `storeys` adds
+    courses of wall under the same roof, which is how the inn stands taller than
+    the cottages without being wider."""
     b = MAT_BASE[material]
+    rc = ROOFS[roof]
     width = HOUSE_W * bays
-    wall_h = FACADE_H * storeys
+    extra = (storeys - 1) * len(FACADE_ROWS)
 
     walls = []
     for bay in range(bays):
         ox = bay * HOUSE_W
         for s in range(storeys):
             for dy, row in enumerate(FACADE_ROWS):
-                y = s * FACADE_H + dy
-                # post, six tiles of wall, post — the facade is one tile
-                # narrower than its roof at each side, so the eaves overhang.
-                walls.append((ox + 1, y, "BuildWalls", b + 0, row))
-                for dx in range(2, HOUSE_W - 2):
-                    walls.append((ox + dx, y, "BuildWalls", b + 1 + ((dx + row) % 4), row))
-                walls.append((ox + HOUSE_W - 2, y, "BuildWalls", b + 5, row))
+                y = FACADE_Y + s * len(FACADE_ROWS) + dy
+                walls.append((ox + FACADE_X, y, "BuildWalls", b + 0, row))
+                for dx in range(1, FACADE_W - 1):
+                    walls.append((ox + FACADE_X + dx, y, "BuildWalls",
+                                  b + 1 + ((dx + row) % 4), row))
+                walls.append((ox + FACADE_X + FACADE_W - 1, y, "BuildWalls", b + 5, row))
 
-    rc = ROOFS[roof]
     roofs = []
     for bay in range(bays):
         ox = bay * HOUSE_W
-        for dy, row in enumerate(ROOF_ROWS):
+        for dy in range(ROOF_H):
             for dx in range(HOUSE_W):
-                # Row 5 columns 3-4 are not this roof: they are the tip of the
-                # steeper gable packed underneath it on the sheet, and stamped
-                # they put a small pale tent on the ridge of every house.
-                if row == 5 and dx in (3, 4): continue
-                roofs.append((ox + dx, dy - ROOF_DROP, "BuildRoofs", rc + dx, row))
+                roofs.append((ox + dx, dy, "BuildRoofs", rc + dx, dy))
 
-    return walls, roofs, (width, wall_h + ROOF_H - ROOF_DROP)
+    return walls, roofs, (width, HOUSE_H + extra)
 
 
 # ----------------------------------------------------------------- the seams

@@ -130,7 +130,7 @@ for x in range(62, COLS):
 SQUARE = (35, 28, 41, 33)
 
 # The Coast Road — in from the west edge, over the bridge, through the village.
-path([(-2, 30), (10, 30), (17, 30)], 3, ",", over=".#")
+path([(-2, 30), (10, 30), (17, 30)], 2, ",", over=".#")
 path([(21, 30), (28, 30), (35, 30)], 2, ",", over=".#")
 # The bridge. The only crossing: a stone one, because the coast road is a trade
 # road and the tolls paid for it.
@@ -154,7 +154,7 @@ rect(35, 15, 39, 18, "=")
 
 # The Kae Ychel Road — east out of the square, through the gap in the rock.
 path([(41, 31), (48, 31)], 2, ",", over=".#")
-path([(48, 31), (56, 32), (64, 32), (74, 32)], 3, ",", over=".#")
+path([(48, 31), (56, 32), (64, 32), (74, 32)], 2, ",", over=".#")
 
 # The mill track — up the east bank from the road to the mill. Short, and worn.
 path([(26, 29), (27, 26), (28, 23), (28, 22)], 2, "t", over=".")
@@ -767,16 +767,17 @@ for (ex, ey, mat, roof, bays, storeys, name, door) in BUILDINGS:
     # The facade's bottom sits on the cell's bottom edge; its top-left in map
     # tiles is therefore one facade-height up from there.
     ox = ex * K.SUB - 1
-    oy = (ey + 1) * K.SUB - K.FACADE_H * storeys
+    oy = (ey + 1) * K.SUB - bh
     for dx, dy, s, c, r in roofs:
         if K.opaque(s, c, r): paint("Buildings", ox + dx, oy + dy, K.gid(s, c, r))
     for dx, dy, s, c, r in walls:
         if K.opaque(s, c, r): paint("Walls", ox + dx, oy + dy, K.gid(s, c, r))
     # A door in the middle of the ground floor, and the step in front of it.
+    # A door in the middle of the visible facade, two tiles of it.
     dxm = ox + bw // 2 - 1 + (door - 1) * 2
-    dym = oy + K.FACADE_H * storeys - 2
-    for i, (c, r) in enumerate(((6, 1), (7, 1), (6, 2), (7, 2), (6, 3), (7, 3))):
-        paint("Buildings", dxm + (i % 2), dym + (i // 2) - 1, K.gid("BuildProps", c, r))
+    dym = oy + K.HOUSE_H + (storeys - 1) * len(K.FACADE_ROWS) - 2
+    for i, (c, r) in enumerate(((6, 2), (7, 2), (6, 3), (7, 3))):
+        paint("Buildings", dxm + (i % 2), dym + (i // 2), K.gid("BuildProps", c, r))
 
 # ---- the ground itself. Flat green is the single loudest thing separating this
 #      from the art it is trying to look like: real ground has sprigs, fern and
@@ -895,6 +896,7 @@ tmx = f'''<?xml version="1.0" encoding="UTF-8"?>
   <property name="DisplayName" value="{sx.escape(DISPLAY)}"/>
   <property name="Stage" type="int" value="1"/>
   <property name="EngineTile" type="int" value="{K.ENGINE_TILE}"/>
+  <property name="Wildlife" type="int" value="26"/>
   <property name="NorthMap" value="r2_whispering_wood"/>
   <property name="EastMap" value="r4_kae_ychel_road"/>
  </properties>

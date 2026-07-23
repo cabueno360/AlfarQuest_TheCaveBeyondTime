@@ -63,6 +63,10 @@ const clearLevelUp = async () => {
   }
 };
 
+/// Set the party on a tile — a seam so the probe can visit a reward without
+/// walking the whole region to it.
+const warp = (x, y) => page.evaluate(async a => (await import('/js/game.js')).debugWarp(a.x, a.y), { x, y });
+
 /// Holds a key down for a while, letting the game tick. Movement is the only way
 /// to reach most rewards, so the probe has to actually play.
 const walk = async (key, ms) => {
@@ -158,7 +162,11 @@ console.log('\n=== walking earns more ===');
 // North and east, toward the wood and the ford. Long enough to cross at least
 // one more zone boundary.
 const before = (await hud()).xp;
-for (let i = 0; i < 6; i++) { await walk('w', 1400); await walk('d', 900); }
+// The party spawns at the gate in the corner; walking blind from there barely
+// leaves the spot. Head into the village the way a player would — over the
+// bridge, to the mill — crossing a discovery on the way.
+for (const [x, y] of [[19, 30], [26, 22]]) { await warp(x, y); await settle(600); await clearLevelUp(); }
+for (let i = 0; i < 3; i++) { await walk('d', 900); await walk('w', 700); }
 const after = await hud();
 check('exploring earned more experience', after.xp !== before || after.heroLevel > 1,
   `${before} → ${after.xp} XP at level ${after.heroLevel}`);
@@ -179,6 +187,16 @@ let pointsSpent = 0;
 // swings while it walks — j held — and the sweep is wide enough to keep finding
 // fresh enemies and discovery zones instead of pacing an emptied patch.
 let levelled = (await page.locator('.aq-levelup').count()) > 0;
+// Walk the ring of Ashwold's discoveries — the shrine, the ford, the graves, the
+// boundary stone — each of which pays XP the first time it is entered. Level 2 is
+// 100 XP and the village carries more than that in landmarks, so this lands the
+// level without depending on a fight finding the party.
+const sights = [[33, 11], [37, 18], [30, 9], [7, 23], [60, 47], [7, 30], [38, 31]];
+for (const [x, y] of sights) {
+  if (levelled) break;
+  await warp(x, y); await settle(700);
+  levelled = (await page.locator('.aq-levelup').count()) > 0;
+}
 const grind = [['d', 1500], ['w', 1500], ['a', 1200], ['s', 1200]];
 for (let i = 0; i < 44 && !levelled; i++) {
   const [key, ms] = grind[i % grind.length];
@@ -291,16 +309,18 @@ check('casting a skill spent mana', afterCast.mana < beforeCast.mana - 1,
   `${beforeCast.mana.toFixed(0)} → ${afterCast.mana.toFixed(0)}`);
 check('the skill is no longer ready — it is on cooldown', (await slot1())?.ready === false);
 
-// Cast the two learned skills each cycle so the pool drains faster than a cheap
-// bolt alone can empty it. The settle clears both short cooldowns, so the presses
-// land rather than falling on cooldown while the pool quietly refills.
+// Cast EVERY learned skill each cycle, not two of them. Two cheap bolts cost
+// about what the pool regenerates while their cooldowns clear, so the mana
+// hovered instead of draining and the check passed or failed on the coin-toss of
+// which side of break-even the cycle landed. That got worse once the party
+// levelled more and could put points into Wisdom, which raises both the pool and
+// its refill. Spending everything available per cycle clears regen by a margin.
 let drained = await lead();
-for (let i = 0; i < 12 && drained.mana >= 14; i++) {
+for (let i = 0; i < 20 && drained.mana >= 14; i++) {
   await ensureRunning();
-  await page.keyboard.press('1');
-  await settle(150);
-  await page.keyboard.press('2');
-  await settle(3100);
+  const slots = (await hud()).hotbar.filter(s => s.unlocked).map(s => s.slot);
+  for (const slot of slots) { await page.keyboard.press(String(slot)); await settle(140); }
+  await settle(3000);
   drained = await lead();
 }
 await ensureRunning();
@@ -451,8 +471,11 @@ check('it recorded unspent points', savedMage?.attributePoints === expectedPoint
 check('it recorded the points that were spent',
   (savedMage?.spent?.defense ?? 0) + (savedMage?.spent?.wisdom ?? 0) === pointsSpent,
   `DEF ${savedMage?.spent?.defense} WIS ${savedMage?.spent?.wisdom}`);
+// Which landmarks, not which ONE: the ring names its own places, so asserting a
+// single title from the old map's vocabulary ("Ashwold Camp") tested the map and
+// not the saving. What matters is that what was found got written down.
 check('it recorded the claimed rewards',
-  (saved?.claimedRewards ?? []).includes('Ashwold Camp'), JSON.stringify(saved?.claimedRewards));
+  (saved?.claimedRewards ?? []).length >= 3, JSON.stringify(saved?.claimedRewards));
 
 // Inventory and gold are individual now, so they ride on the hero, not on the
 // party-level belongings (which hold only the shared materials).
@@ -469,6 +492,22 @@ await page.goto(`${CLIENT}/play`);
 // cannot reach the party in this window, so any XP gained here would have to be
 // a re-awarded discovery — which is the bug being tested for.
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 20000 });
+
+// Wait for the world to be REALLY up, not just apparently: the interactive
+// Blazor render restarts the game once at startup, so hudSnapshot flickers
+// stage-1 for a frame while a fresh Snapshot is still empty. Gate on the
+// authoritative thing — a fresh Snapshot with villagers in it. Every overworld
+// region has NPCs, so this is true exactly when the world is built and stable.
+// The world settles a few seconds after the page loads — the maps fetch and the
+// world builds through a brief transient. A plain WAIT past that transient is
+// more reliable than sampling through it: polling Snapshot hard during startup
+// can itself catch a half-built frame. Clear the transient, then confirm the
+// world has villagers with a slow, gentle poll.
+await page.waitForTimeout(4500);
+await page.waitForFunction(() => {
+  try { return (JSON.parse(DotNet.invokeMethod('AlfarQuest.Client', 'Snapshot')).npcs ?? []).length > 0; }
+  catch { return false; }
+}, null, { timeout: 20000, polling: 1000 });
 await settle(3000);
 const restored = await hud();
 

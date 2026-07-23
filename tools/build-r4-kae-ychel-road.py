@@ -165,8 +165,13 @@ for y, ch in enumerate(WSEAM):
 # =====================================================================
 # The Kae Ychel road: in from Ashwold at rows 31-33, east across the whole map
 # and off the far side toward the sun-city. The spine of the region.
-ROAD_MID = (ROAD_IN[0] + ROAD_IN[1]) // 2       # 32, the middle of the 31-33 band
-path([(-2, ROAD_MID), (8, ROAD_MID)], 3, ",", over=".#~")     # three wide off the seam
+# The incoming road is laid to the WIDTH THE CONTRACT ASKS FOR, read from the
+# neighbour's edge, rather than to a number written here — Ashwold's road has
+# been narrowed once already, and a hard-wired 3 put a row of tarmac where the
+# village leaves grass.
+ROAD_W_IN = ROAD_IN[1] - ROAD_IN[0] + 1
+ROAD_MID = ROAD_IN[0] + ROAD_W_IN // 2
+path([(-2, ROAD_MID), (8, ROAD_MID)], ROAD_W_IN, ",", over=".#~")
 path([(8, ROAD_MID), (22, 32), (34, 33), (48, 32), (60, 31), (74, 31)],
      2, ",", over=".#")
 
@@ -549,14 +554,18 @@ for my in range(MH):
 for (ex, ey, mat, roof, bays, storeys, name) in BUILDINGS:
     walls, roofs, (bw, bh) = K.house_tiles(mat, roof, bays, storeys)
     ox = ex * K.SUB - 1
-    oy = (ey + 1) * K.SUB - K.FACADE_H * storeys
+    oy = (ey + 1) * K.SUB - bh
     for dx, dy, s_, c_, r_ in roofs:
         if K.opaque(s_, c_, r_): paint("Buildings", ox + dx, oy + dy, K.gid(s_, c_, r_))
     for dx, dy, s_, c_, r_ in walls:
         if K.opaque(s_, c_, r_): paint("Walls", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    dxm, dym = ox + bw // 2 - 1, oy + K.FACADE_H * storeys - 2
-    for i, (c_, r_) in enumerate(((6, 1), (7, 1), (6, 2), (7, 2), (6, 3), (7, 3))):
-        paint("Buildings", dxm + (i % 2), dym + (i // 2) - 1, K.gid("BuildProps", c_, r_))
+    # A door in the middle of the visible facade, two tiles of it, drawn over the
+    # wall rather than under the roof — the old stamp was keyed to a four-course
+    # facade and now landed halfway up the roof.
+    dxm = ox + bw // 2 - 1
+    dym = oy + K.HOUSE_H + (storeys - 1) * len(K.FACADE_ROWS) - 2
+    for i, (c_, r_) in enumerate(((6, 2), (7, 2), (6, 3), (7, 3))):
+        paint("Buildings", dxm + (i % 2), dym + (i // 2), K.gid("BuildProps", c_, r_))
 
 # Ground texture: dry tufts everywhere, reed only at the oasis.
 _tufts = 0
@@ -666,6 +675,7 @@ tmx = f'''<?xml version="1.0" encoding="UTF-8"?>
   <property name="DisplayName" value="{sx.escape(DISPLAY)}"/>
   <property name="Stage" type="int" value="1"/>
   <property name="EngineTile" type="int" value="{K.ENGINE_TILE}"/>
+  <property name="Wildlife" type="int" value="30"/>
   <property name="WestMap" value="{WEST_NEIGHBOUR}"/>
   <property name="NorthMap" value="{NORTH_NEIGHBOUR}"/>
  </properties>

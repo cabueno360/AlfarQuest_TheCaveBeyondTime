@@ -563,14 +563,18 @@ for my in range(MH):
 for (ex, ey, mat, roof, bays, storeys, name) in BUILDINGS:
     walls, roofs, (bw, bh) = K.house_tiles(mat, roof, bays, storeys)
     ox = ex * K.SUB - 1
-    oy = (ey + 1) * K.SUB - K.FACADE_H * storeys
+    oy = (ey + 1) * K.SUB - bh
     for dx, dy, s_, c_, r_ in roofs:
         if K.opaque(s_, c_, r_): paint("Buildings", ox + dx, oy + dy, K.gid(s_, c_, r_))
     for dx, dy, s_, c_, r_ in walls:
         if K.opaque(s_, c_, r_): paint("Walls", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    dxm, dym = ox + bw // 2 - 1, oy + K.FACADE_H * storeys - 2
-    for i, (c_, r_) in enumerate(((6, 1), (7, 1), (6, 2), (7, 2), (6, 3), (7, 3))):
-        paint("Buildings", dxm + (i % 2), dym + (i // 2) - 1, K.gid("BuildProps", c_, r_))
+    # A door in the middle of the visible facade, two tiles of it, drawn over the
+    # wall rather than under the roof — the old stamp was keyed to a four-course
+    # facade and now landed halfway up the roof.
+    dxm = ox + bw // 2 - 1
+    dym = oy + K.HOUSE_H + (storeys - 1) * len(K.FACADE_ROWS) - 2
+    for i, (c_, r_) in enumerate(((6, 2), (7, 2), (6, 3), (7, 3))):
+        paint("Buildings", dxm + (i % 2), dym + (i // 2), K.gid("BuildProps", c_, r_))
 
 # Ground cover: sparse, and stone rather than green. Above the shelf, nothing.
 _tufts = 0
@@ -679,6 +683,7 @@ tmx = f'''<?xml version="1.0" encoding="UTF-8"?>
   <property name="DisplayName" value="{sx.escape(DISPLAY)}"/>
   <property name="Stage" type="int" value="1"/>
   <property name="EngineTile" type="int" value="{K.ENGINE_TILE}"/>
+  <property name="Wildlife" type="int" value="22"/>
   <property name="WestMap" value="{WEST_NEIGHBOUR}"/>
   <property name="SouthMap" value="r4_kae_ychel_road"/>
  </properties>
