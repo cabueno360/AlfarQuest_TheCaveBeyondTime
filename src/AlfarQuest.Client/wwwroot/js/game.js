@@ -61,10 +61,21 @@ let snap = null, snapRev = -1;
 // transition reads as a threshold crossed rather than a hard cut.
 let fadeAlpha = 0;
 
+// A rolling frame budget, so "it feels slow" can be answered with where the
+// time actually goes. Three numbers, updated in place, costing two clock reads
+// a frame: the engine tick (C# plus the JSON both ways), the draw, and the gap
+// the browser keeps for itself.
+const perf = { frames: 0, fps: 0, tick: 0, draw: 0, total: 0, _t0: 0, _n: 0, _tick: 0, _draw: 0, _tot: 0 };
+export function perfSnapshot() {
+    return { fps: +perf.fps.toFixed(1), tickMs: +perf.tick.toFixed(2),
+             drawMs: +perf.draw.toFixed(2), frameMs: +perf.total.toFixed(2),
+             frames: perf.frames };
+}
+
 // ---------------------------------------------------------------------
 //  Rendering
 // ---------------------------------------------------------------------
-function render(s) {
+function render(s, dt = 0.016) {
     const W = canvas.width, H = canvas.height;
     const cam = s.cam || { x: 0, y: 0 };
     const shakeMag = (s.hud && s.hud.shake ? s.hud.shake : 0) * 10;
@@ -160,7 +171,7 @@ function render(s) {
     // Daylight outdoors: the torch-and-darkness model belongs to the cave, and
     // running it on the overworld — or a city's open streets — would hide the map
     // the player is meant to read.
-    if (s.outdoor) { drawHud(s.hud); return; }
+    if (s.outdoor) { drawHud(s.hud, dt); return; }
 
     // darkness overlay with light holes
     lctx.globalCompositeOperation = "source-over";
@@ -183,7 +194,7 @@ function render(s) {
     lctx.globalCompositeOperation = "source-over";
     ctx.drawImage(lightCanvas, 0, 0);
 
-    drawHud(s.hud);
+    drawHud(s.hud, dt);
 
     // The transition veil, over everything including the HUD, easing off over a
     // few frames from a full black to clear.
@@ -204,6 +215,7 @@ function loop(now) {
         return;
     }
     const dt = now - last; last = now;
+    const _f0 = performance.now();
 
     let state;
     try {
@@ -229,7 +241,18 @@ function loop(now) {
     // Accumulated for the probe: a sound is in the payload for a single frame, so
     // polling snapshots misses sparse events. This rolling set does not.
     if (state.sounds) for (const s of state.sounds) _familiesSeen.add(s.f);
-    render(state);
+    const _f1 = performance.now();
+    render(state, dt / 1000);
+    const _f2 = performance.now();
+
+    perf.frames++; perf._n++;
+    perf._tick += _f1 - _f0; perf._draw += _f2 - _f1; perf._tot += dt;
+    if (_f2 - perf._t0 > 500) {                 // averaged over half a second
+        perf.fps = perf._n * 1000 / Math.max(1, _f2 - perf._t0);
+        perf.tick = perf._tick / perf._n; perf.draw = perf._draw / perf._n;
+        perf.total = perf._tot / perf._n;
+        perf._t0 = _f2; perf._n = 0; perf._tick = 0; perf._draw = 0; perf._tot = 0;
+    }
     raf = requestAnimationFrame(loop);
 }
 

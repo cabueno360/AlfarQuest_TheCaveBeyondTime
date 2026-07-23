@@ -50,8 +50,9 @@ REGION_ID = "r1_ashwold"
 DISPLAY = "Ashwold"
 
 # The terrain grid, at ENGINE resolution. One character per cell:
-#   '.' grass   ',' dirt road   'c' cobble   '~' water   '=' bridge
-#   '#' rock    'B' building (solid; its facade is the wall you see)
+#   '.' grass   ',' dirt road   't' trodden track   'c' cobble
+#   '~' water   '=' bridge   '#' rock   'g' worked ground
+#   'B' building (solid; its facade is the wall you see)
 G = [["." for _ in range(ROWS)] for _ in range(COLS)]
 
 
@@ -133,9 +134,12 @@ path([(-2, 30), (10, 30), (17, 30)], 3, ",", over=".#")
 path([(21, 30), (28, 30), (35, 30)], 2, ",", over=".#")
 # The bridge. The only crossing: a stone one, because the coast road is a trade
 # road and the tolls paid for it.
+# The deck is five cells across so the parapet can stand ON it. Built one cell
+# narrower, the rails had nowhere to go but the river.
 for _bx in range(15, 24):
-    for _by in range(29, 32):
+    for _by in range(28, 33):
         if at(_bx, _by) in "~.,": put(_bx, _by, "=")
+BRIDGE_SPAN = [x for x in range(15, 24) if at(x, 30) == "="]
 
 # The square, cobbled — the one paved thing in the village, laid by whoever
 # could afford it, which is the reason the inn faces it.
@@ -153,14 +157,14 @@ path([(41, 31), (48, 31)], 2, ",", over=".#")
 path([(48, 31), (56, 32), (64, 32), (74, 32)], 3, ",", over=".#")
 
 # The mill track — up the east bank from the road to the mill. Short, and worn.
-path([(26, 29), (27, 26), (28, 23), (28, 22)], 2, ",", over=".")
+path([(26, 29), (27, 26), (28, 23), (28, 22)], 2, "t", over=".")
 # The back lane — the second row of houses is reached from here, not from the
 # high street, which is how a village thickens without widening.
-path([(30, 32), (30, 38), (44, 38)], 2, ",", over=".")
+path([(30, 32), (30, 38), (44, 38)], 2, "t", over=".")
 # The field track — off the back lane out to the barn and the strips.
-path([(44, 38), (52, 40), (58, 42)], 2, ",", over=".")
+path([(44, 38), (52, 40), (58, 42)], 2, "t", over=".")
 # The path down to the water — to the fishing steps below the bridge.
-path([(19, 32), (18, 35), (17, 37)], 2, ",", over=".")
+path([(19, 32), (19, 35), (19, 37)], 1, "t", over=".")
 
 # =====================================================================
 #  3. THE BUILDINGS
@@ -214,10 +218,12 @@ def plot(ex, ey, w, h):
 
 
 def doorpath(ex, ey, to_y):
-    """The trodden line from a doorstep to the road it faces."""
+    """The trodden line from a doorstep to the road it faces. One cell wide and
+    worn grass, not metalled road: seven of these at road width turned the
+    village into a brown web with houses in the gaps."""
     step = 1 if to_y > ey else -1
     for y in range(ey, to_y + step, step):
-        if at(ex, y) == ".": put(ex, y, ",")
+        if at(ex, y) == ".": put(ex, y, "t")
 
 
 for px_, py_, pw, ph in ((24, 22, 8, 4), (29, 22, 5, 4), (44, 22, 5, 4),
@@ -243,6 +249,24 @@ for x in range(49, 58):
         # the middle, because that is what they are in there to eat.
         if at(x, y) == "." and (y == 40 or x == 49 or x == 57):
             put(x, y, "g")
+
+def frontage(ex, ey, w, gap):
+    """A fence along a plot's street side, with a gap for the gate. The gap is
+    where that household's own path meets the road, which is what makes the
+    fence look built rather than drawn."""
+    for x in range(ex, ex + w):
+        if x == gap or x == gap + 1: continue
+        if at(x, ey) in ".t":
+            PROPS.append((x, ey, "h_fence", 0.85, True, 13))
+
+
+def hedge(x0, y0, x1, y1):
+    """A planted line. A hedge is a line; scatter is not a hedge."""
+    for x in range(x0, x1 + 1):
+        for y in range(y0, y1 + 1):
+            if at(x, y) == ".":
+                COVER.append((x, y, "bush"))
+
 
 # =====================================================================
 #  4. THE PROPS
@@ -375,6 +399,33 @@ prop(55, 35, "log", 0.7)
 prop(60, 47, "ruin", 0.9, True, 18)
 prop(61, 48, "rock", 0.8, True, 13)
 
+# ---- the plot boundaries. Each frontage takes its gate where that household's
+#      own path comes out, so no fence is ever crossed to reach a door.
+#      The street-side row fences the VERGE at y=28, not the road at y=29: a
+#      fence laid on the carriageway is skipped by the terrain test and the
+#      whole north side ended up with no boundary at all.
+for _fx, _fy, _fw, _gap in ((24, 28, 5, 25), (29, 28, 5, 30), (44, 28, 5, 45),
+                            (49, 29, 5, 50), (31, 39, 5, 32), (36, 39, 5, 37),
+                            (41, 39, 5, 42)):
+    frontage(_fx, _fy, _fw, _gap)
+
+# ---- the bridge's parapet, down both sides of the span.
+for _bx in BRIDGE_SPAN:
+    prop(_bx, 28, "support", 0.55, True, 10)
+    prop(_bx, 32, "support", 0.55, True, 10)
+
+# ---- the ground between the village and the fields, which was open green with
+#      nothing in it. An orchard row behind the inn, a stack of hay by the pen,
+#      and the two big trees a village always has on its common.
+prop(46, 22, "cherry", 1.0); prop(48, 23, "cherry", 1.0); prop(50, 22, "cherry", 1.0)
+prop(46, 25, "cherry", 1.0); prop(49, 26, "cherry", 1.0)
+prop(53, 33, "broadleaf", 1.25); prop(59, 29, "broadleaf", 1.2)
+prop(56, 27, "log", 0.8); prop(57, 28, "log", 0.8)
+prop(52, 36, "crate", 0.6, True, 12); prop(53, 37, "barrel", 0.6, True, 11)
+prop(50, 34, "h_cart", 0.8, True, 15)
+prop(58, 38, "tent", 0.75, True, 15)          # a drover's camp by the pen gate
+prop(59, 39, "campfire", 0.7)
+
 # =====================================================================
 #  5. THE WOOD
 #
@@ -433,7 +484,7 @@ def clear_of_works(x, y, pad=1):
     a map was filled rather than laid out."""
     for dx in range(-pad, pad + 1):
         for dy in range(-pad, pad + 1):
-            if at(x + dx, y + dy) in ",c=~B#g": return False
+            if at(x + dx, y + dy) in ",tc=~B#g": return False
     return True
 
 
@@ -467,6 +518,10 @@ for (x0, y0, x1, y1, dens, kinds) in UNDER:
             if _hash(x, y, 3) < dens:
                 COVER.append((x, y, kinds[int(_hash(x, y, 4) * len(kinds)) % len(kinds)]))
 
+# Hedges: the field boundary, the pen, and the lane behind the cottages.
+hedge(63, 45, 63, 53)
+hedge(48, 34, 57, 34)
+hedge(30, 42, 45, 42)
 # A hedgerow along the field boundary: planted in a line, because a hedge is.
 for hy in range(45, 54):
     if at(63, hy) == ".": COVER.append((63, hy, "bush"))
@@ -585,7 +640,7 @@ EXAMINABLES = [
 #  detected, moved to the nearest ground somebody could actually stand on, and
 #  reported, rather than left for a screenshot to find.
 # =====================================================================
-WALKABLE = ".,c=g"
+WALKABLE = ".,tc=g"
 _moved = []
 
 
@@ -656,16 +711,24 @@ for my in range(MH):
         dx, dy = K.vary(K.SOLID, mx, my)
         paint("Ground", mx, my, K.gid("Floors", K.FLOOR_BLOCK["grass"] + dx, dy))
 
-        if c == ",":
-            k = lambda xx, yy: m(xx, yy) in ",=c"
+        if c == "t":
+            # A track is worn, not laid: the same dirt, but thin, and it keeps
+            # the grass showing through at its edges.
+            k = lambda xx, yy: m(xx, yy) in "t,=c"
+            paint("GroundDetails", mx, my, K.floor_tile("dirt", mx, my,
+                  k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
+        elif c == ",":
+            k = lambda xx, yy: m(xx, yy) in ",=ct"
             paint("Roads", mx, my, K.floor_tile("dirt", mx, my,
                   k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
         elif c == "c":
-            k = lambda xx, yy: m(xx, yy) in "c,="
+            # The paving bleeds into the streets that meet it, so the square has
+            # an edge that was laid rather than one that was cut.
+            k = lambda xx, yy: m(xx, yy) in "c,=t"
             paint("Roads", mx, my, K.floor_tile("cobble", mx, my,
                   k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
         elif c == "=":
-            k = lambda xx, yy: m(xx, yy) in "=,c"
+            k = lambda xx, yy: m(xx, yy) in "=,ct"
             paint("Bridges", mx, my, K.floor_tile("cobble", mx, my,
                   k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
         elif c == "~":
@@ -831,7 +894,7 @@ path_out = os.path.join(OUT, "R1_Ashwold.tmx")
 open(path_out, "w").write(tmx)
 
 solid = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] in "#B")
-road = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] in ",c=")
+road = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] in ",tc=")
 water = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] == "~")
 print(f"wrote {path_out}  ({MW}x{MH} tiles = {COLS}x{ROWS} cells, "
       f"{os.path.getsize(path_out)/1024:.0f} KB)")

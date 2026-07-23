@@ -7,6 +7,77 @@ import { ctx, canvas } from "../gfx.js";
 import { drawHotbar } from "./hotbar.js";
 
 // ---------------------------------------------------------------------
+//  Where you are.
+//
+//  The corner panel names the place at all times, but a line of 12px italic in
+//  a corner is not an arrival. When the region changes, the name is announced:
+//  it rises, holds, and goes, the way an area title does in the games this is
+//  trying to be. It is also the only thing that tells a player who has just
+//  walked over a seam that they are somewhere new.
+// ---------------------------------------------------------------------
+const title = { name: "", t: 0, last: null };
+const TITLE_IN = 0.6, TITLE_HOLD = 2.2, TITLE_OUT = 1.0;
+const TITLE_LIFE = TITLE_IN + TITLE_HOLD + TITLE_OUT;
+
+/// Announce a place by name. Called with every frame's region; it only reacts
+/// when the name actually changes, so re-entering the same place is silent.
+function noteRegion(name, dt) {
+    if (name && name !== title.last) {
+        // Including the first one. Being told where you have woken up is the
+        // whole point; a player who starts the game with no idea what the place
+        // is called has been told nothing.
+        title.last = name;
+        title.name = name;
+        title.t = TITLE_LIFE;
+    }
+    if (title.t > 0) title.t = Math.max(0, title.t - dt);
+}
+
+function drawRegionTitle(W, H) {
+    if (title.t <= 0 || !title.name) return;
+    const age = TITLE_LIFE - title.t;
+    const a = age < TITLE_IN ? age / TITLE_IN
+            : title.t < TITLE_OUT ? title.t / TITLE_OUT : 1;
+    const rise = (1 - Math.min(1, age / TITLE_IN)) * 10;      // settles as it fades in
+
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const y = H * 0.22 + rise;
+
+    ctx.font = "30px 'EB Garamond', serif";
+    const w = ctx.measureText(title.name).width;
+    // A band behind it, faded at both ends, so the name reads over grass or rock
+    // without a hard box around it.
+    const g = ctx.createLinearGradient(W / 2 - w, 0, W / 2 + w, 0);
+    g.addColorStop(0, "rgba(8,6,18,0)");
+    g.addColorStop(0.5, "rgba(8,6,18,0.62)");
+    g.addColorStop(1, "rgba(8,6,18,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(W / 2 - w, y - 30, w * 2, 60);
+
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fillText(title.name, W / 2 + 2, y + 2);
+    ctx.fillStyle = "#f0d99a";
+    ctx.fillText(title.name, W / 2, y);
+
+    // A rule under the name, drawn out from the middle as it appears.
+    const rw = Math.min(1, age / TITLE_IN) * (w * 0.6);
+    const rg = ctx.createLinearGradient(W / 2 - rw, 0, W / 2 + rw, 0);
+    rg.addColorStop(0, "rgba(240,217,154,0)");
+    rg.addColorStop(0.5, "rgba(240,217,154,0.85)");
+    rg.addColorStop(1, "rgba(240,217,154,0)");
+    ctx.fillStyle = rg;
+    ctx.fillRect(W / 2 - rw, y + 22, rw * 2, 1);
+    ctx.restore();
+}
+
+/// Test seam: what the title card is showing, and how much life it has left.
+export function regionTitle() {
+    return { name: title.name, t: +title.t.toFixed(2), showing: title.t > 0 };
+}
+
+// ---------------------------------------------------------------------
 //  HUD (drawn in screen space)
 // ---------------------------------------------------------------------
 /// Loot text rising from a kill. Drawn in world space inside the camera
@@ -26,9 +97,11 @@ export function drawFloaters(floats, cam) {
     ctx.restore();
 }
 
-export function drawHud(hud) {
+export function drawHud(hud, dt = 0.016) {
     if (!hud) return;
     const W = canvas.width, H = canvas.height;
+
+    noteRegion(hud.region, dt);
 
     // The action hotbar sits bottom-right, its own corner clear of the party
     // panel (bottom-left) and the quit button (top-right).
@@ -92,6 +165,10 @@ export function drawHud(hud) {
     ctx.fillText(headline, 28, 28);
     ctx.fillStyle = "#f0d99a"; ctx.font = "italic 12px 'EB Garamond', serif";
     ctx.fillText(subline, 28, 48);
+
+    // Over the corner panels but clear of the bottom prompt, at a fifth of the
+    // way down, which is where the eye already is.
+    drawRegionTitle(W, H);
 
     // --- talking to a villager ---
     // Prompt and balloon are both screen-space: a balloon anchored in the world
