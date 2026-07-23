@@ -1,0 +1,121 @@
+@using AlfarQuest.Client.Game
+@using AlfarQuest.Client.Services
+@implements IDisposable
+@inject DialogueState Talk
+
+@* A conversation with someone who has more than one thing to say.
+
+   The concept art's "ideas of conversation" made literal: they greet you, and the
+   questions you may put to them are listed to be chosen, not cycled through. Pick
+   one and they answer — a long answer turns a leaf at a time — then you are back
+   at the list, with what you have already asked marked, until you take your leave. *@
+
+@if (Talk.Open is { } talk)
+{
+    <div class="aq-talk-scrim" @onclick="Close"></div>
+
+    <section class="aq-talk" role="dialog" aria-modal="true" aria-label="@($"Speaking with {talk.Name}")"
+             tabindex="0" @ref="_panel" @onkeydown="OnKeyDown">
+
+        <header class="aq-talk-head">
+            <span class="aq-talk-portrait" aria-hidden="true">@Portrait(talk.Role)</span>
+            <div class="aq-talk-who">
+                <h2 class="aq-talk-name">@talk.Name</h2>
+                <p class="aq-talk-role">@talk.Role</p>
+            </div>
+            <button class="aq-talk-close" aria-label="Take your leave" @onclick="Close">✕</button>
+        </header>
+
+        @if (Talk.Asked is { } asked)
+        {
+            @* An answer. The question is echoed above it so the exchange reads as one. *@
+            <p class="aq-talk-asked">“@asked.Q”</p>
+            <p class="aq-talk-answer">@asked.A[Math.Min(Talk.Page, asked.A.Length - 1)]</p>
+
+            <footer class="aq-talk-foot">
+                @if (asked.A.Length > 1)
+                {
+                    <span class="aq-talk-pages">@(Talk.Page + 1) / @asked.A.Length</span>
+                }
+                <button class="aq-talk-go" @onclick="Talk.Next">
+                    @(Talk.Page + 1 < asked.A.Length ? "Go on…" : "Ask something else")
+                </button>
+            </footer>
+        }
+        else
+        {
+            @* The greeting, then everything you may ask. *@
+            <p class="aq-talk-greeting">@talk.Greeting</p>
+
+            <ul class="aq-talk-topics">
+                @foreach (var topic in talk.Topics)
+                {
+                    var heard = Talk.AlreadyAsked(topic);
+                    <li>
+                        <button type="button" class="aq-talk-topic @(heard ? "heard" : "")"
+                                @onclick="() => Talk.Ask(topic)">
+                            <span class="aq-talk-bullet" aria-hidden="true">@(heard ? "✓" : "❧")</span>
+                            @topic.Q
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <footer class="aq-talk-foot">
+                <button class="aq-talk-leave" @onclick="Close">Take your leave</button>
+            </footer>
+        }
+    </section>
+}
+
+@code {
+    private ElementReference _panel;
+    private bool _focus;
+
+    protected override void OnInitialized() => Talk.Changed += Refresh;
+
+    public void Dispose() => Talk.Changed -= Refresh;
+
+    private void Refresh()
+    {
+        // Focus the panel the first frame it opens, so Escape and Enter reach it
+        // instead of the canvas behind — otherwise WASD would still drive the hero.
+        _focus = Talk.Open is not null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focus && Talk.Open is not null)
+        {
+            _focus = false;
+            try { await _panel.FocusAsync(); } catch { /* panel already gone */ }
+        }
+    }
+
+    private void Close() => Talk.Close();
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "Escape": Close(); break;
+            // Enter/Space turn the page of an answer, exactly as the button does.
+            case "Enter":
+            case " ": if (Talk.Asked is not null) Talk.Next(); break;
+            case "Backspace": if (Talk.Asked is not null) Talk.BackToMenu(); break;
+        }
+    }
+
+    /// <summary>A glyph standing in for a portrait, chosen from the role — the same
+    /// trick the shop counter uses, so a villager reads as themselves at a glance.</summary>
+    private static string Portrait(string role) => role switch
+    {
+        var r when r.Contains("Cleric", StringComparison.OrdinalIgnoreCase) => "✝",
+        var r when r.Contains("Wife", StringComparison.OrdinalIgnoreCase) => "❀",
+        var r when r.Contains("Villager", StringComparison.OrdinalIgnoreCase) => "☖",
+        var r when r.Contains("Academy", StringComparison.OrdinalIgnoreCase) => "✦",
+        var r when r.Contains("Adventurer", StringComparison.OrdinalIgnoreCase) => "⚔",
+        _ => "☗",
+    };
+}

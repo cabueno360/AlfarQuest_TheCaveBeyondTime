@@ -91,6 +91,15 @@ public partial class World
             Party.Add(new Hero(Lore.ByKey(key), Spawn + new Vec((slot++ - 1) * 40f, 0)));
         Active = 0;
         Camera = Spawn;
+
+        // The two seams the shop needs from the engine: a sound queue for its coin,
+        // and a way to release the held hero when its window closes. Set here rather
+        // than at start-up because a rebuilt world is the one that should answer —
+        // the last World constructed is the one being played.
+        AudioBridge.Play = QueueUiSound;
+        MerchantBridge.OnClose = CloseTrade;
+        ReadBridge.OnClose = CloseReading;
+        DialogueBridge.OnClose = CloseConversation;
     }
 
     public void Update(float dt, InputState input)
@@ -115,8 +124,11 @@ public partial class World
 
         // --- hero switching ---
         // F1-F3 pick a hero directly; Tab cycles to the next living one (Shift+Tab
-        // the previous). The number row belongs to the skills now.
-        if (input.switchTo is >= 1 and <= 3 && input.switchTo <= Party.Count)
+        // the previous). The number row belongs to the skills now. Suspended while a
+        // shop is open: the buyer is chosen inside the window there, so Tab must not
+        // quietly swap who the party is steering out from under it.
+        if (Busy) { }
+        else if (input.switchTo is >= 1 and <= 3 && input.switchTo <= Party.Count)
         {
             int idx = input.switchTo - 1;
             if (Party[idx].Alive) Active = idx;
@@ -281,11 +293,11 @@ public partial class World
         // --- camera follows active hero ---
         var focus = Party[Active].Alive ? Party[Active].Pos : Camera;
         Camera += (focus - Camera) * Math.Min(1f, dt * 6f);
-        Camera = new Vec(
-            Math.Clamp(Camera.X, ViewW / 2, ChamberW - ViewW / 2),
-            Math.Clamp(Camera.Y, ViewH / 2, ChamberH - ViewH / 2));
+        Camera = new Vec(ClampCamera(Camera.X, ChamberW, ViewW), ClampCamera(Camera.Y, ChamberH, ViewH));
 
         UpdateNpcs();
+        UpdatePortals();
+        UpdateExaminables();
         UpdateRewards(dt);
         if (input.interact) Interact();
 
@@ -295,6 +307,10 @@ public partial class World
             if (Party[Active].Alive && (Party[Active].Pos - CaveMouth).Len() < 46f) EnterCave();
             return;
         }
+
+        // Interiors (Stage 3) are safe rooms — no husks, no clearing, no descent.
+        // The only way on is back out through the door.
+        if (Stage != 2) return;
 
         if (Husks.Count == 0 && Phase == "playing") Phase = "cleared";
         if (Phase == "cleared")
@@ -308,6 +324,13 @@ public partial class World
                 Descend();
         }
     }
+
+    /// <summary>Keeps the camera inside the map — but a room smaller than the screen
+    /// (an interior) has no inside to keep it in, so it centres instead. Clamping
+    /// there would ask for min &gt; max and throw, which used to freeze the whole
+    /// game the instant you stepped through a door.</summary>
+    static float ClampCamera(float c, float span, float view) =>
+        span <= view ? span / 2f : Math.Clamp(c, view / 2f, span - view / 2f);
 
     static float AngleDiff(float a, float b)
     {

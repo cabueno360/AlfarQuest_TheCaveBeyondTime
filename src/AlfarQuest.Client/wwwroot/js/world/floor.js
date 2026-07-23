@@ -6,6 +6,26 @@ import { ATLAS } from "../atlas.js";
 import { mulberry32, route, distToRoutes } from "../rng.js";
 import { FLOOR_TILES, PATH_TILE, ARCH, ORE_CELLS, BRIDGE_TILE, WALL, OUT } from "./tiles.js";
 import { ctx } from "../gfx.js";
+import { drawTmxLayers } from "./tmx.js";
+
+// Stage 1's authored map, once it has loaded. While this is null the stage draws
+// itself the old way — from terrain samples keyed to the tile type — so the game
+// is never waiting on a file to show a world.
+// Keyed by map id — Stage 1 and each migrated interior. The engine sends which
+// one is loaded (RenderState.mapId), so picture and geometry come from one file.
+const maps = {};
+// The painted maps, kept once drawn. Stage 1's ground alone is hundreds of
+// thousands of tiles and none of them change, so repainting on every world
+// rebuild — which happens each time a door is stepped through — was pure waste.
+const painted = {};
+export function setStageMap(id, tmx) { maps[id] = tmx; delete painted[id]; }
+export function mapFor(id) { return (id && maps[id]) || null; }
+/// Whether the place currently loaded is drawn from a map rather than from code.
+export function hasStageMap(id) { return mapFor(id) !== null; }
+
+/// Layers drawn over the actors rather than under them, so a canopy can hide a
+/// hero who walks behind it. Everything else goes into the ground canvas.
+const ABOVE = ["AbovePlayer"];
 
 // Stage 1 floor: grass, dirt road, river, bridge deck and the mountain.
 export function buildOutdoorCanvas(s) {
@@ -16,6 +36,9 @@ export function buildOutdoorCanvas(s) {
     c.width = cols * T; c.height = rows * T;
     const g = c.getContext("2d");
     g.imageSmoothingEnabled = false;
+
+    const authored = mapFor(s.mapId);
+    if (authored) return paintMap(s.mapId, authored, c, g);
     const img = ATLAS.outTiles.img;
     const rnd = mulberry32(0x5EED1);
     const map = s.map || [];
@@ -81,8 +104,30 @@ export function buildOutdoorCanvas(s) {
     return c;
 }
 
+/// Paints a map into the canvas and keeps it. The map's own grid is 16px against
+/// the engine's 32px cell, and its pixel size matches the canvas exactly, so a
+/// cell lands where the author put it.
+function paintMap(id, tmx, c, g) {
+    if (painted[id]) return painted[id];
+    drawTmxLayers(g, tmx, ABOVE);
+    painted[id] = c;
+    return c;
+}
+
 export function buildFloorCanvas(s) {
-    if ((s.stage || 2) === 1) return buildOutdoorCanvas(s);
+    if (s.outdoor) return buildOutdoorCanvas(s);   // overworld, and open-air interiors (a city)
+
+    // A building authored in Tiled draws from its map, exactly as Stage 1 does.
+    // Its lamps and hearths still light it — the darkness pass is untouched, so a
+    // house painted from a map is still a house lit from within.
+    const authored = mapFor(s.mapId);
+    if (authored) {
+        const c0 = document.createElement("canvas");
+        c0.width = Math.ceil(s.chamberW / 32) * 32; c0.height = Math.ceil(s.chamberH / 32) * 32;
+        const g0 = c0.getContext("2d");
+        g0.imageSmoothingEnabled = false;
+        return paintMap(s.mapId, authored, c0, g0);
+    }
     const T = ATLAS.caves.cw;
     const W = s.chamberW, H = s.chamberH;
     if (!W || !H) return null;
@@ -101,6 +146,14 @@ export function buildFloorCanvas(s) {
     const img = ATLAS.caves.img;
     const rnd = mulberry32(0xCA7E5 + (s.level || 1) * 7919);
 
+    // A home lays its own floorboards over the carved floor instead of cave stone;
+    // its walls stay the same rock (a cottage's stone lower storey). If the tile is
+    // not loaded yet, fall through to the cave floor rather than leaving holes.
+    const houseWood = s.floorStyle === "wood" && ATLAS.houseWood.ready ? ATLAS.houseWood.img : null;
+    // Within a boarded home, a cell the builder laid as PATH (',') is flagged
+    // stone instead — the kitchen, per the blueprint. One interior, two surfaces.
+    const houseStone = houseWood && ATLAS.houseStone.ready ? ATLAS.houseStone.img : null;
+
     const total = FLOOR_TILES.reduce((n, t) => n + t.w, 0);
     const pick = (r) => {
         let acc = r * total;
@@ -110,6 +163,11 @@ export function buildFloorCanvas(s) {
     for (let ty = 0; ty < rows; ty++)
         for (let tx = 0; tx < cols; tx++) {
             if (isWall(tx, ty)) continue;                // rock gets painted later
+            if (houseWood) {
+                const surface = (at(tx, ty) === "," && houseStone) ? houseStone : houseWood;
+                g.drawImage(surface, 0, 0, T, T, tx * T, ty * T, T, T);
+                continue;
+            }
             const [cx, cy] = pick(rnd());
             g.drawImage(img, cx * T, cy * T, T, T, tx * T, ty * T, T, T);
             const c = at(tx, ty);
@@ -135,7 +193,7 @@ export function buildFloorCanvas(s) {
     // Feathered edge: full-strength core, fading band outside it, so the path
     // blends into the rock instead of ending on a hard tile boundary.
     const CORE = 34, FADE = 40;
-    if (routes.length)
+    if (routes.length && !houseWood)
         for (let ty = 0; ty < rows; ty++)
             for (let tx = 0; tx < cols; tx++) {
                 if (at(tx, ty) !== ".") continue;
@@ -150,6 +208,10 @@ export function buildFloorCanvas(s) {
     // ---- rock ----
     const put = (cell, tx, ty) => g.drawImage(img, cell[0] * T, cell[1] * T, T, T, tx * T, ty * T, T, T);
 
+    // Homes keep the cave's rock walls, deliberately. A flat coursed-block tile was
+    // tried here and reverted: without the rim cells a wall sits at the same value
+    // as the lit floorboards and the rooms stop reading as rooms. The rock's dark
+    // mass plus its lit rims is what separates one room from the next.
     for (let ty = 0; ty < rows; ty++)
         for (let tx = 0; tx < cols; tx++) {
             if (!isWall(tx, ty)) continue;
@@ -201,7 +263,7 @@ export function buildFloorCanvas(s) {
     // that is the face actually turned toward the player, so a seam anywhere
     // else would be hidden inside the rock mass.
     const ores = ATLAS.ores;
-    if (ores.ready)
+    if (ores.ready && !houseWood)                          // no ore veins in a home's stone walls
         for (let ty = 0; ty < rows; ty++)
             for (let tx = 0; tx < cols; tx++) {
                 if (!isWall(tx, ty) || isWall(tx, ty + 1)) continue;
@@ -248,9 +310,12 @@ export function drawFloor(s, view, floorCanvas) {
         const vh = Math.min(floorCanvas.height - vy, view.y1 - vy);
         if (vw > 0 && vh > 0) ctx.drawImage(floorCanvas, vx, vy, vw, vh, vx, vy, vw, vh);
         // Cool wash over the tiles so the cistern still reads as cold and wet
-        // rather than as a lit dungeon floor.
-        if ((s && s.stage) !== 1) {
-            ctx.fillStyle = "rgba(10,14,40,0.26)";     // cold, wet cave tint
+        // rather than as a lit dungeon floor — but a home's floorboards get a warm
+        // hearthlight wash instead, so the room reads as lived-in, not a cellar.
+        if (s && !s.outdoor) {
+            ctx.fillStyle = s.floorStyle === "wood"
+                ? "rgba(48,30,12,0.16)"                // warm, lived-in
+                : "rgba(10,14,40,0.26)";               // cold, wet cave tint
             ctx.fillRect(0, 0, floorCanvas.width, floorCanvas.height);
         }
         ctx.restore();

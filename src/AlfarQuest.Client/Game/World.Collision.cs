@@ -49,7 +49,7 @@ public partial class World
         return p;
     }
 
-    static Vec TileCentre(int tx, int ty) => new(tx * TILE + TILE * 0.5f, ty * TILE + TILE * 0.5f);
+    public static Vec TileCentre(float tx, float ty) => new(tx * TILE + TILE * 0.5f, ty * TILE + TILE * 0.5f);
 
     // One character per tile: '#' rock, '.' floor, '~' water, '=' bridge.
     public List<string> MapRows()

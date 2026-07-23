@@ -17,6 +17,7 @@ public sealed class HeroStats
     public long TreasuresOpened { get; set; }
     public long ItemsCollected { get; set; }
     public long GoldEarned { get; set; }
+    public long GoldSpent { get; set; }
     public long DistanceWalked { get; set; }
     public long PlaySeconds { get; set; }
 
@@ -33,6 +34,7 @@ public sealed class HeroStats
         public const string TreasuresOpened = "treasures";
         public const string ItemsCollected = "items";
         public const string GoldEarned = "gold";
+        public const string GoldSpent = "spent";
         public const string DistanceWalked = "distance";
     }
 
@@ -51,6 +53,7 @@ public sealed class HeroStats
             case Kind.TreasuresOpened: TreasuresOpened += amount; break;
             case Kind.ItemsCollected: ItemsCollected += amount; break;
             case Kind.GoldEarned: GoldEarned += amount; break;
+            case Kind.GoldSpent: GoldSpent += amount; break;
             case Kind.DistanceWalked: DistanceWalked += amount; break;
         }
     }
@@ -68,6 +71,7 @@ public sealed class HeroStats
         TreasuresOpened = o.TreasuresOpened;
         ItemsCollected = o.ItemsCollected;
         GoldEarned = o.GoldEarned;
+        GoldSpent = o.GoldSpent;
         DistanceWalked = o.DistanceWalked;
         PlaySeconds = o.PlaySeconds;
     }
@@ -84,5 +88,6 @@ public sealed class HeroStats
         yield return ("Treasures opened", TreasuresOpened);
         yield return ("Items collected", ItemsCollected);
         yield return ("Gold earned", GoldEarned);
+        yield return ("Gold spent", GoldSpent);
     }
 }

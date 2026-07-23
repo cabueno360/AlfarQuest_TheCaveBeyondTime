@@ -16,11 +16,14 @@
 .aq-nowplaying button {
     background: none; border: none; color: var(--aq-gold-soft); cursor: pointer; font-size: 1rem;
 }
-/* Bottom-RIGHT on purpose: the canvas HUD owns the bottom-left corner (the
-   party panel) and the two layers know nothing about each other, so they used
-   to draw straight through one another. One element per corner. */
+/* Bottom-RIGHT, but LIFTED clear of the action hotbar, which the canvas HUD also
+   draws in this corner (render/hotbar.js). The two layers know nothing about each
+   other's layout, so the legend used to sit straight on top of slots 4/potion. The
+   hotbar stands PAD+SLOT = 18+48 = 66px tall from the bottom (canvas px == CSS px,
+   no devicePixelRatio scaling — see gfx.js sizeToParent), so the legend clears it
+   at bottom:80px. The party panel owns the bottom-LEFT. */
 .aq-controls-help {
-    position: absolute; bottom: 12px; right: 12px; text-align: right; color: var(--aq-muted);
+    position: absolute; bottom: 80px; right: 12px; text-align: right; color: var(--aq-muted);
     font-size: .8rem; line-height: 1.5; background: rgba(10,8,24,.5);
     padding: .6rem .8rem; border-radius: 10px; pointer-events: none;
 }

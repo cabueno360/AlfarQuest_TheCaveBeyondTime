@@ -13,9 +13,10 @@ public partial class World
 
     void UpdateActiveHero(Hero h, float dt, InputState input, Vec worldAim)
     {
-        // Mid-sentence the hero stands still, so the balloon stays over the
-        // villager it belongs to.
-        if (IsTalking) { h.Facing = MathF.Atan2(worldAim.Y - h.Pos.Y, worldAim.X - h.Pos.X); return; }
+        // Mid-sentence, or mid-purchase, the hero stands still — so the balloon
+        // stays over the villager it belongs to, and you cannot walk away from a
+        // merchant with their counter still open.
+        if (Busy) { h.Facing = MathF.Atan2(worldAim.Y - h.Pos.Y, worldAim.X - h.Pos.X); return; }
 
         var move = new Vec(
             (input.right ? 1 : 0) - (input.left ? 1 : 0),

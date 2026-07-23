@@ -1,0 +1,68 @@
+@using AlfarQuest.Client.Services
+@implements IDisposable
+@inject ReadState Read
+
+@* A page of something read or examined — the Cleric's journal, a letter from his
+   Order, the description of an armour stand standing empty. Parchment rather than
+   the game's dark panels: a page of writing wants to look like paper. Multi-page
+   things (the journal) turn one leaf at a time; a one-line examination is a single
+   page with no arrows. *@
+
+@if (Read.Open is { } open)
+{
+    <div class="aq-read-scrim" @onclick="Close"></div>
+
+    <section class="aq-read @open.Kind" role="dialog" aria-modal="true" aria-label="@open.Title"
+             tabindex="0" @onkeydown="OnKeyDown">
+        <header class="aq-read-head">
+            <span class="aq-read-mark" aria-hidden="true">@Mark(open.Kind)</span>
+            <h2 class="aq-read-title">@open.Title</h2>
+            <button class="aq-read-close" aria-label="Close" @onclick="Close">✕</button>
+        </header>
+
+        <div class="aq-read-body">
+            @foreach (var para in Read.Text.Split('\n'))
+            {
+                <p class="aq-read-para">@para</p>
+            }
+        </div>
+
+        <footer class="aq-read-foot">
+            @if (open.Pages.Count > 1)
+            {
+                <button type="button" class="aq-read-turn" disabled="@(!Read.HasPrev)" @onclick="Read.Prev">‹ Back</button>
+                <span class="aq-read-page">@(Read.Page + 1) / @open.Pages.Count</span>
+                <button type="button" class="aq-read-turn" disabled="@(!Read.HasNext)" @onclick="Read.Next">Next ›</button>
+            }
+            else
+            {
+                <span class="aq-read-hint">Esc to close</span>
+            }
+        </footer>
+    </section>
+}
+
+@code {
+    protected override void OnInitialized() => Read.Changed += Refresh;
+    public void Dispose() => Read.Changed -= Refresh;
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    private void Close() => Read.Close();
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "Escape": Close(); break;
+            case "ArrowRight": Read.Next(); break;
+            case "ArrowLeft": Read.Prev(); break;
+        }
+    }
+
+    private static string Mark(string kind) => kind switch
+    {
+        "journal" => "✒",
+        "letter" => "✉",
+        "plaque" => "❦",
+        _ => "◆",
+    };
+}

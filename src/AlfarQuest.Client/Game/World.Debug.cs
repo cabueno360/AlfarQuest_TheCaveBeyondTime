@@ -71,6 +71,35 @@ public partial class World
         Husks.Add(new Husk(here + new Vec(38f, 0f), dummy) { State = AiState.Chase, Rooted = true });
     }
 
+    /// <summary>Stands the steered hero beside a named merchant and presses [E] on
+    /// them — so a test can open a shop deterministically instead of steering a
+    /// headless party across the map to find one. It goes through the same
+    /// Interact() path play does, so what opens is the real offer, the real hero as
+    /// buyer, and the real hold; only the walk there is skipped.</summary>
+    public void DebugTradeWith(string npcId)
+    {
+        if (Party.Count == 0 || Active >= Party.Count) return;
+        var npc = Npcs.FirstOrDefault(n => n.Def.Id == npcId);
+        if (npc is null) return;
+
+        Talking = null;
+        Party[Active].Pos = npc.Pos + new Vec(28f, 0f);
+        Camera = npc.Pos;
+        NpcInReach = npc;      // set now so Interact acts on them this instant
+        Interact();
+    }
+
+    /// <summary>Drops the steered hero onto a tile — a test seam so a probe can
+    /// reach a doorway or a landmark without walking the whole map to it.</summary>
+    public void DebugWarp(float tx, float ty)
+    {
+        if (Party.Count == 0 || Active >= Party.Count) return;
+        var p = TileCentre(tx, ty);
+        if (Blocked(p, 14f)) p = NearestOpen(p);
+        Party[Active].Pos = p;
+        Camera = p;
+    }
+
     /// <summary>An open, walkable forest tile that is not in a safe zone — so the
     /// creatures set down beside it will actually hunt.</summary>
     Vec FindOpenForestSpot()
@@ -85,4 +114,44 @@ public partial class World
             }
         return Spawn;
     }
+
+    /// <summary>Drops the party into the cave so it can be exported like the rest.
+    /// The cave's layout is hand-authored and identical at every depth — only its
+    /// population changes — so one capture describes every level.</summary>
+    public void DebugEnterCave() => EnterCave();
+
+    /// <summary>The whole built map, as plain data — the export side of the Tiled
+    /// migration. Stage 1 is generated from a fixed seed rather than authored, so
+    /// the only way to "use the current layout exactly" is to run the generator
+    /// once and write down what it produced. tools/export-stage01.mjs calls this
+    /// and tools/make-tmx.py turns the result into Stage01_Outside.tmx.
+    ///
+    /// Positions are world pixels (TILE = 32); the TMX writer converts to its own
+    /// 16px grid. Nothing here is reachable from play.</summary>
+    public object ExportMap() => new
+    {
+        name = OverworldName,
+        cols = COLS, rows = ROWS, tile = TILE,
+        tiles = MapRows(),                       // '#' rock '.' floor '~' water '=' bridge ',' path
+        spawn = new { x = Spawn.X, y = Spawn.Y },
+        exit = new { x = Exit.X, y = Exit.Y },
+        caveMouth = new { x = CaveMouth.X, y = CaveMouth.Y },
+        safeZones = SafeZones.Select(z => new { x0 = z.X0, y0 = z.Y0, x1 = z.X1, y1 = z.Y1 }),
+        props = Props.Select(p => new { x = p.X, y = p.Y, kind = p.Kind, v = p.Variant,
+                                       s = p.S, solid = p.Solid, r = p.R, flip = p.Flip,
+                                       cx = p.Cx, cy = p.Cy }),   // cave props are a cell, not a name
+        npcs = Npcs.Select(n => new { id = n.Def.Id, x = n.Pos.X, y = n.Pos.Y }),
+        portals = Portals.Select(p => new { x = p.Pos.X, y = p.Pos.Y, r = p.R, target = p.Target,
+                                           label = p.Label, verb = p.Verb,
+                                           retX = p.Return.X, retY = p.Return.Y }),
+        examinables = Examinables.Select(e => new { x = e.Pos.X, y = e.Pos.Y, r = e.R,
+                                                   title = e.Title, verb = e.Verb, kind = e.Kind,
+                                                   pages = e.Pages }),
+        containers = Interactables.Select(i => new { x = i.Pos.X, y = i.Pos.Y, name = i.Name,
+                                                    kind = i.Kind.Id }),
+        discoveries = Discoveries.Select(d => new { x = d.Pos.X, y = d.Pos.Y, name = d.Name,
+                                                   radius = d.Radius, source = d.Source.ToString() }),
+        arches = Arches.Select(a => new { x = a.X, y = a.Y }),
+        creatures = Husks.Select(k => new { id = k.Def.Id, x = k.Pos.X, y = k.Pos.Y }),
+    };
 }

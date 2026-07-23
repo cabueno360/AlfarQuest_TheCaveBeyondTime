@@ -47,8 +47,10 @@ const nudge = async (key, ms) => {
   await page.waitForTimeout(140);
 };
 
-/// Villagers offer a prompt too, and this probe is not about them.
-const isContainer = h => h?.promptName && h.promptVerb !== 'Talk to';
+/// Villagers offer a prompt too — "Talk to" for most, "Trade with" for the
+/// shopkeepers among them — and this probe is about neither.
+const NPC_VERBS = ['Talk to', 'Trade with'];
+const isContainer = h => h?.promptName && !NPC_VERBS.includes(h.promptVerb);
 
 /// Walks a deliberate sweep of the spawn camp until a container is in reach.
 ///

@@ -24,21 +24,31 @@ public partial class World
         }
     }
 
-    // ---- ZONE C: river from (0,20) to (42,79), bridge at (28,48) -----
+    // ---- ZONE C: river from the mountains down to the southern lowlands ----
     void BuildRiver()
     {
         var pts = new List<(float x, float y)>();
+        // The original lazy S, from the northwest cliffs down to the crossroad ford.
         for (int i = 0; i <= 60; i++)
         {
             float t = i / 60f;
-            // Two control bends give it a lazy S rather than a diagonal.
             float x = 0 + (42 - 0) * t + 9f * MathF.Sin(t * 3.1f) - 4f * MathF.Sin(t * 6.4f);
             float y = 20 + (79 - 20) * t + 3f * MathF.Sin(t * 4.2f);
             pts.Add((x, y));
         }
-        foreach (var (px, py) in pts)
+        // The new southern reach: it swings back southwest through the lowlands and
+        // runs off the map toward the coast and Seoshe, widening as it goes.
+        for (int i = 1; i <= 46; i++)
         {
-            float w = 2.4f + 0.8f * MathF.Sin(py * 0.21f);   // 4-6 tiles across
+            float t = i / 46f;
+            float x = 42 + (12 - 42) * t + 5f * MathF.Sin(t * 3.4f);
+            float y = 79 + (126 - 79) * t;
+            pts.Add((x, y));
+        }
+        for (int k = 0; k < pts.Count; k++)
+        {
+            var (px, py) = pts[k];
+            float w = 2.4f + 0.8f * MathF.Sin(py * 0.21f) + 0.9f * Math.Clamp((py - 80f) / 40f, 0f, 1f); // wider downstream
             for (int x = (int)(px - w) - 1; x <= px + w + 1; x++)
                 for (int y = (int)(py - w) - 1; y <= py + w + 1; y++)
                 {
@@ -48,9 +58,13 @@ public partial class World
                     if (dx * dx + dy * dy <= w * w) Tiles[x, y] = WATER;
                 }
         }
-        // The single crossing. Decked wide enough that the player cannot miss it.
+        // The crossroad ford — decked wide enough that the player cannot miss it.
         for (int x = 24; x <= 32; x++)
             for (int y = 46; y <= 50; y++)
+                if (Tiles[x, y] == WATER) Tiles[x, y] = BRIDGE;
+        // The southern crossing, where the coast road steps over the river.
+        for (int x = 24; x <= 33; x++)
+            for (int y = 94; y <= 100; y++)
                 if (Tiles[x, y] == WATER) Tiles[x, y] = BRIDGE;
     }
 
@@ -65,7 +79,24 @@ public partial class World
         Road(55, 28, 44, 18, 1.7f);      // camp -> the cleft
         Road(44, 18, 40, 11, 1.9f);      // cleft -> the mouth
         Road(33, 42, 22, 36, 1.4f);      // a spur west into the forest
-        Road(33, 42, 40, 52, 1.4f);      // a spur south, going nowhere much
+        Road(22, 36, 20, 25, 1.4f);      // up into the foothills, to the Cleric's house
+
+        // The east road — out of the crossroad and off the map toward Kae Ychel,
+        // through the drying scrub, past the caravan and the old colonnade.
+        Road(33, 42, 72, 48, 2.2f);
+        Road(72, 48, 115, 56, 2.2f);     // through the caravan camp
+        Road(115, 56, 155, 61, 2.0f);
+        Road(155, 61, 197, 65, 2.0f);    // to the eastern edge
+        Road(150, 60, 158, 37, 1.5f);    // a spur up to the sunken colonnade
+        Road(155, 61, 184, 84, 1.4f);    // a spur to the broken watchtower
+
+        // The coast road — south from the crossroad, over the river, and off the
+        // southwest edge toward Seoshe on its crescent shore.
+        Road(33, 42, 32, 70, 2.0f);
+        Road(32, 70, 28, 97, 2.0f);      // over the southern crossing
+        Road(28, 97, 14, 123, 1.9f);     // to the southwest edge
+        Road(32, 70, 50, 106, 1.6f);     // a spur down to the fishing steps
+        Road(50, 106, 74, 112, 1.4f);    // on to the standing stones
     }
 
     void Road(float ax, float ay, float bx, float by, float w)

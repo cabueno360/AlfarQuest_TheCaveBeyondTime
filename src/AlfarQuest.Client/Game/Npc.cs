@@ -16,8 +16,31 @@ public sealed record NpcDefinition
     /// rotation without changing anything that reads it.</summary>
     public required IReadOnlyList<string> Lines { get; init; }
 
+    /// <summary>The first thing they say when the conversation opens, above the list
+    /// of questions. Empty falls back to the first of <see cref="Lines"/>.</summary>
+    public string Greeting { get; init; } = "";
+
+    /// <summary>A branching conversation: the questions you may put to them, each
+    /// with its own answer. Empty means they only cycle <see cref="Lines"/> in a
+    /// balloon; non-empty opens the question menu (DialogueWindow) instead.</summary>
+    public IReadOnlyList<DialogueTopic> Topics { get; init; } = [];
+
+    /// <summary>Whether this NPC answers a menu of questions rather than cycling
+    /// one-liners — the tell that [E] should open the dialogue window.</summary>
+    public bool HasDialogue => Topics.Count > 0;
+
+    /// <summary>Keeping to their bed, so the renderer draws no standing sprite for
+    /// them — they are already painted into the furniture (Mirka, in the prop cut
+    /// from the second-floor plan). They stay in the world and stay talkable; only
+    /// the upright figure is suppressed, since the engine has no lying pose.</summary>
+    public bool Bedridden { get; init; }
+
     public NpcServices Services { get; init; } = NpcServices.None;
 }
+
+/// <summary>One question a traveller may ask and the answer it draws. The answer is
+/// a list of pages so a long reply turns a leaf at a time, like a letter.</summary>
+public sealed record DialogueTopic(string Q, params string[] A);
 
 [Flags]
 public enum NpcServices

@@ -14,9 +14,11 @@ public partial class World
         "The Mirror Halls", "The Cave Beyond Time",
     };
 
-    // Stage 1 is one named place; the cave numbers its depths.
-    public string RegionName => Stage == 1
-        ? OverworldName
+    // Stage 1 is one named place; an interior is named for itself; the cave
+    // numbers its depths.
+    public string RegionName =>
+        IsInterior ? (InteriorCatalog.Find(CurrentInterior!)?.Name ?? "Indoors")
+        : Stage == 1 ? OverworldName
         : Level <= RegionNames.Length ? RegionNames[Level - 1] : $"The Deep — level {Level}";
 
     // =================================================================
@@ -49,6 +51,21 @@ public partial class World
     void BuildWorld()
     {
         Rev++;
+
+        // Authored in Tiled? Then the rock, the water and the ways between are read
+        // from the map. Only the PLACE comes from there: the crystals, the husks
+        // and the rewards are still placed per descent below, because those are the
+        // delve rather than the cave. See docs/mapping-standard.md.
+        if (Tiled.MapCatalog.Find(Tiled.MapCatalog.Cave) is { } authored)
+        {
+            BuildCaveFromTmx(authored);
+            Spawn = TileCentre(Reg("entrance").Cx, Reg("entrance").Cy + 2);
+            Exit  = TileCentre(Reg("boss").Cx, Reg("boss").Cy);
+            DressRegions();
+            PlaceCaveRewards();
+            return;
+        }
+
         Tiles = new byte[COLS, ROWS];               // all rock to start
         Props.Clear();
 

@@ -19,6 +19,11 @@ public partial class World
         (28, 38, 40, 48),   // ZONE D — the crossroad where the wagoner waits
         (44, 18, 66, 36),   // ZONE E — the mining camp
         (33, 4, 48, 18),    // ZONE G — the forecourt of the mine
+        (16, 18, 30, 30),   // the Cleric's hamlet in the foothills
+        (106, 50, 128, 66), // the caravan camp on the east road
+        (42, 100, 60, 118), // the fishing steps on the coast road
+        (86, 40, 106, 55),  // the Academy outpost courtyard
+        (24, 71, 38, 80),   // the gate of Seoshe on the coast road
     ];
 
     public static bool InSafeZone(float wx, float wy)

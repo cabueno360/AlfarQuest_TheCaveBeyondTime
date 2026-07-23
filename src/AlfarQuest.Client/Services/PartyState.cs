@@ -319,6 +319,7 @@ public sealed class PartyState
     /// equips from and unequips to their own inventory, never a shared one.</summary>
     public void Equip(Models.Character c, Item item)
     {
+        if (!item.IsEquippable) return;      // a potion or a ration is carried, never worn
         if (!c.Bag.Remove(item)) return;
         var displaced = c.Gear.Equip(item);
         if (displaced is not null && !c.Bag.Add(displaced))

@@ -28,12 +28,37 @@ export const ATLAS = {
     outside:  { src: "assets/Outside/atlas_outside.png", cw: 32, ch: 32, img: null, ready: false },
     // Villagers and creatures, packed by tools/extract-chars.mjs.
     chars:    { src: "assets/Outside/atlas_chars.png", cw: 32, ch: 32, img: null, outlined: null, ready: false },
+    // A one-off building sprite — the Cleric's cottage, assembled from the modular
+    // house tiles (tools/gen-house-tiles.py). Drawn whole rather than gridded, so
+    // it carries no cw/ch.
+    clericHouse: { src: "assets/Outside/clericHouse.png", img: null, ready: false },
+    // A modular floor tile from the same house set — laid over a home's floor in
+    // place of the cave stone (see buildFloorCanvas). 32px, tiles seamlessly.
+    houseWood: { src: "assets/Outside/house/floor_wood.png", cw: 32, ch: 32, img: null, ready: false },
+    // The kitchen's flagstones — laid where a home's builder marked PATH instead
+    // of plain floor, so one interior can have two surfaces (see buildFloorCanvas).
+    houseStone: { src: "assets/Outside/house/floor_stone.png", cw: 32, ch: 32, img: null, ready: false },
 };
 
 let outsideFrames = null;                     // { kind: [{x,y,w,h}, ...] }
 let charFrames = null;
 export const getOutsideFrames = () => outsideFrames;
 export const getCharFrames = () => charFrames;
+
+// The Cleric's-house furniture, decor and story props — each its own PNG,
+// extracted from the concept art (tools/extract+segment+select-house-assets.py).
+// Referenced by props whose kind is "h_<name>" and drawn whole (drawHouseObj).
+export const HOUSE_OBJ = {};                  // name -> { img, ready }
+const HOUSE_NAMES = ["apothecary","armchair","bed","bedside","bench","bench_long",
+    "book_green","book_red","bookshelf","bottle","cabinet","candelabra","candle",
+    "chair","chair_b","chalice","chest","cross","cupboard","curtains","desk",
+    "dining_table","flowers","flowers_yellow","font","frame","globe","herbs","icon",
+    "journal","letter","low_table","medicine_stand","nightstand","panacea","plant",
+    "records","rug","rug_stone","sconce","screen","side_table","washstand","wedding",
+    // the cottage's yard — fence, cart and the small authored details outside
+    "fence","cart","bush","rock","flowerbush","wildflowers","stone","signpost","bucket",
+    // Mirka asleep in her sickbed — one prop, cut from the second-floor plan
+    "bed_mirka","fireplace"];
 
 // A flat-coloured copy of an atlas, keeping only its silhouette.
 //
@@ -117,6 +142,15 @@ export function loadAtlases(onFramesReady) {
         im.onerror = () => console.error("sprite atlas failed to load:", a.src);
         im.src = a.src;
         a.img = im;
+    }
+    for (const n of HOUSE_NAMES) {
+        if (HOUSE_OBJ[n]) continue;
+        const im = new Image();
+        const rec = { img: im, ready: false };
+        im.onload = () => { rec.ready = true; };
+        im.onerror = () => console.error("house object failed to load:", n);
+        im.src = `assets/Outside/house/obj/${n}.png`;
+        HOUSE_OBJ[n] = rec;
     }
     if (!outsideFrames)
         fetch("assets/Outside/atlas_outside.json")

@@ -1,0 +1,277 @@
+@using AlfarQuest.Client.Models
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
+@using AlfarQuest.Client.Components.Character
+@implements IDisposable
+@inject ShopState Shop
+
+@* The merchant's counter.
+
+   A full window, unlike the loot popup: buying is a thing you settle into, not a
+   thing you glance at. The greeting comes first with its four doors — Buy, Sell,
+   Ask, Goodbye — and Buy or Sell open the same two-panel counter: the merchant's
+   wares on the left, the trading hero's pack on the right, and whatever is picked
+   described along the bottom with the price and the buttons to act on it. *@
+
+@if (Shop.Open is { } shop)
+{
+    <div class="aq-shop-scrim" @onclick="Close"></div>
+
+    <section class="aq-shop" role="dialog" aria-modal="true" aria-label="@($"{shop.Name}'s shop")"
+             data-special="@shop.Special.ToString().ToLowerInvariant()"
+             tabindex="0" @onkeydown="OnKeyDown">
+
+        <header class="aq-shop-head">
+            <span class="aq-shop-portrait" aria-hidden="true">@Portrait(shop.Role)</span>
+            <div class="aq-shop-who">
+                <h2 class="aq-shop-name">@shop.Name @if (shop.Special) { <span class="aq-shop-badge">Rare</span> }</h2>
+                <p class="aq-shop-role">@shop.Role</p>
+            </div>
+
+            <div class="aq-shop-purses">
+                <span class="aq-shop-gold" title="Your gold">
+                    <span class="aq-shop-coin">◈</span> @Shop.BuyerGold
+                    @if (Shop.TradePulse > 0)
+                    {
+                        @* Re-keyed on every trade so the coin animation replays. *@
+                        <span class="aq-shop-coinfly" @key="Shop.TradePulse" aria-hidden="true">◈</span>
+                    }
+                </span>
+                <span class="aq-shop-mgold" title="The merchant's coin (unlimited for now)">
+                    Merchant <span class="aq-shop-coin">◈</span> ∞
+                </span>
+            </div>
+
+            <button class="aq-shop-close" aria-label="Close" @onclick="Close">✕</button>
+        </header>
+
+        @* Which hero is trading. Switching redraws the pack and the purse to that
+           hero — purchases belong to whoever is picked here. *@
+        @if (Shop.Party.Count > 1)
+        {
+            <div class="aq-shop-heroes" role="tablist" aria-label="Trading hero">
+                @foreach (var hero in Shop.Party)
+                {
+                    var on = ReferenceEquals(hero, Shop.Buyer);
+                    <button type="button" role="tab" aria-selected="@on"
+                            class="aq-shop-hero @(on ? "on" : "")"
+                            @onclick="() => Shop.SetBuyer(hero)">
+                        @hero.Name
+                    </button>
+                }
+            </div>
+        }
+
+        @if (Shop.Screen == ShopState.Stage.Greeting)
+        {
+            <div class="aq-shop-greet">
+                <p class="aq-shop-line">“@_line”</p>
+                <div class="aq-shop-choices">
+                    <button type="button" class="aq-btn aq-shop-choice" @onclick="Shop.ShowBuy">Buy</button>
+                    <button type="button" class="aq-btn aq-shop-choice" @onclick="Shop.ShowSell">Sell</button>
+                    <button type="button" class="aq-btn aq-shop-choice" @onclick="Ask">Ask About This Place</button>
+                    <button type="button" class="aq-btn aq-shop-choice ghost" @onclick="Close">Goodbye</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* Category filter — only tabs that would find something. *@
+            <div class="aq-shop-filters" role="toolbar" aria-label="Filter by category">
+                <button type="button" class="aq-shop-filter @(Shop.Filter is null ? "on" : "")"
+                        @onclick="() => Shop.SetFilter(null)">All</button>
+                @foreach (var cat in Shop.Categories)
+                {
+                    var info = CategoryInfo.Of(cat);
+                    <button type="button" class="aq-shop-filter @(Shop.Filter == cat ? "on" : "")"
+                            @onclick="() => Shop.SetFilter(cat)">@info.Icon @info.Name</button>
+                }
+            </div>
+
+            <div class="aq-shop-body">
+                @* -------- the merchant's wares -------- *@
+                <div class="aq-shop-col">
+                    <h3 class="aq-shop-col-head">@shop.Name’s Wares</h3>
+                    <div class="aq-shop-list" role="list">
+                        @if (Shop.Shelf.Count == 0)
+                        {
+                            <p class="aq-shop-empty">Nothing here to sell you.</p>
+                        }
+                        @foreach (var slot in Shop.Shelf)
+                        {
+                            var sel = ReferenceEquals(Shop.Detail, slot.Item) && Shop.DetailFromShop;
+                            var afford = Shop.CanAfford(slot.Item);
+                            <button type="button" role="listitem"
+                                    class="aq-shop-row @(sel ? "sel" : "") @(afford ? "" : "poor")"
+                                    style="--rarity:@RarityInfo.Of(slot.Item.Rarity).Colour"
+                                    @onclick="() => Shop.SelectDetail(slot.Item, true)"
+                                    @ondblclick="() => Shop.Buy(slot)">
+                                <span class="aq-shop-ico">@slot.Item.Icon</span>
+                                <span class="aq-shop-rowname">@slot.Item.Name</span>
+                                <span class="aq-shop-qty">×@slot.Quantity</span>
+                                <span class="aq-shop-price">◈ @Shop.PriceToBuy(slot.Item)</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @* -------- the trading hero's pack -------- *@
+                <div class="aq-shop-col">
+                    <h3 class="aq-shop-col-head">@(Shop.Buyer?.Name ?? "Your")’s Pack</h3>
+                    <div class="aq-shop-list" role="list">
+                        @if (Shop.Pack.Count == 0)
+                        {
+                            <p class="aq-shop-empty">Your pack is empty.</p>
+                        }
+                        @foreach (var item in Shop.Pack)
+                        {
+                            var sel = ReferenceEquals(Shop.Detail, item) && !Shop.DetailFromShop;
+                            var wanted = Shop.WillBuy(item);
+                            <button type="button" role="listitem"
+                                    class="aq-shop-row @(sel ? "sel" : "") @(wanted ? "" : "refused")"
+                                    style="--rarity:@RarityInfo.Of(item.Rarity).Colour"
+                                    @onclick="() => Shop.SelectDetail(item, false)"
+                                    @ondblclick="() => Shop.Sell(item)">
+                                <span class="aq-shop-ico">@item.Icon</span>
+                                <span class="aq-shop-rowname">@item.Name</span>
+                                <span class="aq-shop-price sell">◈ @Shop.PriceToSell(item)</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* -------- selected item, and what you can do with it -------- *@
+            <footer class="aq-shop-foot">
+                <div class="aq-shop-detail">
+                    @if (Shop.Detail is { } d)
+                    {
+                        <span class="aq-shop-detail-ico" style="--rarity:@RarityInfo.Of(d.Rarity).Colour">@d.Icon</span>
+                        <div class="aq-shop-detail-text">
+                            <div class="aq-shop-detail-name" style="color:@RarityInfo.Of(d.Rarity).Colour">@d.Name</div>
+                            <div class="aq-shop-detail-kind">
+                                @RarityInfo.Of(d.Rarity).Name · @CategoryInfo.Of(d.Kind).Name
+                                @if (d.IsEquippable) { <text> · @SlotInfo.Of(d.Slot).Name</text> }
+                            </div>
+                            <ul class="aq-shop-detail-bonuses">
+                                @foreach (var b in d.Bonuses()) { <li>@b</li> }
+                            </ul>
+                            @if (!string.IsNullOrWhiteSpace(d.Flavour))
+                            {
+                                <p class="aq-shop-detail-flav">@d.Flavour</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="aq-shop-detail-none">Pick something to see it here.</p>
+                    }
+                </div>
+
+                <div class="aq-shop-actions">
+                    @if (Shop.Notice is { } note)
+                    {
+                        <p class="aq-shop-notice">@note</p>
+                    }
+                    <div class="aq-shop-buttons">
+                        <button type="button" class="aq-btn ghost" @onclick="Shop.BackToGreeting">Back</button>
+                        @if (Shop.Detail is { } det)
+                        {
+                            if (Shop.DetailFromShop)
+                            {
+                                var slot = ShelfOf(det);
+                                <button type="button" class="aq-btn buy"
+                                        disabled="@(slot is null || !Shop.CanAfford(det))"
+                                        @onclick="() => { if (slot is not null) Shop.Buy(slot); }">
+                                    Buy · ◈@Shop.PriceToBuy(det)
+                                </button>
+                                <button type="button" class="aq-btn"
+                                        disabled="@(slot is null || !Shop.CanAfford(det))"
+                                        @onclick="() => { if (slot is not null) Shop.BuyMany(slot, 5); }">
+                                    Buy 5
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="aq-btn sell"
+                                        disabled="@(!Shop.WillBuy(det))"
+                                        @onclick="() => Shop.Sell(det)">
+                                    Sell · ◈@Shop.PriceToSell(det)
+                                </button>
+                                <button type="button" class="aq-btn"
+                                        disabled="@(!Shop.WillBuy(det))"
+                                        @onclick="() => Shop.SellMany(det, 5)">
+                                    Sell 5
+                                </button>
+                            }
+                        }
+                        <button type="button" class="aq-btn ghost" @onclick="Close">Close</button>
+                    </div>
+                </div>
+            </footer>
+        }
+    </section>
+}
+
+@code {
+    private int _ask;
+    private string _line = "";
+    private string? _shownId;   // which merchant _line belongs to
+
+    protected override void OnInitialized() => Shop.Changed += Refresh;
+
+    public void Dispose() => Shop.Changed -= Refresh;
+
+    private void Refresh()
+    {
+        // Reset the greeting whenever a different merchant is opened — keyed on
+        // who is open, not on the close, so shutting one shop by Escape and opening
+        // the next never shows the first one's words.
+        var id = Shop.Open?.Npc.Id;
+        if (id != _shownId) { _shownId = id; _ask = 0; _line = Shop.Open?.Greeting ?? ""; }
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>"Ask About This Place" — walks the merchant's own lines, so asking
+    /// twice hears the next thing on their mind rather than the same sentence.</summary>
+    private void Ask()
+    {
+        var lines = Shop.Open?.Npc.Lines;
+        if (lines is { Count: > 0 })
+        {
+            _line = lines[_ask % lines.Count];
+            _ask++;
+        }
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        _line = "";
+        Shop.Close();
+    }
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Close();
+    }
+
+    /// <summary>The shelf slot a selected item belongs to, so the Buy button acts
+    /// on the live count and not a stale copy.</summary>
+    private ShopState.Slot? ShelfOf(Item item) =>
+        Shop.Shelf.FirstOrDefault(s => ReferenceEquals(s.Item, item));
+
+    /// <summary>A portrait glyph by trade — a stand-in for the sprite, sized large
+    /// behind a frame, so each merchant has a face at the counter.</summary>
+    private static string Portrait(string role) => role switch
+    {
+        "Blacksmith" => "⚒",
+        "Alchemist" => "⚗",
+        "Herbalist" => "❦",
+        "Traveling Merchant" => "🎒",
+        "Magic Scholar" => "📖",
+        "Hunter" => "🏹",
+        "Fisherman" => "🎣",
+        _ => "🪙",
+    };
+}

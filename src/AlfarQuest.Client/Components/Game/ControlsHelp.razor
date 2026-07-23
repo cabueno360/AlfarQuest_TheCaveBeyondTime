@@ -1,5 +1,5 @@
-@* Bottom-right by design: the canvas HUD owns the bottom-left corner, and the
-   two layers cannot see each other's layout. One element per corner.
+@* Bottom-right, lifted above the canvas hotbar (which shares this corner) — see
+   .aq-controls-help in game.css for the offset. The party panel owns bottom-left.
 
    Data-driven so a new binding is one row here and nowhere else. *@
 <div class="aq-controls-help">
@@ -15,9 +15,10 @@
         ("Move",         "WASD / arrows"),
         ("Aim",          "mouse"),
         ("Attack",       "J / left-click"),
-        ("Ability",      "K / right-click"),
+        ("Skills",       "1 · 2 · 3 · 4"),
         ("Dash",         "Shift / Space"),
-        ("Switch hero",  "1 · 2 · 3"),
+        ("Interact",     "E"),
+        ("Switch hero",  "F1 · F2 · F3"),
         ("Character",    "C"),
     ];
 }

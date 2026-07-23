@@ -30,14 +30,28 @@ public partial class World
             ("Deepdelve Camp",      50f, 20f, 8f),
             ("The Riven Pass",      62f, 12f, 8f),
             ("The Mine Mouth",      64f,  8f, 6f),
+            ("The Cleric's House",  20f, 24f, 7f),   // the cottage in the foothills
+            ("The Foothill Path",   22f, 33f, 6f),
+            // ---- the east road, toward Kae Ychel ----
+            ("The Kae Ychel Road",  88f, 52f, 9f),
+            ("The Academy Outpost", 96f, 47f, 8f),
+            ("Caravan Rest",       115f, 57f, 8f),
+            ("The Sunken Colonnade",158f, 35f, 8f),
+            ("The Broken Watch",   184f, 84f, 7f),
+            // ---- the coast road, toward Seoshe ----
+            ("The Coast Road",      30f, 82f, 9f),
+            ("The Gate of Seoshe",  31f, 76f, 7f),
+            ("The Fishing Steps",   50f,108f, 7f),
+            ("The Standing Stones", 78f,112f, 7f),
         })
             Discoveries.Add(new Discovery(name, TileCentre((int)tx, (int)ty), tiles * TILE,
                                           XpSource.RegionDiscovered));
 
-        // ---- the two secrets ----------------------------------------
-        // Worth more than a zone: nothing points at these.
+        // ---- the secrets — nothing points at these ------------------
         Discoveries.Add(new Discovery("Behind the Waterfall", TileCentre(8, 18), 3.2f * TILE, XpSource.SecretArea));
         Discoveries.Add(new Discovery("The Forest Hollow", TileCentre(18, 34), 3.2f * TILE, XpSource.SecretArea));
+        Discoveries.Add(new Discovery("The Weeping Shards", TileCentre(150, 24), 3.4f * TILE, XpSource.SecretArea));
+        Discoveries.Add(new Discovery("Smuggler's Hollow", TileCentre(14, 116), 3.4f * TILE, XpSource.SecretArea));
 
         // ---- Zone A, Ashwold Camp: the tutorial's worth of things -----
         // Deliberately ordinary and close together. The first minute should
@@ -93,6 +107,31 @@ public partial class World
         Put("Watcher of the Mouth", 66f,  11f,  "statue");
         Put("Old Cart",           62f,   13f,   "cart");
         Put("Deep Chest",         64.5f,  7f,   "chest_ancient");
+
+        // ---- the east road: the academy, caravan, colonnade, watchtower ----
+        // Kept to the courtyard edges, clear of the apprentices and the doorway.
+        Put("Reliquary of the Corps", 104f, 51f, "chest_gold");
+        Put("Apprentice's Chest",  88f,  51f,   "chest_wood");
+        Put("Warded Crystal",     103f,  44f,   "crystal");
+        Put("Caravan Strongbox",  120f,  58f,   "chest_wood");
+        Put("Trader's Crate",     108f,  57f,   "crate");
+        Put("Spice Barrel",       121f,  56f,   "barrel");
+        Put("Colonnade Reliquary",158f,  36.5f, "chest_gold");
+        Put("Ychellen Runestone", 156f,  30.5f, "runestone");
+        Put("Fallen Column",      161f,  38f,   "corpse_old");
+        Put("Watch Strongbox",    186f,  85f,   "chest_iron");
+        Put("Watcher's Bones",    182f,  83f,   "corpse_old");
+        Put("Weeping Crystal",    150f,  24f,   "crystal");
+
+        // ---- the coast road: fishing steps, stones, smugglers ----
+        Put("Fisher's Barrel",     52f, 110f,   "barrel");
+        Put("Dock Crate",          48f, 110f,   "crate");
+        Put("River Herbs",         55f, 109f,   "herbs");
+        Put("The Altar Stone",     78f, 112f,   "altar");
+        Put("Menhir",              73f, 111f,   "runestone");
+        Put("Smuggler's Cache",    14f, 116f,   "chest_locked");
+        Put("Buried Strongbox",    11f, 118f,   "chest_iron");
+        Put("Bridgekeeper's Box",  28f,  97f,   "chest_wood");
 
         // Last: whatever this player already opened stays opened, and whatever
         // was left inside is still inside.

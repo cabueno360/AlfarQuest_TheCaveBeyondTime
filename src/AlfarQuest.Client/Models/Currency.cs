@@ -5,6 +5,10 @@ namespace AlfarQuest.Client.Models;
 /// that shows money picks it up without changing.</summary>
 public sealed record Currency(string Key, string Name, string Symbol, string Colour)
 {
+    /// <summary>The everyday coin — what a shop prices in and a purse spends. Named
+    /// here so the dozen places that move gold agree on the one key.</summary>
+    public const string GoldKey = "gold";
+
     public static readonly IReadOnlyList<Currency> All =
     [
         new("gold",   "Gold",           "◈", "#f0d99a"),

@@ -1,0 +1,136 @@
+/* A conversation with a villager who has more than one thing to say.
+
+   Narrower and shorter than the shop counter — this is talking, not trading — but
+   the same void-and-gold frame so the two read as one interface. The body is
+   either the greeting above a list of questions to choose, or a single answer
+   with its page turn. Questions already put to them are dimmed and ticked. */
+
+.aq-talk-scrim {
+    position: fixed; inset: 0; z-index: 70;
+    background: rgba(4, 3, 12, .5);
+    animation: aq-talk-fade .18s ease;
+}
+@keyframes aq-talk-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.aq-talk {
+    position: fixed; z-index: 80;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(620px, calc(100vw - 2rem));
+    max-height: min(640px, calc(100vh - 2rem));
+    display: flex; flex-direction: column;
+    background:
+        radial-gradient(120% 80% at 50% -10%, rgba(60, 45, 22, .32), transparent 60%),
+        linear-gradient(180deg, rgba(28, 22, 46, .98), rgba(9, 7, 20, .99));
+    border: 1px solid color-mix(in srgb, var(--aq-crystal) 32%, transparent);
+    border-radius: 16px;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, .72), inset 0 0 60px -30px rgba(120, 150, 255, .4);
+    color: var(--aq-text);
+    outline: none;
+    animation: aq-talk-in .22s cubic-bezier(.2, .9, .3, 1.15);
+}
+@keyframes aq-talk-in {
+    from { opacity: 0; transform: translate(-50%, -46%) scale(.97); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ---- who you are speaking to ---- */
+.aq-talk-head {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .9rem 1.1rem .7rem;
+    border-bottom: 1px solid rgba(185, 199, 255, .16);
+}
+.aq-talk-portrait {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; flex: none;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--aq-gold) 45%, transparent);
+    background: radial-gradient(80% 80% at 50% 25%, rgba(216, 180, 90, .22), rgba(10, 8, 24, .6));
+    color: var(--aq-gold-soft); font-size: 1.15rem;
+}
+.aq-talk-who { flex: 1 1 auto; min-width: 0; }
+.aq-talk-name {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 1.02rem;
+    letter-spacing: .04rem; color: var(--aq-gold-soft);
+}
+.aq-talk-role { margin: .1rem 0 0; font-size: .78rem; color: var(--aq-muted); font-style: italic; }
+.aq-talk-close {
+    flex: none; background: none; border: none; cursor: pointer;
+    color: var(--aq-muted); font-size: 1rem; line-height: 1; padding: .3rem .4rem;
+    border-radius: 6px;
+}
+.aq-talk-close:hover { color: var(--aq-text); background: rgba(185, 199, 255, .12); }
+
+/* ---- the greeting and the questions ---- */
+.aq-talk-greeting {
+    margin: 0; padding: 1rem 1.2rem .4rem;
+    font-family: 'EB Garamond', serif; font-size: 1rem; line-height: 1.55;
+    color: var(--aq-text); font-style: italic;
+}
+
+.aq-talk-topics {
+    list-style: none; margin: 0; padding: .5rem .8rem .2rem;
+    overflow-y: auto; flex: 1 1 auto;
+}
+.aq-talk-topics li { margin: 0 0 .3rem; }
+
+.aq-talk-topic {
+    width: 100%; text-align: left; cursor: pointer;
+    display: flex; align-items: baseline; gap: .55rem;
+    padding: .5rem .7rem;
+    background: rgba(185, 199, 255, .05);
+    border: 1px solid transparent; border-radius: 9px;
+    color: var(--aq-crystal);
+    font-family: 'EB Garamond', serif; font-size: .94rem; line-height: 1.4;
+    transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.aq-talk-topic:hover {
+    background: rgba(216, 180, 90, .12);
+    border-color: color-mix(in srgb, var(--aq-gold) 42%, transparent);
+    color: var(--aq-gold-soft);
+}
+.aq-talk-topic.heard { color: var(--aq-muted); }
+.aq-talk-topic.heard:hover { color: var(--aq-crystal); }
+.aq-talk-bullet { flex: none; color: var(--aq-gold); font-size: .8rem; }
+.aq-talk-topic.heard .aq-talk-bullet { color: rgba(154, 149, 182, .8); }
+
+/* ---- an answer ---- */
+.aq-talk-asked {
+    margin: 0; padding: .9rem 1.2rem .1rem;
+    font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .03rem;
+    color: var(--aq-gold-soft);
+}
+.aq-talk-answer {
+    margin: 0; padding: .5rem 1.2rem 1rem;
+    font-family: 'EB Garamond', serif; font-size: 1.02rem; line-height: 1.62;
+    color: var(--aq-text);
+    overflow-y: auto; flex: 1 1 auto;
+}
+
+/* ---- the foot ---- */
+.aq-talk-foot {
+    display: flex; align-items: center; justify-content: flex-end; gap: .7rem;
+    padding: .7rem 1.1rem .9rem;
+    border-top: 1px solid rgba(185, 199, 255, .14);
+}
+.aq-talk-pages { margin-right: auto; font-size: .76rem; color: var(--aq-muted); letter-spacing: .05rem; }
+
+.aq-talk-go, .aq-talk-leave {
+    cursor: pointer; font-family: 'Cinzel', serif; font-size: .8rem; letter-spacing: .06rem;
+    padding: .48rem 1rem; border-radius: 999px;
+    transition: transform .12s ease, box-shadow .14s ease;
+}
+.aq-talk-go {
+    color: #1b1405; background: var(--aq-gold-soft);
+    border: 1px solid var(--aq-gold);
+}
+.aq-talk-go:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -6px var(--aq-gold); }
+.aq-talk-leave {
+    color: var(--aq-crystal); background: rgba(185, 199, 255, .08);
+    border: 1px solid rgba(185, 199, 255, .3);
+}
+.aq-talk-leave:hover { color: var(--aq-text); background: rgba(185, 199, 255, .16); }
+
+@media (max-width: 560px) {
+    .aq-talk { width: calc(100vw - 1rem); }
+    .aq-talk-answer, .aq-talk-greeting { font-size: .95rem; }
+}

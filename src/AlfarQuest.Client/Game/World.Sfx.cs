@@ -47,12 +47,29 @@ public partial class World
         _sounds.Add(new RSound { f = family, v = MathF.Min(1f, vol) });
     }
 
+    /// <summary>Sounds the interface raised between frames — a purchase, a coin.
+    /// Queued because the shop runs outside the simulation's tick, then drained
+    /// into the frame so they ride the same audio path as everything else.</summary>
+    readonly Queue<string> _uiSounds = new();
+
+    /// <summary>Queues a menu sound to play on the next frame at full strength.
+    /// Wired to <see cref="AudioBridge.Play"/> so the shop can ring a coin without
+    /// knowing anything about the world it is standing in.</summary>
+    public void QueueUiSound(string family)
+    {
+        if (!string.IsNullOrEmpty(family)) _uiSounds.Enqueue(family);
+    }
+
     /// <summary>Clears the frame's sounds and advances the dedupe clock. Called at
     /// the top of Update so what accumulates during the tick is exactly what the
-    /// render payload carries — no sound survives into the next frame to play twice.</summary>
+    /// render payload carries — no sound survives into the next frame to play twice.
+    /// The queued UI sounds are folded in here, centred and full-volume, since the
+    /// player raised them and they have no place on the map to fall off from.</summary>
     void BeginSfxFrame(float dt)
     {
         _sounds.Clear();
         _sfxClock += dt;
+        while (_uiSounds.Count > 0 && _sounds.Count < MaxSoundsPerFrame)
+            _sounds.Add(new RSound { f = _uiSounds.Dequeue(), v = 1f });
     }
 }

@@ -76,15 +76,16 @@ export function drawHud(hud) {
     // Enemies remaining — top LEFT. The top-right corner belongs to the DOM
     // "Abandon Delve" button (.aq-quit); this used to be drawn underneath it.
     // Top LEFT: the top-right corner belongs to the DOM "Abandon Delve" button.
-    // Outdoors there is nothing to kill, so a husk counter reading 0 would be
-    // noise — the line carries the objective instead.
-    const outdoors = hud.stage === 1;
-    const headline = outdoors
-        ? (hud.objective || "Find the old mine")
-        : hud.phase === "cleared" ? "Chamber cleared" : `Husks: ${hud.enemies}`;
-    const subline = outdoors
-        ? (hud.region || "")
-        : `${hud.region || ""}  ·  depth ${hud.level || 1}`;
+    // Only the cave has husks to count and depths to number; the overworld and a
+    // building interior carry their objective and their name instead — a husk
+    // counter reading 0 in someone's kitchen would be noise.
+    const inCave = hud.stage === 2;
+    const headline = inCave
+        ? (hud.phase === "cleared" ? "Chamber cleared" : `Husks: ${hud.enemies}`)
+        : (hud.objective || hud.region || "");
+    const subline = inCave
+        ? `${hud.region || ""}  ·  depth ${hud.level || 1}`
+        : (hud.objective ? (hud.region || "") : "");
 
     ctx.fillStyle = "rgba(10,8,24,0.55)"; ctx.fillRect(18, 14, 210, 46);
     ctx.fillStyle = "#b9c7ff"; ctx.font = "14px 'EB Garamond', serif"; ctx.textAlign = "left"; ctx.textBaseline = "middle";

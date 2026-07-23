@@ -1,0 +1,1016 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The cave — Stage 2, painted with the Pixel Crawler dungeon set.
+     ONE map serves every depth: the layout is the same each time and only the
+     population changes, so crystals, creatures and rewards stay in code while the
+     place itself lives here. The eight regions of the story are on the Region
+     layer as named rectangles. Depths, in order: The Crystal Cistern, The Weeping Gallery, The Sunken Vault, The Mirror Halls, The Cave Beyond Time. -->
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
+     width="176" height="112" tilewidth="16" tileheight="16" infinite="0"
+     nextlayerid="320" nextobjectid="97">
+ <properties>
+  <property name="Stage" type="int" value="2"/>
+  <property name="DisplayName" value="The Crystal Cistern"/>
+  <property name="Depths" value="The Crystal Cistern | The Weeping Gallery | The Sunken Vault | The Mirror Halls | The Cave Beyond Time"/>
+  <property name="Music" value="cavern"/>
+  <property name="EngineTile" type="int" value="32"/>
+ </properties>
+ <tileset firstgid="1" source="../Tilesets/CaveDungeon.tsx"/>
+ <tileset firstgid="626" source="../Tilesets/CaveWalls.tsx"/>
+ <tileset firstgid="1251" source="../Tilesets/CaveWater.tsx"/>
+ <tileset firstgid="1876" source="../Tilesets/CaveFloors.tsx"/>
+ <tileset firstgid="2526" source="../Tilesets/CaveRocks.tsx"/>
+ <tileset firstgid="2773" source="../Tilesets/CaveDungeonProps.tsx"/>
+ <tileset firstgid="3398" source="../Tilesets/CaveFurniture.tsx"/>
+ <layer id="301" name="Ground" width="176" height="112">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="302" name="GroundDetails" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeDY0DwAB</data>
+ </layer>
+ <layer id="303" name="Water" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrt3GmuomAQhWH/sGgHBFmC87AExXmBDbmn4olpIDdt1E7eJyFGQUw6x7pFfdi9HgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeLV90usVCf8O+D+tquwuyS++uL6eW/JZVvuO1ZZV24wc48vkymaTTbVvqx6COoxvUWdxkPzU17a6Wtfnuoe4VdtOx6/IMT6sUCbH1XZpyeNO+1eqw4tqm5JffFhdR6/VllbboSWPffUOcx1Xqg7P9Qh8wij56Q3qDE46+t/oMdaqw5nqMP0wXm2rOul/6+uMDtXvxv699s9Vh5tMlN36Mdf7NsryUec/K9NX8owX1NWlMrdXVjNlLHqAyFyq/retjhY2O5vo+Pr9dz0W+m7cqcf4BxPrZ1fJY24w1+NQ9XNq++us95XJtvnDwuYOJ9Xdk56XNp84qi6PyDF+6awMzawuRpajh7gpW0PrAc563jZ/KHXcRd+Rm80jdjrPTpkedcwzgOd+N/rYwtYa4jGzrBbK2F3ZLpJH3W4y13diqfra1/PI7tL67ZGyvbDXgTaHp3o4UMa8v02VudQyt7GeYt0xf9jrPFny6K83yWO2trcMx7XiWPuBpr40V92NGddB9XVjvcJEr/f1+kR1dKk6XOo8TVKdZ6rjtnr/0GZqZ31uZDbX5+yU7Ts5xl/mAifVv8jQcx2ONeLohy82A4trrajfTXzum6o38Dq/0OuR2ZX1wZl9VwC3Vr3b25rCzua5cV/Z3uYE/re+VAbnHfU30/FDnX9qz+NacWSzucx6izO5RYPcstS3NYSYL0Rd3qg+HlVnz09rwKOOPjXq9Uzvi1lazBnutjZSPvUo3CeBLifV26kyFtdkqbIU9fD0dB/DRRm7dPSn0Rt49hf6HF+/m+hzlsx/8cv5Q2l96dX60chyZj1Dnjzu3dnaNV+TWAOZ2fGpZXigxzhP9CzAK01tDSJX1g52L07b+646fqHjc7v3EnhXnb4ps0vrZ88d62UD60ViDWNLncWbXWyOG/OKwnqLtv76rozP9Oj9M/AOhd3LE/c69u1+hiZjm+uubb4Q/TbwDqnNZXd2DTfvqL8Xve9i9wLxO2S829jWlOMex62uwU4d9XerHuJk91EAn5pDxP9JEr/NbPsd283WKKi7+DS/Bhva2kOT3O5zyMgvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4Qn8A3HJX0A==</data>
+ </layer>
+ <layer id="304" name="Bridges" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrt3DEKwkAUBNCUOWB2bxFz/05EA+NiZTfwXpNePsPk78ZtAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/vXYt+3a38/z8xy734UOI2b2iBmGlvx9zez85PAhfynL3yNm95K/lObvGTMMDfLdTf7SmL8j+u89y9DgjHe2I7oENJj79w5N/tKWv9khhv5LkXxnyxmGpvw9lz0wtOwfrmV29V9a3H133QNDW/7mHhha+u/dHWbMMLTkb95/sH+gyXp33f0HmswfZ8fyl6b+m3d37H9p679j2Z3JX5ryd/3+Tf7Smr++P6Zt/7CeHdv/0rZ/mO7/Ut5/H+7/Uib/s8T3x7T23zx/038BAAAAAAAAAAAAAAAAAAAAAAAAAACABk9WakZD</data>
+ </layer>
+ <layer id="305" name="Walls" width="176" height="112">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="306" name="Objects" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeDY0DwAB</data>
+ </layer>
+ <layer id="307" name="Props" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrt3EtO3EAQBuAGKY8ZVmOSbMMFkssENsld5gTJmmvkPiCR1xGIBAxI9DKLGcYT20xX9/dJ3iCEkF0u/11+pAQAAAAAAMAQVwcp/cjbzwP7gnhuct3e5u1O/RLQ4jClLm/Hh3oyejKU2JNbdjG3D4jrWv0CAFuYvxCZ+QuRmb8QwaejlE7zdnZkXwDl+5Uz4e+8/QmUDce+/6Bvx11Hr/Lfus/bQ6D6df+hrnX0kH70Jq9p3ubtnbUNe1pH60cQ37ocK9vK0hAlS0PkLA0AAAAAAAAAAAAAAMSybODdlptZSrczx7pG5w3U74t5Si+9/16l794thGozhm8bUJp1NSljtLOuu3ScCbyu+6t+Kci6fhpxXWdO1qZa+mnfDHtiLUZD9HVa6OvAds89kzYDVxPgfGrPssHnG8wX6nHu+RyzhMA8X7bbLEHvBgAAAAAAAKbgXjuRa8pz+6gpAECuBrkaaMPnLqUvXb/fvcvX0JXrKAX5mmv3W8/6fZWvoa9dR4GefCtgt4zwrzHe15Q5ptPK9x92yQhjkzmmM/T7D7XU/5Ae6Z36/fXXod9/WFf/EfOKHllnf93G90/0ZfUFlJqPiZ+zo5OP5ezSdbk+jxuq0U0z8dUipftFW71xU84uaRaxLQO8z7V7Mh+/5ks9LzbNxD/kn33syvk/feN3ugzQp+b/57yQ/80gxnYxd+4T13WQ42dWgl5J7Upbp9OOp56n7DsvKG2dvu/9xvN56nnKGuYF+9hvyAowhRazQi2W5scE5v4dkbl/BwAAAADlegTVxYJf</data>
+ </layer>
+ <layer id="308" name="AbovePlayer" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeDY0DwAB</data>
+ </layer>
+ <layer id="309" name="Shadows" width="176" height="112">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeDY0DwAB</data>
+ </layer>
+ <objectgroup id="310" name="PlayerSpawn">
+  <object id="1" name="PlayerSpawn" x="712.00" y="824.00">
+   <properties>
+    <property name="Type" value="PlayerSpawn"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="311" name="Descent">
+  <object id="2" name="Descend" x="1144.00" y="744.00">
+   <properties>
+    <property name="InteractionType" value="Descend"/>
+    <property name="DestinationMap" value="cave"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="312" name="Arch">
+  <object id="3" name="Arch" x="712.00" y="712.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="4" name="Arch" x="248.00" y="616.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="5" name="Arch" x="280.00" y="360.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="6" name="Arch" x="808.00" y="424.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="Arch" x="1032.00" y="264.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="8" name="Arch" x="1144.00" y="520.00">
+   <properties>
+    <property name="Type" value="CaveMouth"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="313" name="Region">
+  <object id="89" name="The Descent" x="576.00" y="704.00" width="272.00" height="176.00">
+   <properties>
+    <property name="RegionKey" value="entrance"/>
+    <property name="RegionName" value="The Descent"/>
+   </properties>
+  </object>
+  <object id="90" name="The Abandoned Workings" x="80.00" y="608.00" width="368.00" height="240.00">
+   <properties>
+    <property name="RegionKey" value="mine"/>
+    <property name="RegionName" value="The Abandoned Workings"/>
+   </properties>
+  </object>
+  <object id="91" name="The Cut Tunnels" x="112.00" y="352.00" width="272.00" height="208.00">
+   <properties>
+    <property name="RegionKey" value="tunnels"/>
+    <property name="RegionName" value="The Cut Tunnels"/>
+   </properties>
+  </object>
+  <object id="92" name="The Drowned Hollow" x="496.00" y="400.00" width="432.00" height="272.00">
+   <properties>
+    <property name="RegionKey" value="lake"/>
+    <property name="RegionName" value="The Drowned Hollow"/>
+   </properties>
+  </object>
+  <object id="93" name="The Crystal Garden" x="176.00" y="64.00" width="368.00" height="240.00">
+   <properties>
+    <property name="RegionKey" value="crystal"/>
+    <property name="RegionName" value="The Crystal Garden"/>
+   </properties>
+  </object>
+  <object id="94" name="The Sunken Ruins" x="752.00" y="64.00" width="368.00" height="240.00">
+   <properties>
+    <property name="RegionKey" value="ruins"/>
+    <property name="RegionName" value="The Sunken Ruins"/>
+   </properties>
+  </object>
+  <object id="95" name="The Forgotten Shrine" x="1008.00" y="336.00" width="304.00" height="208.00">
+   <properties>
+    <property name="RegionKey" value="sanctuary"/>
+    <property name="RegionName" value="The Forgotten Shrine"/>
+   </properties>
+  </object>
+  <object id="96" name="The Crystal Heart" x="944.00" y="608.00" width="400.00" height="272.00">
+   <properties>
+    <property name="RegionKey" value="boss"/>
+    <property name="RegionName" value="The Crystal Heart"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="314" name="Discovery">
+  <object id="9" name="The Descent" x="712.00" y="792.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="128"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="The Abandoned Workings" x="264.00" y="728.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="179.2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="The Cut Tunnels" x="248.00" y="456.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="153.6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="The Drowned Hollow" x="712.00" y="536.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="204.8"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="The Crystal Garden" x="360.00" y="184.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="179.2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" name="The Sunken Ruins" x="936.00" y="184.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="179.2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="The Forgotten Shrine" x="1160.00" y="440.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="153.6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="The Crystal Heart" x="1144.00" y="744.00">
+   <properties>
+    <property name="XpSource" value="RegionDiscovered"/>
+    <property name="Radius" value="204.8"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="315" name="TreasureSpawn">
+ </objectgroup>
+ <objectgroup id="316" name="Props">
+  <object id="17" name="deco 5,7" x="699.52" y="749.02">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="7"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" name="deco 5,7" x="807.76" y="804.07">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="7"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="19" name="deco 6,2" x="744.30" y="751.13">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="2"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="20" name="deco 8,3" x="787.27" y="763.88">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="21" name="deco 8,3" x="616.82" y="779.86">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="deco 9,13" x="218.69" y="751.77">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="deco 9,13" x="395.57" y="753.85">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="deco 9,13" x="322.75" y="758.72">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="deco 9,13" x="232.91" y="800.41">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="deco 8,3" x="213.32" y="696.67">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" name="deco 8,3" x="159.74" y="752.80">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" name="deco 8,3" x="272.67" y="728.42">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" name="deco 8,3" x="393.36" y="681.75">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" name="deco 8,3" x="294.04" y="662.67">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" name="deco 5,9" x="149.04" y="686.75">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="9"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" name="deco 5,9" x="201.63" y="658.76">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="9"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" name="deco 5,9" x="178.73" y="801.85">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="9"/>
+    <property name="Scale" value="0.46"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" name="deco 6,10" x="279.26" y="774.95">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="10"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.85"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" name="deco 9,3" x="324.72" y="700.45">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" name="deco 9,3" x="368.02" y="713.75">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" name="deco 9,3" x="251.14" y="687.16">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" name="deco 6,2" x="315.30" y="796.00">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="2"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="deco 6,2" x="277.73" y="816.47">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="2"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" name="deco 8,13" x="279.50" y="412.89">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="41" name="deco 8,13" x="228.80" y="511.02">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="42" name="deco 8,13" x="335.78" y="456.41">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="43" name="deco 8,13" x="153.25" y="443.07">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="44" name="deco 8,13" x="202.68" y="391.00">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="45" name="deco 9,3" x="164.88" y="496.28">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="46" name="deco 9,3" x="283.55" y="515.74">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="47" name="deco 9,3" x="225.66" y="452.82">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="48" name="deco 2,3" x="322.86" y="404.28">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="49" name="deco 2,3" x="275.21" y="472.62">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="50" name="deco 2,3" x="236.02" y="409.54">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="51" name="deco 8,13" x="828.80" y="597.22">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="52" name="deco 8,13" x="785.97" y="634.28">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="53" name="deco 8,13" x="608.87" y="607.50">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="13"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="54" name="deco 2,3" x="618.76" y="466.01">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="55" name="deco 2,3" x="846.06" y="465.80">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="56" name="deco 2,3" x="563.61" y="487.43">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="3"/>
+    <property name="Scale" value="0.44"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="57" name="deco 8,11" x="291.01" y="201.88">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="11"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.85"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="58" name="deco 8,11" x="367.41" y="93.48">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="11"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.85"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="59" name="deco 9,11" x="459.31" y="199.21">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="11"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.85"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="60" name="deco 9,12" x="402.73" y="108.33">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="12"/>
+    <property name="Scale" value="0.56"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.34"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="61" name="deco 9,12" x="440.47" y="234.58">
+   <properties>
+    <property name="Cx" value="9"/>
+    <property name="Cy" value="12"/>
+    <property name="Scale" value="0.56"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14.34"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="62" name="deco 8,9" x="335.08" y="205.35">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="9"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.82"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="63" name="deco 8,4" x="870.20" y="162.27">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="64" name="deco 8,4" x="976.11" y="182.52">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="65" name="deco 8,4" x="871.98" y="212.51">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="66" name="deco 8,4" x="910.85" y="208.69">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="67" name="deco 3,10" x="941.88" y="114.04">
+   <properties>
+    <property name="Cx" value="3"/>
+    <property name="Cy" value="10"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="68" name="deco 3,10" x="809.88" y="189.83">
+   <properties>
+    <property name="Cx" value="3"/>
+    <property name="Cy" value="10"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="69" name="deco 2,8" x="958.05" y="240.95">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="70" name="deco 2,8" x="996.47" y="115.42">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="71" name="deco 2,8" x="1041.66" y="178.69">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="72" name="deco 3,8" x="912.32" y="154.74">
+   <properties>
+    <property name="Cx" value="3"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17.92"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="73" name="deco 6,4" x="1155.86" y="434.06">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="74" name="deco 6,4" x="1250.19" y="421.02">
+   <properties>
+    <property name="Cx" value="6"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="75" name="deco 5,0" x="1197.89" y="424.11">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="76" name="deco 5,0" x="1086.68" y="500.45">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="77" name="deco 5,0" x="1144.91" y="386.90">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="78" name="deco 2,8" x="1144.94" y="495.11">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="79" name="deco 2,8" x="1191.16" y="500.37">
+   <properties>
+    <property name="Cx" value="2"/>
+    <property name="Cy" value="8"/>
+    <property name="Scale" value="0.54"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="80" name="deco 5,0" x="1080.69" y="691.47">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="81" name="deco 5,0" x="1029.97" y="753.90">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="82" name="deco 5,0" x="1231.51" y="738.10">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="83" name="deco 5,0" x="1019.70" y="707.77">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="84" name="deco 5,0" x="1152.05" y="833.08">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="85" name="deco 5,0" x="1211.45" y="696.23">
+   <properties>
+    <property name="Cx" value="5"/>
+    <property name="Cy" value="0"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13.31"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="86" name="deco 8,4" x="1258.41" y="691.32">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="87" name="deco 8,4" x="1032.95" y="670.43">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="88" name="deco 8,4" x="1284.77" y="741.36">
+   <properties>
+    <property name="Cx" value="8"/>
+    <property name="Cy" value="4"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15.87"/>
+    <property name="Flip" value="false"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="317" name="EnemySpawn">
+ </objectgroup>
+ <objectgroup id="318" name="LightingMarker">
+ </objectgroup>
+ <objectgroup id="319" name="MusicZone">
+ </objectgroup>
+</map>

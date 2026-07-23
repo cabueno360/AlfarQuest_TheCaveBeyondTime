@@ -1,0 +1,219 @@
+/* The merchant's shop.
+
+   A full-window counter, not the small loot popup — buying is something you
+   settle into. The frame is the game's void-and-gold, warmed a shade so a shop
+   feels like lamplight after the cave. A rare merchant (data-special) trades the
+   cool border for gold, so the window itself says "this one is worth it".
+
+   Layout is a header, an optional row of hero tabs, then either the greeting and
+   its four choices, or the two-panel counter: wares left, pack right, and the
+   selected item described across the foot with the buttons to act on it. */
+
+.aq-shop-scrim {
+    position: fixed; inset: 0; z-index: 70;
+    background: rgba(4, 3, 12, .5);
+    animation: aq-shop-fade .18s ease;
+}
+@keyframes aq-shop-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.aq-shop {
+    position: fixed; z-index: 80;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(860px, calc(100vw - 2rem));
+    height: min(620px, calc(100vh - 2rem));
+    display: flex; flex-direction: column;
+    background:
+        radial-gradient(120% 80% at 50% -10%, rgba(60, 45, 22, .35), transparent 60%),
+        linear-gradient(180deg, rgba(28, 22, 46, .98), rgba(9, 7, 20, .99));
+    border: 1px solid color-mix(in srgb, var(--aq-crystal) 32%, transparent);
+    border-radius: 16px;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, .72), inset 0 0 60px -30px rgba(120, 150, 255, .4);
+    color: var(--aq-text);
+    outline: none;
+    animation: aq-shop-in .22s cubic-bezier(.2, .9, .3, 1.15);
+}
+.aq-shop[data-special="true"] {
+    border-color: color-mix(in srgb, var(--aq-gold) 60%, transparent);
+    box-shadow: 0 26px 80px rgba(0, 0, 0, .72), 0 0 46px -12px var(--aq-gold),
+                inset 0 0 60px -28px rgba(216, 180, 90, .5);
+}
+@keyframes aq-shop-in {
+    from { opacity: 0; transform: translate(-50%, -46%) scale(.97); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ---- header ---- */
+.aq-shop-head {
+    display: grid; grid-template-columns: auto 1fr auto auto; align-items: center;
+    gap: .8rem; padding: .8rem 1rem;
+    border-bottom: 1px solid rgba(185, 199, 255, .14);
+}
+.aq-shop-portrait {
+    display: grid; place-items: center;
+    width: 52px; height: 52px; font-size: 1.7rem;
+    border-radius: 12px;
+    background: radial-gradient(circle at 40% 30%, rgba(90, 70, 40, .5), rgba(10, 8, 22, .7));
+    border: 1px solid color-mix(in srgb, var(--aq-gold) 45%, transparent);
+    box-shadow: inset 0 0 16px -6px var(--aq-gold);
+    animation: aq-shop-portrait-in .3s .04s both cubic-bezier(.2, .9, .3, 1.2);
+}
+@keyframes aq-shop-portrait-in {
+    from { opacity: 0; transform: translateX(-12px) rotate(-6deg); }
+    to { opacity: 1; transform: none; }
+}
+.aq-shop-who { min-width: 0; }
+.aq-shop-name {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--aq-gold-soft);
+    display: flex; align-items: center; gap: .5rem;
+}
+.aq-shop-badge {
+    font-family: 'EB Garamond', serif; font-size: .6rem; letter-spacing: .12rem;
+    text-transform: uppercase; color: #1b1405;
+    background: var(--aq-gold-soft); border-radius: 6px; padding: .1rem .4rem;
+}
+.aq-shop-role {
+    margin: .05rem 0 0; font-size: .72rem; letter-spacing: .1rem;
+    text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-shop-purses { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; }
+.aq-shop-gold { position: relative; font-size: 1rem; color: var(--aq-gold-soft); font-variant-numeric: tabular-nums; }
+.aq-shop-mgold { font-size: .66rem; color: var(--aq-muted); }
+.aq-shop-coin { color: var(--aq-gold); }
+.aq-shop-coinfly {
+    position: absolute; right: -2px; top: 0; color: var(--aq-gold-soft);
+    pointer-events: none; animation: aq-shop-coinfly .7s ease-out forwards;
+}
+@keyframes aq-shop-coinfly {
+    0% { opacity: 0; transform: translateY(6px) scale(.7); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-22px) scale(1.3); }
+}
+.aq-shop-close {
+    background: none; border: none; cursor: pointer; color: var(--aq-muted);
+    font-size: 1rem; padding: .2rem .35rem; align-self: start;
+}
+.aq-shop-close:hover { color: var(--aq-text); }
+
+/* ---- hero tabs ---- */
+.aq-shop-heroes {
+    display: flex; gap: .35rem; padding: .5rem 1rem 0; flex-wrap: wrap;
+}
+.aq-shop-hero {
+    font: inherit; font-size: .78rem; cursor: pointer;
+    padding: .25rem .7rem; border-radius: 999px;
+    color: var(--aq-muted); background: rgba(0, 0, 0, .3);
+    border: 1px solid rgba(185, 199, 255, .16);
+}
+.aq-shop-hero.on {
+    color: #1b1405; background: var(--aq-gold-soft);
+    border-color: var(--aq-gold); font-weight: 600;
+}
+
+/* ---- greeting ---- */
+.aq-shop-greet {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    gap: 1.6rem; padding: 2rem clamp(1rem, 6vw, 4rem);
+}
+.aq-shop-line {
+    margin: 0; font-family: 'EB Garamond', serif; font-size: 1.3rem; line-height: 1.5;
+    color: var(--aq-text); text-align: center; font-style: italic;
+}
+.aq-shop-choices {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: .7rem;
+    max-width: 460px; margin: 0 auto; width: 100%;
+}
+.aq-shop-choice { padding: .7rem 1rem; font-size: .95rem; }
+
+/* ---- filter row ---- */
+.aq-shop-filters {
+    display: flex; gap: .35rem; padding: .6rem 1rem; flex-wrap: wrap;
+    border-bottom: 1px solid rgba(185, 199, 255, .1);
+}
+.aq-shop-filter {
+    font: inherit; font-size: .72rem; cursor: pointer;
+    padding: .2rem .6rem; border-radius: 8px;
+    color: var(--aq-muted); background: rgba(0, 0, 0, .28);
+    border: 1px solid rgba(185, 199, 255, .12);
+}
+.aq-shop-filter.on { color: var(--aq-gold-soft); border-color: color-mix(in srgb, var(--aq-gold) 55%, transparent); }
+
+/* ---- the two panels ---- */
+.aq-shop-body {
+    flex: 1; min-height: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.aq-shop-col {
+    display: flex; flex-direction: column; min-height: 0;
+    border-right: 1px solid rgba(185, 199, 255, .1);
+}
+.aq-shop-col:last-child { border-right: none; }
+.aq-shop-col-head {
+    margin: 0; padding: .5rem .9rem; font-family: 'Cinzel', serif; font-size: .8rem;
+    color: var(--aq-crystal); letter-spacing: .04rem;
+    border-bottom: 1px solid rgba(185, 199, 255, .08);
+}
+.aq-shop-list { flex: 1; min-height: 0; overflow-y: auto; padding: .4rem; display: flex; flex-direction: column; gap: .25rem; }
+.aq-shop-empty { margin: 1rem .5rem; color: var(--aq-muted); font-size: .82rem; font-style: italic; text-align: center; }
+
+.aq-shop-row {
+    display: grid; grid-template-columns: auto 1fr auto auto; align-items: center;
+    gap: .5rem; padding: .4rem .55rem; cursor: pointer; font: inherit; text-align: left;
+    border-radius: 9px; color: var(--aq-text);
+    background: color-mix(in srgb, var(--rarity, #b8b6c8) 8%, rgba(0, 0, 0, .35));
+    border: 1px solid transparent;
+    transition: background .12s, border-color .12s;
+}
+.aq-shop-row:hover { background: color-mix(in srgb, var(--rarity, #b8b6c8) 16%, rgba(0, 0, 0, .4)); }
+.aq-shop-row.sel {
+    border-color: color-mix(in srgb, var(--rarity, var(--aq-gold)) 70%, transparent);
+    box-shadow: 0 0 14px -5px var(--rarity, var(--aq-gold));
+}
+.aq-shop-row.poor .aq-shop-price { color: #d98a8a; }
+.aq-shop-row.refused { opacity: .5; }
+.aq-shop-ico { font-size: 1.15rem; width: 1.4rem; text-align: center; }
+.aq-shop-rowname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .86rem; }
+.aq-shop-qty { font-size: .72rem; color: var(--aq-muted); font-variant-numeric: tabular-nums; }
+.aq-shop-price { font-size: .82rem; color: var(--aq-gold-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aq-shop-price.sell { color: #9fe4b0; }
+
+/* ---- foot: selected item + actions ---- */
+.aq-shop-foot {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem;
+    padding: .8rem 1rem; border-top: 1px solid rgba(185, 199, 255, .14);
+    background: rgba(0, 0, 0, .25);
+}
+.aq-shop-detail { display: flex; gap: .7rem; min-height: 84px; }
+.aq-shop-detail-ico {
+    font-size: 2rem; width: 60px; height: 60px; flex: none; display: grid; place-items: center;
+    border-radius: 12px; background: rgba(0, 0, 0, .4);
+    border: 1px solid color-mix(in srgb, var(--rarity, #b8b6c8) 55%, transparent);
+    box-shadow: inset 0 0 18px -6px var(--rarity, transparent);
+}
+.aq-shop-detail-text { min-width: 0; }
+.aq-shop-detail-name { font-family: 'Cinzel', serif; font-size: .92rem; }
+.aq-shop-detail-kind { font-size: .68rem; text-transform: uppercase; letter-spacing: .06rem; color: var(--aq-muted); margin-top: .1rem; }
+.aq-shop-detail-bonuses { list-style: none; margin: .35rem 0 0; padding: 0; font-size: .78rem; color: var(--aq-crystal); }
+.aq-shop-detail-bonuses li { line-height: 1.4; }
+.aq-shop-detail-flav { margin: .35rem 0 0; font-size: .76rem; font-style: italic; color: var(--aq-muted); }
+.aq-shop-detail-none { margin: auto; color: var(--aq-muted); font-style: italic; font-size: .82rem; }
+
+.aq-shop-actions { display: flex; flex-direction: column; justify-content: flex-end; gap: .4rem; }
+.aq-shop-notice { margin: 0; font-size: .78rem; color: var(--aq-gold-soft); text-align: right; min-height: 1.1em; }
+.aq-shop-buttons { display: flex; gap: .4rem; justify-content: flex-end; flex-wrap: wrap; }
+.aq-shop-buttons .aq-btn { padding: .45rem .8rem; font-size: .84rem; }
+.aq-btn.buy { background: linear-gradient(180deg, #d8b45a, #b8933f); color: #1b1405; border-color: #d8b45a; }
+.aq-btn.buy:hover:not(:disabled) { background: linear-gradient(180deg, #f0d99a, #d8b45a); }
+.aq-btn.sell { background: linear-gradient(180deg, #5fae7a, #3f8a5a); color: #06210f; border-color: #5fae7a; }
+.aq-btn.sell:hover:not(:disabled) { background: linear-gradient(180deg, #7fd694, #5fae7a); }
+.aq-btn.ghost { background: rgba(0, 0, 0, .3); color: var(--aq-muted); }
+.aq-btn.ghost:hover:not(:disabled) { color: var(--aq-text); }
+.aq-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Narrow screens: stack the panels and the foot so nothing overflows. */
+@media (max-width: 620px) {
+    .aq-shop { height: min(90vh, 640px); }
+    .aq-shop-body { grid-template-columns: 1fr; }
+    .aq-shop-col { border-right: none; border-bottom: 1px solid rgba(185, 199, 255, .1); }
+    .aq-shop-foot { grid-template-columns: 1fr; }
+    .aq-shop-choices { grid-template-columns: 1fr; }
+}

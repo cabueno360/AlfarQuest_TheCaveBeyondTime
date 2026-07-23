@@ -14,7 +14,9 @@ public partial class World
         props = Props.ConvertAll(p => new RProp { x = p.X, y = p.Y, s = p.S, cx = p.Cx, cy = p.Cy, k = p.Kind, v = p.Variant, flip = p.Flip }),
         arches = Arches.ConvertAll(a => new RVec { x = a.X, y = a.Y }),
         npcs = Npcs.ConvertAll(n => new RNpc { x = n.Pos.X, y = n.Pos.Y, f = n.Facing,
-                                               kind = n.Def.Kind, name = n.Def.Name }),
+                                               kind = n.Def.Kind, name = n.Def.Name,
+                                               merchant = MerchantCatalog.Trades(n.Def.Id),
+                                               hidden = n.Def.Bedridden }),
         spawn = new RVec { x = Spawn.X, y = Spawn.Y },
         exit = new RVec { x = Exit.X, y = Exit.Y },
     };
@@ -29,6 +31,30 @@ public partial class World
     {
         var ents = new List<REnt>();
         var lights = new List<RLight>();
+
+        // Interiors are lit by their own lamps and hearths — the renderer darkens
+        // anything that is not Stage 1, so without these a house would be a black
+        // cave. Each fitting throws a warm pool; the stove and shrine, a wider one.
+        if (IsInterior)
+            foreach (var p in Props)
+            {
+                var (rad, col) = p.Kind switch
+                {
+                    "lantern" => (150f, "#f0c874"),
+                    "campfire" => (240f, "#ff9a4a"),
+                    "statue" => (170f, "#cfe0ff"),
+                    "crystal" => (200f, "#6ea0ff"),   // arcane braziers and wards glow cold blue
+                    // The Cleric's-house fittings each throw their own warm pool; the
+                    // holy-water font glows a faint devotional blue.
+                    "h_candelabra" => (160f, "#f0c874"),
+                    "h_candle" => (110f, "#f0c874"),
+                    "h_sconce" => (135f, "#f0c874"),
+                    "h_font" => (120f, "#bcd4ff"),
+                    "h_fireplace" => (250f, "#ff9a4a"),   // the hearth lights its whole room
+                    _ => (0f, ""),
+                };
+                if (rad > 0) lights.Add(new RLight { x = p.X, y = p.Y, rad = rad, c = col });
+            }
 
         foreach (var c in Crystals)
         {
@@ -124,12 +150,21 @@ public partial class World
             dropsDelivered = LootBridge.Delivered,
             // What [E] would do right now, in the same order Interact() resolves
             // it — so the prompt can never offer one thing and the key do another.
-            promptName = Talking is not null ? ""
-                : ThingInReach?.Name ?? NpcInReach?.Def.Name ?? "",
-            promptVerb = Talking is not null ? ""
-                : ThingInReach is { } t ? VerbFor(t) : NpcInReach is not null ? "Talk to" : "",
+            // "Trade with" for a shopkeeper, so the merchant announces itself in the
+            // prompt as well as by the coin over their head.
+            // A doorway wins the prompt, then a thing at your feet, then a villager —
+            // the same order Interact() resolves them in.
+            promptName = Busy ? ""
+                : PortalInReach?.Label ?? ExamineInReach?.Title ?? ThingInReach?.Name ?? NpcInReach?.Def.Name ?? "",
+            promptVerb = Busy ? ""
+                : PortalInReach is { } door ? door.Verb
+                : ExamineInReach is { } ex ? ex.Verb
+                : ThingInReach is { } t ? VerbFor(t)
+                : NpcInReach is { } npc ? (IsMerchant(npc) ? "Trade with" : "Talk to")
+                : "",
             // Crafting is gated on standing beside someone who can do it.
             atCraftsman = (Talking ?? NpcInReach)?.Def.Services.HasFlag(NpcServices.Crafting) ?? false,
+            outdoor = OutdoorLook,
             talkName = Talking?.Def.Name ?? "",
             talkRole = Talking?.Def.Role ?? "",
             talkLine = Talking?.CurrentLine ?? "",
@@ -176,7 +211,8 @@ public partial class World
             }).ToList()
         };
 
-        return new RenderState { cam = new RVec { x = Camera.X, y = Camera.Y },
+        return new RenderState { cam = new RVec { x = Camera.X, y = Camera.Y }, outdoor = OutdoorLook,
+                                 floorStyle = FloorStyle, mapId = MapId,
                                  chamberW = ChamberW, chamberH = ChamberH, level = Level,
                                  tile = TILE, stage = Stage, rev = Rev,
                                  ents = ents, lights = lights, hud = hud,

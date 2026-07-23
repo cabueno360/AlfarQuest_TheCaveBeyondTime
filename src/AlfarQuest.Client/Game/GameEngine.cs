@@ -43,6 +43,20 @@ public static class GameEngine
             fleeBelow = c.FleeBelow, protective = c.Protective, xp = c.Xp,
         }), Json);
 
+    // The map-migration seam: load a building's interior so it can be exported the
+    // same way Stage 1 was. Never called from play — see World.Interiors.
+    [JSInvokable]
+    public static void DebugLoadInterior(string id) => _world?.EnterInterior(id, default);
+
+    [JSInvokable]
+    public static void DebugEnterCave() => _world?.DebugEnterCave();
+
+    // The map-migration seam: the built world as plain data, so it can be written
+    // out as a Tiled .tmx. Never called from play — see World.Debug.
+    [JSInvokable]
+    public static string DebugExportMap() =>
+        _world is null ? "{}" : JsonSerializer.Serialize(_world.ExportMap(), Json);
+
     // A test seam: stage a controlled encounter on open ground. Never called from
     // play — see World.Debug.
     [JSInvokable]
@@ -51,6 +65,49 @@ public static class GameEngine
     // A test seam: one immortal, evasive target to accumulate attack rolls on.
     [JSInvokable]
     public static void DebugTrainingDummy() => _world?.DebugTrainingDummy();
+
+    // A test seam: open a named merchant's shop as the steered hero, through the
+    // same [E] path as play — see World.Debug.
+    [JSInvokable]
+    public static void DebugTradeWith(string npcId) => _world?.DebugTradeWith(npcId);
+
+    // A test seam: drop the steered hero on a tile (e.g. beside a door).
+    [JSInvokable]
+    public static void DebugWarp(double tx, double ty) => _world?.DebugWarp((float)tx, (float)ty);
+
+    // The trading model as data, so a test can assert who keeps a shop, that a
+    // merchant sells dearer than they buy, and that each shelf is stocked — none
+    // of which needs the world running. Prices are read through ShopEconomy, so
+    // this also proves the economy seam returns list price with its levers off.
+    [JSInvokable]
+    public static string MerchantFacts() => JsonSerializer.Serialize(new
+    {
+        merchants = MerchantCatalog.All.Select(m =>
+        {
+            var npc = NpcCatalog.Find(m.NpcId);
+            var first = m.Stock
+                .Select(s => Services.Character.ItemCatalog.Find(s.ItemId))
+                .FirstOrDefault(i => i is not null);
+            return new
+            {
+                npcId = m.NpcId,
+                name = npc?.Name ?? m.NpcId,
+                role = npc?.Role ?? "",
+                isShopNpc = npc?.Services.HasFlag(NpcServices.Shop) ?? false,
+                special = m.Special,
+                restock = m.Restock.ToString(),
+                stockLines = m.Stock.Count,
+                buysAnything = m.Buys.Count == 0,
+                buys = m.Buys.Select(b => b.ToString()),
+                sample = first is null ? null : new
+                {
+                    id = first.Id, name = first.Name,
+                    buy = ShopEconomy.BuyPrice(first, null, m),
+                    sell = ShopEconomy.SellPrice(first, null, m),
+                },
+            };
+        }),
+    }, Json);
 
     // The combat model as data, so a test can assert the weapon types differ, the
     // damage schools exist, the status architecture names them all, and the

@@ -23,6 +23,9 @@ public sealed partial class Play : IAsyncDisposable
     [Inject] private PlayTimeTracker PlayTime { get; set; } = default!;
     [Inject] private CampaignSaveService Campaign { get; set; } = default!;
     [Inject] private LootState Loot { get; set; } = default!;
+    [Inject] private ShopState Shop { get; set; } = default!;
+    [Inject] private ReadState Read { get; set; } = default!;
+    [Inject] private DialogueState Dialogue { get; set; } = default!;
 
     private const string SheetHold = "character-window";
     private const string LevelUpHold = "level-up";
@@ -49,6 +52,14 @@ public sealed partial class Play : IAsyncDisposable
         // whoever is listening, and nothing listening means the contents go
         // straight to the pack with no window at all.
         Loot.Attach();
+        // Likewise a merchant: with a listener the engine opens the shop on [E],
+        // and without one a shopkeeper simply talks like any other villager.
+        Shop.Attach();
+        // And the reading panel — the journal, letters, examined things.
+        Read.Attach();
+        // And the question menu: with a listener the engine opens a conversation
+        // on [E], and without one a villager just cycles their one-line balloon.
+        Dialogue.Attach();
 
         // Before the world is built, so a returning player starts the session at
         // the level they left it — the engine reads attribute-derived numbers on
@@ -58,6 +69,12 @@ public sealed partial class Play : IAsyncDisposable
 
         Party.LevelledUp += OnLevelledUp;
         PlayTime.Start();
+
+        // Stage 1 is authored in Tiled. The world is built synchronously inside
+        // startGame, and a .tmx has to be fetched, so it is registered here first —
+        // see Game/Tiled/MapCatalog. A map that fails to arrive is not fatal: the
+        // stage falls back to the generator it was migrated from.
+        await LoadStageMapsAsync();
 
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/game.js");
         _self = DotNetObjectReference.Create(this);
@@ -87,6 +104,8 @@ public sealed partial class Play : IAsyncDisposable
         // StateHasChanged after each: this arrives from JS, and Blazor only
         // re-renders automatically after its own event handlers. Without it the
         // sheet closed in state and stayed on screen.
+        if (Read.Open is not null) { Read.Close(); StateHasChanged(); return; }
+        if (Shop.Open is not null) { Shop.Close(); StateHasChanged(); return; }
         if (Loot.Open is not null) { Loot.Close(); StateHasChanged(); return; }
         if (SheetOpen) { await CloseSheet(); StateHasChanged(); }
     }
@@ -94,6 +113,10 @@ public sealed partial class Play : IAsyncDisposable
     [JSInvokable]
     public async Task ToggleCharacterSheet(string? activeHeroKey = null)
     {
+        // The counter or the page comes first: pressing C mid-purchase or mid-read
+        // should not stack the sheet on top. Finish, then open it.
+        if (Shop.Open is not null || Read.Open is not null) return;
+
         SheetOpen = !SheetOpen;
         // Open on whoever the player is steering, not on whoever happens to be
         // first in the party.
@@ -230,6 +253,33 @@ public sealed partial class Play : IAsyncDisposable
         if (_module is not null)
         {
             try { await _module.DisposeAsync(); } catch { /* already torn down */ }
+        }
+    }
+
+    /// <summary>Fetches the maps that have been migrated to Tiled and registers
+    /// them for the engine to build from. Only Stage 1 so far — every other map
+    /// still comes from its own builder, which is what keeps the migration
+    /// incremental. Failure is logged and swallowed: an unregistered map means the
+    /// stage builds from its generator, so the player still gets a world.</summary>
+    private async Task LoadStageMapsAsync()
+    {
+        try
+        {
+            using var http = new System.Net.Http.HttpClient { BaseAddress = new Uri(Nav.BaseUri) };
+            foreach (var (id, path) in Game.Tiled.MapCatalog.Migrated)
+            {
+                var xml = await http.GetStringAsync(path);
+                // A map that is simply not there is not an error: the dev server
+                // answers a missing asset with the SPA's index.html, so anything
+                // that is not a map document just means "not migrated yet" — build
+                // that place from its own builder, quietly.
+                if (xml.TrimStart().StartsWith("<?xml", StringComparison.Ordinal))
+                    Game.Tiled.MapCatalog.Register(id, xml);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"maps not loaded, using the builders: {ex.Message}");
         }
     }
 }

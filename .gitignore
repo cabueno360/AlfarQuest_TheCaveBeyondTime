@@ -466,3 +466,10 @@ tools/shots/
 # publish in the client .csproj; only the curated wwwroot/audio/sfx/ folder — the
 # ~50 OGG files the game actually plays — is tracked.
 src/AlfarQuest.Client/wwwroot/audio/fx/
+
+# Map pipeline: intermediates that any of tools/*.py can regenerate.
+# The .tmx/.tsx they produce ARE committed; these are the scratch behind them.
+tools/refs/seg/
+tools/refs/extracted/
+# The art pack ships extracted alongside; the archive is redundant weight.
+src/AlfarQuest.Client/wwwroot/Maps/*.zip

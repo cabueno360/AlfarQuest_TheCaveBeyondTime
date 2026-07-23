@@ -1,0 +1,257 @@
+namespace AlfarQuest.Client.Game;
+
+// =====================================================================
+//  Building interiors and the doorways between them.
+//
+//  A door is a Portal: a point on one map that, when used, swaps the whole
+//  world for another and sets the party down at the far side. It reuses the
+//  same machinery as EnterCave — change the tiles, bump Rev, reposition the
+//  party — so the renderer transitions for free, and the interior is just a
+//  small map like any other. Leaving rebuilds the overworld from its seed
+//  (deterministic, so the village is exactly as it was) and drops the party
+//  back on the doorstep.
+// =====================================================================
+public partial class World
+{
+    /// <summary>A doorway. On the overworld it names the interior to load; inside
+    /// an interior its target is <see cref="Overworld"/>, which sends you back
+    /// out to <see cref="Return"/> — the spot just outside the door you came in by.</summary>
+    public sealed class Portal
+    {
+        public Vec Pos;
+        public float R = 40f;
+        public required string Target;   // an interior id, or Portal.Overworld
+        public string Label = "the door";
+        public string Verb = "Enter";    // Enter a place, Go up/down stairs, Step outside
+        public Vec Return;               // where a door from the world drops you back
+        public Vec? Arrive;              // where a stair or inner door sets you down
+
+        public const string Overworld = "__overworld__";
+    }
+
+    public List<Portal> Portals { get; } = [];
+
+    /// <summary>The interior currently loaded, or null when out in the world or the
+    /// cave. Interiors are Stage 3 — the renderer already lights and stone-floors
+    /// anything that is not Stage 1.</summary>
+    public string? CurrentInterior { get; private set; }
+    public bool IsInterior => CurrentInterior is not null;
+
+    /// <summary>Where leaving the current interior puts the party — the doorstep it
+    /// was entered from, so stepping in and back out never moves you.</summary>
+    Vec _interiorReturn;
+
+    /// <summary>Whether the current interior is open-air (a city's streets) and
+    /// should be lit as daylight rather than as a dungeon.</summary>
+    bool _interiorOutdoor;
+
+    /// <summary>The floor material the current interior asks for — "wood" for a home,
+    /// empty for the default stone. Read by the renderer when it paints the floor.</summary>
+    string _interiorFloor = "";
+
+    /// <summary>Whether the world should be drawn with the outdoor look — always
+    /// on the overworld, and in interiors that declare themselves open-air.</summary>
+    public bool OutdoorLook => IsInterior ? _interiorOutdoor : Stage == 1;
+
+    /// <summary>The floor style the renderer should lay down — only interiors set it;
+    /// the overworld and the cave use their own ground.</summary>
+    public string FloorStyle => IsInterior ? _interiorFloor : "";
+
+    /// <summary>Which authored map is loaded, or empty for a place that has none
+    /// (the cave). The renderer uses it to draw the same .tmx the engine built
+    /// from, so picture and geometry can never drift apart.</summary>
+    public string MapId => IsInterior ? CurrentInterior ?? ""
+                         : Stage == 1 ? Tiled.MapCatalog.Stage01
+                         : Stage == 2 ? Tiled.MapCatalog.Cave : "";
+
+    /// <summary>The doorway within reach of the steered hero, or null. Recomputed
+    /// each frame beside the NPC check so the prompt and the key never disagree.</summary>
+    public Portal? PortalInReach { get; private set; }
+
+    void UpdatePortals()
+    {
+        PortalInReach = null;
+        if (Party.Count == 0 || Busy) return;
+        var hero = Party[Active];
+        var best = float.MaxValue;
+        foreach (var p in Portals)
+        {
+            var d = (p.Pos - hero.Pos).Len();
+            if (d < p.R && d < best) { best = d; PortalInReach = p; }
+        }
+    }
+
+    /// <summary>Steps through a doorway — a door from the world into a building, a
+    /// stair between its floors, or the way back out. Called from Interact when a
+    /// portal is the thing in reach.</summary>
+    public void UsePortal(Portal p)
+    {
+        if (p.Target == Portal.Overworld) ExitInterior();
+        else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
+        else EnterInterior(p.Target, p.Return);                    // a door from the world
+    }
+
+    /// <summary>Enters a building from the overworld, remembering the doorstep to
+    /// return to. The world is not kept in memory — leaving rebuilds it from seed.</summary>
+    public void EnterInterior(string id, Vec returnTo)
+    {
+        _interiorReturn = returnTo;
+        LoadInterior(id, null);
+    }
+
+    /// <summary>Moves between floors of the same building — up the stairs, down
+    /// again — without disturbing where the front door will let you back out.</summary>
+    public void SwitchInterior(string id, Vec? arriveAt) => LoadInterior(id, arriveAt);
+
+    /// <summary>Throws away the current map and lays down an interior, standing the
+    /// party at <paramref name="arriveAt"/> or, if none is given, the map's own
+    /// entry point.</summary>
+    void LoadInterior(string id, Vec? arriveAt)
+    {
+        if (InteriorCatalog.Find(id) is not { } def) return;
+
+        CurrentInterior = id;
+        Stage = 3;
+        Rev++;
+        Phase = "playing";
+        Talking = null; TradingWith = null;
+
+        Props.Clear(); Npcs.Clear(); Portals.Clear(); Examinables.Clear(); Reading = null;
+        // The overworld's chests and region markers must not leak into a building
+        // whose tiles happen to sit where they stood. Leaving rebuilds the overworld
+        // (and its rewards) from seed.
+        Interactables.Clear(); Discoveries.Clear();
+        Crystals.Clear(); Husks.Clear(); Shots.Clear(); Bolts.Clear(); Slashes.Clear(); Fx.Clear();
+
+        _interiorOutdoor = def.Outdoor;
+        _interiorFloor = def.FloorTile;
+
+        // Authored in Tiled? Then the map is the source of truth and the C# builder
+        // is skipped. The def still describes the PLACE — its name, whether it is
+        // open-air, what its floor is made of — because none of that is geometry.
+        if (Tiled.MapCatalog.Find(id) is { } authored)
+        {
+            BuildInteriorFromTmx(authored);
+        }
+        else
+        {
+            COLS = def.Cols; ROWS = def.Rows;
+            Tiles = new byte[COLS, ROWS];   // all ROCK (0) — walls; the builder carves the rooms
+            def.Build(this);                // fills floor, furniture, doors; sets Spawn
+        }
+
+        var at = arriveAt ?? Spawn;
+        PlaceParty(at);
+        Camera = at;
+    }
+
+    /// <summary>Leaves the current interior, rebuilding the overworld and dropping
+    /// the party back on the doorstep. Rewards and opened containers persist through
+    /// the RewardBridge, so the world is as it was left, not freshly stocked.</summary>
+    public void ExitInterior()
+    {
+        var back = _interiorReturn;
+        CurrentInterior = null;
+        BuildOverworld();      // deterministic; also bumps Rev and clears entities
+        PlaceParty(back);
+        Camera = back;
+    }
+
+    /// <summary>Sets the party down around a point, tidily abreast and never inside
+    /// a wall. Movement/cooldowns are left untouched — walking through a door is not
+    /// a new life the way descending into the cave is.</summary>
+    void PlaceParty(Vec at)
+    {
+        for (int i = 0; i < Party.Count; i++)
+        {
+            var p = at + new Vec((i - 1) * 34f, 0);
+            if (Blocked(p, 14f)) p = NearestOpen(p);
+            Party[i].Pos = p;
+        }
+    }
+
+    // ---- helpers the interior builders use --------------------------
+
+    /// <summary>Carves a floor rectangle out of the solid interior block — the room
+    /// you stand in, with the surrounding rock left as its walls.</summary>
+    public void Room(int x0, int y0, int x1, int y1)
+    {
+        for (int x = x0; x <= x1; x++)
+            for (int y = y0; y <= y1; y++)
+                if (x >= 0 && y >= 0 && x < COLS && y < ROWS) Tiles[x, y] = FLOOR;
+    }
+
+    /// <summary>Stamps a rock partition back into a carved room — an interior wall
+    /// between two spaces. Leave a gap in the run for a doorway.</summary>
+    public void Wall(int x0, int y0, int x1, int y1)
+    {
+        for (int x = x0; x <= x1; x++)
+            for (int y = y0; y <= y1; y++)
+                if (x >= 0 && y >= 0 && x < COLS && y < ROWS) Tiles[x, y] = ROCK;
+    }
+
+    /// <summary>Lays a paved street (rendered as the outdoor path) — for a city's
+    /// open-air interior, where rock is a building and this is the way between.</summary>
+    public void Street(int x0, int y0, int x1, int y1)
+    {
+        for (int x = x0; x <= x1; x++)
+            for (int y = y0; y <= y1; y++)
+                if (x >= 0 && y >= 0 && x < COLS && y < ROWS) Tiles[x, y] = PATH;
+    }
+
+    /// <summary>Fills water — a harbour, a dock, the crescent shore.</summary>
+    public void Water(int x0, int y0, int x1, int y1)
+    {
+        for (int x = x0; x <= x1; x++)
+            for (int y = y0; y <= y1; y++)
+                if (x >= 0 && y >= 0 && x < COLS && y < ROWS) Tiles[x, y] = WATER;
+    }
+
+    /// <summary>Places a catalogued NPC at a tile — for people who live indoors, like
+    /// Mirka in her sickroom, who never appear on the overworld placement table.</summary>
+    public void AddNpc(string id, float tx, float ty)
+    {
+        if (NpcCatalog.Find(id) is { } def) Npcs.Add(new Npc(def, TileCentre(tx, ty)));
+    }
+
+    /// <summary>Places a Cleric's-house furniture/decor/story sprite — its own PNG,
+    /// drawn whole by the renderer as kind "h_&lt;name&gt;" (see HOUSE_OBJ in atlas.js).
+    /// Furniture passes solid=true with a collision radius; small decor passes false.
+    /// No random flip or variant, so a bed or a portrait always sits as it was drawn.</summary>
+    public void AddHouseObj(float tx, float ty, string name, float scale, bool solid, float radius, bool flip = false)
+    {
+        Props.Add(new Prop
+        {
+            X = tx * TILE + TILE * 0.5f,
+            Y = ty * TILE + TILE * 0.5f,
+            Kind = "h_" + name,
+            S = scale, Solid = solid, R = radius, Flip = flip,
+        });
+    }
+
+    /// <summary>A stair between floors of the same building: it carries you to
+    /// <paramref name="arrive"/> on the target floor, drawn as a ladder.</summary>
+    public void AddStair(float tx, float ty, string target, Vec arrive, string label)
+    {
+        Portals.Add(new Portal { Pos = TileCentre(tx, ty), Target = target, Label = label, Arrive = arrive, R = 42f, Verb = "Go" });
+        AddOw(tx, ty, "ladder", 0.7f, false, 0f);
+    }
+
+    /// <summary>Adds a doorway between the world and a building: a door from the
+    /// overworld reads "Enter …", the way back out reads "Step …".</summary>
+    public void AddPortal(float tx, float ty, string target, string label, Vec ret, string? doorProp = "caveEntrance")
+    {
+        var pos = TileCentre(tx, ty);
+        Portals.Add(new Portal { Pos = pos, Target = target, Label = label, Return = ret, R = 42f,
+                                 Verb = target == Portal.Overworld ? "Step" : "Enter" });
+        if (doorProp is not null) AddOw(tx, ty, doorProp, 0.8f, false, 0f);
+    }
+
+    /// <summary>A door between two interiors — a city and a building within it —
+    /// carrying you to <paramref name="arrive"/> on the far map. Reads "Enter …".</summary>
+    public void AddDoor(float tx, float ty, string target, Vec arrive, string label, string? doorProp = "caveEntrance")
+    {
+        Portals.Add(new Portal { Pos = TileCentre(tx, ty), Target = target, Label = label, Arrive = arrive, R = 42f, Verb = "Enter" });
+        if (doorProp is not null) AddOw(tx, ty, doorProp, 0.8f, false, 0f);
+    }
+}

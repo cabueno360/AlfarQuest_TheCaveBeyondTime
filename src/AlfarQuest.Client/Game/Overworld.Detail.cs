@@ -79,6 +79,62 @@ public partial class World
         AddOw(48.6f, 18f, "mineCart", 0.7f, true, 18f);
     }
 
+    // ---- the Cleric's house: the first enterable building -----------
+    // A stone-and-timber cottage dug into the northern foothills — the Cleric's home
+    // in his mountain village, where he kept vigil over Mirka. Its door is the one
+    // place on this map that opens onto a whole other map (see World.Interiors).
+    void BuildClericHamlet()
+    {
+        // A stone footprint for collision — hidden under the cottage sprite drawn
+        // on top of it, so the building blocks like a wall but reads as a house.
+        for (int x = 18; x <= 22; x++)
+            for (int y = 20; y <= 23; y++)
+                if (x < COLS && y < ROWS) Tiles[x, y] = ROCK;
+
+        // The cottage itself, assembled from the modular house tiles
+        // (tools/gen-house-tiles.py → clericHouse.png): stone foundation, timber
+        // upper storey, slate roof, chimney, an arched door centred at its base. It
+        // is drawn on top of the stone footprint above, which does the blocking — the
+        // sprite is visual only, so the doorway below it stays walkable and the
+        // entrance portal is reachable. Its own door sits where the portal is, so the
+        // portal adds no archway of its own (null prop).
+        AddOw(20, 24, "clericHouse", 1.2f, false, 0f);
+        AddPortal(20, 24, "cleric_house", "the Cleric's house", TileCentre(20, 25.5f), null);
+
+        // A path up from the road to the doorstep, so the house is approached rather
+        // than stumbled into.
+        Road(20, 30, 20, 25, 1.4f);
+
+        // The yard, from the concept's own exterior pieces: a fence along the front
+        // with the gate left open at the path, the handcart and bucket by the wall,
+        // bushes and flowers along the way in. The well, the wayside shrine, the
+        // graves the winter filled and the lanterns stay as they were — the Outside
+        // pack has those and the concept sheet does not.
+        foreach (var fx in new[] { 15.4f, 16.8f, 18.2f })                 // fence, west run
+            AddHouseObj(fx, 27.4f, "fence", 0.9f, true, 12f);
+        foreach (var fx in new[] { 21.8f, 23.2f, 24.6f })                 // fence, east run
+            AddHouseObj(fx, 27.4f, "fence", 0.9f, true, 12f);
+        AddHouseObj(24.2f, 25.4f, "cart", 0.9f, true, 15f);
+        AddHouseObj(18.2f, 25.2f, "bucket", 0.8f, false, 0f);
+        AddHouseObj(16.4f, 25f, "bush", 0.85f, true, 12f);
+        AddHouseObj(23.6f, 23.4f, "bush", 0.8f, true, 12f);
+        AddHouseObj(17.4f, 26.6f, "flowerbush", 0.8f, false, 0f);
+        AddHouseObj(22.8f, 26.6f, "flowerbush", 0.8f, false, 0f);
+        AddHouseObj(15.2f, 26.2f, "wildflowers", 0.8f, false, 0f);
+        AddHouseObj(25.4f, 26.8f, "wildflowers", 0.8f, false, 0f);
+        AddHouseObj(14.2f, 23.6f, "rock", 0.8f, true, 13f);
+        AddHouseObj(26.2f, 24.4f, "stone", 0.8f, false, 0f);
+        AddHouseObj(16.6f, 28.4f, "signpost", 0.85f, false, 0f);
+
+        AddOw(15f, 24.6f, "statue", 0.75f, true, 15f);       // shrine to the Holy Light
+        AddOw(13.6f, 26f, "well", 0.7f, true, 16f);
+        AddOw(25.2f, 24.6f, "gravestone", 0.6f, true, 12f);
+        AddOw(26.4f, 25.8f, "gravestone", 0.55f, true, 11f);
+        AddOw(18.4f, 26.2f, "lantern", 0.58f, false, 0f);
+        AddOw(21.6f, 26.2f, "lantern", 0.58f, false, 0f);
+        AddOw(23, 34, "signpost", 0.6f, false, 0f);          // at the foothill junction
+    }
+
     // ---- secrets ----------------------------------------------------
     void BuildSecrets()
     {

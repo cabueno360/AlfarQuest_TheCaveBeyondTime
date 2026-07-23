@@ -14,7 +14,7 @@ public class InputState
     public float viewW = 1280, viewH = 720;
 }
 
-public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); public List<RSound> sounds = new(); }
+public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public bool outdoor; public string floorStyle = ""; public string mapId = ""; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); public List<RSound> sounds = new(); }
 
 /// <summary>One sound the frame asked for: a family (a folder of interchangeable
 /// takes, picked from at random on the JS side) and how loud, already faded for
@@ -47,7 +47,7 @@ public class REnt
 }
 
 public class RProp { public float x, y, s; public int cx, cy, v; public string k = ""; public bool flip; }
-public class RNpc { public float x, y, f; public string kind = "", name = ""; public bool talking, inReach; }
+public class RNpc { public float x, y, f; public string kind = "", name = ""; public bool talking, inReach, merchant, hidden; }
 
 public class RFloat { public float x, y, life; public string text = "", c = "#ffffff"; }
 public class RLight { public float x, y, rad; public string c = "#ffffff"; }
@@ -56,7 +56,7 @@ public class RHud
 {
     public string phase = ""; public int enemies, level, stage, dropsTried, dropsDelivered;
     public string objective = "", talkName = "", talkRole = "", talkLine = "", promptName = "";
-    public bool atCraftsman; public float shake, clearedFor;
+    public bool atCraftsman, outdoor; public float shake, clearedFor;
     public string message = "", region = ""; public List<RHero> party = new();
 
     // Progression, read by the canvas HUD. heroLevel is the steered hero's level,

@@ -15,7 +15,8 @@ import { initGfx, sizeToParent, canvas, ctx, lightCanvas, lctx, hexA } from "./g
 import { attachInput, detachInput, readInput, resetLatch, mousePos } from "./input.js";
 import { setHotbarMouse } from "./render/hotbar.js";
 import { ATLAS, loadAtlases } from "./atlas.js";
-import { buildFloorCanvas, drawFloor } from "./world/floor.js";
+import { buildFloorCanvas, drawFloor, setStageMap, hasStageMap } from "./world/floor.js";
+import { loadTmx } from "./world/tmx.js";
 import { buildScenery } from "./world/scenery.js";
 import { drawEntity, drawDecal } from "./render/entities.js";
 import { drawHud, drawFloaters } from "./render/hud.js";
@@ -23,6 +24,17 @@ import { createMusic } from "./music.js";
 import { initSfx, playSounds, setSfxMuted, stopSfx, sfxPlayed } from "./sfx.js";
 
 const ASM = "AlfarQuest.Client";
+
+/// Outdoor scenery whose picture lives in the Stage 1 map. Indoors everything
+/// prefixed "h_" is house furniture and is painted by the interior's own map.
+const PAINTED_BY_MAP = new Set([
+    "pine", "broadleaf", "deadTree", "cherry", "bush", "flowers", "rock", "orePile", "log",
+]);
+
+/// House pieces the map deliberately does NOT paint, so their sprite must still be
+/// drawn. Mirka's bed is the only one: it has her asleep in it, and no tile in the
+/// pack carries a person. Suppressing it left the sickroom empty.
+const KEPT_OVER_MAP = new Set(["h_bed_mirka"]);
 
 let raf = 0, running = false, last = 0;
 // Gameplay hold. While set the engine is not ticked at all, so enemies, AI,
@@ -45,6 +57,9 @@ let scenery = null;      // cave scenery, scattered client-side
 let floorCanvas = null;  // the whole chamber floor, pre-painted
 let builtRev = -1;       // which world revision the caches belong to
 let snap = null, snapRev = -1;
+// A quick fade-from-black whenever the map is swapped (a door, the cave), so a
+// transition reads as a threshold crossed rather than a hard cut.
+let fadeAlpha = 0;
 
 // ---------------------------------------------------------------------
 //  Rendering
@@ -65,10 +80,12 @@ function render(s) {
     // Descending rebuilds the chamber, so the cached floor and scenery — which
     // are keyed to the old crystal layout — have to be thrown away.
     if (s.rev !== snapRev) {
+        const firstBuild = snapRev < 0;
         snapRev = s.rev;
         try { snap = JSON.parse(DotNet.invokeMethod(ASM, "Snapshot")); }
         catch (err) { console.error("world snapshot failed", err); }
         floorCanvas = null; scenery = null; builtRev = s.rev;
+        if (!firstBuild) fadeAlpha = 1;    // a map swap, not the initial load
     }
     if (!snap) return;
     // Merge the static geometry back in so the rest of the frame reads as before.
@@ -90,9 +107,18 @@ function render(s) {
 
     // Props are authored by the engine now (it owns their collision), so the
     // client only draws what it is told.
-    const props = (s.props || []).map(p => ({ t: "prop", x: p.x, y: p.y, cell: [p.cx, p.cy], s: p.s, flip: p.flip, kind: p.k, v: p.v || 0 }));
+    // Scenery and furniture the authored map already draws. Outdoors that is the
+    // trees and undergrowth; indoors it is the whole of the furniture.
+    const drawnByMap = hasStageMap(s.mapId);
+    const props = (s.props || []).map(p => ({
+        t: "prop", x: p.x, y: p.y, cell: [p.cx, p.cy], s: p.s, flip: p.flip,
+        kind: p.k, v: p.v || 0,
+        painted: drawnByMap && !KEPT_OVER_MAP.has(p.k)
+                 && (!p.k || p.k.startsWith("h_") || PAINTED_BY_MAP.has(p.k)),
+    }));
     const npcs = (s.npcs || []).map(n => ({ t: "npc", x: n.x, y: n.y, f: n.f, kind: n.kind,
-                                            name: n.name, inReach: n.name === s.hud?.promptName }));
+                                            name: n.name, merchant: n.merchant, hidden: n.hidden,
+                                            inReach: n.name === s.hud?.promptName }));
 
     // sort: floor decals & scenery first, then dynamic. Props share the crystals'
     // tier so the cavern's static furniture behaves as one layer behind the actors.
@@ -111,8 +137,8 @@ function render(s) {
 
     drawFloaters(s.floats, cam);
 
-    // additive colored glow for each light source (cave only — see below)
-    if ((s.stage || 2) !== 1) {
+    // additive colored glow for each light source (dark maps only — see below)
+    if (!s.outdoor) {
     ctx.globalCompositeOperation = "lighter";
     for (const L of (s.lights || [])) {
         const g = ctx.createRadialGradient(L.x, L.y, 0, L.x, L.y, L.rad);
@@ -126,8 +152,9 @@ function render(s) {
     ctx.restore();
 
     // Daylight outdoors: the torch-and-darkness model belongs to the cave, and
-    // running it on Stage 1 would hide the map the player is meant to read.
-    if ((s.stage || 2) === 1) { drawHud(s.hud); return; }
+    // running it on the overworld — or a city's open streets — would hide the map
+    // the player is meant to read.
+    if (s.outdoor) { drawHud(s.hud); return; }
 
     // darkness overlay with light holes
     lctx.globalCompositeOperation = "source-over";
@@ -151,6 +178,14 @@ function render(s) {
     ctx.drawImage(lightCanvas, 0, 0);
 
     drawHud(s.hud);
+
+    // The transition veil, over everything including the HUD, easing off over a
+    // few frames from a full black to clear.
+    if (fadeAlpha > 0.001) {
+        ctx.fillStyle = `rgba(4,3,10,${fadeAlpha})`;
+        ctx.fillRect(0, 0, W, H);
+        fadeAlpha *= 0.86;
+    } else fadeAlpha = 0;
 }
 
 function loop(now) {
@@ -209,6 +244,27 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
     window.addEventListener("resize", onResize);
 
     loadAtlases(() => { floorCanvas = null; });
+
+    // Stage 1 is painted in Tiled. Fetch it and, once it lands, throw away the
+    // ground already drawn so the next frame repaints from the map. Deliberately
+    // not awaited: a slow or missing map must not hold up the first frame, and
+    // until it arrives the stage draws itself the way it always did.
+    // Every place authored in Tiled. Each lands independently; whichever the
+    // player is standing in repaints as soon as its map arrives. Deliberately not
+    // awaited — a slow map must not hold up the first frame, and until it comes
+    // that place draws itself the way it always did.
+    for (const [id, path] of [
+        ["Stage01_Outside", "Maps/Outside/Stage01_Outside.tmx"],
+        ["cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"],
+        ["cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"],
+        ["cave", "Maps/Cave/Cave_Descent.tmx"],
+    ]) {
+        loadTmx(path).then(tmx => {
+            if (!tmx) return;
+            setStageMap(id, tmx);
+            floorCanvas = null;
+        });
+    }
 
     // Above ground and below it are different places and get different music.
     // Which one is playing is decided by the world's own stage every frame, not
@@ -360,6 +416,46 @@ export function debugTrainingDummy() {
 /// resistances. A seam for the probe to assert the depth without the world running.
 export function combatFacts() {
     try { return JSON.parse(DotNet.invokeMethod(ASM, "CombatFacts")); } catch { return null; }
+}
+
+/// The trading model as data — who keeps a shop, their stock, buy vs sell prices.
+/// A seam for the shop probe to assert the economy without steering to a merchant.
+export function merchantFacts() {
+    try { return JSON.parse(DotNet.invokeMethod(ASM, "MerchantFacts")); } catch { return null; }
+}
+
+/// Opens a named merchant's shop as the steered hero, through the same [E] path as
+/// play — so the probe can trade deterministically instead of hunting for a stall.
+export function debugTradeWith(npcId) {
+    try { DotNet.invokeMethod(ASM, "DebugTradeWith", npcId); } catch { /* engine not up */ }
+}
+
+/// Drops the steered hero on a tile — so the probe can stand at a doorway without
+/// steering the whole way there.
+export function debugWarp(tx, ty) {
+    try { DotNet.invokeMethod(ASM, "DebugWarp", tx, ty); } catch { /* engine not up */ }
+}
+
+/// The built map as plain data, for the Tiled export (tools/export-stage01.mjs).
+/// Stage 1 is generated from a fixed seed, so this is how its layout is captured
+/// once and written down as a .tmx. Never called from play.
+export function debugLoadInterior(id) {
+    try { DotNet.invokeMethod(ASM, "DebugLoadInterior", id); } catch { /* engine not up */ }
+}
+
+export function debugEnterCave() {
+    try { DotNet.invokeMethod(ASM, "DebugEnterCave"); } catch { /* engine not up */ }
+}
+
+export function debugExportMap() {
+    try { return JSON.parse(DotNet.invokeMethod(ASM, "DebugExportMap")); }
+    catch { return null; }
+}
+
+/// The world's NPCs with their merchant flag, read from the snapshot — so the probe
+/// can prove some villagers are marked as shops and others are not.
+export function npcMarkers() {
+    try { return JSON.parse(DotNet.invokeMethod(ASM, "Snapshot")).npcs ?? []; } catch { return []; }
 }
 
 /// Every sound family raised since the last reset. A sparse event lives in the

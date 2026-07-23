@@ -13,9 +13,42 @@ public enum Slot
     Necklace, Ring1, Ring2, Pants, Boots, Artifact,
     MainHand, OffHand, Shield,
     Pet, Mount,
+
+    /// <summary>Not worn anywhere — a potion, a bundle of herbs, a ration. Carried
+    /// in the pack and traded, but never equipped, so the paper doll ignores it.</summary>
+    None,
 }
 
 public enum Rarity { Common, Uncommon, Rare, Epic, Legendary, Mythic }
+
+/// <summary>What kind of thing an item is, for the shop's filters and for deciding
+/// which merchant will handle it. Derived from the slot when an item does not say,
+/// so ordinary gear needs no annotation.</summary>
+public enum ItemClass
+{
+    Weapon, Armor, Accessory, Consumable, Material, Quest, Magic, Food, Book, Tool,
+}
+
+/// <summary>Presentation for a category — the label and icon the shop's filter
+/// tabs use. Beside the enum so a new category is one row.</summary>
+public sealed record CategoryInfo(ItemClass Category, string Name, string Icon)
+{
+    public static readonly IReadOnlyList<CategoryInfo> All =
+    [
+        new(ItemClass.Weapon,     "Weapons",     "⚔"),
+        new(ItemClass.Armor,      "Armor",       "🛡"),
+        new(ItemClass.Accessory,  "Trinkets",    "◈"),
+        new(ItemClass.Consumable, "Consumables", "🧪"),
+        new(ItemClass.Material,   "Materials",   "◆"),
+        new(ItemClass.Magic,      "Magic",       "✦"),
+        new(ItemClass.Food,       "Food",        "🍞"),
+        new(ItemClass.Book,       "Books",       "📖"),
+        new(ItemClass.Tool,       "Tools",       "🔧"),
+        new(ItemClass.Quest,      "Quest",       "❗"),
+    ];
+
+    public static CategoryInfo Of(ItemClass c) => All.First(x => x.Category == c);
+}
 
 /// <summary>Presentation for a rarity, beside the enum so a new tier is one row
 /// and no component changes.</summary>
@@ -113,6 +146,53 @@ public sealed record Item
     /// that deals Fire rather than Slashing. Null means "whatever the type
     /// deals".</summary>
     public DamageType? DamageKind { get; init; }
+
+    /// <summary>What a merchant charges to sell this. The base value everything
+    /// else prices off — a merchant buys it back for a fraction. Zero means it is
+    /// not for sale.</summary>
+    public int Value { get; init; }
+
+    /// <summary>Overrides the category derived from the slot — a wand that is a
+    /// Magic item rather than a Weapon, a ration that is Food. Null derives it, so
+    /// ordinary gear needs no annotation.</summary>
+    public ItemClass? Category { get; init; }
+
+    /// <summary>What kind of thing this is, for the shop's filters. Weapons and
+    /// armour come from the slot; anything else says so with <see cref="Category"/>.</summary>
+    public ItemClass Kind => Category ?? Slot switch
+    {
+        Slot.MainHand or Slot.OffHand => ItemClass.Weapon,
+        Slot.Necklace or Slot.Ring1 or Slot.Ring2 or Slot.Artifact => ItemClass.Accessory,
+        Slot.None => ItemClass.Consumable,
+        _ => ItemClass.Armor,
+    };
+
+    /// <summary>Worn on the body, so the paper doll and equip both apply. False for
+    /// consumables and goods, which are carried but never equipped.</summary>
+    public bool IsEquippable => Slot != Slot.None;
+
+    /// <summary>The price to work from — the authored <see cref="Value"/> when it
+    /// has one, otherwise a figure derived from rarity and what the item does. The
+    /// fallback means every item can be sold for something sensible without each
+    /// one being priced by hand; shop stock sets an explicit value for the numbers
+    /// that matter.</summary>
+    public int Worth => Value > 0 ? Value : DerivedValue();
+
+    private int DerivedValue()
+    {
+        int baseByRarity = Rarity switch
+        {
+            Rarity.Common => 15, Rarity.Uncommon => 45, Rarity.Rare => 120,
+            Rarity.Epic => 320, Rarity.Legendary => 900, Rarity.Mythic => 2500, _ => 15,
+        };
+        int fromStats = (int)(Damage * 4 + Armour * 3 + (DamageMin + DamageMax) * 2.5f + CritChance * 200);
+        return baseByRarity + fromStats;
+    }
+
+    /// <summary>What the player pays a merchant to buy it, and gets selling it back.
+    /// A merchant sells dear and buys cheap; the gap is where its living is.</summary>
+    public int BuyPrice => Worth;
+    public int SellPrice => Math.Max(1, (int)MathF.Round(Worth * 0.45f));
 
     public bool IsWeapon => Weapon is not null;
     public WeaponClass? WeaponInfo => Weapon is { } w ? WeaponClass.Of(w) : null;

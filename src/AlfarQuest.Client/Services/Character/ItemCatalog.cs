@@ -28,6 +28,7 @@ public static class ItemCatalog
 
         foreach (var item in StartingGear.Everything) all[item.Id] = item;
         foreach (var item in WeaponRack.All) all[item.Id] = item;
+        foreach (var item in MerchantGoods.All) all[item.Id] = item;
         foreach (var recipe in RecipeBook.All) all[recipe.Output.Id] = recipe.Output;
 
         return all;

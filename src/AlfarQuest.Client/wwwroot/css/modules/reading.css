@@ -1,0 +1,78 @@
+/* Reading — the journal, letters, examined things.
+
+   Parchment, not the game's void-and-crystal panels: a page of writing should
+   look like paper under lamplight. Kept narrow and centred like an open book,
+   with a soft aged tint and a serif face. The journal (kind "journal") warms a
+   shade more, an examined object ("note") is plainer. */
+
+.aq-read-scrim {
+    position: fixed; inset: 0; z-index: 78;
+    background: rgba(4, 3, 10, .55);
+    animation: aq-read-fade .18s ease;
+}
+@keyframes aq-read-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.aq-read {
+    position: fixed; z-index: 82;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(560px, calc(100vw - 2rem));
+    max-height: min(78vh, 680px);
+    display: flex; flex-direction: column;
+    color: #2a2016;
+    background:
+        radial-gradient(120% 90% at 50% 0%, #efe2c4, #e6d6b2 55%, #ddcaa0);
+    border: 1px solid #b79a63;
+    border-radius: 10px;
+    box-shadow: 0 26px 70px rgba(0, 0, 0, .7), inset 0 0 60px -20px rgba(120, 90, 40, .4);
+    outline: none;
+    animation: aq-read-in .22s cubic-bezier(.2, .9, .3, 1.15);
+}
+.aq-read.journal { background: radial-gradient(120% 90% at 50% 0%, #f0e3c2, #e7d3a6 55%, #d8c191); }
+@keyframes aq-read-in {
+    from { opacity: 0; transform: translate(-50%, -47%) scale(.97); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.aq-read-head {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: .6rem; padding: .8rem 1.1rem .5rem;
+    border-bottom: 1px solid rgba(120, 90, 40, .3);
+}
+.aq-read-mark { font-size: 1.2rem; color: #6b4f24; }
+.aq-read-title {
+    margin: 0; font-family: 'Cinzel', serif; font-size: 1.05rem; color: #4a3413;
+    letter-spacing: .02rem;
+}
+.aq-read-close {
+    background: none; border: none; cursor: pointer; color: #7a5c2c;
+    font-size: 1rem; padding: .1rem .3rem;
+}
+.aq-read-close:hover { color: #3a2810; }
+
+.aq-read-body {
+    flex: 1; min-height: 0; overflow-y: auto;
+    padding: 1rem 1.3rem;
+    font-family: 'EB Garamond', serif; font-size: 1.02rem; line-height: 1.62;
+}
+.aq-read-para { margin: 0 0 .8rem; }
+.aq-read-para:last-child { margin-bottom: 0; }
+.aq-read.journal .aq-read-body { font-style: italic; }
+
+.aq-read-foot {
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+    padding: .6rem 1.1rem .8rem;
+    border-top: 1px solid rgba(120, 90, 40, .3);
+}
+.aq-read-turn {
+    font: inherit; font-family: 'EB Garamond', serif; font-size: .9rem; cursor: pointer;
+    padding: .3rem .9rem; border-radius: 7px; color: #4a3413;
+    background: rgba(120, 90, 40, .12); border: 1px solid rgba(120, 90, 40, .35);
+}
+.aq-read-turn:hover:not(:disabled) { background: rgba(120, 90, 40, .22); }
+.aq-read-turn:disabled { opacity: .35; cursor: not-allowed; }
+.aq-read-page { font-family: 'EB Garamond', serif; font-size: .84rem; color: #6b4f24; font-variant-numeric: tabular-nums; }
+.aq-read-hint { font-family: 'EB Garamond', serif; font-size: .8rem; color: #8a6c3c; font-style: italic; }
+
+@media (max-width: 620px) {
+    .aq-read { width: calc(100vw - 1.4rem); max-height: 84vh; }
+}

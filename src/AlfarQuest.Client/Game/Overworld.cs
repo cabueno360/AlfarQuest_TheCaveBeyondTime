@@ -6,7 +6,11 @@ namespace AlfarQuest.Client.Game;
 // =====================================================================
 public partial class World
 {
-    public const int OW_COLS = 80, OW_ROWS = 80;
+    // Four times the original 80×80, and wider than it is tall on purpose — the
+    // world is meant to open out east toward Kae Ychel and south toward Seoshe,
+    // not just run deeper north into the mountains. The original camp, crossroad,
+    // mine and cave keep their coordinates; everything past x72 / y80 is new.
+    public const int OW_COLS = 200, OW_ROWS = 128;
     public const string OverworldName = "The Approach";
 
     // Where the mine mouth sits, and how close you must get to be taken in.
@@ -16,21 +20,34 @@ public partial class World
 
     void BuildOverworld()
     {
+        // Stage 1 is authored in Tiled. If its map is registered, it is the source
+        // of truth and everything below is skipped; the generator underneath stays
+        // as the fallback, so a missing or broken map still yields a playable world
+        // and the cave and interiors are untouched by the migration.
+        // See Overworld.Tmx.cs and docs/mapping-standard.md.
+        if (Tiled.MapCatalog.Find(Tiled.MapCatalog.Stage01) is { } authored)
+        {
+            BuildOverworldFromTmx(authored);
+            return;
+        }
+
         Rev++;
         Stage = 1;
         COLS = OW_COLS; ROWS = OW_ROWS;
         Tiles = new byte[COLS, ROWS];
-        Props.Clear(); Arches.Clear(); Crystals.Clear(); Husks.Clear();
+        Props.Clear(); Arches.Clear(); Crystals.Clear(); Husks.Clear(); Portals.Clear(); Examinables.Clear(); Reading = null;
 
         // Everything starts as open grass; the blocking is carved in after.
         for (int x = 0; x < COLS; x++)
             for (int y = 0; y < ROWS; y++)
                 Tiles[x, y] = FLOOR;
 
-        BuildMountain();      // ZONE F — northern barrier
-        BuildRiver();         // ZONE C — river + the one bridge
-        BuildRoads();         // the dirt route linking every zone
-        BuildForest();        // ZONE B
+        BuildMountain();      // ZONE F — northern barrier, now the full width
+        BuildRiver();         // ZONE C — river down to the southern lowlands
+        BuildRoads();         // the dirt route + the east and coast roads
+        BuildForest();        // ZONE B — the original wood
+        BuildEastVegetation();   // the drying scrub of the Kae Ychel road
+        BuildSouthVegetation();  // the wet lowland forest toward the coast
         BuildSpawnCamp();     // ZONE A
         BuildCrossroad();     // ZONE D
         BuildMiningCamp();    // ZONE E
@@ -38,9 +55,14 @@ public partial class World
         BuildSecrets();       // waterfall cache + forest hollow
         BuildOptional();      // pond, crystal field, abandoned wagon
         BuildLandmarks();     // one memorable thing per area
+        BuildClericHamlet();  // the first enterable building — opens onto its own map
+        BuildEastReach();     // the road to Kae Ychel: caravan, ruins, watchtower
+        BuildSouthReach();    // the road to Seoshe: fishing steps, stones, smugglers
+        BuildMageSchool();    // the Academy outpost courtyard on the east road
+        BuildSeosheGate();    // the gate into Seoshe, on the coast road
         BuildStories();       // what happened here, told in objects
         PlaceNpcs();          // the village, and the last post before the graves
-        SpawnWildlife(64);    // ZONE-appropriate creatures, never inside a safe zone
+        SpawnWildlife(180);   // ZONE-appropriate creatures, never inside a safe zone
         PlaceOverworldRewards();  // zones to find, chests to open, seams to mine
 
         Spawn = TileCentre(13, 70);
@@ -71,7 +93,7 @@ public partial class World
         return false;
     }
 
-    void AddOw(float tx, float ty, string kind, float scale, bool solid, float radius)
+    public void AddOw(float tx, float ty, string kind, float scale, bool solid, float radius)
     {
         Props.Add(new Prop
         {

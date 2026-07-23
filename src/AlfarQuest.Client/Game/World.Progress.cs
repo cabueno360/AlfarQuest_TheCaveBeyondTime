@@ -16,6 +16,7 @@ public partial class World
         ClearedFor = 0f;
         _rng = new Random(42);
         Props.Clear(); Crystals.Clear(); Husks.Clear(); Shots.Clear(); Slashes.Clear(); Fx.Clear();
+        Portals.Clear(); Examinables.Clear(); Reading = null;
 
         BuildWorld();
         BuildChamber();

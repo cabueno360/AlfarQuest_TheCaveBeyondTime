@@ -27,6 +27,16 @@ builder.Services.AddSingleton<AlfarQuest.Client.Services.Character.CharacterWind
 // the engine's own loot stack by reference — a second instance would be a second
 // opinion about what is left in the chest.
 builder.Services.AddSingleton<LootState>();
+// The shop the player has open. Singleton because it holds each merchant's live
+// shelves for the session — a second instance would forget what was already
+// bought and quietly restock the shelf on the next visit.
+builder.Services.AddSingleton<ShopState>();
+// The journal, a letter, a thing looked closely at. Singleton so the reading
+// panel is wired once and every examinable in the world feeds the same window.
+builder.Services.AddSingleton<ReadState>();
+// The question menu a villager answers. Singleton so the engine's offer is
+// wired once and every talking NPC feeds the same window.
+builder.Services.AddSingleton<DialogueState>();
 
 builder.Services.AddAuthorizationCore();
 

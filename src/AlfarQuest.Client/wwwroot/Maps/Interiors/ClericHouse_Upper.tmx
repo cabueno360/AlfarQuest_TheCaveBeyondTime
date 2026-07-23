@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Cleric's House — Upstairs, painted with the Pixel Crawler interior set.
+     16x16 grid; one engine cell is a 2x2 block, so the map is 88x48.
+     Walls are the Walls layer (blocking); the kitchen's flagstones are the same
+     Ground layer with a stone surface. NPCs and heroes are NOT Pixel Crawler —
+     they stay on our own atlases and appear here as NPCSpawn objects. -->
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
+     width="88" height="48" tilewidth="16" tileheight="16" infinite="0"
+     nextlayerid="217" nextobjectid="47">
+ <properties>
+  <property name="Interior" value="cleric_house_upper"/>
+  <property name="DisplayName" value="The Cleric's House — Upstairs"/>
+  <property name="EngineTile" type="int" value="32"/>
+ </properties>
+ <tileset firstgid="1" source="../Tilesets/IntWalls.tsx"/>
+ <tileset firstgid="1026" source="../Tilesets/IntProps.tsx"/>
+ <tileset firstgid="1938" source="../Tilesets/Furniture.tsx"/>
+ <layer id="201" name="Ground" width="88" height="48">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="202" name="GroundDetails" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrt0MENglAURcG3ggpUrEXUWgTsRalWqYBbxI9xMZOcBk4VAAAAwH/5dFXftHVetHboq47plIZ07j1p6ZKfY7qmW7r729QjP6c0pyU9/W3ulafvtHoLAAAAAAAAAAAAAD+3A1zkCJI=</data>
+ </layer>
+ <layer id="203" name="Walls" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtWwuO4yAMxafhcxpC7n+V6aYSnn19Nd1ZTYkrFKSoovwMGGOe7a8QQpIQ2vHJ8dXjux3/5eN3P754fNvxheMrx/d11f+v+vc6ube5l+297J6vvTz0fOx9tN5nlOf6Bfqr/yjH9qnTLtA/j1+pfjT6K72+lkvPb/I4P2s8rZ8hX2h9CrXfiV6mv8G68z5stG9aLn3sBO01r+2rkdd9L9Bfo3ww+hODPhxfaDwhvtp7+/v4gebTDHqwvfLpiG8brQeOfwt/9xX3zeJj3ldr35kvssHnWl5e8CmekwT0veKbQvSLcS4D0RdofnzO2oDvkY+RrwOVZ4PPzk7KF29PTvNR+Zv7nhWQT9GBHt3ndyflU4/5BODrzPL35KT7PONcJMf5qDxP8iifzk66z28XD07z2ej+4Xvw7BRn8ZnemU7zUb1E6F70kFdN5vCRx33CesaTvuggr2bc89/67tmJ9HXU97zk1Qw+87pP8D7L8F720hdXS/wO3em9fqXf6y2IhzSQF+la37fpvyr/GR+40u/1ecRHGNdaRf/NTvp8BdytyCMO5CF/ZRL+oHzkrf8ivumh/7aJ+IOH/psJn2acfxX9V5zuE8aTLZw+yTOulumdN+I7fn9jf2i/amTXaAO7QxzwYQa7RJLHvGV3aWRXCNR+hF9EotfqX/tDvlV6LDtD/oHdYiSv2T4mhl0hDOwM1bgPRucqGfSinWOjc8n9sZ3F6p/tImxXseyJwu8JWHcv/GGfhD944r86PtuJV5G/xUn+8nuC7fVnp1l2E099Hu3M3vjDLL0lfQD+Gw17/yr6b3TUfxl/eHWPnqEvzsJ/myP+i/4Pt4n3uNc7yxN/+CT/h1l6yyy79E/0FtT3vfGH1VIj+Zuc5e9qif0sI/lFXuk978YM/g/ZEf9dLTG+Eth/9nSC1sIfGuGQ7L/qIa/qJP03O84H/R9usO4e+uJK+APiwwXW2dtfdtY7ykv/RfwB7QgryV8v/AHjNbYPsL/VxfBftMNUshd56YuryF/EcxB/8H6vz+Ajz/noe2LV+ItPsb8l8bW/zXo3evozI/7L/gbsjxaNuEv2V3gVF8n+AOhvIRRXWcifYKc89p+NuFMx/BUwvm80vtLL5WXgX2HR22i9dH1GcZgcT8v+BYjTByPOkv0BsL0V37uJHV+8D+Iq0f8gDOIouTwa/gz7IE50M+I0K9kruX414p9xX9OLfayDeNs22Oc48JtpBt9YfFiN+GbmG/YzsviK6ef6jH9bfkzWuYnGOcV3sOX/0AZx6JX8ZKLB1/sgfhnj3IPhBzOKZ2Y+KEY88cjPyIpn3gd+PZafjjXfYvQXjHhoPud/AJv8nUs=</data>
+ </layer>
+ <layer id="204" name="Buildings" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="205" name="Objects" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="206" name="Furniture" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtmrtOw0AQRUewjhsbCA0UFCQ0PFIBEn2aJA2v7wDR8BD8EfwMFEDHowJaUqQACi4CurXlyLOy175HupVXq9X1eLyzOyKEEEJIfbgMRK4C+uCKa3h7Q3+tGCMSmPzzjAy9tLEKX9agbs74W2D8WtmFt3sKsZf1/cw0so1rNvzx8BZrvYPuLWs+hbdnSt92x+iM+WHLI38/sNZP6MvxmveNzhjfWAxFWlA7ZD6sCwd816qMUnJTC8/a0FKJc27Ps3h4Rx4e/uXiHnztQ4MS+3vomb9z2M/Nc89cGF16TwghhBBCSswEarFJ3mE4YxnertBfZ2zD250M/latLks69xkon1ccw9uTCsdv0nlq0rnPUTjePOPwAp9foTfmCydEyAExNBVkv8+sGg+RyCP0BD1HunOvw9cNaLPGZ2DTMWILakKzMb853+gw9zqtL8p0D6/VA8b6ws5/D1gd6gsne3z8n/sp/2itHrAiKbK+OIe3Fyn+5ukBY1+oW9gX6hbt8xLeixNCCCGEEPLLN6hAKKs=</data>
+ </layer>
+ <layer id="207" name="AbovePlayer" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="208" name="Shadows" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <objectgroup id="209" name="PlayerSpawn">
+  <object id="1" name="PlayerSpawn" x="344.00" y="248.00">
+   <properties>
+    <property name="Type" value="PlayerSpawn"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="210" name="NPCSpawn">
+  <object id="2" name="mirka" x="104.00" y="94.40">
+   <properties>
+    <property name="NpcId" value="mirka"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="mirkafather" x="168.00" y="72.00">
+   <properties>
+    <property name="NpcId" value="mirkafather"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="211" name="Warp">
+  <object id="4" name="downstairs" x="344.00" y="216.00">
+   <properties>
+    <property name="DestinationMap" value="cleric_house"/>
+    <property name="DestinationSpawn" value="0.0,0.0"/>
+    <property name="Label" value="downstairs"/>
+    <property name="Verb" value="Go"/>
+    <property name="Radius" value="42"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="212" name="Interaction">
+  <object id="5" name="the vigil chair" x="65.60" y="94.40">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A hard wooden chair drawn up to the bedside, its seat worn smooth. He slept upright in it for the better part of a year, in his full armour, so as never to leave her."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="6" name="the Cleric's journal" x="142.40" y="88.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="journal"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="The Cleric's journal, in his own careful hand, left open on the nightstand the morning he followed Cerno down into the cave.␟Her father came in the dark with a stranger — Cerno, a warrior of Kaladash, grim and honest. He put into my hand a phial of panacea, drawn, he swore, from the Cave Beyond Time. I did not believe him. I drank his word like a dying man drinks water.␟The first month, the wasting slowed. Her fingers looked human again. She wakes only minutes a day, but each waking is more determined than the last. I have not told her of my bargain — only that through her father's diligence and the will of God, we found a way.␟A letter from my Order. More healers called to the war than exist to send; Blazwitz and Koerig have joined against Tellaran, and the line is pushed north. They speak of recalling me. Outside my window they light the corpse-pyres now, great pillars of flame, and all I can do is pray He accepts the departed.␟Three months, and her progress has stalled. Then her skin grew pale as the snow again, and bruises rose wherever I touched her, as though her flesh rejected me. The panacea's gift was only a loan. There has been no waking in weeks.␟Cerno comes tomorrow to lead me to the cave, and I will descend into the madness he promised. Mirka — tomorrow is the first time I will leave your side in nearly a year. By God, at least I had this year with you. Come, Cerno. Lead me on to damnation."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="the medicine table" x="192.00" y="120.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="Phials and cloths, a bowl of water gone cold, herbs ground to paste. Prayer, ritual, divination, every miracle he was blessed with — he tried them all on the wasting, and the wasting did not so much as slow."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="8" name="wilting flowers" x="158.40" y="110.40">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="Fresh flowers someone still brings to the bedside, though they wilt within a day in the cold of this room. A small, stubborn kindness."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="9" name="the Panacea phial" x="126.40" y="113.60">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="relic"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="The phial Cerno drew from the Cave Beyond Time — no larger than a green bean, its gilt water long since drunk, its wax seal broken. Six drops. It bought her a single month, and Cerno's price for it was the Cleric's own descent into madness."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="the master bed" x="568.00" y="88.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="His own bed, made and unslept-in. Why lie here, when she was three doors down and every night might be the last? He kept his vigil in the chair beside hers."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="the study desk" x="88.00" y="254.40">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A half-written sermon on righteousness, a map of the valley and its white-peaked mountains, a missive to the seminary begun and abandoned. He had run clean out of things to say to God."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="Mirka's things" x="312.00" y="302.40">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Search"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A chest of her belongings, folded and put away: a summer dress, a spindle, letters he wrote her before they married. He could not bear to look at them, and could not bear to throw them out."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="the balcony" x="616.00" y="254.40">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A narrow balcony over the village. From here you can see the frozen slopes where the sheep once grazed on shockingly green grass, and the smoke of the pyres. He came out here to pray where she could not hear him weep."/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="213" name="Props">
+  <object id="14" name="h_rug" x="110.40" y="129.60">
+   <properties>
+    <property name="Kind" value="h_rug"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="h_bed_mirka" x="104.00" y="113.60">
+   <properties>
+    <property name="Kind" value="h_bed_mirka"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.95"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="h_chair" x="65.60" y="94.40">
+   <properties>
+    <property name="Kind" value="h_chair"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.72"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="17" name="h_curtains" x="56.00" y="62.40">
+   <properties>
+    <property name="Kind" value="h_curtains"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" name="h_bedside" x="142.40" y="88.00">
+   <properties>
+    <property name="Kind" value="h_bedside"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.78"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="19" name="h_journal" x="142.40" y="76.80">
+   <properties>
+    <property name="Kind" value="h_journal"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="20" name="h_apothecary" x="192.00" y="120.00">
+   <properties>
+    <property name="Kind" value="h_apothecary"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.78"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="18"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="21" name="h_herbs" x="216.00" y="81.60">
+   <properties>
+    <property name="Kind" value="h_herbs"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="h_washstand" x="161.60" y="129.60">
+   <properties>
+    <property name="Kind" value="h_washstand"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="h_flowers" x="158.40" y="110.40">
+   <properties>
+    <property name="Kind" value="h_flowers"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="h_panacea" x="126.40" y="113.60">
+   <properties>
+    <property name="Kind" value="h_panacea"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="7"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="h_candelabra" x="62.40" y="72.00">
+   <properties>
+    <property name="Kind" value="h_candelabra"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="h_candle" x="219.20" y="136.00">
+   <properties>
+    <property name="Kind" value="h_candle"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" name="h_bed" x="568.00" y="88.00">
+   <properties>
+    <property name="Kind" value="h_bed"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.88"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="18"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" name="h_cupboard" x="625.60" y="78.40">
+   <properties>
+    <property name="Kind" value="h_cupboard"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" name="h_plant" x="504.00" y="120.00">
+   <properties>
+    <property name="Kind" value="h_plant"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" name="h_candle" x="632.00" y="62.40">
+   <properties>
+    <property name="Kind" value="h_candle"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" name="h_desk" x="88.00" y="254.40">
+   <properties>
+    <property name="Kind" value="h_desk"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" name="h_chair" x="88.00" y="276.80">
+   <properties>
+    <property name="Kind" value="h_chair"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.62"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" name="h_records" x="110.40" y="241.60">
+   <properties>
+    <property name="Kind" value="h_records"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" name="h_bookshelf" x="65.60" y="225.60">
+   <properties>
+    <property name="Kind" value="h_bookshelf"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" name="h_bookshelf" x="65.60" y="299.20">
+   <properties>
+    <property name="Kind" value="h_bookshelf"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" name="h_candle" x="136.00" y="222.40">
+   <properties>
+    <property name="Kind" value="h_candle"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" name="ladder" x="344.00" y="216.00">
+   <properties>
+    <property name="Kind" value="ladder"/>
+    <property name="Variant" value="28"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" name="h_chest" x="312.00" y="302.40">
+   <properties>
+    <property name="Kind" value="h_chest"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="h_cabinet" x="376.00" y="302.40">
+   <properties>
+    <property name="Kind" value="h_cabinet"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.82"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" name="h_bench" x="616.00" y="254.40">
+   <properties>
+    <property name="Kind" value="h_bench"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.72"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="41" name="h_flowers" x="504.00" y="225.60">
+   <properties>
+    <property name="Kind" value="h_flowers"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="42" name="h_plant" x="552.00" y="225.60">
+   <properties>
+    <property name="Kind" value="h_plant"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="43" name="h_flowers_yellow" x="600.00" y="225.60">
+   <properties>
+    <property name="Kind" value="h_flowers_yellow"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="44" name="h_flowers" x="648.00" y="225.60">
+   <properties>
+    <property name="Kind" value="h_flowers"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="45" name="h_candelabra" x="488.00" y="312.00">
+   <properties>
+    <property name="Kind" value="h_candelabra"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="46" name="h_candle" x="648.00" y="312.00">
+   <properties>
+    <property name="Kind" value="h_candle"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="214" name="TreasureSpawn">
+ </objectgroup>
+ <objectgroup id="215" name="LightingMarker">
+ </objectgroup>
+ <objectgroup id="216" name="MusicZone">
+ </objectgroup>
+</map>

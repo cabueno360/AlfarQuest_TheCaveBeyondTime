@@ -37,6 +37,9 @@ const FAMILIES = {
     spell_impact: ["spell-impact-1", "spell-impact-2", "spell-impact-3"],
     chest:        ["chest-1", "chest-2"],
     chest_rare:   ["chest-2", "unlock"],
+    // A purchase or a sale. No coin recording of its own, so it borrows the
+    // latch of a lock and the lid of a chest — a small, dry "transaction" click.
+    coin:         ["unlock", "chest-1"],
     mine:         ["mine-1", "mine-2", "mine-3", "mine-4", "mine-5"],
     chop:         ["chop-1", "chop-2", "chop-3", "chop-4"],
 };
@@ -47,7 +50,7 @@ const FAMILY_GAIN = {
     step_dirt: 0.5, step_stone: 0.5, step_water: 0.5,
     hit: 0.9, crit: 1.0, swing: 0.55, bow: 0.6, block: 0.7,
     magic_fire: 0.85, magic_frost: 0.85, magic_holy: 0.85, spell_impact: 0.8,
-    chest: 0.9, chest_rare: 1.0, mine: 0.8, chop: 0.8, dash: 0.5,
+    chest: 0.9, chest_rare: 1.0, coin: 0.85, mine: 0.8, chop: 0.8, dash: 0.5,
 };
 
 const MASTER = 0.7;      // headroom under the music

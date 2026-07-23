@@ -1,7 +1,7 @@
 // =====================================================================
 //  One draw function per entity kind, dispatched by drawEntity().
 // =====================================================================
-import { ATLAS, animFrame, drawSprite, getOutsideFrames, getCharFrames } from "../atlas.js";
+import { ATLAS, animFrame, drawSprite, getOutsideFrames, getCharFrames, HOUSE_OBJ } from "../atlas.js";
 import { CRYSTAL_CELLS } from "../world/tiles.js";
 import { ctx, hexA } from "../gfx.js";
 
@@ -37,6 +37,12 @@ function drawCrystal(e) {
 }
 
 function drawProp(e) {
+    if (e.kind === "clericHouse") return drawBuilding(e, ATLAS.clericHouse);
+    // Suppressed when the place is drawn from its own map: the furniture and the
+    // scenery are painted into it, and drawing the sprite too would stack one on
+    // the other. The engine still keeps the prop, because it carries the collision.
+    if (e.painted) return;
+    if (e.kind && e.kind.startsWith("h_")) return drawHouseObj(e);
     if (e.kind) return drawOutProp(e);
     const a = ATLAS.deco;
     if (!a.ready) return;
@@ -46,6 +52,49 @@ function drawProp(e) {
     ctx.ellipse(e.x, e.y - 3, a.cw * e.s * 0.32, a.cw * e.s * 0.11, 0, 0, 7);
     ctx.fill();
     drawSprite(a, e.cell[0], e.cell[1], e.x, e.y, e.s, e.flip, 1, 0);
+}
+
+// A whole-image building sprite (the Cleric's cottage), bottom-anchored on its
+// tile like any prop but drawn from its own PNG rather than an atlas cell. Its
+// door sits at the base centre, where the entrance portal is.
+function drawBuilding(e, a) {
+    if (!a || !a.ready || !a.img) return;
+    const dw = a.img.width * e.s, dh = a.img.height * e.s;
+    ctx.fillStyle = "rgba(0,0,0,0.30)";
+    ctx.beginPath();
+    ctx.ellipse(e.x, e.y - 2, dw * 0.34, dw * 0.12, 0, 0, 7);
+    ctx.fill();
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(a.img, e.x - dw / 2, e.y - dh, dw, dh);
+    ctx.restore();
+}
+
+// A Cleric's-house furniture / decor / story sprite, drawn whole from its own PNG
+// (HOUSE_OBJ[name]) like the cottage, but small and placed room by room. Rugs lie
+// flat and centred on their tile; everything else stands bottom-anchored with a
+// grounding shadow, so a bed or bookcase sits on the floor like the actors do.
+function drawHouseObj(e) {
+    const rec = HOUSE_OBJ[e.kind.slice(2)];
+    if (!rec || !rec.ready || !rec.img) return;
+    const dw = rec.img.width * e.s, dh = rec.img.height * e.s;
+    const flat = e.kind === "h_rug" || e.kind === "h_rug_stone";
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    if (flat) {
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(rec.img, e.x - dw / 2, e.y - dh / 2, dw, dh);
+        ctx.restore();
+        return;
+    }
+    ctx.fillStyle = "rgba(0,0,0,0.34)";
+    ctx.beginPath();
+    ctx.ellipse(e.x, e.y - 2, dw * 0.36, dw * 0.13, 0, 0, 7);
+    ctx.fill();
+    ctx.translate(e.x, 0);
+    if (e.flip) ctx.scale(-1, 1);
+    ctx.drawImage(rec.img, -dw / 2, e.y - dh, dw, dh);
+    ctx.restore();
 }
 
 // Stage 1 props come from the packed outdoor atlas, addressed by name. Frames
@@ -76,6 +125,10 @@ function drawOutProp(e) {
 // A villager. Two poses in the atlas; the second is used when facing left, so
 // they appear to turn toward whoever is speaking to them.
 function drawNpc(e) {
+    // Someone keeping to their bed is already painted into the furniture (Mirka,
+    // in the bed prop cut from the second-floor plan). The engine still has them
+    // standing there to be talked to; only the upright figure is suppressed.
+    if (e.hidden) return;
     const a = ATLAS.chars;
     const frames = getCharFrames();
     if (!a.ready || !frames) return;
@@ -90,12 +143,31 @@ function drawNpc(e) {
     groundShadow(e.x, e.y - 2, dw * 0.40, dw * 0.15);
     drawFramed(a, f, e.x, e.y, dw, dh, facingLeft);
 
-    // A quiet marker so a villager reads as approachable from a distance.
+    // A merchant wears a coin over their head at all times — the one clear tell,
+    // from across the map, that this villager is a shop and not just someone to
+    // talk to. It bobs so it reads as a floating marker, not part of the sprite.
+    if (e.merchant) {
+        const bob = Math.sin(performance.now() / 380 + e.x) * 2.2;
+        const cy = e.y - dh - 12 + bob;
+        ctx.save();
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        // A soft disc behind the coin so it holds up over any ground colour.
+        ctx.beginPath(); ctx.arc(e.x, cy, 9, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(30,22,12,0.55)"; ctx.fill();
+        ctx.strokeStyle = "rgba(240,217,154,0.85)"; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.font = "bold 13px 'EB Garamond', serif";
+        ctx.fillStyle = "#f0d99a";
+        ctx.fillText("◈", e.x, cy + 0.5);
+        ctx.restore();
+    }
+
+    // A quiet marker so a villager reads as approachable from a distance. Sits
+    // above the coin for a merchant, so the two do not overlap.
     if (e.inReach) {
         ctx.fillStyle = "rgba(240,217,154,0.9)";
         ctx.font = "bold 13px 'EB Garamond', serif";
         ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-        ctx.fillText("!", e.x, e.y - dh - 6);
+        ctx.fillText("!", e.x, e.y - dh - (e.merchant ? 26 : 6));
     }
 }
 
