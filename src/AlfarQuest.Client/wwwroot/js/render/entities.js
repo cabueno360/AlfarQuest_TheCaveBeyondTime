@@ -135,8 +135,17 @@ function drawNpc(e) {
     const list = frames[e.kind];
     if (!list || !list.length) return;
 
+    // The frame table is a grab-bag, not an animation: for some villagers the
+    // second entry is not the same person turned round but a different subject
+    // altogether — the blacksmith's is an anvil, the woodcutter's is a bust with
+    // no body under it. Indexing into it turned a man into a workbench whenever
+    // he faced west, and left a head floating over the grass.
+    //
+    // So pick the FULL-BODY frame — the tallest — and mirror it. Every villager
+    // in the sheet has one, and a mirrored figure is right where a wrong one
+    // never is.
     const facingLeft = Math.cos(e.f) < 0;
-    const f = list[facingLeft && list.length > 1 ? 1 : 0];
+    const f = list.reduce((a, b) => (b.h > a.h ? b : a));
     const s = 1.15;
     const dw = f.w * s, dh = f.h * s;
 

@@ -90,23 +90,47 @@ const RIM = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 ///
 /// Each cell is clipped while its rim is drawn, or the outline of one sprite
 /// would bleed a pixel into the sprite packed next to it.
+///
+/// The rim is DILATED ONCE and laid down ONCE. Drawing the four offsets straight
+/// onto the result at 0.75 each accumulated: a pixel with the silhouette on two
+/// sides came out at 0.94, on four sides at 0.996 — which is to say opaque. The
+/// one-pixel gaps in these sprites are exactly the places that have the
+/// silhouette on several sides, so they filled in solid: the guard's hand welded
+/// to his body, the woodcutter's two legs fused into one stump, the old man's
+/// feet swallowed. The art was whole the whole time; the rim was eating it.
+///
+/// Uniform 0.45 is enough to separate a figure from ground this busy — which is
+/// the only thing the rim is for — while leaving a one-pixel gap reading as a
+/// gap.
+const RIM_ALPHA = 0.45;
+
 function makeOutlined(img, cells) {
     const dark = makeMask(img, "#0b0812");
+    // The dilation, at full strength, on its own canvas. Overlapping offsets
+    // here cost nothing: opaque over opaque is still opaque.
+    const spread = document.createElement("canvas");
+    spread.width = img.width; spread.height = img.height;
+    const sg = spread.getContext("2d");
+    sg.imageSmoothingEnabled = false;
+
     const c = document.createElement("canvas");
     c.width = img.width; c.height = img.height;
     const g = c.getContext("2d");
     g.imageSmoothingEnabled = false;
 
     for (const r of cells) {
-        g.save();
-        g.beginPath(); g.rect(r.x, r.y, r.w, r.h); g.clip();
-        g.globalAlpha = 0.75;
+        sg.save();
+        sg.beginPath(); sg.rect(r.x, r.y, r.w, r.h); sg.clip();
         for (const [ox, oy] of RIM)
-            g.drawImage(dark, r.x, r.y, r.w, r.h, r.x + ox, r.y + oy, r.w, r.h);
-        g.globalAlpha = 1;
-        g.drawImage(img, r.x, r.y, r.w, r.h, r.x, r.y, r.w, r.h);
-        g.restore();
+            sg.drawImage(dark, r.x, r.y, r.w, r.h, r.x + ox, r.y + oy, r.w, r.h);
+        sg.restore();
     }
+
+    g.globalAlpha = RIM_ALPHA;
+    g.drawImage(spread, 0, 0);
+    g.globalAlpha = 1;
+    for (const r of cells)
+        g.drawImage(img, r.x, r.y, r.w, r.h, r.x, r.y, r.w, r.h);
     return c;
 }
 

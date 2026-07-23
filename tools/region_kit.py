@@ -169,6 +169,14 @@ GROUND_COVER = {
     "orePile": ("Rocks",      [(0, 8), (1, 8), (2, 8)]),
 }
 
+# The small stuff that stops grass reading as a painted field: leaf sprigs,
+# fern clumps, reeds. Kept apart from GROUND_COVER because these are ground
+# TEXTURE — they go under everything and carry no collision — while a bush is a
+# thing you walk around.
+TUFTS = [(1, 9), (2, 9), (3, 9), (1, 10), (2, 10), (3, 10),
+         (1, 12), (2, 12), (3, 12), (1, 13), (2, 13), (3, 13)]
+CLUMPS = [(7, 11), (7, 14), (8, 11), (9, 11), (10, 11), (11, 11)]
+
 _ALPHA = {}
 
 
@@ -177,6 +185,59 @@ def alpha_of(setname):
         im = Image.open(os.path.join(PC, SETS[setname])).convert("RGBA")
         _ALPHA[setname] = im.split()[3].load(), im.width // T, im.height // T
     return _ALPHA[setname]
+
+
+# The tree canopies need MORE THAN ONE LAYER.
+#
+# A tile layer holds one tile per cell, so two trees whose boxes overlap cannot
+# both be on it — the second one stamped wins every contested cell and slices the
+# first in half. That is where the canopies with no trunk and the trunks with no
+# canopy come from, and no amount of thinning the wood fixes it: any wood dense
+# enough to look like a wood has overlapping crowns.
+#
+# So trees are dealt onto several layers, back to front. Sorted by their foot,
+# each tree takes the FIRST layer none of its tiles are taken on; a tree that
+# conflicts is pushed to a higher layer, which is drawn later and therefore in
+# front — which is also exactly where a nearer tree belongs.
+# Six, because four still left a third of a dense wood fighting over the last
+# one. The count is the depth of overlap the wood actually has, and the last
+# layer is the only one where a tree can still be cut.
+TREE_LAYERS = ["Trees", "Trees2", "Trees3", "Trees4", "Trees5", "Trees6"]
+
+
+def tree_box(kind, ex, ey, pick):
+    """The tile rectangle a tree occupies, bottom-centred on its cell.
+    Returns (tileset, sheet_col, sheet_row, map_x, map_y, w, h)."""
+    opts = TREES[kind]
+    setname, (bx, by, bw, bh) = opts[pick % len(opts)]
+    tx0, ty0 = bx // T, by // T
+    tw = -(-(bx + bw) // T) - tx0
+    th = -(-(by + bh) // T) - ty0
+    mx, my = ex * SUB + 1, ey * SUB + 1
+    return setname, tx0, ty0, mx - tw // 2, my - th + 1, tw, th
+
+
+def plant(trees, paint, pick):
+    """Stamp a list of (ex, ey, kind) across the tree layers. `paint` is the
+    caller's (layer, mx, my, gid) setter; `pick` chooses a variant per tree.
+    Returns how many landed on each layer, which is the honest measure of how
+    crowded a wood is."""
+    taken = [set() for _ in TREE_LAYERS]
+    used = [0] * len(TREE_LAYERS)
+    for (ex, ey, kind) in sorted(trees, key=lambda t: (t[1], t[0])):
+        if kind not in TREES: continue
+        setname, tx0, ty0, ox, oy, tw, th = tree_box(kind, ex, ey, pick(ex, ey))
+        cells = [(ox + dx, oy + dy) for dy in range(th) for dx in range(tw)
+                 if opaque(setname, tx0 + dx, ty0 + dy)]
+        li = next((i for i in range(len(TREE_LAYERS))
+                   if not any(c in taken[i] for c in cells)), len(TREE_LAYERS) - 1)
+        taken[li].update(cells)
+        used[li] += 1
+        for dy in range(th):
+            for dx in range(tw):
+                if not opaque(setname, tx0 + dx, ty0 + dy): continue
+                paint(TREE_LAYERS[li], ox + dx, oy + dy, gid(setname, tx0 + dx, ty0 + dy))
+    return used
 
 
 def opaque(setname, col, row):

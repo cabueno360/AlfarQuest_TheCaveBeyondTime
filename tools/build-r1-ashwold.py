@@ -679,9 +679,9 @@ if at(*SPAWN) not in WALKABLE:
 # =====================================================================
 #  7. PAINT IT
 # =====================================================================
-LNAMES = ["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Shore",
-          "Cliffs", "CliffFace", "Buildings", "Walls", "Objects", "Trees",
-          "AbovePlayer", "Shadows"]
+LNAMES = (["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Shore",
+           "Cliffs", "CliffFace", "Buildings", "Walls", "Objects"]
+          + K.TREE_LAYERS + ["AbovePlayer", "Shadows"])
 OBJ_ORDER = ["PlayerSpawn", "NPCSpawn", "EnemySpawn", "Warp", "Interaction",
              "Props", "TreasureSpawn", "Discovery", "SafeZone", "MusicZone"]
 
@@ -778,18 +778,29 @@ for (ex, ey, mat, roof, bays, storeys, name, door) in BUILDINGS:
     for i, (c, r) in enumerate(((6, 1), (7, 1), (6, 2), (7, 2), (6, 3), (7, 3))):
         paint("Buildings", dxm + (i % 2), dym + (i // 2) - 1, K.gid("BuildProps", c, r))
 
-# ---- the trees and the undergrowth ----
-for (ex, ey, kind) in TREES:
-    opts = K.TREES[kind]
-    setname, (bx, by, bw, bh) = opts[int(_hash(ex, ey, 7) * len(opts)) % len(opts)]
-    tx0, ty0 = bx // K.T, by // K.T
-    tw, th = -(-(bx + bw) // K.T) - tx0, -(-(by + bh) // K.T) - ty0
-    mx, my = ex * K.SUB + 1, ey * K.SUB + 1
-    for dy in range(th):
-        for dx in range(tw):
-            sx_, sy_ = tx0 + dx, ty0 + dy
-            if not K.opaque(setname, sx_, sy_): continue
-            paint("Trees", mx - tw // 2 + dx, my - th + 1 + dy, K.gid(setname, sx_, sy_))
+# ---- the ground itself. Flat green is the single loudest thing separating this
+#      from the art it is trying to look like: real ground has sprigs, fern and
+#      reed in it. Sparse, unplanned, and under everything, so it reads as
+#      texture rather than as objects somebody placed.
+_tufts = 0
+for _tx in range(COLS):
+    for _ty in range(ROWS):
+        if at(_tx, _ty) != ".": continue
+        h = _hash(_tx, _ty, 21)
+        if h > 0.16: continue
+        mx_, my_ = _tx * K.SUB + (1 if _hash(_tx, _ty, 22) > 0.5 else 0), _ty * K.SUB + 1
+        # Reed and fern only where the ground is damp — beside the water, in the
+        # carr — and leaf sprigs everywhere else.
+        near_water = any(at(_tx + dx, _ty + dy) == "~"
+                         for dx in range(-2, 3) for dy in range(-2, 3))
+        pool = K.CLUMPS if (near_water and h < 0.09) else K.TUFTS
+        c, r = K.vary(pool, _tx, _ty)
+        paint("GroundDetails", mx_, my_, K.gid("Vegetation", c, r))
+        _tufts += 1
+
+# ---- the trees, dealt across several layers so that overlapping crowns keep
+#      each other whole (see region_kit.plant) ----
+_per_layer = K.plant(TREES, paint, lambda ex, ey: int(_hash(ex, ey, 7) * 997))
 
 for (ex, ey, kind) in COVER:
     setname, opts = K.GROUND_COVER[kind]
@@ -899,7 +910,8 @@ water = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] == "~")
 print(f"wrote {path_out}  ({MW}x{MH} tiles = {COLS}x{ROWS} cells, "
       f"{os.path.getsize(path_out)/1024:.0f} KB)")
 print(f"  buildings {len(BUILDINGS)}   npcs {len(NPCS)}   placed props {len(PROPS)}")
-print(f"  trees {len(TREES)}   undergrowth {len(COVER)}")
+print(f"  trees {len(TREES)} across {len(K.TREE_LAYERS)} layers {_per_layer}   "
+      f"undergrowth {len(COVER)}   ground tufts {_tufts}")
 print(f"  examinables {len(EXAMINABLES)}   containers {len(CONTAINERS)}   "
       f"discoveries {len(DISCOVERIES)}")
 if _moved:

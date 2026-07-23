@@ -26,11 +26,17 @@ await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
 await settle(13000);            // every .tmx has to land before the region is stood up
 
-for (let i = 0; i < 4; i++) {
-  await page.click('.aq-levelup-go', { timeout: 1200 }).catch(() => {});
-  await settle(250);
-  if (await page.locator('.aq-cw.shown').count()) { await page.keyboard.press('c'); await settle(250); }
-}
+// Walking a region earns XP from its discoveries, so the level-up card comes up
+// mid-tour and photographs itself instead of the place. Cleared at every stop,
+// not just at the start.
+const clearLevel = async () => {
+  for (let i = 0; i < 4; i++) {
+    await page.click('.aq-levelup-go', { timeout: 900 }).catch(() => {});
+    await settle(220);
+    if (await page.locator('.aq-cw.shown').count()) { await page.keyboard.press('c'); await settle(220); }
+  }
+};
+await clearLevel();
 
 const ok = await page.evaluate(async r => (await import('/js/game.js')).debugLoadRegion(r), REGION);
 console.log('region stood up:', ok);
@@ -46,7 +52,9 @@ const SPOTS = [
   ['16-westwood', 8, 22], ['17-landing', 17, 35], ['18-gate', 7, 30],
 ];
 for (const [name, x, y] of SPOTS) {
-  await warp(x, y); await settle(650);
+  await warp(x, y); await settle(500);
+  await clearLevel();
+  await settle(350);
   await page.screenshot({ path: `tools/shots/region-${REGION}-${name}.png` });
 }
 const hud = await page.evaluate(async () => (await import('/js/game.js')).hudSnapshot());

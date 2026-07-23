@@ -157,8 +157,14 @@ def at(x, y):
     return rows[y][x]
 
 blank = [0] * (MW * MH)
-LNAMES = ["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Shore", "Cliffs",
-          "CliffFace", "Buildings", "Objects", "Trees", "AbovePlayer", "Shadows"]
+# The canopies need more than one layer: a tile layer holds one tile per cell,
+# so two trees whose crowns overlap cannot both be on it and the second one
+# stamped slices the first in half — which is where the canopies with no trunk
+# and the trunks with no canopy came from.
+TREE_LAYERS = ["Trees", "Trees2", "Trees3", "Trees4", "Trees5", "Trees6"]
+LNAMES = (["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Shore", "Cliffs",
+           "CliffFace", "Buildings", "Objects"] + TREE_LAYERS
+          + ["AbovePlayer", "Shadows"])
 layers = {n: list(blank) for n in LNAMES}
 
 def put(layer, mx, my, g):
@@ -269,27 +275,46 @@ TREES = {
                   ("Vegetation", (13 * 16, 4 * 16, 2 * 16, 5 * 16))],
 }
 
-def stamp_tree(kind, mx, my):
+def tree_cells(kind, mx, my):
+    """Which sheet tiles a tree occupies and where they land, or None."""
     opts = TREES.get(kind)
-    if not opts: return False
+    if not opts: return None
     setname, box = opts[((mx * 92837111) ^ (my * 689287499)) % len(opts)]
     tx0, ty0, tw, th = box_tiles(setname, *box)
     alpha, scols, srows = sheet_alpha(setname)
     ox, oy = mx - tw // 2, my - th + 1          # bottom-centred on the prop cell
+    cells = []
     for dy in range(th):
         for dx in range(tw):
-            sx, sy = tx0 + dx, ty0 + dy
-            if sx >= scols or sy >= srows: continue
-            if not any(alpha[sx * T + px, sy * T + py] > 8
+            # NOT `sx`: at module scope that is xml.sax.saxutils, and shadowing
+            # it turns every object written afterwards into an AttributeError.
+            scx, scy = tx0 + dx, ty0 + dy
+            if scx >= scols or scy >= srows: continue
+            if not any(alpha[scx * T + px, scy * T + py] > 8
                        for py in range(0, T, 2) for px in range(0, T, 2)):
                 continue                        # blank source tile — leave the map alone
-            put("Trees", ox + dx, oy + dy, gid(setname, sx, sy))
-    return True
+            cells.append((ox + dx, oy + dy, setname, scx, scy))
+    return cells
 
+# Dealt back to front: sorted by their foot, each tree takes the first layer none
+# of its tiles are taken on, so a tree that conflicts is pushed onto a later
+# layer — which is drawn in front, which is where a nearer tree belongs anyway.
+_taken = [set() for _ in TREE_LAYERS]
+_used = [0] * len(TREE_LAYERS)
 planted = 0
+_trees = []
 for p in w["props"]:
     mx, my = int(p["x"]) // T, int(p["y"]) // T
-    if stamp_tree(p["kind"], mx, my): planted += 1
+    cells = tree_cells(p["kind"], mx, my)
+    if cells: _trees.append((my, mx, cells))
+for _my, _mx, cells in sorted(_trees):
+    keys = [(c[0], c[1]) for c in cells]
+    li = next((i for i in range(len(TREE_LAYERS))
+               if not any(k in _taken[i] for k in keys)), len(TREE_LAYERS) - 1)
+    _taken[li].update(keys); _used[li] += 1
+    for ox, oy, setname, scx, scy in cells:
+        put(TREE_LAYERS[li], ox, oy, gid(setname, scx, scy))
+    planted += 1
 
 # ------------------------------------------------------------------- write ----
 def encode(data):
@@ -387,5 +412,5 @@ path = os.path.join(MAPDIR, "Stage01_Outside.tmx")
 open(path, "w").write(tmx)
 print(f"wrote {path}  ({MW}x{MH} @{T}px, {os.path.getsize(path)/1024:.0f} KB)")
 print("tilesets:", ", ".join(f"{n}(gid {GID[n][0]})" for n in SETS))
-print(f"trees stamped: {planted}")
+print(f"trees stamped: {planted} across {len(TREE_LAYERS)} layers {_used}")
 print("objects:", ", ".join(f"{k} {len(v)}" for k, v in og.items() if v))
