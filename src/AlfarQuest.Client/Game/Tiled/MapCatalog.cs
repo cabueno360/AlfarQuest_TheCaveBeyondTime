@@ -34,6 +34,18 @@ public static class MapCatalog
     /// same each time and only the population changes.</summary>
     public const string Cave = "cave";
 
+    /// <summary>The hand-authored overworld REGIONS that will replace Stage 1.
+    ///
+    /// Kept apart from <see cref="Migrated"/> on purpose: a region registers and
+    /// can be walked and judged, but it does not become the overworld. Stage 1
+    /// stays on its own map until the ring of regions is closed and the cave is
+    /// reachable again, because half a world is not a world and the game has to
+    /// stay finishable between iterations.</summary>
+    public static readonly (string Id, string Path)[] Regions =
+    [
+        ("r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"),
+    ];
+
     static readonly Dictionary<string, TmxMap> Maps = [];
 
     /// <summary>Parses and registers a map. Bad map data must never take the game

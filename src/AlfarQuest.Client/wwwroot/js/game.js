@@ -85,7 +85,10 @@ function render(s) {
         try { snap = JSON.parse(DotNet.invokeMethod(ASM, "Snapshot")); }
         catch (err) { console.error("world snapshot failed", err); }
         floorCanvas = null; scenery = null; builtRev = s.rev;
-        if (!firstBuild) fadeAlpha = 1;    // a map swap, not the initial load
+        // A door earns a fade; a seam must not have one. Walking from one region
+        // into the next is the same walk, and the whole point of cutting the
+        // world into maps is that the player cannot tell where the cuts are.
+        if (!firstBuild && !snap?.seam) fadeAlpha = 1;
     }
     if (!snap) return;
     // Merge the static geometry back in so the rest of the frame reads as before.
@@ -264,6 +267,10 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
         ["seoshe", "Maps/Interiors/Seoshe.tmx"],
         ["thieves_warehouse", "Maps/Interiors/ThievesWarehouse.tmx"],
         ["cave", "Maps/Cave/Cave_Descent.tmx"],
+        // The hand-authored regions Stage 1 is being rebuilt as. They load like
+        // any other map; until the ring is closed only the debug seam stands one
+        // up, so nothing here changes what a player sees.
+        ["r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"],
     ]) {
         loadTmx(path).then(tmx => {
             if (!tmx) return;
@@ -447,6 +454,10 @@ export function debugWarp(tx, ty) {
 /// once and written down as a .tmx. Never called from play.
 export function debugLoadInterior(id) {
     try { DotNet.invokeMethod(ASM, "DebugLoadInterior", id); } catch { /* engine not up */ }
+}
+
+export function debugLoadRegion(id) {
+    try { return DotNet.invokeMethod(ASM, "DebugLoadRegion", id); } catch { return false; }
 }
 
 export function debugEnterCave() {

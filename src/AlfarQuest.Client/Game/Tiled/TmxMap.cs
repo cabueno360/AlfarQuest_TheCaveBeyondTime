@@ -19,6 +19,11 @@ public sealed class TmxMap
     public int Width, Height, TileWidth, TileHeight;
     public Dictionary<string, string> Properties = [];
 
+    /// <summary>A map-level custom property — what the map says about itself:
+    /// its display name, its stage, the regions it adjoins.</summary>
+    public string Property(string key, string fallback = "") =>
+        Properties.TryGetValue(key, out var v) && v.Length > 0 ? v : fallback;
+
     /// <summary>Layer name → global tile ids, row-major, 0 for an empty cell.</summary>
     public Dictionary<string, int[]> TileLayers = [];
 

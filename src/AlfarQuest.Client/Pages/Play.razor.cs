@@ -266,7 +266,8 @@ public sealed partial class Play : IAsyncDisposable
         try
         {
             using var http = new System.Net.Http.HttpClient { BaseAddress = new Uri(Nav.BaseUri) };
-            foreach (var (id, path) in Game.Tiled.MapCatalog.Migrated)
+            foreach (var (id, path) in Game.Tiled.MapCatalog.Migrated
+                                        .Concat(Game.Tiled.MapCatalog.Regions))
             {
                 var xml = await http.GetStringAsync(path);
                 // A map that is simply not there is not an error: the dev server

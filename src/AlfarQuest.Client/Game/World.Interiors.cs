@@ -61,7 +61,7 @@ public partial class World
     /// (the cave). The renderer uses it to draw the same .tmx the engine built
     /// from, so picture and geometry can never drift apart.</summary>
     public string MapId => IsInterior ? CurrentInterior ?? ""
-                         : Stage == 1 ? Tiled.MapCatalog.Stage01
+                         : Stage == 1 ? CurrentRegion ?? Tiled.MapCatalog.Stage01
                          : Stage == 2 ? Tiled.MapCatalog.Cave : "";
 
     /// <summary>The doorway within reach of the steered hero, or null. Recomputed

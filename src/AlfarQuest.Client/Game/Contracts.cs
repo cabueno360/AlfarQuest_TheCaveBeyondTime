@@ -29,6 +29,7 @@ public class WorldSnapshot
     public int rev, tile, cols, rows, stage;
     public float chamberW, chamberH;
     public List<string> map = new();
+    public bool seam;          // this rev is a region seam, not a doorway
     public List<RProp> props = new();
     public List<RVec> arches = new();
     public List<RNpc> npcs = new();

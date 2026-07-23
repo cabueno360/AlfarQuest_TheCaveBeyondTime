@@ -11,6 +11,7 @@ public partial class World
         rev = Rev, tile = TILE, cols = COLS, rows = ROWS, stage = Stage,
         chamberW = ChamberW, chamberH = ChamberH,
         map = MapRows(),
+        seam = TakeCrossedSeam(),
         props = Props.ConvertAll(p => new RProp { x = p.X, y = p.Y, s = p.S, cx = p.Cx, cy = p.Cy, k = p.Kind, v = p.Variant, flip = p.Flip, paint = p.Painted }),
         arches = Arches.ConvertAll(a => new RVec { x = a.X, y = a.Y }),
         npcs = Npcs.ConvertAll(n => new RNpc { x = n.Pos.X, y = n.Pos.Y, f = n.Facing,

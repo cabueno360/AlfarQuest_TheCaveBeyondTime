@@ -18,7 +18,7 @@ public partial class World
     // numbers its depths.
     public string RegionName =>
         IsInterior ? (InteriorCatalog.Find(CurrentInterior!)?.Name ?? "Indoors")
-        : Stage == 1 ? OverworldName
+        : Stage == 1 ? (CurrentRegion is null ? OverworldName : RegionTitle)
         : Level <= RegionNames.Length ? RegionNames[Level - 1] : $"The Deep — level {Level}";
 
     // =================================================================

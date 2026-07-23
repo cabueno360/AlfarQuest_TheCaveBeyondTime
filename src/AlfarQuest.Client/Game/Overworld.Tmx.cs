@@ -113,6 +113,11 @@ public partial class World
     void ReadTerrain(TmxMap m)
     {
         var cliffs = m.Layer("Cliffs");
+        // A building's FACADE is on the Walls layer, and the wall you can see is
+        // the wall you cannot walk through. The roof above it lives on Buildings,
+        // which blocks nothing, so the eaves overhang the doorstep the way eaves
+        // do instead of fencing it off.
+        var walls = m.Layer("Walls");
         var water = m.Layer("Water");
         var bridges = m.Layer("Bridges");
         var roads = m.Layer("Roads");
@@ -127,7 +132,7 @@ public partial class World
                     m.Painted(l, mx, my) || m.Painted(l, mx + 1, my) ||
                     m.Painted(l, mx, my + 1) || m.Painted(l, mx + 1, my + 1);
 
-                Tiles[x, y] = Any(cliffs) ? ROCK
+                Tiles[x, y] = Any(cliffs) || Any(walls) ? ROCK
                             : Any(water) ? WATER
                             : Any(bridges) ? BRIDGE
                             : Any(roads) ? PATH

@@ -51,6 +51,11 @@ public static class GameEngine
     [JSInvokable]
     public static void DebugEnterCave() => _world?.DebugEnterCave();
 
+    // Stands up a hand-authored overworld region, so one can be walked and judged
+    // before the ring is closed and Stage 1 moves onto it. Never called from play.
+    [JSInvokable]
+    public static bool DebugLoadRegion(string id) => _world?.LoadRegion(id) ?? false;
+
     // The map-migration seam: the built world as plain data, so it can be written
     // out as a Tiled .tmx. Never called from play — see World.Debug.
     [JSInvokable]
