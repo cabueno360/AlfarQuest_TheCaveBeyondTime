@@ -254,9 +254,16 @@ function drawHusk(e) {
     }
 }
 
+/// A hero who has a sheet of their own. Every such sheet answers the same
+/// nine-column contract as atlas_party — loop, swing, channel — so giving a hero
+/// their own art is one entry here and one atlas, and nothing about how a hero
+/// is drawn has to change.
+const HERO_ATLAS = { Mage: "mage" };
+
 function drawHero(e) {
     const { x, y, r } = e;
-    const a = ATLAS.party;
+    const own = ATLAS[HERO_ATLAS[e.name]];
+    const a = own?.ready ? own : ATLAS.party;      // the shared sheet is the fallback
     const row = a.rows[e.name];
     if (!a.ready || row === undefined) return;
 
@@ -288,7 +295,8 @@ function drawHero(e) {
     // Ability outranks the basic attack: DoAbility can fire on the same frame
     // as an attack, and the channel pose is the more dramatic of the two.
     if (e.abl > 0) f = a.ability.col;
-    drawSprite(a, f, row, x, y + r * 0.95, 1, Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash, OUTLINE);
+    drawSprite(a, f, row, x, y + r * 0.95, a.scale ?? 1,
+               Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash, OUTLINE);
 }
 
 /// Stamps a packed frame with a dark rim behind it.

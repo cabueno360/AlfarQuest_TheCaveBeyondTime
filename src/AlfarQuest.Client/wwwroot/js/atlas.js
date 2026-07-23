@@ -9,6 +9,23 @@
 import { ctx } from "./gfx.js";
 
 export const ATLAS = {
+    // The Mage has his own sheet. It came as an 8x8 grid of sixty-four VARIATIONS
+    // rather than an animation, so tools/import-mage-atlas.py chooses which nine
+    // are the loop, the swing and the channel and cuts them into one row — the
+    // same nine-column contract atlas_party already answers to, which is why
+    // drawHero needs to know nothing except which atlas to reach for.
+    //
+    // Its cells are 32px against the party sheet's 63, so it carries its own
+    // scale: measured, not guessed — the party's Mage stands 54px tall and this
+    // one fills 31 of its 32, so 1.74 puts the two at the same height.
+    mage: {
+        src: "assets/atlas_mage.png", cw: 32, ch: 32, ground: 31, scale: 1.74,
+        img: null, white: null, outlined: null, ready: false,
+        rows:   { Mage: 0 },
+        frames: { Mage: 6 },
+        attack:  { first: 6, count: 2, duration: 0.22 },
+        ability: { col: 8, duration: 0.45 },
+    },
     party: {
         // cw/ch/ground are reported by tools/extract-sprites.mjs — keep in sync.
         src: "assets/atlas_party.png", cw: 51, ch: 63, ground: 61, img: null, white: null, outlined: null, ready: false,
