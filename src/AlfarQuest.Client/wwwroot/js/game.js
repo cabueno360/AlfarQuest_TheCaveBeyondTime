@@ -294,6 +294,7 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
         // any other map; until the ring is closed only the debug seam stands one
         // up, so nothing here changes what a player sees.
         ["r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"],
+        ["r2_whispering_wood", "Maps/Regions/R2_WhisperingWood.tmx"],
     ]) {
         loadTmx(path).then(tmx => {
             if (!tmx) return;

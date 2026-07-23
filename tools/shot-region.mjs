@@ -43,14 +43,25 @@ console.log('region stood up:', ok);
 await settle(1500);
 
 // The player's own line through the place, in order, plus the corners of it.
-const SPOTS = [
-  ['01-arrival', 11, 30], ['02-bridge', 19, 30], ['03-mill', 27, 24],
-  ['04-smithy', 26, 29], ['05-street', 32, 30], ['06-square', 38, 31],
-  ['07-inn', 40, 27], ['08-backlane', 36, 38], ['09-fields', 52, 46],
-  ['10-minroad', 37, 22], ['11-ford', 37, 17], ['12-shrine', 33, 11],
-  ['13-graves', 30, 9], ['14-woodyard', 29, 14], ['15-eastroad', 56, 33],
-  ['16-westwood', 8, 22], ['17-landing', 17, 35], ['18-gate', 7, 30],
-];
+const TOURS = {
+  r1_ashwold: [
+    ['01-arrival', 11, 30], ['02-bridge', 19, 30], ['03-mill', 27, 24],
+    ['04-smithy', 26, 29], ['05-street', 32, 30], ['06-square', 38, 31],
+    ['07-inn', 40, 27], ['08-backlane', 36, 38], ['09-fields', 52, 46],
+    ['10-minroad', 37, 22], ['11-ford', 37, 17], ['12-shrine', 33, 11],
+    ['13-graves', 30, 9], ['14-woodyard', 29, 14], ['15-eastroad', 56, 33],
+    ['16-westwood', 8, 22], ['17-landing', 17, 35], ['18-gate', 7, 30],
+  ],
+  r2_whispering_wood: [
+    ['01-fromvillage', 36, 52], ['02-roadclimb', 36, 44], ['03-valeturn', 34, 34],
+    ['04-footbridge', 29, 33], ['05-vale', 20, 33], ['06-clerichouse', 19, 36],
+    ['07-chapel', 16, 34], ['08-valegraves', 14, 32], ['09-ford', 36, 18],
+    ['10-cross', 37, 23], ['11-mountainroad', 52, 13], ['12-delvercamp', 52, 20],
+    ['13-burn', 48, 42], ['14-kilns', 46, 41], ['15-deepwood', 12, 16],
+    ['16-hollow', 11, 47], ['17-highseat', 20, 15], ['18-eastedge', 68, 13],
+  ],
+};
+const SPOTS = TOURS[REGION] ?? TOURS.r1_ashwold;
 for (const [name, x, y] of SPOTS) {
   await warp(x, y); await settle(500);
   await clearLevel();

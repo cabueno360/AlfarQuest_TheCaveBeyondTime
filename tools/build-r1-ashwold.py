@@ -904,6 +904,12 @@ tmx = f'''<?xml version="1.0" encoding="UTF-8"?>
 path_out = os.path.join(OUT, "R1_Ashwold.tmx")
 open(path_out, "w").write(tmx)
 
+_edges = K.save_edges(REGION_ID, G, COLS, ROWS)
+print(f"  seam north: road at {K.runs(_edges['north'], ',t=')}  "
+      f"water at {K.runs(_edges['north'], '~')}  rock at {K.runs(_edges['north'], '#')}")
+print(f"  seam east : road at {K.runs(_edges['east'], ',t=')}  "
+      f"water at {K.runs(_edges['east'], '~')}  rock at {K.runs(_edges['east'], '#')}")
+
 solid = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] in "#B")
 road = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] in ",tc=")
 water = sum(1 for x in range(COLS) for y in range(ROWS) if G[x][y] == "~")

@@ -44,6 +44,7 @@ public static class MapCatalog
     public static readonly (string Id, string Path)[] Regions =
     [
         ("r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"),
+        ("r2_whispering_wood", "Maps/Regions/R2_WhisperingWood.tmx"),
     ];
 
     static readonly Dictionary<string, TmxMap> Maps = [];

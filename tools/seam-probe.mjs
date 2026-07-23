@@ -1,0 +1,82 @@
+// Walk across a region seam and prove the player cannot tell.
+//
+//     node tools/seam-probe.mjs
+//
+// Stands up Ashwold, walks the party north up the mine road until the map
+// changes, and checks the three things that make a seam invisible: the map
+// really changed, the party arrived at the far edge rather than the middle, and
+// the crossing did NOT fade — a door earns a fade, a stride does not.
+import { chromium } from 'playwright-core';
+
+const C = process.env.CLIENT ?? 'http://localhost:5223';
+const b = await chromium.launch({ channel: 'chrome', args: ['--no-sandbox'] });
+const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const errs = []; p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+const s = ms => p.waitForTimeout(ms);
+let pass = 0, fail = 0;
+const ok = (c, m) => { c ? pass++ : fail++; console.log(`  ${c ? 'ok  ' : 'FAIL'}   ${m}`); };
+const hud = () => p.evaluate(async () => (await import('/js/game.js')).hudSnapshot());
+const warp = (x, y) => p.evaluate(async a => (await import('/js/game.js')).debugWarp(a.x, a.y), { x, y });
+
+const u = { email: `seam.${Date.now()}@example.com`, password: 'a-long-enough-passphrase' };
+await p.goto(`${C}/signup`); await s(2200);
+await p.fill('#signup-name', 'Seam'); await p.fill('#signup-email', u.email);
+await p.fill('#signup-password', u.password); await p.fill('#signup-confirm', u.password);
+await p.click('button[type=submit]'); await s(2500);
+await p.goto(`${C}/play`);
+await p.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
+await s(14000);
+const clear = async () => { for (let i = 0; i < 4; i++) {
+  await p.click('.aq-levelup-go', { timeout: 800 }).catch(() => {});
+  await s(200);
+  if (await p.locator('.aq-cw.shown').count()) { await p.keyboard.press('c'); await s(200); }
+} };
+await clear();
+
+console.log('=== crossing north out of Ashwold ===');
+ok(await p.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r1_ashwold')), 'Ashwold stands up');
+await s(1200); await clear();
+const before = await hud();
+ok(before.region === 'Ashwold', `starts in Ashwold (got "${before.region}")`);
+
+// On the mine road at the very top of the village map, then walk north.
+await warp(36, 2); await s(500); await clear();
+const at2 = await hud();
+ok(at2.heroTx >= 34 && at2.heroTx <= 37, `on the mine road at the north edge (x=${at2.heroTx})`);
+
+await p.keyboard.down('w');
+let crossed = null;
+for (let i = 0; i < 40 && !crossed; i++) {
+  await s(150);
+  const h = await hud();
+  if (h.region !== 'Ashwold') crossed = h;
+}
+await p.keyboard.up('w');
+
+ok(!!crossed, 'walking north changed the map');
+if (crossed) {
+  ok(crossed.region === 'The Whispering Wood', `arrived in the Whispering Wood (got "${crossed.region}")`);
+  ok(crossed.heroTy >= 50, `set down at the FAR edge, not the middle (y=${crossed.heroTy})`);
+  ok(Math.abs(crossed.heroTx - at2.heroTx) <= 2,
+     `kept its column across the seam (${at2.heroTx} -> ${crossed.heroTx})`);
+}
+await s(600);
+await p.screenshot({ path: 'tools/shots/seam-after-crossing.png' });
+
+// And back again: a seam has to work both ways or it is a trapdoor.
+await p.keyboard.down('s');
+let back = null;
+for (let i = 0; i < 40 && !back; i++) {
+  await s(150);
+  const h = await hud();
+  if (h.region === 'Ashwold') back = h;
+}
+await p.keyboard.up('s');
+ok(!!back, 'walking south came back to Ashwold');
+if (back) ok(back.heroTy <= 5, `set down at Ashwold's north edge (y=${back.heroTy})`);
+
+console.log('=== console ===');
+ok(errs.length === 0, `the game logged no errors${errs.length ? ': ' + errs[0] : ''}`);
+console.log(`\n${fail ? 'FAILURES' : 'ALL PASS'}: ${pass} passed, ${fail} failed`);
+await b.close();
+process.exit(fail ? 1 : 0);

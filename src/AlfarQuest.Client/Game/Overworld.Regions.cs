@@ -77,9 +77,11 @@ public partial class World
 
         var hero = Party[Active].Pos;
         int cols = m.Width / MapSub, rows = m.Height / MapSub;
-        // One stride in from the far edge, so the party lands on the map rather
-        // than on the line and immediately triggers the crossing back.
-        const float Inset = TILE * 1.2f;
+        // Two cells in from the far edge. One was not enough: the arriving
+        // position has to clear the OTHER side's trigger band by a margin, or a
+        // party that walks north lands inside the southern band and is bounced
+        // straight back, forever.
+        const float Inset = TILE * 2f;
         var at = new Vec(
             dx > 0 ? Inset : dx < 0 ? cols * TILE - Inset : Math.Clamp(hero.X, Inset, cols * TILE - Inset),
             dy > 0 ? Inset : dy < 0 ? rows * TILE - Inset : Math.Clamp(hero.Y, Inset, rows * TILE - Inset));
@@ -96,7 +98,11 @@ public partial class World
     {
         if (CurrentRegion is null || Party.Count == 0 || Busy) return;
         var p = Party[Active].Pos;
-        const float Edge = TILE * 0.9f;
+        // The hero is already clamped to a full cell in from the wall
+        // (World.Collision.Clamp, pad = TILE), so a band NARROWER than that can
+        // never be reached and the seam never fires. It has to be wider than the
+        // clamp, not narrower than the map.
+        const float Edge = TILE * 1.15f;
 
         if (p.X <= Edge && CrossSeam(_west, -1, 0)) return;
         if (p.X >= COLS * TILE - Edge && CrossSeam(_east, 1, 0)) return;

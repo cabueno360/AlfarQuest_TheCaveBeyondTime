@@ -27,9 +27,30 @@ page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push(String(e)));
 
 const settle = (ms = 500) => page.waitForTimeout(ms);
-const hud = () => page.evaluate(async () => (await import('/js/game.js')).hudSnapshot());
+/// The HUD, waited for rather than sampled. hudSnapshot() answers null while the
+/// world is paused — which it is behind a level-up card and behind the character
+/// sheet the card hands off to — so a bare read taken a beat too early reports
+/// "stage undefined" and takes three checks down with it, for no reason but the
+/// clock. Every read retries for a second before giving up.
+const hudRaw = () => page.evaluate(async () => (await import('/js/game.js')).hudSnapshot());
+const hud = async () => {
+  for (let i = 0; i < 10; i++) {
+    const h = await hudRaw();
+    if (h && h.stage !== undefined) return h;
+    await settle(120);
+  }
+  return await hudRaw();
+};
 const warp = (x, y) => page.evaluate(async a => (await import('/js/game.js')).debugWarp(a.x, a.y), { x, y });
-const markers = () => page.evaluate(async () => (await import('/js/game.js')).npcMarkers());
+const markersRaw = () => page.evaluate(async () => (await import('/js/game.js')).npcMarkers());
+const markers = async () => {
+  for (let i = 0; i < 10; i++) {
+    const m = await markersRaw();
+    if (m && m.length) return m;
+    await settle(120);
+  }
+  return (await markersRaw()) ?? [];
+};
 const press = k => page.keyboard.press(k);
 
 const clearLevelUp = async () => {
@@ -65,7 +86,16 @@ await page.click('button[type=submit]');
 await settle(2500);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
-await settle(1500);
+// Wait for the world to actually BE there rather than for a guess at how long
+// that takes. Eight .tmx files are fetched at startup now, and a fixed sleep
+// that was long enough for four reads the world mid-build: stage undefined, no
+// villagers, and three checks failing for no reason but the clock.
+await page.waitForFunction(async () => {
+  const g = await import('/js/game.js');
+  const h = g.hudSnapshot();
+  return h && h.stage === 1 && (h.party?.length ?? 0) > 0;
+}, null, { timeout: 30000 });
+await settle(1200);
 await clearLevelUp();
 
 const start = await hud();

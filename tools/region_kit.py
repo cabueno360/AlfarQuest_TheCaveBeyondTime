@@ -329,6 +329,51 @@ def house_tiles(material, roof, bays=1, storeys=1):
     return walls, roofs, (width, wall_h + ROOF_H - ROOF_DROP)
 
 
+# ----------------------------------------------------------------- the seams
+#  A region's edge is a CONTRACT with its neighbour. Written down when a region
+#  is built and read by the next one, so a road that leaves Ashwold at a given
+#  column enters the wood at the same column — by construction, not by somebody
+#  remembering. A comment saying "the road is at x=35" is a comment; this is the
+#  actual row of ground, and if it stops matching the next build says so.
+EDGES = os.path.join("tools", "refs", "regions")
+
+
+def save_edges(region_id, G, cols, rows):
+    """Write this region's four borders: the outermost line of ground on each."""
+    import json
+    os.makedirs(EDGES, exist_ok=True)
+    data = {
+        "cols": cols, "rows": rows,
+        "north": "".join(G[x][0] for x in range(cols)),
+        "south": "".join(G[x][rows - 1] for x in range(cols)),
+        "west":  "".join(G[0][y] for y in range(rows)),
+        "east":  "".join(G[cols - 1][y] for y in range(rows)),
+    }
+    with open(os.path.join(EDGES, region_id + ".json"), "w") as f:
+        json.dump(data, f, indent=1)
+    return data
+
+
+def load_edges(region_id):
+    import json
+    path = os.path.join(EDGES, region_id + ".json")
+    return json.load(open(path)) if os.path.exists(path) else None
+
+
+def runs(profile, chars):
+    """The spans of `chars` along an edge, as (start, end) inclusive. What the
+    next region needs to know: where the road is, where the water is."""
+    out, i = [], 0
+    while i < len(profile):
+        if profile[i] in chars:
+            j = i
+            while j + 1 < len(profile) and profile[j + 1] in chars: j += 1
+            out.append((i, j)); i = j + 1
+        else:
+            i += 1
+    return out
+
+
 # --------------------------------------------------------------------- output
 def encode(data):
     return base64.b64encode(zlib.compress(struct.pack(f"<{len(data)}I", *data), 9)).decode()

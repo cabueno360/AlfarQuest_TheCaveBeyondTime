@@ -6,6 +6,26 @@ public static class NpcCatalog
 {
     public static readonly IReadOnlyList<NpcDefinition> All =
     [
+        // ---- the Whispering Wood, and the chapel hamlet in its vale ----
+        // The wood's people are not the village's people: they live off it, not
+        // off the road, and they all know somebody the cave has taken.
+        new() { Id = "collier", Kind = "npcWoodcutter", Name = "Ash-Hand Weyl", Role = "Charcoal Burner",
+                Lines = ["A kiln wants three days and no sleep. Rush it and you get smoke and grief.",
+                         "Ashwold's forge burns what I make. That is the whole of my trade.",
+                         "The wood is quieter this year. I do not say that as a good thing."] },
+        new() { Id = "forester", Kind = "npcHunter", Name = "Ilsa", Role = "Forester",
+                Lines = ["Stay on the road above the ford. Below it the ground lies to you.",
+                         "I mark the trees that are safe to fell. Lately I have been marking fewer.",
+                         "Deer will not cross the high path any more. Ask yourself what taught them that."] },
+        new() { Id = "chapel_keeper", Kind = "npcPriest", Name = "Brother Enoch", Role = "Chapel Keeper",
+                Lines = ["The Light is not a lamp you carry. It is one you are seen by.",
+                         "Every soul that goes up the mine road is written in my book. I have run out of pages twice.",
+                         "The Cleric's wife lies in that house. Pray at her door, not in it."] },
+        new() { Id = "vale_widow", Kind = "npcOldWoman", Name = "Goodwife Marrow", Role = "Of the Vale",
+                Lines = ["I have buried a husband and two brothers out of this vale.",
+                         "The bell rings for a delve going up. It rings twice for one coming back.",
+                         "Take bread before the ford. There is nothing to eat past it."] },
+
         new() { Id = "elder", Kind = "npcOldMan", Name = "Old Halvard", Role = "Elder",
                 Services = NpcServices.Quest,
                 Lines = ["The mine took my son's crew. Do not go in light.",
