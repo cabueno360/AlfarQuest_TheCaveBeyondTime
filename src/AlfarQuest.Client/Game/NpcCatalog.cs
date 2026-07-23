@@ -6,6 +6,23 @@ public static class NpcCatalog
 {
     public static readonly IReadOnlyList<NpcDefinition> All =
     [
+        // ---- Deepdelve, the pit under the pass ----
+        // What is left of a working mine after the thing below it stopped giving
+        // ore and started taking crews.
+        new() { Id = "pit_captain", Kind = "npcBlacksmith", Name = "Captain Orlo", Role = "Pit Captain",
+                Lines = ["I sign them in and I sign them out. The second column has gone quiet.",
+                         "The seam was good for nine years. Then it was not a seam any more.",
+                         "You want the mouth, it is up the switchback. I will not walk you to it."] },
+        new() { Id = "winch_hand", Kind = "npcWagoner", Name = "Bel", Role = "Winch Hand",
+                Lines = ["The gear is greased and the drum is sound. Nothing to wind up.",
+                         "Last cage I sent down came back up with the rope cut clean. Cut, not frayed.",
+                         "Load's still on that cart. Been on it since the feast day."] },
+        new() { Id = "stranded_delver", Kind = "npcMerchant", Name = "Yeska", Role = "Delver",
+                Services = NpcServices.Shop,
+                Lines = ["I sell what the last lot did not need. They will not be needing it.",
+                         "Rope, oil, a good lamp. Go down without all three and do not come back.",
+                         "I have been at this mouth eleven days. I have not gone in."] },
+
         // ---- the Whispering Wood, and the chapel hamlet in its vale ----
         // The wood's people are not the village's people: they live off it, not
         // off the road, and they all know somebody the cave has taken.

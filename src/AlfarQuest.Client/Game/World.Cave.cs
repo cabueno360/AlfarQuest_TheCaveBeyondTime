@@ -48,6 +48,11 @@ public partial class World
 
     public static Region Reg(string key) => Array.Find(Regions, r => r.Key == key)!;
 
+    /// <summary>What the cave is, when nothing tells it otherwise. The authored
+    /// map overrides both; the generator underneath has never had a size of its
+    /// own and used to take the overworld's.</summary>
+    public const int CAVE_COLS = 88, CAVE_ROWS = 56;
+
     void BuildWorld()
     {
         Rev++;

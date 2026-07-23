@@ -151,8 +151,14 @@ public partial class World
     public void ExitInterior()
     {
         var back = _interiorReturn;
+        var region = CurrentRegion;
         CurrentInterior = null;
-        BuildOverworld();      // deterministic; also bumps Rev and clears entities
+        // Come back out into the world you went in from. BuildOverworld only ever
+        // knows Stage 1, so a door entered from a region used to put the party
+        // down on the OLD map at the region's coordinates — the picture and the
+        // ground disagreeing, with nothing to say so.
+        if (region is null || !StandRegion(region))
+            BuildOverworld();  // deterministic; also bumps Rev and clears entities
         PlaceParty(back);
         Camera = back;
     }

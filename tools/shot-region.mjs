@@ -60,6 +60,14 @@ const TOURS = {
     ['13-burn', 48, 42], ['14-kilns', 46, 41], ['15-deepwood', 12, 16],
     ['16-hollow', 11, 47], ['17-highseat', 20, 15], ['18-eastedge', 68, 13],
   ],
+  r3_deepdelve: [
+    ['01-pass', 4, 13], ['02-cleft', 9, 13], ['03-passout', 15, 16],
+    ['04-bowl', 26, 24], ['05-pitfloor', 34, 27], ['06-pithead', 40, 24],
+    ['07-office', 34, 30], ['08-bunkhouse', 29, 24], ['09-tarn', 24, 33],
+    ['10-pump', 26, 37], ['11-tips', 33, 39], ['12-southtrack', 31, 48],
+    ['13-switchback', 45, 24], ['14-turn', 45, 18], ['15-shelf', 50, 14],
+    ['16-mouth', 54, 14], ['17-cerno', 52, 14], ['18-lastwatch', 56, 14],
+  ],
 };
 const SPOTS = TOURS[REGION] ?? TOURS.r1_ashwold;
 for (const [name, x, y] of SPOTS) {

@@ -75,6 +75,54 @@ await p.keyboard.up('s');
 ok(!!back, 'walking south came back to Ashwold');
 if (back) ok(back.heroTy <= 5, `set down at Ashwold's north edge (y=${back.heroTy})`);
 
+// ------------------------------------------------------------------
+console.log('\n=== east out of the wood, into Deepdelve ===');
+ok(await p.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r2_whispering_wood')),
+   'the wood stands up');
+await s(1200); await clear();
+// On the mountain road at the wood's east edge, then walk east.
+await warp(70, 13); await s(500); await clear();
+const at3 = await hud();
+ok(at3.region === 'The Whispering Wood', `starts in the wood (got "${at3.region}")`);
+await p.keyboard.down('d');
+let east = null;
+for (let i = 0; i < 40 && !east; i++) {
+  await s(150);
+  const h = await hud();
+  if (h.region !== 'The Whispering Wood') east = h;
+}
+await p.keyboard.up('d');
+ok(!!east, 'walking east changed the map');
+if (east) {
+  ok(east.region === 'Deepdelve', `arrived in Deepdelve (got "${east.region}")`);
+  ok(east.heroTx <= 5, `set down at the far edge (x=${east.heroTx})`);
+  ok(Math.abs(east.heroTy - at3.heroTy) <= 2,
+     `kept its row across the seam (${at3.heroTy} -> ${east.heroTy})`);
+}
+
+// ------------------------------------------------------------------
+console.log('\n=== and the world can reach the cave again ===');
+// The whole reason Deepdelve had to exist: until it did, nothing in the new
+// Stage 1 had a way down, which is why the old map was still the one being played.
+await p.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r3_deepdelve'));
+await s(1200); await clear();
+// Below the mouth, walking up to it: the trigger is a radius of about a cell
+// and a half, so an approach that passes two cells to the side misses it.
+await warp(54, 16); await s(600); await clear();
+const shelf = await hud();
+ok(shelf.stage === 1, `on the shelf, above ground (stage ${shelf.stage})`);
+await p.keyboard.down('w');
+let down = null;
+for (let i = 0; i < 30 && !down; i++) {
+  await s(160);
+  const h = await hud();
+  if (h.stage === 2) down = h;
+}
+await p.keyboard.up('w');
+ok(!!down, 'walking into the mouth carried the party down');
+if (down) ok(down.level === 1, `and it is the first depth (level ${down.level})`);
+await p.screenshot({ path: 'tools/shots/seam-into-the-cave.png' });
+
 console.log('=== console ===');
 ok(errs.length === 0, `the game logged no errors${errs.length ? ': ' + errs[0] : ''}`);
 console.log(`\n${fail ? 'FAILURES' : 'ALL PASS'}: ${pass} passed, ${fail} failed`);

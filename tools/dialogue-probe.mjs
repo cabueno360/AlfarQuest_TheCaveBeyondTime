@@ -52,12 +52,43 @@ await page.click('button[type=submit]');
 await settle(2500);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
+// Wait for the world to BE there, not for a guess at how long that takes. Nine
+// .tmx files are fetched at startup now; a fixed sleep that was long enough for
+// four reads the world mid-build and finds the generator's villagers standing
+// where the map's ought to be.
+await page.waitForFunction(async () => {
+  const g = await import('/js/game.js');
+  const h = g.hudSnapshot();
+  return h && h.stage === 1 && (h.party?.length ?? 0) > 0;
+}, null, { timeout: 30000 });
 await settle(1500);
 await clearLevelUp();
 
+/// Put the party at a tile and CONFIRM they got there.
+///
+/// debugWarp does nothing while the world is paused, and the world is paused
+/// behind a level-up card — which arrives unbidden the moment a discovery pays
+/// out. Warping blind then meant standing next to whoever happened to be near
+/// the spawn and testing them instead, which is how this probe came to report
+/// that Mirka's father was a shopkeeper called Mother Sena.
+const standAt = async (x, y) => {
+  for (let i = 0; i < 4; i++) {
+    await clearLevelUp();
+    await warp(x, y);
+    await settle(350);
+    const h = await hud();
+    if (h && Math.abs(h.heroTx - x) <= 1 && Math.abs(h.heroTy - y) <= 1) {
+      await clearLevelUp();       // one may have popped on arrival
+      await settle(250);
+      return h;
+    }
+  }
+  return await hud();
+};
+
 console.log('\n=== the question menu ===');
 // Mirka's father stands on the path below the Cleric's house.
-await warp(22, 26); await settle(400); await clearLevelUp(); await warp(22, 26); await settle(400);
+await standAt(22, 26);
 const before = await hud();
 check('Mirka\'s Father can be spoken to', before?.promptVerb === 'Talk to', `"${before?.promptVerb} ${before?.promptName}"`);
 
@@ -73,6 +104,10 @@ const greeting = (await page.locator('.aq-talk-greeting').textContent().catch(()
 check('he greets you before the questions', greeting.length > 20, `"${greeting.slice(0, 46)}…"`);
 
 const topics = page.locator('.aq-talk-topic');
+// Wait for the questions to actually be in the window before reading or clicking
+// any of them. The window opens a frame before its list is filled, and on a
+// busy machine that gap is wide enough to click into an empty menu.
+await topics.first().waitFor({ state: 'visible', timeout: 10000 });
 const nTopics = await topics.count();
 check('every question from the concept is offered', nTopics === 11, `${nTopics} questions`);
 
@@ -123,7 +158,7 @@ check('and the hero is released', after?.promptVerb === 'Talk to', `"${after?.pr
 
 console.log('\n=== a villager with no menu still just talks ===');
 // The coast fisher has no topics — he should still use the canvas balloon.
-await warp(48, 107); await settle(400); await clearLevelUp(); await warp(48, 107); await settle(400);
+await standAt(48, 107);
 await page.keyboard.press('e');
 await settle(500);
 const plain = await hud();

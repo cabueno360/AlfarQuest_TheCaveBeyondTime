@@ -43,6 +43,21 @@ public partial class World
     /// plus the four neighbours it names.</summary>
     public bool LoadRegion(string id, Vec? arriveAt = null)
     {
+        if (!StandRegion(id)) return false;
+        var at = arriveAt ?? Spawn;
+        foreach (var h in Party) h.Pos = at;
+        Camera = at;
+        return true;
+    }
+
+    /// <summary>Lays the region's ground down and reads what it says about itself,
+    /// WITHOUT touching where the party is standing.
+    ///
+    /// Separate from LoadRegion because coming back out of a building is not the
+    /// same act as arriving: the door has already decided where you are, and the
+    /// world underneath simply has to become the right one again.</summary>
+    public bool StandRegion(string id)
+    {
         if (MapCatalog.Find(id) is not { } m) return false;
 
         CurrentInterior = null;
@@ -58,10 +73,6 @@ public partial class World
         _south = m.Property("SouthMap");
         _east = m.Property("EastMap");
         _west = m.Property("WestMap");
-
-        var at = arriveAt ?? Spawn;
-        foreach (var h in Party) h.Pos = at;
-        Camera = at;
         return true;
     }
 

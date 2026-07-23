@@ -12,6 +12,11 @@ public partial class World
     {
         Stage = 2;
         Level = 1;
+        // The cave is its own size. Without this it inherits the dimensions of
+        // whatever map the party just left — which on the authored path is put
+        // right by the map itself, and on the generator path leaves the delve
+        // shaped like the overworld and sealed past its own regions.
+        COLS = CAVE_COLS; ROWS = CAVE_ROWS;
         Phase = "playing";
         ClearedFor = 0f;
         _rng = new Random(42);
