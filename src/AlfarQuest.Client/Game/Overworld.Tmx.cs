@@ -73,17 +73,30 @@ public partial class World
         COLS = m.Width / MapSub; ROWS = m.Height / MapSub;
         Tiles = new byte[COLS, ROWS];
 
-        // Walls block, everything else is floor. The kitchen's flagstones are a
-        // different surface on the same Ground layer, and a surface is not a rule:
-        // it is drawn from the map and walked on like any other floor.
+        // Walls block; below them the same precedence the outdoors uses, because a
+        // walled place is not always a roofed one — Seoshe is a city, with streets
+        // to walk and dock water to fall in. A map with none of those layers is a
+        // plain room and every cell falls through to floor.
+        //
+        // The kitchen's flagstones are NOT a case here: a surface is not a rule, so
+        // they are painted on the Ground layer and walked on like any other floor.
         var walls = m.Layer("Walls");
+        var water = m.Layer("Water");
+        var bridges = m.Layer("Bridges");
+        var roads = m.Layer("Roads");
         for (int x = 0; x < COLS; x++)
             for (int y = 0; y < ROWS; y++)
             {
                 int mx = x * MapSub, my = y * MapSub;
-                bool solid = m.Painted(walls, mx, my) || m.Painted(walls, mx + 1, my)
-                          || m.Painted(walls, mx, my + 1) || m.Painted(walls, mx + 1, my + 1);
-                Tiles[x, y] = solid ? ROCK : FLOOR;
+                bool Any(int[]? l) =>
+                    m.Painted(l, mx, my) || m.Painted(l, mx + 1, my) ||
+                    m.Painted(l, mx, my + 1) || m.Painted(l, mx + 1, my + 1);
+
+                Tiles[x, y] = Any(walls) ? ROCK
+                            : Any(water) ? WATER
+                            : Any(bridges) ? BRIDGE
+                            : Any(roads) ? PATH
+                            : FLOOR;
             }
 
         ReadProps(m);
@@ -136,6 +149,7 @@ public partial class World
                 Solid = o.Flag("Solid"),
                 R = o.Num("Radius"),
                 Flip = o.Flag("Flip"),
+                Painted = o.Has("Painted") ? o.Flag("Painted") : null,
             });
         }
     }

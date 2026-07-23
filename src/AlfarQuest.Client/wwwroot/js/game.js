@@ -113,8 +113,11 @@ function render(s) {
     const props = (s.props || []).map(p => ({
         t: "prop", x: p.x, y: p.y, cell: [p.cx, p.cy], s: p.s, flip: p.flip,
         kind: p.k, v: p.v || 0,
+        // A map that says so per prop wins: the same crate is painted into the
+        // warehouse floor and drawn from our atlas out on the road, and only the
+        // map it stands in knows which. Kind is the fallback for the older maps.
         painted: drawnByMap && !KEPT_OVER_MAP.has(p.k)
-                 && (!p.k || p.k.startsWith("h_") || PAINTED_BY_MAP.has(p.k)),
+                 && (p.paint ?? (!p.k || p.k.startsWith("h_") || PAINTED_BY_MAP.has(p.k))),
     }));
     const npcs = (s.npcs || []).map(n => ({ t: "npc", x: n.x, y: n.y, f: n.f, kind: n.kind,
                                             name: n.name, merchant: n.merchant, hidden: n.hidden,
@@ -257,6 +260,9 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
         ["Stage01_Outside", "Maps/Outside/Stage01_Outside.tmx"],
         ["cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"],
         ["cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"],
+        ["mage_school", "Maps/Interiors/MageSchool.tmx"],
+        ["seoshe", "Maps/Interiors/Seoshe.tmx"],
+        ["thieves_warehouse", "Maps/Interiors/ThievesWarehouse.tmx"],
         ["cave", "Maps/Cave/Cave_Descent.tmx"],
     ]) {
         loadTmx(path).then(tmx => {

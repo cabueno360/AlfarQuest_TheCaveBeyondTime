@@ -157,7 +157,7 @@ def at(x, y):
     return rows[y][x]
 
 blank = [0] * (MW * MH)
-LNAMES = ["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Cliffs",
+LNAMES = ["Ground", "GroundDetails", "Roads", "Bridges", "Water", "Shore", "Cliffs",
           "CliffFace", "Buildings", "Objects", "Trees", "AbovePlayer", "Shadows"]
 layers = {n: list(blank) for n in LNAMES}
 
@@ -206,13 +206,17 @@ for my in range(MH):
 
 # Beaches: a land cell touching water gets the island ring, so the shoreline
 # draws itself. Done after, so it sits over the ground already laid.
+#
+# On its OWN layer, not on Water. Water is what the engine reads to decide where
+# you may not walk, and this ring is drawn on the LAND cell — putting it there
+# turned the last strip of every beach into deep water you could not stand on.
 for my in range(MH):
     for mx in range(MW):
         if m(mx, my) in "~#": continue
         wn, ws = m(mx, my-1) == "~", m(mx, my+1) == "~"
         we, ww = m(mx+1, my) == "~", m(mx-1, my) == "~"
         if wn or ws or we or ww:
-            put("Water", mx, my, shore_tile(mx, my, wn, we, ws, ww))
+            put("Shore", mx, my, shore_tile(mx, my, wn, we, ws, ww))
 
 # ----- scatter Pixel Crawler vegetation where our props say greenery stands ----
 # Our prop kind -> a single-tile Pixel Crawler sprite. Only the 1-tile plants from
@@ -364,8 +368,9 @@ tmx = f'''<?xml version="1.0" encoding="UTF-8"?>
 <!-- Stage 1 — "{w["name"]}", painted with Pixel Crawler. See docs/mapping-standard.md.
      16x16 grid; the engine's cell is 32px, so one engine cell is a 2x2 block here
      and the map is {MW}x{MH}. Terrain type is read by layer precedence
-     (Cliffs > Water > Bridges > Roads > Ground). CliffFace is decoration only and
-     is never read for collision. -->
+     (Cliffs > Water > Bridges > Roads > Ground). Shore and CliffFace are
+     decoration only and are never read for collision — the shoreline ring is
+     drawn on the LAND cell, so putting it on Water would flood every beach. -->
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
      width="{MW}" height="{MH}" tilewidth="{T}" tileheight="{T}" infinite="0"
      nextlayerid="{lid+1}" nextobjectid="{oid}">

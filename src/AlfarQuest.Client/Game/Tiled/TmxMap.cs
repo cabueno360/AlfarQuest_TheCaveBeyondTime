@@ -167,4 +167,8 @@ public sealed class TmxObject
 
     public bool Flag(string key, bool fallback = false) =>
         Properties.TryGetValue(key, out var v) ? v is "true" or "1" : fallback;
+
+    /// <summary>Whether the map said anything at all about this key. Lets a reader
+    /// tell "the map set it false" from "the map is silent", which a bool cannot.</summary>
+    public bool Has(string key) => Properties.ContainsKey(key);
 }

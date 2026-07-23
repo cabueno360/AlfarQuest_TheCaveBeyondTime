@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Academy Outpost, painted with Pixel Crawler.
+     16x16 grid; one engine cell is a 2x2 block, so the map is 88x48.
+     A roofed place: Walls block, everything else is stone floor.
+     NPCs and heroes are NOT Pixel Crawler — they stay on our own atlases and
+     appear here as NPCSpawn objects. Each prop says whether this map drew it. -->
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
+     width="88" height="48" tilewidth="16" tileheight="16" infinite="0"
+     nextlayerid="221" nextobjectid="60">
+ <properties>
+  <property name="Interior" value="mage_school"/>
+  <property name="DisplayName" value="The Academy Outpost"/>
+  <property name="Outdoor" type="bool" value="false"/>
+  <property name="EngineTile" type="int" value="32"/>
+ </properties>
+ <tileset firstgid="1" source="../Tilesets/Floors.tsx"/>
+ <tileset firstgid="651" source="../Tilesets/Water.tsx"/>
+ <tileset firstgid="1276" source="../Tilesets/Walls.tsx"/>
+ <tileset firstgid="1901" source="../Tilesets/Rocks.tsx"/>
+ <tileset firstgid="2148" source="../Tilesets/Vegetation.tsx"/>
+ <tileset firstgid="2823" source="../Tilesets/IntWalls.tsx"/>
+ <tileset firstgid="3848" source="../Tilesets/IntProps.tsx"/>
+ <tileset firstgid="4760" source="../Tilesets/Dungeon.tsx"/>
+ <tileset firstgid="5385" source="../Tilesets/Farm.tsx"/>
+ <tileset firstgid="6010" source="../Tilesets/BuildProps.tsx"/>
+ <tileset firstgid="6635" source="../Tilesets/Esoteric.tsx"/>
+ <layer id="201" name="Ground" width="88" height="48">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="202" name="GroundDetails" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="203" name="Roads" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="204" name="Water" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="205" name="Shore" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="206" name="Walls" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtWzuO3TAMfEhMu9kbpNkLWE9Fmj3ENlvY1gXS5BD5HjwyIAGTAYXdBSgZSGhAhaAPRX3GFMWZHm63kNOR05LTlpPkdM8p5bTmtOc05xRzmrz+u+qnUldKWSplUvpKpa2UvmIp30ue60fob3ulHNuHUr5A/yx/o/qr0l8s9Wv5UvI76afJq/XvkI80P5HaJxovj/+Aeed12GndavlSZAdoX/O1/abk67pH6O+g/Kz0tyjjW5V9FWh8tX4q7QXKW/IPal/3aWvfHjQfKF9gXeu6/ZDb7XtOv3L6Kfb5uu69+m/l6zkYod8E+x7X/Wsu7/19yjKeBsjh71nG6RfK3C6AV+c+fhwg/0uW8XLB/H6WcfrNgNd3wNsR+2rUPrrq3Jz6Ib4H+K+O2Fej9tFV5+bUb4P/Gf4HHX/t8LfaJQvYc46/NvodgAtorzn+2uFvtdfxXuX4a6PfBPfiye1fc/3wnpngvu74a6Mf+kMOuN87/trir5AfzPHXzv6tfjX0Czn+2uFvvRdH8M86/trbv+jfdPy10Q/90+jnH7GvvmUZvy+Y31Fy0f9wkJ/+in31r33o/0303vTo82uCv/j+h+9ZTz6/pvZvoHfZF59fE/zFd3F8rx+Bvx/O9b1gHUfJPfEX35nd/9DP/l3p/d7t3z7+h22g/fu/+H8x/sH9D33sX49/6KPfHeKi3P/QF3+D4283/D0oztDx1xZ/I/gf3P9r63/YKf7B8ddOvwRxqRiX7fhro99G8Q/i8Wem+mFcfJ1n9z/Y2r/of4iOv13wV4g34/hrh78R4h+C+x9M9RPF/+D2ry3+1vgz51/08z8E4iE6/tr6H+4Kz/HjWX5iyHnPE/t8lder/1Z+pH4C70Ia/1bj0wrwPDG+Cvm+E9VH/q8QT5T5vXuDX6zxl5H/G6l/HA+XszzmP0+k/0TxeRu9V07KfDH/eQY+bX1HThTX0+LnBuIvh1f4uULxxnuD/4x8YuQ3i8Jvxv+HvIHvzPXR/818Y3yH4PYrjR/1S434h6PBQ9+IZ78q+zo9/O2313juM+3b1rnRePBR4fkjT39RzsGs8PR3OleBeP17Q9+o9DcrPHo+538A5lMjcQ==</data>
+ </layer>
+ <layer id="207" name="WallFace" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrt2DsKwCAQBFAb71/nc4p87pdtbAQhhZGEvAdTDMiC7aQEwBvMOaUpskaW3L8XT91v9dH/a9njzRY5I0fu34un7rf66P8BAAAAAO9T77Gj3N1nv67eY0exzwIAAAAAAAAAwP9c0kZrgQ==</data>
+ </layer>
+ <layer id="208" name="Buildings" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="209" name="Objects" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="210" name="Furniture" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtmj0OwjAMRiMmwuKh6kDZYEUgVWxwDJA4C4xwH7gMnIdcgDaV08Z2vrdZ/dWn6sWu4hwAAABJzMk5T/E1GMYuZLen+BoM4xyyu1B8zaJK++6zSn6+t5DdneJrDsvEeawU5Au/Tuvf3PjGuUVj17+5WYdsN4byTenXFBxDtidD+cK/ZfnXev87Fq/wjDfJvZ92/37CM74k937wL/wLZPS/LXXX3PNL73+v1F1zz9eAlvVZK1rWZ/QPZfs3R/9Qkn+l/T+zhrT/Z/CvLv9y+yDu9db9y+2DuNfDv/Bvyf7FnDeufzHn2fPvqrbrXwn7Ew613e/d2v4EaVjYn/D0/489fP73a7GeTTp/AcChqpHBmGwV59s3/2E+5NE3/2E+BAAAAIBVfiGjPrA=</data>
+ </layer>
+ <layer id="211" name="AbovePlayer" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <layer id="212" name="Shadows" width="88" height="48">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAeBpCAAAB</data>
+ </layer>
+ <objectgroup id="213" name="PlayerSpawn">
+  <object id="1" name="PlayerSpawn" x="344.00" y="312.00">
+   <properties>
+    <property name="Type" value="PlayerSpawn"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="214" name="NPCSpawn">
+  <object id="2" name="grandmaster" x="312.00" y="104.00">
+   <properties>
+    <property name="NpcId" value="grandmaster"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="215" name="Warp">
+  <object id="3" name="the courtyard" x="344.00" y="344.00">
+   <properties>
+    <property name="DestinationMap" value="__overworld__"/>
+    <property name="DestinationSpawn" value="0.0,0.0"/>
+    <property name="Label" value="the courtyard"/>
+    <property name="Verb" value="Step"/>
+    <property name="Radius" value="42"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="216" name="Interaction">
+  <object id="4" name="the midsummer tests" x="344.00" y="88.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A notice pinned to the lectern. &quot;The Academy of Kae Ychel. Each midsummer the hundred finest apprentices are tested before the avatar of the Twin Sun King. The ten best are blessed with a boon — only one may claim the greatest of them. This outpost prepares those who would sit the tests.&quot;"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="5" name="the Evoker Corps notice" x="408.00" y="264.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="letter"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A recruitment bill. &quot;THE EVOKER CORPS. Lightning, fire, force — the King's own war-mages. A show impressive enough at the tests, and a place is yours.&quot; Some apprentices, they say, want the Corps more than they want the boon."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="6" name="the arcane library" x="56.00" y="88.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="Treatises on incantation and evocation, on arrays of three points and five, on the trapping of fey beasts in cold iron. The lowest shelves are chained shut — bindings and summonings, the workings an apprentice is forbidden to attempt alone. A whole shelf's worth of them is missing."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="the casting circle" x="568.00" y="120.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A granite floor scored with arcane circles — formulae given physical form, written in special ink. Apprentices prepare their workings here, sealed and warded from all intrusion. One such preparation, some years past, went so catastrophically wrong the masters will not speak of it above a whisper."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="8" name="the memorial" x="568.00" y="264.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A plaque, and beneath it fresh flowers. &quot;In memory of the apprentices lost at the tests: BRUELOS. GERSIMO. THAMI. RAZA. ILLELLI. EMRYS. And the grandmaster who burned holding the fire back.&quot;␟Below, a line has been chiselled out and left blank. &quot;The one who summoned it was not executed, but banished — a greater demon sealed within his own heart, to carry until he can be rid of it. His name is struck from every roll of this Academy.&quot;"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="9" name="a warded door" x="632.00" y="312.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A low door sealed with arcane script that hums faintly under your hand. Whatever the Academy keeps behind it is not for apprentices — nor, by the look of the seals, is it meant to get out."/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="217" name="Props">
+  <object id="10" name="caveEntrance" x="344.00" y="344.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="58"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="lantern" x="312.00" y="328.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="12"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="lantern" x="376.00" y="328.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="statue" x="344.00" y="62.40">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="53"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" name="workbench" x="344.00" y="88.00">
+   <properties>
+    <property name="Kind" value="workbench"/>
+    <property name="Variant" value="25"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="chair" x="280.00" y="152.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="56"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="chair" x="312.00" y="152.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="57"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="17" name="chair" x="376.00" y="152.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="3"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" name="chair" x="408.00" y="152.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="33"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="19" name="chair" x="280.00" y="184.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="53"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="20" name="chair" x="312.00" y="184.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="3"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="21" name="chair" x="376.00" y="184.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="7"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="chair" x="408.00" y="184.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="47"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="chair" x="280.00" y="216.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="27"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="chair" x="312.00" y="216.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="29"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="chair" x="376.00" y="216.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="51"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="chair" x="408.00" y="216.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="29"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" name="banner" x="264.00" y="56.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="36"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" name="banner" x="424.00" y="56.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="56"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" name="lantern" x="264.00" y="120.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="49"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" name="lantern" x="424.00" y="120.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="33"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" name="crate" x="408.00" y="264.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="57"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" name="toolRack" x="56.00" y="56.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="42"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" name="toolRack" x="56.00" y="88.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" name="toolRack" x="56.00" y="120.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="1"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" name="toolRack" x="56.00" y="152.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="7"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" name="toolRack" x="56.00" y="200.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" name="toolRack" x="56.00" y="232.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="56"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" name="toolRack" x="56.00" y="264.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="toolRack" x="88.00" y="56.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="53"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" name="toolRack" x="120.00" y="56.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="30"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="41" name="workbench" x="152.00" y="280.00">
+   <properties>
+    <property name="Kind" value="workbench"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.58"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="42" name="chair" x="152.00" y="299.20">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="43" name="lantern" x="104.00" y="168.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="44" name="lantern" x="184.00" y="248.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="52"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="45" name="statue" x="568.00" y="120.00">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="49"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="46" name="crystal" x="520.00" y="88.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="47"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="47" name="crystal" x="616.00" y="88.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="48" name="crystal" x="520.00" y="152.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="25"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="49" name="crystal" x="616.00" y="152.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="50" name="crystal" x="568.00" y="72.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="63"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="51" name="crystal" x="568.00" y="168.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="52" name="crystal" x="504.00" y="120.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="19"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="53" name="crystal" x="632.00" y="120.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="59"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="54" name="statue" x="568.00" y="264.00">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="27"/>
+    <property name="Scale" value="0.72"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="55" name="flowers" x="542.40" y="280.00">
+   <properties>
+    <property name="Kind" value="flowers"/>
+    <property name="Variant" value="9"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="56" name="flowers" x="593.60" y="280.00">
+   <properties>
+    <property name="Kind" value="flowers"/>
+    <property name="Variant" value="5"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="57" name="lantern" x="504.00" y="216.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="55"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="58" name="lantern" x="632.00" y="216.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="13"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="59" name="crate" x="632.00" y="312.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="11"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="218" name="TreasureSpawn">
+ </objectgroup>
+ <objectgroup id="219" name="LightingMarker">
+ </objectgroup>
+ <objectgroup id="220" name="MusicZone">
+ </objectgroup>
+</map>

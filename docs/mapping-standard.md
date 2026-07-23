@@ -21,6 +21,14 @@ src/AlfarQuest.Client/wwwroot/
   Maps/
     Outside/
       Stage01_Outside.tmx        the official Stage 1 map
+    Interiors/
+      ClericHouse_Ground.tmx     the Cleric's house, both floors
+      ClericHouse_Upper.tmx
+      MageSchool.tmx             the Academy Outpost
+      Seoshe.tmx                 the city — walled, but under open sky
+      ThievesWarehouse.tmx       the burnt warehouse
+    Cave/
+      Cave_Descent.tmx           the delve; one map serves every depth
     Tilesets/
       Floors.tsx  Water.tsx  Walls.tsx      external, never embedded
       Vegetation.tsx  Rocks.tsx
@@ -134,16 +142,28 @@ has the same shape.
 | 3 | `Roads` | dirt road → engine `PATH` |
 | 4 | `Bridges` | bridge deck → engine `BRIDGE` (walkable over water) |
 | 5 | `Water` | → engine `WATER` (blocks) |
-| 6 | `Cliffs` | rock and mountain → engine `ROCK` (blocks) |
-| 7 | `Buildings` | structures drawn as tiles |
-| 8 | `Objects` | tile-drawn scenery |
-| 9 | `Trees` | canopy below the player |
-| 10 | `AbovePlayer` | drawn over the player — eaves, upper canopy |
-| 11 | `Shadows` | contact shadows |
+| 6 | `Shore` | the beach — **decorative only, never blocks** |
+| 7 | `Cliffs` | rock and mountain → engine `ROCK` (blocks) |
+| 8 | `Walls` | a room's or a city block's wall → engine `ROCK` (blocks) |
+| 9 | `WallFace` | the courses under a wall's southern edge — decorative |
+| 10 | `Buildings` | structures drawn as tiles |
+| 11 | `Objects` | tile-drawn scenery |
+| 12 | `Trees` / `Furniture` | canopy and furnishings below the player |
+| 13 | `AbovePlayer` | drawn over the player — eaves, upper canopy |
+| 14 | `Shadows` | contact shadows |
+
+`Shore` and `WallFace` exist because the shoreline and the wall face are drawn
+on cells the player may still walk on. The shoreline ring is an *island in
+water*, so it is painted on the LAND cell — put it on `Water` and the last
+strip of every beach becomes water nobody can stand on. Keep decoration off the
+layers that decide collision.
 
 ### Terrain is decided by layer precedence
 
-`Cliffs > Water > Bridges > Roads > Ground`
+Outdoors: `Cliffs > Water > Bridges > Roads > Ground`
+Indoors: `Walls > Water > Bridges > Roads > Ground` — a walled place is not
+always a roofed one, and Seoshe has streets to walk and dock water to fall in.
+Underground: `Walls > Water > Bridges > Floor`.
 
 The **highest painted layer wins**; an unpainted cell is floor. Terrain type is
 never read from tile ids, so a map can be entirely repainted with a different
@@ -166,7 +186,7 @@ Every gameplay thing is an object. Position is a point (or a rectangle for zones
 | `Discovery` | an area that pays XP on entry | `XpSource`, `Radius`, `QuestId` |
 | `Warp` | a doorway to another map | `DestinationMap`, `DestinationSpawn`, `Label`, `Verb`, `Radius` |
 | `Interaction` | something to read or examine | `InteractionType`, `Verb`, `ReadKind`, `Pages`, `Radius` |
-| `Props` | scenery sprites | `Kind`, `Variant`, `Scale`, `Flip`, `Solid`, `Radius` |
+| `Props` | scenery sprites | `Kind`, `Variant`, `Scale`, `Flip`, `Solid`, `Radius`, `Painted` |
 | `SafeZone` | rectangle creatures will not enter | — |
 | `CaveMouth` | the descent | `InteractionType`, `DestinationMap` |
 | `QuestTrigger` | a story beat | `QuestId`, `StoryEvent` |
@@ -189,7 +209,8 @@ own collision radius.
 
 Collision is **map data, not code**:
 
-* **Terrain** — the `Cliffs` and `Water` layers. Painting a cliff blocks it.
+* **Terrain** — the `Cliffs`, `Walls` and `Water` layers. Painting a cliff blocks
+  it. `Shore` and `WallFace` are decoration and block nothing.
 * **Props** — each prop object's own `Solid` and `Radius`.
 
 Nothing in C# hardcodes where the walls are. To make somewhere impassable, paint
@@ -209,7 +230,7 @@ Names are `PascalCase` and stable — the loader reads them by name.
 `DestinationSpawn` · `Music` · `Weather` · `StoryEvent` · `Respawn` ·
 `LightRadius` · `InteractionType` · `ContainerKind` · `XpSource` · `Radius` ·
 `Kind` · `Variant` · `Scale` · `Flip` · `Solid` · `Verb` · `Label` ·
-`ReadKind` · `Pages`
+`ReadKind` · `Pages` · `Painted`
 
 Ids must match the catalogues in C# (`NpcCatalog`, `CreatureCatalog`,
 `ContainerKind`, `MerchantCatalog`). An id the game does not know is **skipped,
@@ -217,6 +238,13 @@ not crashed** — a typo costs you one object, never the map.
 
 `Pages` holds multi-page reading text separated by `␟` (U+241F), because Tiled has
 no list type.
+
+`Painted` says whether THIS map already drew the prop's art into its tile layers.
+When it is true the renderer leaves the sprite off, so nothing is drawn twice; the
+engine keeps the prop either way, because the prop is what carries the collision.
+It is per prop and not per kind on purpose — the same crate is painted into the
+warehouse floor and drawn from our own atlas out on the Stage 1 road. A map that
+says nothing falls back to judging by kind, which is all the older maps offer.
 
 ### Map-level properties
 
@@ -252,11 +280,11 @@ Two things follow from this:
 * **The painted map is cached** (`stageMapCanvas`). Stage 1 is hundreds of
   thousands of tiles and never changes, so repainting it on every world rebuild —
   which happens each time a door is stepped through — was pure waste.
-* **Scenery painted into the map is not drawn twice.** `PAINTED_BY_MAP` in
-  `render/entities.js` lists the prop kinds whose picture now lives in the map
-  (trees, bushes, flowers, rocks). The engine still keeps those props, because
-  they carry the collision — a tree you can walk through is a worse bug than a
-  tree drawn twice — but their sprite is suppressed.
+* **Scenery painted into the map is not drawn twice.** A prop's `Painted`
+  property says so, and `PAINTED_BY_MAP` in `game.js` is the by-kind fallback for
+  maps that do not. The engine still keeps those props, because they carry the
+  collision — a tree you can walk through is a worse bug than a tree drawn twice —
+  but their sprite is suppressed.
 
 ## How the engine loads a map
 
@@ -300,8 +328,15 @@ Stage 1 was **exported** from its generator rather than redrawn, because it was
 procedural (`Random(42)`), and exporting is the only way to reproduce it exactly:
 
 ```bash
-node tools/export-stage01.mjs    # capture the generated world → tools/refs/stage01-world.json
-python3 tools/make-tmx.py        # write the .tmx and .tsx
+node tools/export-stage01.mjs     # Stage 1     → tools/refs/stage01-world.json
+python3 tools/make-tmx.py
+
+node tools/export-interiors.mjs   # the interiors → tools/refs/cleric-house.json
+python3 tools/make-house-tmx.py   #   the Cleric's house, both floors
+python3 tools/make-places-tmx.py  #   the Academy, Seoshe, the burnt warehouse
+
+node tools/export-cave.mjs        # the cave    → tools/refs/cave.json
+python3 tools/make-cave-tmx.py
 ```
 
 > **Run this only to re-baseline.** Once a map is authored in Tiled the `.tmx` is
@@ -309,6 +344,13 @@ python3 tools/make-tmx.py        # write the .tmx and .tsx
 > also reads whatever the engine currently builds — so with the map in place it
 > exports the map back to itself. Move the `.tmx` aside first if you truly mean to
 > re-baseline from the generator.
+>
+> This is not theoretical. Exporting with the maps in place, then regenerating,
+> fed a rendering bug back in as if it were level design: the shoreline had been
+> painted on the collision layer, so the beach exported as water, and the next
+> generation drew it as water on purpose. **A round trip only proves the map is
+> faithful if the JSON came from the generator.** Diff the two — an interior
+> should come back byte for byte.
 
 ---
 

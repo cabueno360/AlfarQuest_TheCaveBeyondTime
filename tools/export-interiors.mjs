@@ -13,7 +13,8 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 const CLIENT = process.env.CLIENT ?? 'http://localhost:5223';
 mkdirSync('tools/refs', { recursive: true });
 
-const FLOORS = ['cleric_house', 'cleric_house_upper'];
+const FLOORS = ['cleric_house', 'cleric_house_upper',
+                'mage_school', 'seoshe', 'thieves_warehouse'];
 
 const browser = await chromium.launch({ channel: 'chrome', args: ['--no-sandbox'] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -30,7 +31,10 @@ await page.fill('#signup-confirm', player.password);
 await page.click('button[type=submit]'); await settle(2500);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
-await settle(1500);
+// The .tmx files are fetched in the background. Capturing before they land
+// reads the world the generator built — or, for the first id, the overworld
+// that is still standing. Wait for them.
+await settle(12000);
 
 const out = {};
 for (const id of FLOORS) {

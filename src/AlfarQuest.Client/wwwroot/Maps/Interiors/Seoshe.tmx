@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Seoshe, painted with Pixel Crawler.
+     16x16 grid; one engine cell is a 2x2 block, so the map is 112x80.
+     Open sky: this one is a city, so it is painted like Stage 1 — cobbled streets, dock water with a drawn shoreline, quarried walls with a rim.
+     NPCs and heroes are NOT Pixel Crawler — they stay on our own atlases and
+     appear here as NPCSpawn objects. Each prop says whether this map drew it. -->
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
+     width="112" height="80" tilewidth="16" tileheight="16" infinite="0"
+     nextlayerid="221" nextobjectid="48">
+ <properties>
+  <property name="Interior" value="seoshe"/>
+  <property name="DisplayName" value="Seoshe"/>
+  <property name="Outdoor" type="bool" value="true"/>
+  <property name="EngineTile" type="int" value="32"/>
+ </properties>
+ <tileset firstgid="1" source="../Tilesets/Floors.tsx"/>
+ <tileset firstgid="651" source="../Tilesets/Water.tsx"/>
+ <tileset firstgid="1276" source="../Tilesets/Walls.tsx"/>
+ <tileset firstgid="1901" source="../Tilesets/Rocks.tsx"/>
+ <tileset firstgid="2148" source="../Tilesets/Vegetation.tsx"/>
+ <tileset firstgid="2823" source="../Tilesets/IntWalls.tsx"/>
+ <tileset firstgid="3848" source="../Tilesets/IntProps.tsx"/>
+ <tileset firstgid="4760" source="../Tilesets/Dungeon.tsx"/>
+ <tileset firstgid="5385" source="../Tilesets/Farm.tsx"/>
+ <tileset firstgid="6010" source="../Tilesets/BuildProps.tsx"/>
+ <tileset firstgid="6635" source="../Tilesets/Esoteric.tsx"/>
+ <layer id="201" name="Ground" width="112" height="80">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="202" name="GroundDetails" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwGMAAAB</data>
+ </layer>
+ <layer id="203" name="Roads" width="112" height="80">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="204" name="Water" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtnGGuqkoQhE1YiSCKLAEE4bgEEVHZ/zrumFedU48V1M2tL5kQPf46le6pnu5htzPGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY8zfyinb7W5plWld8VzSKtLq0hrSytN6pNVm/n+p8dXkDO3uaa3Zf5p+NfxJq0qrz35/Z7S4IP6+zzGtD+LujO+btI6ksdFiTpq8kCN7aPRMq8bziNyZQ2OjReTIE3JnA61OiMOG4rOzfnKMiL8ROfIIzzJi/8vhZSI+jRYDNDuRdzkg3hZ4mg45dLR+clzhWb6a7dN6Q8MjaokD4rNCHBotPsiNTfZ/LYdN3D2gqdHb/745ckLcRR2YU9xxTW/0/GcNrxI1+0zPHt/v8TujF38X5MYXaoUH4jA8TUE1hNGiRO5sqGaIHBrPG9X4RosJXiW0qqDhSp+jPtxbPzlOFH9X1PAtcmbUDjU8jONPj9umR5Sjhoj6b0bctfhstCiQG3s8S+TOJ+2H8bxZP8nzlzvirUAujZriAy17fPb5p+b5y0JnZ9Fnv+D5g+9f7v9JEv2/btOrvW3OsHP7T0ku5Ddn6sNHHdhT7eD9T4/wmxV5lIL6fi28zNXnn7L+s0YOjVzZIpdWiMeaPI3RokP8zTjvrOFhDtBypNx6sn5yDNAs+gsF/Gbkzg9y6t3nL5LUpFX0jCL+SvjRnvZFowXXDKHdiniMs+03PIzjT48b4u648Z8TzTKV9HejRZx3ss+cse/FLG/MYdt/ap6/9MiN0e+LeZg7zRK29p+SxNzLts93ptoh/Ghl/STrvwflzIVmBV/QLvrx7v9p+s+FNByoHzGRpyk9/ylJvun/xTnogWYHz5RTjRYvuiM2Zb/9+IbiLzyM6z89JsTZm+5QR9xF7yjmz57WT44L1ewr3ZWOec8y+52x9/0jTf/Z08x8TXfGPnS3s4W3MVoM0C586Am5dKD+X/jSyfrJsdLZ2DaHDjRbODv+JInZiAfd/wutDjR/dnH9J8mVavQBzyfNzh+QU13/aRLa9Zt6L94DE9+fHX+SjDQ7cd+cmRXQbE89XaNFQV5loXf27OE/zzT/slo/OWKuukOtXtG7sp60/82+/yAdfw2dc8bsROTWuBfv+k+P8JkrzV0/6H1MM51lO/40469D3L2p796TDx3pfMZo0W3uO0zY92KWfoamneNPkg+9/yzOYW70zh6e//T7B/Xg+30fumfbkZZ8t9po8aIcuZBXuVNOPdJ5qNHb/34Qb3u6w9nSO0UKOkMzxhhj/mX+AMFUotw=</data>
+ </layer>
+ <layer id="205" name="Shore" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrt16ENAAAIA0HC/kuhWAuNw5LcjdBXjQAAAAAAAAAAAAA+6rSBfuiHfvqhH/pxU/rph37opx/6oR/+n37oh37opx/64f+hn37oh376oR/+H/rph37oh3764f+hH/rph37oh37+H/qhn37oh37o5/+hH/qhn34AwDI3KCnL</data>
+ </layer>
+ <layer id="206" name="Walls" width="112" height="80">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="207" name="WallFace" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrt2jEOgzAMAMAs+f8M9EdQ3oR3BgrFBNo7yYOnWIoyxHYpAAAAAPC5Vy1liOgjurrOubc57ugdMUWMdZ2T8y7Oyrdkn7+3nl95F2flW7LP31sPAAAA0J6+zrPp6wAAwPey5t6t/mP/tl+TNfdu9R+zXwMAAEAL+hTH3GVOrk9xjDk5AAAAAAAAAAAAAAAAAAAAAFdaAE7a48M=</data>
+ </layer>
+ <layer id="208" name="Buildings" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwGMAAAB</data>
+ </layer>
+ <layer id="209" name="Objects" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwGMAAAB</data>
+ </layer>
+ <layer id="210" name="Furniture" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrt3D1KxEAUAOCsnXUQZl2PYCVa2e01vIaNP2dQ8ecMsl7DU4ieQj2Ar4iFxUKEkExmvg8eqYbNy2NgljczTQMAAAAAADB/i7bs/HYKz2+/8PxWrTkKAAAAAP+12vMN5uxY/WByR+YhZON0t4w85ta3XujT/l1fz+x79N1HcJOa5jbiLtVRx4vI8zLiKuI6zf99nrsxm3i+VFDD+8jxIeIx4imV9T6vlczBHBwMtM5/62r2Hs+Piuu3HPl/08lAv/cZNfuK+Db3AAAAqlZK/wEAAKZQWv+9NiX33wEAAKiX/l9e2i37fp1/n4fDLXVy/h2m5/w7AADWmRnoeZ+He1vysu72pCx71uX33pa1vSxZOEvjjmNY52nccQDAtH4A4ZEmyw==</data>
+ </layer>
+ <layer id="211" name="AbovePlayer" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwGMAAAB</data>
+ </layer>
+ <layer id="212" name="Shadows" width="112" height="80">
+  <data encoding="base64" compression="zlib">eNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwGMAAAB</data>
+ </layer>
+ <objectgroup id="213" name="PlayerSpawn">
+  <object id="1" name="PlayerSpawn" x="440.00" y="568.00">
+   <properties>
+    <property name="Type" value="PlayerSpawn"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="214" name="NPCSpawn">
+  <object id="2" name="seoshe_guard" x="392.00" y="568.00">
+   <properties>
+    <property name="NpcId" value="seoshe_guard"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="seoshe_guard" x="504.00" y="568.00">
+   <properties>
+    <property name="NpcId" value="seoshe_guard"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="4" name="seoshe_burgher" x="376.00" y="408.00">
+   <properties>
+    <property name="NpcId" value="seoshe_burgher"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="5" name="seoshe_trader" x="552.00" y="408.00">
+   <properties>
+    <property name="NpcId" value="seoshe_trader"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="6" name="seoshe_noble" x="488.00" y="136.00">
+   <properties>
+    <property name="NpcId" value="seoshe_noble"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="seoshe_sailor" x="728.00" y="408.00">
+   <properties>
+    <property name="NpcId" value="seoshe_sailor"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="215" name="Warp">
+  <object id="8" name="the gate" x="440.00" y="600.00">
+   <properties>
+    <property name="DestinationMap" value="__overworld__"/>
+    <property name="DestinationSpawn" value="0.0,0.0"/>
+    <property name="Label" value="the gate"/>
+    <property name="Verb" value="Step"/>
+    <property name="Radius" value="42"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="9" name="the burnt warehouse" x="696.00" y="536.00">
+   <properties>
+    <property name="DestinationMap" value="thieves_warehouse"/>
+    <property name="DestinationSpawn" value="0.0,0.0"/>
+    <property name="Label" value="the burnt warehouse"/>
+    <property name="Verb" value="Enter"/>
+    <property name="Radius" value="42"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="216" name="Interaction">
+  <object id="10" name="the city gate" x="440.00" y="584.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="&quot;SEOSHE.&quot; The crescent-coast city, and the finest den of thieves on the continent — though the sign does not say so. Its guard captains drink on the crews' coin, and the crews drink on theirs."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="a proclamation" x="456.00" y="296.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="Nailed to a post in the square. &quot;By order of the harbour watch: a stolen cargo — a red lacquer box, sought under the King's own seal. Any word of it, or of the crew that took it, to be brought forth at once.&quot; No reward is named. That, the old hands say, is a very bad sign."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="House Cayhall" x="584.00" y="104.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="The gates of House Cayhall. They deal in fine lumber and ores — or did, until a ship of theirs came into the Low Docks barely hauling anything, and a warehouse burned to the waterline the very night it berthed. The House has said nothing since."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="the Neruum flotilla" x="728.00" y="216.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A harbour notice. &quot;The Neruum flotilla makes port at month's end — exotic spices, pelts and fabrics from far-off lands. Berths assigned at the Low Docks; manifests filed with the harbourmaster.&quot; The docks stagger out along the crescent like the teeth of a yawning beast."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" name="the Low Docks" x="728.00" y="584.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="&quot;THE LOW DOCKS.&quot; Gulls and cargo and every colour of merchant by day; and after dark, other trades entirely. High Street runs north from here to Baron Hill, if your coat is fine enough for the walk."/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="217" name="Props">
+  <object id="15" name="caveEntrance" x="440.00" y="600.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="3"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="support" x="392.00" y="600.00">
+   <properties>
+    <property name="Kind" value="support"/>
+    <property name="Variant" value="62"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="17" name="support" x="504.00" y="600.00">
+   <properties>
+    <property name="Kind" value="support"/>
+    <property name="Variant" value="62"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" name="banner" x="408.00" y="584.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="19" name="banner" x="488.00" y="584.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="15"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="20" name="well" x="456.00" y="344.00">
+   <properties>
+    <property name="Kind" value="well"/>
+    <property name="Variant" value="50"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="21" name="statue" x="456.00" y="392.00">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="62"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="stall" x="312.00" y="280.00">
+   <properties>
+    <property name="Kind" value="stall"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="stall" x="600.00" y="280.00">
+   <properties>
+    <property name="Kind" value="stall"/>
+    <property name="Variant" value="14"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="stall" x="312.00" y="424.00">
+   <properties>
+    <property name="Kind" value="stall"/>
+    <property name="Variant" value="60"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="stall" x="600.00" y="424.00">
+   <properties>
+    <property name="Kind" value="stall"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="barrel" x="344.00" y="296.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" name="crate" x="568.00" y="296.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" name="banner" x="280.00" y="264.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" name="banner" x="632.00" y="264.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="23"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" name="statue" x="264.00" y="136.00">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="38"/>
+    <property name="Scale" value="0.9"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" name="statue" x="648.00" y="136.00">
+   <properties>
+    <property name="Kind" value="statue"/>
+    <property name="Variant" value="47"/>
+    <property name="Scale" value="0.9"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" name="caveEntrance" x="328.00" y="104.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="22"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" name="caveEntrance" x="584.00" y="104.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" name="banner" x="232.00" y="120.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="23"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" name="banner" x="680.00" y="120.00">
+   <properties>
+    <property name="Kind" value="banner"/>
+    <property name="Variant" value="63"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" name="log" x="776.00" y="248.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="27"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" name="log" x="776.00" y="360.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="3"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" name="log" x="776.00" y="488.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="7"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="crate" x="728.00" y="216.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="11"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" name="barrel" x="744.00" y="232.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="30"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="41" name="crate" x="728.00" y="504.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="9"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="42" name="barrel" x="744.00" y="520.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="43" name="scaffold" x="728.00" y="296.00">
+   <properties>
+    <property name="Kind" value="scaffold"/>
+    <property name="Variant" value="46"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="44" name="ruin" x="680.00" y="536.00">
+   <properties>
+    <property name="Kind" value="ruin"/>
+    <property name="Variant" value="14"/>
+    <property name="Scale" value="1"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="22"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="45" name="crate" x="680.00" y="504.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="51"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="46" name="barrel" x="696.00" y="568.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="47" name="caveEntrance" x="696.00" y="536.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="17"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="218" name="TreasureSpawn">
+ </objectgroup>
+ <objectgroup id="219" name="LightingMarker">
+ </objectgroup>
+ <objectgroup id="220" name="MusicZone">
+ </objectgroup>
+</map>

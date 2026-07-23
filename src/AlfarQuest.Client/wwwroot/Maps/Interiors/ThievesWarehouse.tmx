@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Burnt Warehouse, painted with Pixel Crawler.
+     16x16 grid; one engine cell is a 2x2 block, so the map is 80x56.
+     A roofed place: Walls block, everything else is wood floor.
+     NPCs and heroes are NOT Pixel Crawler — they stay on our own atlases and
+     appear here as NPCSpawn objects. Each prop says whether this map drew it. -->
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
+     width="80" height="56" tilewidth="16" tileheight="16" infinite="0"
+     nextlayerid="221" nextobjectid="34">
+ <properties>
+  <property name="Interior" value="thieves_warehouse"/>
+  <property name="DisplayName" value="The Burnt Warehouse"/>
+  <property name="Outdoor" type="bool" value="false"/>
+  <property name="EngineTile" type="int" value="32"/>
+ </properties>
+ <tileset firstgid="1" source="../Tilesets/Floors.tsx"/>
+ <tileset firstgid="651" source="../Tilesets/Water.tsx"/>
+ <tileset firstgid="1276" source="../Tilesets/Walls.tsx"/>
+ <tileset firstgid="1901" source="../Tilesets/Rocks.tsx"/>
+ <tileset firstgid="2148" source="../Tilesets/Vegetation.tsx"/>
+ <tileset firstgid="2823" source="../Tilesets/IntWalls.tsx"/>
+ <tileset firstgid="3848" source="../Tilesets/IntProps.tsx"/>
+ <tileset firstgid="4760" source="../Tilesets/Dungeon.tsx"/>
+ <tileset firstgid="5385" source="../Tilesets/Farm.tsx"/>
+ <tileset firstgid="6010" source="../Tilesets/BuildProps.tsx"/>
+ <tileset firstgid="6635" source="../Tilesets/Esoteric.tsx"/>
+ <layer id="201" name="Ground" width="80" height="56">
+  <data encoding="base64" compression="zlib">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</data>
+ </layer>
+ <layer id="202" name="GroundDetails" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="203" name="Roads" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="204" name="Water" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrt07EJwzAQhlGBJomwi8yQQmDPYDsJ2X8OH/gGUGvyHvzFtR9cKQAAAAAAAAAAAMC/2mopr9gRm+p171WXUd9otcRaNuyxj37DHtFqzYY9Gzb9hr2j1Zw//Iz9siUAAAAAAAD3cgKA/gaJ</data>
+ </layer>
+ <layer id="205" name="Shore" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="206" name="Walls" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtXEtu5SAQjBKwN7nBbHIBGxazySFmk4UNF5hNDpH5HXx4ktFUSoWfXzRmJAZLSEGGdh60q7u625jHu7s5tZDamNqSmk3NpRZTm1JbUxtS86mZPv7d+Lj9bbexcRtrt7Fxk2U32X67v259Hu9B3nLlPs6ft/sjyOfnLzR+EvL8Nj7fH7f+Sr9PPS+Pd9D3tD6e5gdYZ173ldY93x832TPMz/08fxH9vG8e5AXqD0LeKP6/SejFTP9fHh+3+Rbul54faH7Ws5Ke5n3J6/7d3t19S+1naj/s3+vnfT9Lfu7z78H3aiC9Q70exXsSCnqLeoj79pqef9b1xZ4rP1+f7B89Q/waSG+ceE/wvXLU5/cobPI84MPTib/vsz1Xfr6+2vd6hnhoCng+0HvIelbC0wn24TL22Z6rF88V1u+i56hXoWBXF8K3CfTKC/xcCviJ+/Jiz9WLlwrrd9HzRejJWNAzhZfTjh/AdnoCu9MK/im8G4SdVnZ+Ajs70voo/MP3vRX8C+S/ob8WCQ/R7hrwh1fRZz00tO6t4B/6e07Y3VjwD1fhTzqhdx7ko79zJj69Jdm/KuJfvGI3xx27vBAvYx6F800l/6/WlfEvFHgH+3dG4N1c4GFR3Md9empg/bL/p/g5+3OL4P+j4P+KL2c9DLAPzw2sH/t/TuidL+BfyS4z30a8xH16aWD9EP/YDrNeol3NcRa0y4ofM3/GuMKZ+HefZI8V+S/jm7KrUcRdkJcwPnoRd/LwPrfk/yk7OhX4ryM8DEJPWV7WU94He8Hf1B5SM1b3lR7d74y/9KfH+vzXEr5b4hEz8dtZ6Jmj+CPHL9k/OhJvU37c24H4XC3/zwj+6nf0zog4jKc4N9vdrKfol7fi/yk8C8Rvld3lOIuKyzBPwXh/K/5fEDzDCt6xwO9nPZvJLpf4NPo3rfh/I+iV29G7VeC/IzsdRB4O9RTtSkv+ny/g1SzygKagdyrPyPNxXVvivyrPF0V8bynkDYPIMzI/jo3yX8SzKPJoA8WdBoFvq+DDHMdZaF1b4r+TiLtYkXfjeJ7ivypvh/nfbIdawT9T0LtQ8P+YD08iDu1FXDpU5L+1/T8n6lX24nmBeAjjYWl+rfxvrevtpLqG3Od8Cfo/LeBfrfxK1uu5Mfyrya8dxWFf+/odji9mu41596e+fofzK9mOY16+499x/Mt2G/NSHf9u8y8dxWU7/t2OfxjP7/h3G79eKB/Q8e94fDHjH8ZpO/4dwz/MJyO/6/h3nF9j/nfo/t9N+Bf+Qf1za/iH+d+W8h818A/rYTr//Zj/NwD/DQ3F/2rx3xnqn2ND+Y8a+If5D9vx70P+X4T657Xz3w/jX2v535r+n6E8VMe/4/5fjlthnr3j3zH8w7qEhepBHq7Ukf7vff5O3lOdJtfDqe/HnPi+Vs1X5x/wfazPM0K+qnt34jyFuXB+wbXvOXyhPobl8fkHWR7Xc3Dduar/KNXH8fkEVnxfi/I577+Kcy4GUb837nzPtlfvbAvnI/D5C7HwXSafD2FF3eUqzrHgemC1D17Uj+zVn8TH/e+ExoL8ufCd5F7dqCnUs5Teu1KdVhDncvwGkHSeag==</data>
+ </layer>
+ <layer id="207" name="WallFace" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrt2jkKgEAMBdBp5v61yylc7mcsbAQLYYIL70GKNGHKzCelALDrayld1Bg11HZ99vyjf9ocb5ii1qiltuuz5x89AEArb9nPvsp+BgBkuZvnnfe7t+dz2e7meef9Tj4HAADfkXXXcPXv+pusu4arfxcAAAAAAAAA/7ABju17oQ==</data>
+ </layer>
+ <layer id="208" name="Buildings" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="209" name="Objects" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="210" name="Furniture" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrt2j0KwkAQBtDtxGrB4E/wCqmCnRfxRl7DG2jrQdTrmHQWCpKoJM57sNWyzUcyw8CkBAAMzTGndMrP7+rc7V0klyaD64scdrnbO+D36tzvPrrHercoUlo2Z1W8Vw+BcSnmMmiVHXOogud3mPl2+jjLDwDC2k5lAObmGCr5AUHcJjIAMBcD/6w0345W5L3Y/QfmlCHuxa79j71s5Ke+DKRv2ruHmPTx7/ZxcwsA0LoDv3YVfA==</data>
+ </layer>
+ <layer id="211" name="AbovePlayer" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <layer id="212" name="Shadows" width="80" height="56">
+  <data encoding="base64" compression="zlib">eNrtwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAAAAAAAAAHgYRgAAAQ==</data>
+ </layer>
+ <objectgroup id="213" name="PlayerSpawn">
+  <object id="1" name="PlayerSpawn" x="312.00" y="376.00">
+   <properties>
+    <property name="Type" value="PlayerSpawn"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="214" name="NPCSpawn">
+ </objectgroup>
+ <objectgroup id="215" name="Warp">
+  <object id="2" name="the docks" x="312.00" y="408.00">
+   <properties>
+    <property name="DestinationMap" value="seoshe"/>
+    <property name="DestinationSpawn" value="0.0,0.0"/>
+    <property name="Label" value="the docks"/>
+    <property name="Verb" value="Enter"/>
+    <property name="Radius" value="42"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="216" name="Interaction">
+  <object id="3" name="Essil's map" x="120.00" y="104.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Read"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A rough map on the round table, smeared with soot-black notes in a careful hand. A ship's manifest beside it — untreated fabric and simple lumber, filed for House Cayhall — and pencilled in the margin: &quot;too thin. hides something, or hides a trap.&quot; Essil worried it was the second. He was right."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="4" name="the tunnel" x="56.00" y="136.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A hole in the corner, no more than two feet high, dropping into a passage that runs two hundred yards beneath the streets. Marko and Mako dug it in a single night — men of stone, stout and red-haired and identical, who spoke only in unison. Three strips of arcane paper still cling to the mouth, a one-way illusion long since gone dark."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="5" name="the stash pit" x="456.00" y="360.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Search"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A pit dug beneath the rubble, where they meant to sink the take until the heat died down. Empty now, but for a red lacquer lid, its cherry paint blistered, and a scatter of spent arcane seals that once bound whatever the box had held."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="6" name="where it happened" x="376.00" y="216.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="The floor here is scorched black and fused to glass, and in the cracks lies a fine silver-blue ash that will not brush away. Here the box was opened; here the shard woke and screamed, and the crew — Kas, Essil, Yash, the twins — came apart into that smoke one by one, while their boss hung in the air and could not look away.␟Crouch close, and in the ash you can almost see what he saw: a great storm of every pain across all times and places, and behind it, the yawning maw of a cave."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="the crew's things" x="136.00" y="344.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Search"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="What the fire left of them, gathered into one crate by some kind hand and never claimed. Kas's rolls of tavern gossip. Yash's fetishes of bone and silk twine. Essil's neat folios. Two sets of stonemason's picks, identical. There is no one left to come for them."/>
+   </properties>
+   <point/>
+  </object>
+  <object id="8" name="the boss's coat" x="88.00" y="360.00">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Verb" value="Examine"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Radius" value="44"/>
+    <property name="Pages" value="A burgher's overcoat of brushed velvet, fine enough to walk High Street unremarked, folded over a broken chair. In its pocket: a pair of loaded dice and a black headscarf. He prayed to the Mother of all Luck, and she loved him right up until the night she didn't."/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="217" name="Props">
+  <object id="9" name="caveEntrance" x="312.00" y="408.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="crate" x="280.00" y="392.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="barrel" x="344.00" y="392.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="9"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="workbench" x="120.00" y="88.00">
+   <properties>
+    <property name="Kind" value="workbench"/>
+    <property name="Variant" value="30"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="17"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="chair" x="88.00" y="88.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="22"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" name="chair" x="152.00" y="88.00">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="21"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="chair" x="120.00" y="62.40">
+   <properties>
+    <property name="Kind" value="chair"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="9"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="lantern" x="72.00" y="56.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="21"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="17" name="lantern" x="184.00" y="56.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="21"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" name="crate" x="184.00" y="120.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="1"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="19" name="barrel" x="78.40" y="120.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="46"/>
+    <property name="Scale" value="0.52"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="20" name="ladder" x="56.00" y="136.00">
+   <properties>
+    <property name="Kind" value="ladder"/>
+    <property name="Variant" value="17"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="21" name="log" x="328.00" y="184.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="log" x="376.00" y="280.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="50"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="23" name="orePile" x="264.00" y="248.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="15"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" name="rock" x="344.00" y="328.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="43"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" name="crate" x="296.00" y="216.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="52"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" name="barrel" x="232.00" y="312.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="27"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" name="lantern" x="488.00" y="328.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="41"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" name="caveEntrance" x="456.00" y="360.00">
+   <properties>
+    <property name="Kind" value="caveEntrance"/>
+    <property name="Variant" value="50"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" name="crystal" x="392.00" y="200.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="41"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" name="crystal" x="360.00" y="216.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" name="crate" x="136.00" y="344.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="13"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" name="barrel" x="88.00" y="360.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="12"/>
+    <property name="Scale" value="0.55"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="10"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" name="lantern" x="168.00" y="360.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="28"/>
+    <property name="Scale" value="0.5"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0"/>
+    <property name="Painted" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="218" name="TreasureSpawn">
+ </objectgroup>
+ <objectgroup id="219" name="LightingMarker">
+ </objectgroup>
+ <objectgroup id="220" name="MusicZone">
+ </objectgroup>
+</map>

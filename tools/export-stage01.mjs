@@ -32,7 +32,7 @@ await page.fill('#signup-confirm', player.password);
 await page.click('button[type=submit]'); await settle(2500);
 await page.goto(`${CLIENT}/play`);
 await page.waitForFunction(async () => (await import('/js/game.js')).hudSnapshot() !== null, null, { timeout: 25000 });
-await settle(1500);
+await settle(12000);   // let the .tmx land before reading the world
 
 const world = await page.evaluate(async () => (await import('/js/game.js')).debugExportMap());
 if (!world || !world.tiles) {

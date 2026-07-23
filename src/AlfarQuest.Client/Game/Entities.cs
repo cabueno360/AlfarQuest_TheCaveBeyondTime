@@ -331,6 +331,12 @@ public class Prop
     public string Kind = "";        // outdoor props: name in atlas_outside.json
     public int Variant;
     public bool Solid, Flip;
+    /// <summary>Set by a Tiled map that paints this prop's art into its own tile
+    /// layers, so the renderer knows not to draw the sprite on top of it. Null when
+    /// nothing has an opinion — the prop is then judged by kind, which is all a
+    /// hand-built place can offer. Per-prop rather than per-kind because a crate
+    /// is painted in the warehouse and drawn from our atlas out on the road.</summary>
+    public bool? Painted;
 }
 
 public class Crystal

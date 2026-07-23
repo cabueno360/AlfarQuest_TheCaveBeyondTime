@@ -24,6 +24,9 @@ public static class MapCatalog
         (Stage01, "Maps/Outside/Stage01_Outside.tmx"),
         ("cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"),
         ("cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"),
+        ("mage_school", "Maps/Interiors/MageSchool.tmx"),
+        ("seoshe", "Maps/Interiors/Seoshe.tmx"),
+        ("thieves_warehouse", "Maps/Interiors/ThievesWarehouse.tmx"),
         (Cave, "Maps/Cave/Cave_Descent.tmx"),
     ];
 

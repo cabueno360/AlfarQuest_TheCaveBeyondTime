@@ -46,7 +46,7 @@ public class REnt
     public float t01 = 1; public bool add;
 }
 
-public class RProp { public float x, y, s; public int cx, cy, v; public string k = ""; public bool flip; }
+public class RProp { public float x, y, s; public int cx, cy, v; public string k = ""; public bool flip; public bool? paint; }
 public class RNpc { public float x, y, f; public string kind = "", name = ""; public bool talking, inReach, merchant, hidden; }
 
 public class RFloat { public float x, y, life; public string text = "", c = "#ffffff"; }
