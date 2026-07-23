@@ -296,6 +296,7 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
         ["r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"],
         ["r2_whispering_wood", "Maps/Regions/R2_WhisperingWood.tmx"],
         ["r3_deepdelve", "Maps/Regions/R3_Deepdelve.tmx"],
+        ["r4_kae_ychel_road", "Maps/Regions/R4_KaeYchelRoad.tmx"],
     ]) {
         loadTmx(path).then(tmx => {
             if (!tmx) return;

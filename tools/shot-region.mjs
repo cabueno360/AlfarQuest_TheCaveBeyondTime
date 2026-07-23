@@ -68,6 +68,14 @@ const TOURS = {
     ['13-switchback', 45, 24], ['14-turn', 45, 18], ['15-shelf', 50, 14],
     ['16-mouth', 54, 14], ['17-cerno', 52, 14], ['18-lastwatch', 56, 14],
   ],
+  r4_kae_ychel_road: [
+    ['01-roadin', 4, 32], ['02-brook', 10, 12], ['03-oasis', 22, 24],
+    ['04-caravan', 29, 29], ['05-wayhouse', 30, 30], ['06-well', 22, 25],
+    ['07-trackjoin', 33, 26], ['08-trackhead', 32, 10], ['09-academyspur', 52, 27],
+    ['10-outpost', 54, 22], ['11-courtyard', 52, 21], ['12-hall', 49, 20],
+    ['13-drynorth', 42, 12], ['14-ruins', 12, 50], ['15-colonnade', 15, 49],
+    ['16-drysoutheast', 52, 44], ['17-stoppedwagon', 44, 40], ['18-eastwaymark', 66, 30],
+  ],
 };
 const SPOTS = TOURS[REGION] ?? TOURS.r1_ashwold;
 for (const [name, x, y] of SPOTS) {

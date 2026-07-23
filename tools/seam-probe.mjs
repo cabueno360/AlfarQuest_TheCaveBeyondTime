@@ -123,6 +123,32 @@ ok(!!down, 'walking into the mouth carried the party down');
 if (down) ok(down.level === 1, `and it is the first depth (level ${down.level})`);
 await p.screenshot({ path: 'tools/shots/seam-into-the-cave.png' });
 
+// ------------------------------------------------------------------
+console.log('\n=== the ring closes: south out of Deepdelve, west out of the road ===');
+// R3 -> R4: the miners' track down at the top of the road country.
+ok(await p.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r3_deepdelve')),
+   'Deepdelve stands up');
+await s(1200); await clear();
+await warp(31, 54); await s(500); await clear();     // on the south track
+await p.keyboard.down('s');
+let r4 = null;
+for (let i = 0; i < 40 && !r4; i++) { await s(150); const h = await hud(); if (h.region !== 'Deepdelve') r4 = h; }
+await p.keyboard.up('s');
+ok(!!r4, 'walking south changed the map');
+if (r4) ok(r4.region === 'The Kae Ychel Road', `arrived on the Kae Ychel Road (got "${r4.region}")`);
+
+// R4 -> R1: west off the road country brings you back to the village. The ring.
+await warp(2, 32); await s(500); await clear();
+const onroad = await hud();
+ok(onroad.region === 'The Kae Ychel Road', `back on the road (got "${onroad.region}")`);
+await p.keyboard.down('a');
+let home = null;
+for (let i = 0; i < 40 && !home; i++) { await s(150); const h = await hud(); if (h.region !== 'The Kae Ychel Road') home = h; }
+await p.keyboard.up('a');
+ok(!!home, 'walking west off the road changed the map');
+if (home) ok(home.region === 'Ashwold',
+   `the ring closes — the optional wing comes home to Ashwold (got "${home.region}")`);
+
 console.log('=== console ===');
 ok(errs.length === 0, `the game logged no errors${errs.length ? ': ' + errs[0] : ''}`);
 console.log(`\n${fail ? 'FAILURES' : 'ALL PASS'}: ${pass} passed, ${fail} failed`);

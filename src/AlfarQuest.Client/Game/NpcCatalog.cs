@@ -6,6 +6,16 @@ public static class NpcCatalog
 {
     public static readonly IReadOnlyList<NpcDefinition> All =
     [
+        // ---- the Kae Ychel road, and the caravan on it ----
+        new() { Id = "caravan_master", Kind = "npcWagoner", Name = "Ondu the Long-Hauler", Role = "Caravan Master",
+                Lines = ["Kae Ychel is nine days east if the wells hold. Eleven if they do not.",
+                         "I water here every trip. The old road knew where to put an oasis.",
+                         "Silk and glass out, ore and hides back. That is the whole of the road."] },
+        new() { Id = "road_priest", Kind = "npcPriest", Name = "Sister Vell", Role = "Of the Twin Sun",
+                Lines = ["The Sun King's light falls hardest on this road. That is why it is a hard road.",
+                         "I walk to Kae Ychel and back, and I bless the wells at every stop.",
+                         "The ruins you passed were a city once, before the sun found it."] },
+
         // ---- Deepdelve, the pit under the pass ----
         // What is left of a working mine after the thing below it stopped giving
         // ore and started taking crews.
