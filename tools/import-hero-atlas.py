@@ -38,7 +38,7 @@ FRAMES = {
     # 0-5 idle+walk, 6-7 attack, 8 channel
     "cleric": [0, 37, 39, 41, 43, 45, 50, 61, 66],
     "thief":  [0, 41, 43, 45, 47, 49, 51, 55, 61],
-    "mage":   [8, 25, 27, 29, 30, 31, 36, 38, 50],
+    "mage":   [16, 17, 18, 19, 20, 21, 34, 37, 50],
 }
 
 CELL_H = 56          # the strip's cell height in pixels; the body is scaled to fit
