@@ -13,15 +13,20 @@ namespace AlfarQuest.Client.Game.Tiled;
 /// and nothing needs a flag to say so.</summary>
 public static class MapCatalog
 {
-    /// <summary>The id of Stage 1's map — the file under wwwroot/Maps/Outside.</summary>
+    /// <summary>The id the generator's Stage 1 answers to. No longer fetched or
+    /// registered: Stage 1 is the ring of regions now, and the game opens in
+    /// Ashwold. The old map still lives under wwwroot/Maps/Outside as the export
+    /// baseline behind tools/make-tmx.py, but shipping its 1.2 MB to every player
+    /// at startup — for a map none of them play — was dead weight. If every region
+    /// fails to load, BuildOverworld finds this unregistered and falls through to
+    /// the procedural generator, which is the true last-resort world.</summary>
     public const string Stage01 = "Stage01_Outside";
 
-    /// <summary>The maps that have been migrated, as (id, path under wwwroot). An
-    /// interior's id is its <see cref="InteriorDef"/> id, so the builder can simply
-    /// ask whether the interior it is about to build has a map.</summary>
+    /// <summary>The maps fetched and registered at startup, as (id, path under
+    /// wwwroot). An interior's id is its <see cref="InteriorDef"/> id, so the
+    /// builder can simply ask whether the interior it is about to build has a map.</summary>
     public static readonly (string Id, string Path)[] Migrated =
     [
-        (Stage01, "Maps/Outside/Stage01_Outside.tmx"),
         ("cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"),
         ("cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"),
         ("mage_school", "Maps/Interiors/MageSchool.tmx"),

@@ -283,7 +283,6 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
     // awaited — a slow map must not hold up the first frame, and until it comes
     // that place draws itself the way it always did.
     for (const [id, path] of [
-        ["Stage01_Outside", "Maps/Outside/Stage01_Outside.tmx"],
         ["cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"],
         ["cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"],
         ["mage_school", "Maps/Interiors/MageSchool.tmx"],

@@ -40,7 +40,8 @@ drifting apart.
 src/AlfarQuest.Client/wwwroot/
   Maps/
     Outside/
-      Stage01_Outside.tmx        the official Stage 1 map
+      Stage01_Outside.tmx        the OLD Stage 1 — export baseline only now,
+                                 no longer fetched or played (see below)
     Interiors/
       ClericHouse_Ground.tmx     the Cleric's house, both floors
       ClericHouse_Upper.tmx
@@ -57,8 +58,12 @@ src/AlfarQuest.Client/wwwroot/
   assets/                                   our own art (NPCs, heroes), untouched
 ```
 
-Open `Maps/Outside/Stage01_Outside.tmx` in Tiled and edit it. Save, reload the
-page, and you are playing your change.
+Stage 1 is now the RING of four regions under `Maps/Regions/` (R1_Ashwold …
+R4_KaeYchelRoad); the game opens in Ashwold. `Stage01_Outside.tmx` is kept as the
+export baseline behind `tools/make-tmx.py` and as the id the procedural generator
+answers to if every region fails to load, but it is no longer fetched at startup
+or played — shipping its 1.2 MB to every player for a map none of them see was
+dead weight. Open a region's `.tmx` in Tiled and edit it; save, reload, play.
 
 ---
 
