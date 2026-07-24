@@ -46,6 +46,10 @@ GRIDS = {
     "OurMageFrames":   ("atlas_mage.png", 32, 32,
                         "the nine the Mage is actually animated from, in engine "
                         "column order"),
+    "OurClericFrames": ("atlas_cleric.png", 74, 56,
+                        "the Cleric's nine frames, cut from a generated 8x12 sheet "
+                        "by tools/import-hero-atlas.py. 74-wide cells because the "
+                        "attack frames' sword reaches out past the body"),
     "OurCaveTiles":    ("Caves/MainLev2.0.png", 32, 32, "the cave's rock and floor"),
     "OurCaveDeco":     ("Caves/decorative.png", 32, 32, "cave decoration"),
     "OurOres":         ("Miner_Ores.png", 128, 128, "crystal spires and ore"),

@@ -18,6 +18,20 @@ export const ATLAS = {
     // Its cells are 32px against the party sheet's 63, so it carries its own
     // scale: measured, not guessed — the party's Mage stands 54px tall and this
     // one fills 31 of its 32, so 1.74 puts the two at the same height.
+    // The Cleric has his own sheet too, cut from a generated 8x12 sheet by
+    // tools/import-hero-atlas.py — which segments the figures rather than indexing
+    // a grid, because a generated sheet is not on one. Same nine-column contract.
+    // The cell is 74x56 because the attack frames' sword reaches out of the body's
+    // column; the body itself fills ~54px, so scale 1.0 stands him at the party's
+    // height.
+    cleric: {
+        src: "assets/atlas_cleric.png", cw: 74, ch: 56, ground: 55, scale: 1.0,
+        img: null, white: null, outlined: null, ready: false,
+        rows:   { Cleric: 0 },
+        frames: { Cleric: 6 },
+        attack:  { first: 6, count: 2, duration: 0.22 },
+        ability: { col: 8, duration: 0.45 },
+    },
     mage: {
         src: "assets/atlas_mage.png", cw: 32, ch: 32, ground: 31, scale: 1.74,
         img: null, white: null, outlined: null, ready: false,
