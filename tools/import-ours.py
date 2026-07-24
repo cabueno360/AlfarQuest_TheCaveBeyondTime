@@ -37,7 +37,7 @@ GRIDS = {
     "OurHeroes":       ("atlas_party.png", 51, 63,
                         "the three heroes and the husk — rows Mage/Cleric/Thief/husk, "
                         "columns idle+walk 0-5, attack 6-7, ability 8"),
-    "OurMageFrames":   ("atlas_mage.png", 41, 56,
+    "OurMageFrames":   ("atlas_mage.png", 50, 56,
                         "the nine the Mage is animated from, in engine column "
                         "order, cut from his generated sheet like the others"),
     "OurClericFrames": ("atlas_cleric.png", 74, 56,

@@ -44,7 +44,11 @@ FRAMES = {
     # the boots alternate. So his frames are addressed by (row, col), and the walk
     # is a proper cycle from the walk-down row rather than six near-identical
     # frames. Row 2 = walk-down; row 4 = cast-down; row 6 = the ultimate.
-    "mage": [(2, 0), (2, 1), (2, 2), (2, 3), (2, 6), (2, 7),
+    # Built from the ook8ga sheet, whose row 3 is a proper stepping walk (the
+    # cloak opens and the boots alternate) — the sequence the art direction asked
+    # for. Walk from row 3; cast from row 4 (arm out, then the orb bright); the
+    # ultimate from row 6.
+    "mage": [(3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 6),
              (4, 3), (4, 6), (6, 0)],
 }
 
