@@ -8,7 +8,7 @@
      16x16 grid; one engine cell is a 2x2 block, so the map is 144x112. -->
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
      width="144" height="112" tilewidth="16" tileheight="16" infinite="0"
-     nextlayerid="531" nextobjectid="131">
+     nextlayerid="531" nextobjectid="206">
  <properties>
   <property name="Region" value="r3_deepdelve"/>
   <property name="DisplayName" value="Deepdelve"/>
@@ -64,7 +64,7 @@
   <data encoding="base64" compression="zlib">eNrt2TkKQgEMRdFsIWt07BzX4dA67NUHNoKIip3/HLhVUqZLFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwN2oq6ZplsZpkub9+RyOuYdd2qdDfz8HAAAAAAAAGJJFV63TJi3TKm37ef5uj+G65g5O6Zwu/Xr+bg8AAAAAAOCR/xS/8p8CAAAAAAAAAAAAAAAAAAAAAAAAAPgfNzKSHjI=</data>
  </layer>
  <layer id="511" name="Objects" width="144" height="112">
-  <data encoding="base64" compression="zlib">eNrt2jEOgjAABVDGhqNYvQXcRicWdTZOcmcXjEZNtEhF4b2pIU2akObzQ1sUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwC/alnnnA/NVJebFopsfy+sYkBkxIQ+WsgPoafUiP9qQb+297Jq8U3jcT83NsyZ4R3P2jf5yvNtjuzfWlE1AbmvfPwBgJJuuhxwG6iOX83Pn6ADAv6sH7DPP/v3U+hLwoShHgJFU8gfoyf0bAAAAAAAAAACAdGdtOAx1</data>
+  <data encoding="base64" compression="zlib">eNrtnbty2zAQRV168Clx8hcU5VYPt9SjTio3TupMquSfM5qIYwQmSBDEYwGe0yTjOJIILLB3F4vVwwMAAAAAwDs7Zf+3VoV9rxfFeAOY7Fe+Lp4dnl/q3tHvn1fFHifJdy1ls9J5bAae+7Bim9afXR+bndAxYf+Z51dCcbq/V3f/81jRPByxKevemGL9jcVh5wxzM7b3DfnNLvFnPAmwV5sdjGn9a0T/whqua58Z4hJpji+RbafDNqOh+4etCp/T842rcs+5bY3tsEVvLRNj7EqKwxtsp1rGfOBFYV+Qhis2EAWJ8VHv+06Fz/kZm0WjQJHocZrtHOhmU2Y8J0W3E8+lZ6vc9hvdLyz1vy3zXL2f8o2ztipPvOa6D5H/lKGzJWpt01ZjnGn3a+322ms8J9qOPPOBtUnMnwmfXE9p9T9rr31NFY9PaYwT+5yIeZiDHj+1ltoR/NdyDcBzh9GuptaG8n0x51H1cjLiwVAaIUa+o/P8nI0lbx3qzIrzljLtXirkuZfH0tRCl81BDetXVy2ra9ApPRpb35j5miF/cRZ6tgr4vLnrrTZCnMfor7FnbReJ6XuW5uEl2YHrZ+kU+4GEeVkSX8eq1dwy50liG0lrq01838zMN3P2kS7mnePvbLG472fk7FLOXmzGy7ovCl27NPYc2EQ5ekWKDYd8zdLqzqXWoIaaE1ser1WyxsKmvzlnzW9DTcAY/5jpPnGu+KCZqAXZCL9DHSoufsnYd4K7UGH9o8+e3GtgSbFpqhoF8n7yxjTWnHQVamnzc5wT9PytvVaBfqVlk7Meae353dT3WFPHoBJzEvQyAank0go3H1BCbLkp6J5vTbpoTX76OnJ/oLZxkGKj9M+Qw5y5yBU7lFCL1KrlNt449pqH8Hoi5Wv4vs9BQH/ntVFzXUqNd9Om1mdTsAbSbbHLWJsTO6cScs2d+F6nZPZ/ttQO7ix9kXVNo//f/udNxj6AU77WtmZq9Rcu2uOC3pg9jmvvN7A0tqtV4w7tI+b+f3TYg6jhWM6tDrq2+DvEuinl7is9OGTZTYn0fpr9FCTFc5IIeV9sTn6D86Q41BjPmbkrqRom1tkz/e3WRYoahjVpoqnct+kDXfOBuwS16SHmlHpKObjqntQ6M5WNkG8GABfoL7I+bjl7l3hnKqfJnbdlvCm/35fwHe5zGLOTZ2wIIApzc1qf7r//pN7/LjHO8c3VUSsuBwl3Fw6euaWadY9tbT3NeObPrDOADxyVm+bt98a19pr+MvHcfx7jvfePwsb82cGm6Fn+P78fP9rTq/az14j2RS9v+aTQL78MG/vu8J4/sB1YgRaiFicvXx8ZA6iTqbpG7kTIhvNqqB1ixH98u+uQn4H0SH9+/sb4AgDABOTOQToh7xkN5X642z3MrQ5kaf0iNbTuUCs6jeQ730/MX3FQMwm1wLkivg3i6mEflua7fe8bzO3ZRf1NfHKdv24yfp9tqWwF3MORFhPqPSXQG9OY91U5+7SPTYy1WNIzxsJHP+j+IkdNCnVKfuOkz1XLvb8gPrsWW7xE6HdRe1+w84Ke6rn7vEqwW0m9bvu9cV+4zb7QZy0bkvS7vh/Z1llvKzb/lvN5Yu0N5FHBxh7byKKnr3z/EXsXAAAAAAAAPPwFRy6Yyg==</data>
  </layer>
  <layer id="512" name="Trees" width="144" height="112">
   <data encoding="base64" compression="zlib">eNrt2MtKVWEcxuF1C2ojtxeQehHmlSXYrCBHKioe8lSTyvIAnp1keeoeNL2HPIAv+IGbzVbco0KeB36T9c0W7+hfVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAc/G6q6oGuvwHHjfZWVVTaTrNdN5/f5vtvLMfGgxmE2/KLpazl5W0mtbqtjOc95E0aj80eJ9NDJVdHGYzR+k4naTfZUMf8j6b5tK8DVGMZQvjaaJs4jR7OUt/0nm6KPv5nPcv6Wtash+KhWxhMX1Mn9Lf7OUyXaXrdFP2s563jbSZtuyH4lu28D0tp5Wyi7ZaVbWnjvSidvftR97208/0y34otrOFnbSb9souXmYz3akn9db8Ix52kM0cpqN0XPbTl828Sv22A/wj9XchaFX9XQha0XgXglY03oWgFc3uQvBUze5C8FTN7kIAAAAAAAAAAAAAAADwP7kFIZVNvQ==</data>
@@ -129,7 +129,7 @@
  <objectgroup id="523" name="Warp">
  </objectgroup>
  <objectgroup id="524" name="Interaction">
-  <object id="102" name="the pass marker" x="56.00" y="184.00">
+  <object id="177" name="the pass marker" x="56.00" y="184.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -139,7 +139,7 @@
    </properties>
    <point/>
   </object>
-  <object id="103" name="the captain's board" x="536.00" y="472.00">
+  <object id="178" name="the captain's board" x="536.00" y="472.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -149,7 +149,7 @@
    </properties>
    <point/>
   </object>
-  <object id="104" name="the headgear" x="648.00" y="376.00">
+  <object id="179" name="the headgear" x="648.00" y="376.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -159,7 +159,7 @@
    </properties>
    <point/>
   </object>
-  <object id="105" name="the loaded cart" x="616.00" y="392.00">
+  <object id="180" name="the loaded cart" x="616.00" y="392.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -169,7 +169,7 @@
    </properties>
    <point/>
   </object>
-  <object id="106" name="the tarn" x="328.00" y="472.00">
+  <object id="181" name="the tarn" x="328.00" y="472.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -179,7 +179,7 @@
    </properties>
    <point/>
   </object>
-  <object id="107" name="the offerings" x="728.00" y="408.00">
+  <object id="182" name="the offerings" x="728.00" y="408.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -189,7 +189,7 @@
    </properties>
    <point/>
   </object>
-  <object id="108" name="the mouth" x="872.00" y="216.00">
+  <object id="183" name="the mouth" x="872.00" y="216.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Read"/>
@@ -199,7 +199,7 @@
    </properties>
    <point/>
   </object>
-  <object id="109" name="the last watch" x="856.00" y="232.00">
+  <object id="184" name="the last watch" x="856.00" y="232.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -209,7 +209,7 @@
    </properties>
    <point/>
   </object>
-  <object id="110" name="the bunkhouse" x="456.00" y="408.00">
+  <object id="185" name="the bunkhouse" x="456.00" y="408.00">
    <properties>
     <property name="InteractionType" value="Examine"/>
     <property name="Verb" value="Examine"/>
@@ -953,7 +953,907 @@
    </properties>
    <point/>
   </object>
-  <object id="68" name="pine" x="344.00" y="648.00">
+  <object id="68" name="crate" x="584.00" y="456.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="69" name="barrel" x="600.00" y="440.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="50"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="70" name="crate" x="536.00" y="472.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="46"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="71" name="orePile" x="536.00" y="456.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="21"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="72" name="orePile" x="568.00" y="440.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="53"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="73" name="toolRack" x="616.00" y="472.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="74" name="h_bucket" x="552.00" y="440.00">
+   <properties>
+    <property name="Kind" value="h_bucket"/>
+    <property name="Variant" value="49"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="75" name="h_cart" x="568.00" y="472.00">
+   <properties>
+    <property name="Kind" value="h_cart"/>
+    <property name="Variant" value="59"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="76" name="log" x="536.00" y="472.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="46"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="77" name="log" x="600.00" y="456.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="21"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="78" name="log" x="552.00" y="472.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="79" name="log" x="632.00" y="472.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="13"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="80" name="log" x="664.00" y="472.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="28"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="81" name="log" x="664.00" y="504.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="37"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="82" name="log" x="680.00" y="488.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="35"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="83" name="log" x="632.00" y="520.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="55"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="84" name="workbench" x="680.00" y="520.00">
+   <properties>
+    <property name="Kind" value="workbench"/>
+    <property name="Variant" value="22"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="85" name="barrel" x="440.00" y="376.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="38"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="86" name="crate" x="472.00" y="360.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="87" name="h_bucket" x="456.00" y="360.00">
+   <properties>
+    <property name="Kind" value="h_bucket"/>
+    <property name="Variant" value="51"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="88" name="campfire" x="488.00" y="408.00">
+   <properties>
+    <property name="Kind" value="campfire"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="89" name="h_cart" x="424.00" y="392.00">
+   <properties>
+    <property name="Kind" value="h_cart"/>
+    <property name="Variant" value="32"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="90" name="toolRack" x="472.00" y="424.00">
+   <properties>
+    <property name="Kind" value="toolRack"/>
+    <property name="Variant" value="51"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="91" name="mineCart" x="696.00" y="392.00">
+   <properties>
+    <property name="Kind" value="mineCart"/>
+    <property name="Variant" value="15"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="16"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="92" name="orePile" x="712.00" y="424.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="93" name="orePile" x="680.00" y="424.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="23"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="94" name="crate" x="728.00" y="392.00">
+   <properties>
+    <property name="Kind" value="crate"/>
+    <property name="Variant" value="6"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="12"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="95" name="barrel" x="696.00" y="440.00">
+   <properties>
+    <property name="Kind" value="barrel"/>
+    <property name="Variant" value="17"/>
+    <property name="Scale" value="0.6"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="11"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="96" name="log" x="664.00" y="440.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="27"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="97" name="log" x="728.00" y="440.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="26"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="98" name="crystal" x="776.00" y="440.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="17"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="99" name="crystal" x="792.00" y="392.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="60"/>
+    <property name="Scale" value="0.767"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="100" name="crystal" x="760.00" y="488.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="26"/>
+    <property name="Scale" value="0.833"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="101" name="crystal" x="744.00" y="360.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="39"/>
+    <property name="Scale" value="0.833"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="102" name="crystal" x="712.00" y="488.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.833"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="103" name="crystal" x="808.00" y="456.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="5"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="104" name="crystal" x="632.00" y="520.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="55"/>
+    <property name="Scale" value="0.833"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="105" name="crystal" x="680.00" y="552.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="55"/>
+    <property name="Scale" value="0.767"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="106" name="crystal" x="264.00" y="408.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="25"/>
+    <property name="Scale" value="0.767"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="107" name="crystal" x="232.00" y="472.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="37"/>
+    <property name="Scale" value="0.833"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="108" name="crystal" x="840.00" y="392.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="22"/>
+    <property name="Scale" value="0.767"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="109" name="crystal" x="856.00" y="408.00">
+   <properties>
+    <property name="Kind" value="crystal"/>
+    <property name="Variant" value="0"/>
+    <property name="Scale" value="0.767"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="110" name="orePile" x="488.00" y="648.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="39"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="111" name="orePile" x="536.00" y="664.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="23"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="112" name="orePile" x="504.00" y="696.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="11"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="113" name="orePile" x="552.00" y="728.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="7"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="114" name="orePile" x="472.00" y="680.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="38"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="115" name="orePile" x="520.00" y="744.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="116" name="orePile" x="456.00" y="712.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="30"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="117" name="orePile" x="568.00" y="712.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="4"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="118" name="orePile" x="488.00" y="760.00">
+   <properties>
+    <property name="Kind" value="orePile"/>
+    <property name="Variant" value="16"/>
+    <property name="Scale" value="0.8"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="13"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="119" name="log" x="472.00" y="728.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="56"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="120" name="log" x="520.00" y="744.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="121" name="log" x="504.00" y="664.00">
+   <properties>
+    <property name="Kind" value="log"/>
+    <property name="Variant" value="39"/>
+    <property name="Scale" value="0.75"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="122" name="mineCart" x="456.00" y="744.00">
+   <properties>
+    <property name="Kind" value="mineCart"/>
+    <property name="Variant" value="34"/>
+    <property name="Scale" value="0.7"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="15"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="123" name="lantern" x="568.00" y="424.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="22"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="124" name="lantern" x="520.00" y="472.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="55"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="125" name="lantern" x="488.00" y="568.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="31"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="126" name="lantern" x="440.00" y="616.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="61"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="127" name="lantern" x="600.00" y="392.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="12"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="128" name="lantern" x="744.00" y="328.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="19"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="129" name="lantern" x="792.00" y="264.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="38"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="130" name="lantern" x="696.00" y="376.00">
+   <properties>
+    <property name="Kind" value="lantern"/>
+    <property name="Variant" value="29"/>
+    <property name="Scale" value="0.65"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="false"/>
+    <property name="Radius" value="0.0"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="131" name="rock" x="328.00" y="456.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="6"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="132" name="rock" x="376.00" y="392.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="11"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="133" name="rock" x="280.00" y="408.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="20"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="134" name="rock" x="424.00" y="344.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="32"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="135" name="rock" x="712.00" y="568.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="2"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="136" name="rock" x="760.00" y="536.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="5"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="137" name="rock" x="248.00" y="536.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="60"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="138" name="rock" x="664.00" y="344.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="59"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="139" name="rock" x="840.00" y="488.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="2"/>
+    <property name="Scale" value="0.85"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="140" name="rock" x="344.00" y="600.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="24"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="141" name="rock" x="312.00" y="488.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="8"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="true"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="142" name="rock" x="408.00" y="456.00">
+   <properties>
+    <property name="Kind" value="rock"/>
+    <property name="Variant" value="7"/>
+    <property name="Scale" value="1.1"/>
+    <property name="Flip" value="false"/>
+    <property name="Solid" value="true"/>
+    <property name="Radius" value="14"/>
+    <property name="Painted" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="143" name="pine" x="344.00" y="648.00">
    <properties>
     <property name="Kind" value="pine"/>
     <property name="Variant" value="51"/>
@@ -965,7 +1865,7 @@
    </properties>
    <point/>
   </object>
-  <object id="69" name="deadTree" x="344.00" y="680.00">
+  <object id="144" name="deadTree" x="344.00" y="680.00">
    <properties>
     <property name="Kind" value="deadTree"/>
     <property name="Variant" value="57"/>
@@ -977,7 +1877,7 @@
    </properties>
    <point/>
   </object>
-  <object id="70" name="broadleaf" x="376.00" y="648.00">
+  <object id="145" name="broadleaf" x="376.00" y="648.00">
    <properties>
     <property name="Kind" value="broadleaf"/>
     <property name="Variant" value="38"/>
@@ -989,7 +1889,7 @@
    </properties>
    <point/>
   </object>
-  <object id="71" name="pine" x="392.00" y="712.00">
+  <object id="146" name="pine" x="392.00" y="712.00">
    <properties>
     <property name="Kind" value="pine"/>
     <property name="Variant" value="62"/>
@@ -1001,7 +1901,7 @@
    </properties>
    <point/>
   </object>
-  <object id="72" name="broadleaf" x="408.00" y="744.00">
+  <object id="147" name="broadleaf" x="408.00" y="744.00">
    <properties>
     <property name="Kind" value="broadleaf"/>
     <property name="Variant" value="12"/>
@@ -1013,7 +1913,7 @@
    </properties>
    <point/>
   </object>
-  <object id="73" name="pine" x="424.00" y="632.00">
+  <object id="148" name="pine" x="424.00" y="632.00">
    <properties>
     <property name="Kind" value="pine"/>
     <property name="Variant" value="2"/>
@@ -1025,7 +1925,7 @@
    </properties>
    <point/>
   </object>
-  <object id="74" name="pine" x="424.00" y="648.00">
+  <object id="149" name="pine" x="424.00" y="648.00">
    <properties>
     <property name="Kind" value="pine"/>
     <property name="Variant" value="2"/>
@@ -1037,7 +1937,7 @@
    </properties>
    <point/>
   </object>
-  <object id="75" name="pine" x="424.00" y="664.00">
+  <object id="150" name="pine" x="424.00" y="664.00">
    <properties>
     <property name="Kind" value="pine"/>
     <property name="Variant" value="56"/>
@@ -1049,7 +1949,7 @@
    </properties>
    <point/>
   </object>
-  <object id="76" name="rock" x="344.00" y="600.00">
+  <object id="151" name="rock" x="344.00" y="600.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="38"/>
@@ -1061,7 +1961,7 @@
    </properties>
    <point/>
   </object>
-  <object id="77" name="rock" x="344.00" y="616.00">
+  <object id="152" name="rock" x="344.00" y="616.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="21"/>
@@ -1073,7 +1973,7 @@
    </properties>
    <point/>
   </object>
-  <object id="78" name="rock" x="344.00" y="632.00">
+  <object id="153" name="rock" x="344.00" y="632.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="11"/>
@@ -1085,7 +1985,7 @@
    </properties>
    <point/>
   </object>
-  <object id="79" name="bush" x="360.00" y="680.00">
+  <object id="154" name="bush" x="360.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="9"/>
@@ -1097,7 +1997,7 @@
    </properties>
    <point/>
   </object>
-  <object id="80" name="bush" x="376.00" y="680.00">
+  <object id="155" name="bush" x="376.00" y="680.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="15"/>
@@ -1109,7 +2009,7 @@
    </properties>
    <point/>
   </object>
-  <object id="81" name="rock" x="392.00" y="600.00">
+  <object id="156" name="rock" x="392.00" y="600.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="4"/>
@@ -1121,7 +2021,7 @@
    </properties>
    <point/>
   </object>
-  <object id="82" name="orePile" x="392.00" y="760.00">
+  <object id="157" name="orePile" x="392.00" y="760.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="34"/>
@@ -1133,7 +2033,7 @@
    </properties>
    <point/>
   </object>
-  <object id="83" name="rock" x="440.00" y="712.00">
+  <object id="158" name="rock" x="440.00" y="712.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="41"/>
@@ -1145,7 +2045,7 @@
    </properties>
    <point/>
   </object>
-  <object id="84" name="rock" x="472.00" y="600.00">
+  <object id="159" name="rock" x="472.00" y="600.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="20"/>
@@ -1157,7 +2057,7 @@
    </properties>
    <point/>
   </object>
-  <object id="85" name="rock" x="488.00" y="584.00">
+  <object id="160" name="rock" x="488.00" y="584.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="36"/>
@@ -1169,7 +2069,7 @@
    </properties>
    <point/>
   </object>
-  <object id="86" name="orePile" x="520.00" y="680.00">
+  <object id="161" name="orePile" x="520.00" y="680.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="8"/>
@@ -1181,7 +2081,7 @@
    </properties>
    <point/>
   </object>
-  <object id="87" name="rock" x="520.00" y="728.00">
+  <object id="162" name="rock" x="520.00" y="728.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="51"/>
@@ -1193,7 +2093,7 @@
    </properties>
    <point/>
   </object>
-  <object id="88" name="rock" x="520.00" y="744.00">
+  <object id="163" name="rock" x="520.00" y="744.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="10"/>
@@ -1205,7 +2105,7 @@
    </properties>
    <point/>
   </object>
-  <object id="89" name="orePile" x="536.00" y="680.00">
+  <object id="164" name="orePile" x="536.00" y="680.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="29"/>
@@ -1217,7 +2117,7 @@
    </properties>
    <point/>
   </object>
-  <object id="90" name="orePile" x="552.00" y="568.00">
+  <object id="165" name="orePile" x="552.00" y="568.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="33"/>
@@ -1229,7 +2129,7 @@
    </properties>
    <point/>
   </object>
-  <object id="91" name="bush" x="552.00" y="632.00">
+  <object id="166" name="bush" x="552.00" y="632.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="55"/>
@@ -1241,7 +2141,7 @@
    </properties>
    <point/>
   </object>
-  <object id="92" name="rock" x="584.00" y="584.00">
+  <object id="167" name="rock" x="584.00" y="584.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="55"/>
@@ -1253,7 +2153,7 @@
    </properties>
    <point/>
   </object>
-  <object id="93" name="orePile" x="584.00" y="632.00">
+  <object id="168" name="orePile" x="584.00" y="632.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="41"/>
@@ -1265,7 +2165,7 @@
    </properties>
    <point/>
   </object>
-  <object id="94" name="rock" x="600.00" y="584.00">
+  <object id="169" name="rock" x="600.00" y="584.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="52"/>
@@ -1277,7 +2177,7 @@
    </properties>
    <point/>
   </object>
-  <object id="95" name="orePile" x="600.00" y="616.00">
+  <object id="170" name="orePile" x="600.00" y="616.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="41"/>
@@ -1289,7 +2189,7 @@
    </properties>
    <point/>
   </object>
-  <object id="96" name="bush" x="600.00" y="648.00">
+  <object id="171" name="bush" x="600.00" y="648.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="37"/>
@@ -1301,7 +2201,7 @@
    </properties>
    <point/>
   </object>
-  <object id="97" name="bush" x="600.00" y="712.00">
+  <object id="172" name="bush" x="600.00" y="712.00">
    <properties>
     <property name="Kind" value="bush"/>
     <property name="Variant" value="38"/>
@@ -1313,7 +2213,7 @@
    </properties>
    <point/>
   </object>
-  <object id="98" name="rock" x="616.00" y="584.00">
+  <object id="173" name="rock" x="616.00" y="584.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="11"/>
@@ -1325,7 +2225,7 @@
    </properties>
    <point/>
   </object>
-  <object id="99" name="rock" x="632.00" y="712.00">
+  <object id="174" name="rock" x="632.00" y="712.00">
    <properties>
     <property name="Kind" value="rock"/>
     <property name="Variant" value="32"/>
@@ -1337,7 +2237,7 @@
    </properties>
    <point/>
   </object>
-  <object id="100" name="orePile" x="648.00" y="568.00">
+  <object id="175" name="orePile" x="648.00" y="568.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="26"/>
@@ -1349,7 +2249,7 @@
    </properties>
    <point/>
   </object>
-  <object id="101" name="orePile" x="648.00" y="632.00">
+  <object id="176" name="orePile" x="648.00" y="632.00">
    <properties>
     <property name="Kind" value="orePile"/>
     <property name="Variant" value="29"/>
@@ -1363,61 +2263,61 @@
   </object>
  </objectgroup>
  <objectgroup id="526" name="TreasureSpawn">
-  <object id="111" name="A loaded cart" x="616.00" y="392.00">
+  <object id="186" name="A loaded cart" x="616.00" y="392.00">
    <properties>
     <property name="ContainerKind" value="cart"/>
    </properties>
    <point/>
   </object>
-  <object id="112" name="The winch house store" x="648.00" y="472.00">
+  <object id="187" name="The winch house store" x="648.00" y="472.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="113" name="A miner's locker" x="632.00" y="456.00">
+  <object id="188" name="A miner's locker" x="632.00" y="456.00">
    <properties>
     <property name="ContainerKind" value="barrel"/>
    </properties>
    <point/>
   </object>
-  <object id="114" name="The captain's chest" x="568.00" y="472.00">
+  <object id="189" name="The captain's chest" x="568.00" y="472.00">
    <properties>
     <property name="ContainerKind" value="chest_iron"/>
    </properties>
    <point/>
   </object>
-  <object id="115" name="Spoil worth sorting" x="520.00" y="408.00">
+  <object id="190" name="Spoil worth sorting" x="520.00" y="408.00">
    <properties>
     <property name="ContainerKind" value="ore"/>
    </properties>
    <point/>
   </object>
-  <object id="116" name="A seam in the tips" x="552.00" y="616.00">
+  <object id="191" name="A seam in the tips" x="552.00" y="616.00">
    <properties>
     <property name="ContainerKind" value="ore"/>
    </properties>
    <point/>
   </object>
-  <object id="117" name="Left at the mouth" x="904.00" y="232.00">
+  <object id="192" name="Left at the mouth" x="904.00" y="232.00">
    <properties>
     <property name="ContainerKind" value="crate"/>
    </properties>
    <point/>
   </object>
-  <object id="118" name="Yeska's stock" x="920.00" y="248.00">
+  <object id="193" name="Yeska's stock" x="920.00" y="248.00">
    <properties>
     <property name="ContainerKind" value="barrel"/>
    </properties>
    <point/>
   </object>
-  <object id="119" name="Under the pump floor" x="408.00" y="616.00">
+  <object id="194" name="Under the pump floor" x="408.00" y="616.00">
    <properties>
     <property name="ContainerKind" value="chest_wood"/>
    </properties>
    <point/>
   </object>
-  <object id="120" name="Wedged in the pass" x="216.00" y="248.00">
+  <object id="195" name="Wedged in the pass" x="216.00" y="248.00">
    <properties>
     <property name="ContainerKind" value="chest_wood"/>
    </properties>
@@ -1425,49 +2325,49 @@
   </object>
  </objectgroup>
  <objectgroup id="527" name="Discovery">
-  <object id="121" name="The Riven Pass" x="136.00" y="216.00">
+  <object id="196" name="The Riven Pass" x="136.00" y="216.00">
    <properties>
     <property name="Radius" value="108.8"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="122" name="Deepdelve" x="568.00" y="440.00">
+  <object id="197" name="Deepdelve" x="568.00" y="440.00">
    <properties>
     <property name="Radius" value="128.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="123" name="The Pit Head" x="648.00" y="392.00">
+  <object id="198" name="The Pit Head" x="648.00" y="392.00">
    <properties>
     <property name="Radius" value="102.4"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="124" name="The Black Tarn" x="328.00" y="472.00">
+  <object id="199" name="The Black Tarn" x="328.00" y="472.00">
    <properties>
     <property name="Radius" value="108.8"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="125" name="The Switchback" x="728.00" y="344.00">
+  <object id="200" name="The Switchback" x="728.00" y="344.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="126" name="The Mouth" x="872.00" y="216.00">
+  <object id="201" name="The Mouth" x="872.00" y="216.00">
    <properties>
     <property name="Radius" value="128.0"/>
     <property name="XpSource" value="RegionDiscovered"/>
    </properties>
    <point/>
   </object>
-  <object id="127" name="The Tips" x="536.00" y="632.00">
+  <object id="202" name="The Tips" x="536.00" y="632.00">
    <properties>
     <property name="Radius" value="96.0"/>
     <property name="XpSource" value="SecretArea"/>
@@ -1476,11 +2376,11 @@
   </object>
  </objectgroup>
  <objectgroup id="528" name="SafeZone">
-  <object id="128" name="safe0" x="0.00" y="160.00" width="256.00" height="96.00">
+  <object id="203" name="safe0" x="0.00" y="160.00" width="256.00" height="96.00">
   </object>
-  <object id="129" name="safe1" x="416.00" y="320.00" width="320.00" height="224.00">
+  <object id="204" name="safe1" x="416.00" y="320.00" width="320.00" height="224.00">
   </object>
-  <object id="130" name="safe2" x="704.00" y="128.00" width="288.00" height="160.00">
+  <object id="205" name="safe2" x="704.00" y="128.00" width="288.00" height="160.00">
   </object>
  </objectgroup>
  <objectgroup id="529" name="CaveMouth">

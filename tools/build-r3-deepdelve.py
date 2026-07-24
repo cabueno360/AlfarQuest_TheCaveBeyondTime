@@ -285,6 +285,74 @@ for _cx, _cy in ((21, 26), (43, 31), (18, 32)):
     prop(_cx, _cy, "crystal", 0.7)
 
 # =====================================================================
+#  4b. THE PIT, DRESSED
+#
+#  A working pit that has STOPPED is not empty — it is full of the work left
+#  where it was set down. This is the clutter that says men were here yesterday
+#  and are not here today: cordwood for the props, ore drawn up and never carted,
+#  the tools on their racks, the rubble the tips are made of, and the crystal
+#  vein they were chasing when whatever happened happened.
+# =====================================================================
+
+# ---- the sorting floor, around the office and winch: where the ore was broken
+#      and graded. Barrows, sieves, stacked timber, the graded heaps.
+for _x, _y, _k, _s in ((36, 28, "crate", 0.6), (37, 27, "barrel", 0.6),
+                       (34, 30, "crate", 0.6), (33, 28, "orePile", 0.8),
+                       (35, 27, "orePile", 0.75), (38, 29, "toolRack", 0.7),
+                       (34, 27, "h_bucket", 0.65), (36, 30, "h_cart", 0.75)):
+    prop(_x, _y, _k, _s, True, 12)
+for _x, _y in ((33, 29), (37, 28), (35, 30)):
+    prop(_x, _y, "log", 0.8)                     # cordwood for the pit props
+
+# ---- cordwood and timber stacks by the winch house: a mine eats timber, and a
+#      stopped one still has the last delivery stacked and waiting.
+for _x, _y in ((40, 30), (41, 29), (41, 31), (42, 30), (40, 31)):
+    prop(_x, _y, "log", 0.85)
+prop(42, 32, "workbench", 0.75, True, 15)
+
+# ---- the miners' bunkhouse yard: the small human things. Washing-poles, a
+#      barrel of water, boots by the door, the fire they cooked on.
+prop(27, 23, "barrel", 0.6, True, 11); prop(30, 23, "crate", 0.6, True, 12)
+prop(28, 22, "h_bucket", 0.65); prop(31, 24, "campfire", 0.7)
+prop(26, 24, "h_cart", 0.7, True, 14)
+prop(29, 26, "toolRack", 0.7, True, 12)
+
+# ---- the adit approach: the last stretch of rail, more loaded carts, the ore
+#      that was coming up when the winch stopped.
+prop(43, 24, "mineCart", 0.8, True, 16)
+prop(44, 26, "orePile", 0.85, True, 14); prop(42, 26, "orePile", 0.8, True, 13)
+prop(45, 24, "crate", 0.6, True, 12); prop(43, 27, "barrel", 0.6, True, 11)
+prop(41, 27, "log", 0.8); prop(45, 27, "log", 0.8)
+
+# ---- THE VEIN. This is why Deepdelve exists: a run of crystal in the rock that
+#      they followed down. It comes up out of the bowl walls and the adit, and it
+#      is what the delve chases below. More of it here says "there was a reason".
+for _x, _y in ((48, 27), (49, 24), (47, 30), (46, 22), (44, 30), (50, 28),
+               (39, 32), (42, 34), (16, 24), (14, 30), (52, 24), (55, 27)):
+    prop(_x, _y, "crystal", 0.7 + 0.2 * ((_x * 7 + _y) % 3) / 3)
+
+# ---- the tips and the southern fall: spoil, broken gear, the rubble that is
+#      thrown down a slope for years.
+for _x, _y in ((30, 40), (33, 41), (31, 43), (34, 45), (29, 42), (32, 46),
+               (28, 44), (35, 44), (30, 47)):
+    prop(_x, _y, "orePile", 0.8, True, 13)
+for _x, _y in ((29, 45), (33, 47), (31, 41)):
+    prop(_x, _y, "log", 0.75)
+prop(28, 46, "mineCart", 0.7, True, 15)          # a cart run off the end of the rail
+
+# ---- lamps along the rails and the paths, because people still come up to the
+#      mouth and somebody keeps them filled.
+for _x, _y in ((35, 26), (32, 29), (30, 34), (28, 37), (37, 24),
+               (46, 20), (49, 16), (43, 23)):
+    prop(_x, _y, "lantern", 0.65)
+
+# ---- rubble heaps and fallen stone across the bowl floor, so the ground reads
+#      as a quarry and not a car park. Solid, so they break the sightlines.
+for _x, _y in ((20, 28), (23, 24), (17, 25), (26, 21), (44, 35), (47, 33),
+               (15, 33), (41, 21), (52, 30), (22, 37), (19, 30), (25, 28)):
+    prop(_x, _y, "rock", 0.85 + 0.25 * ((_x + _y) % 2), True, 14)
+
+# =====================================================================
 #  5. WHAT GROWS HERE
 #
 #  Almost nothing. A few pines have got a hold on the sheltered side of the bowl
@@ -580,6 +648,9 @@ for (ex, ey, mat, roof, bays, storeys, name) in BUILDINGS:
 # The density pass — crops on the worked ground, flower sprigs by the houses,
 # and leaf/reed texture on the open grass. See region_kit.dress_ground.
 _crops, _sprigs, _tufts = K.dress_ground(at, paint, COLS, ROWS)
+# Deepdelve is mostly bare stone, so it needs the stone equivalent of tufts:
+# gravel scattered over the quarry floor, or it reads as a flat brown car park.
+_gravel = K.dress_stone(at, paint, COLS, ROWS)
 
 _per_layer = K.plant(TREES, paint, lambda ex, ey: int(_hash(ex, ey, 7) * 997))
 
@@ -688,7 +759,7 @@ print(f"wrote {path_out}  ({MW}x{MH} tiles = {COLS}x{ROWS} cells, "
       f"{os.path.getsize(path_out)/1024:.0f} KB)")
 print(f"  buildings {len(BUILDINGS)}   npcs {len(NPCS)}   placed props {len(PROPS)}")
 print(f"  trees {len(TREES)} across {len(K.TREE_LAYERS)} layers {_per_layer}   "
-      f"undergrowth {len(COVER)}   ground: {_crops} crops, {_sprigs} flower sprigs, {_tufts} tufts")
+      f"undergrowth {len(COVER)}   ground: {_crops} crops, {_sprigs} flower sprigs, {_tufts} tufts, {_gravel} gravel")
 print(f"  examinables {len(EXAMINABLES)}   containers {len(CONTAINERS)}   "
       f"discoveries {len(DISCOVERIES)}")
 print(f"  CAVE MOUTH at {CAVE_MOUTH}")

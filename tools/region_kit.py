@@ -182,6 +182,30 @@ CLUMPS = [(7, 11), (7, 14), (8, 11), (9, 11), (10, 11), (11, 11)]
 # than sprinkled everywhere.
 FLOWER_SPRIGS = [(12, 10), (13, 10), (12, 11), (13, 11), (14, 11)]
 
+# Gravel and pebbles, for bare stone the way tufts are for grass: the small brown
+# stones of Rocks.png rows 4-6. Bare rock at this zoom is as flat and telling as
+# flat grass, and this is what breaks it up. ORE_ROCKS are the same sheet's
+# copper-flecked stones (rows 7-8) — the vein the pit was following, so they go
+# by hand near the workings, not scattered.
+GRAVEL = [(c, r) for r in (4, 5, 6) for c in range(5)]
+ORE_ROCKS = [(6, 7), (7, 7), (8, 7), (9, 7), (6, 8), (7, 8)]
+
+
+def dress_stone(at, paint, cols, rows, density=0.30):
+    """Scatter gravel across bare stone ('q'), the way dress_ground scatters
+    tufts across grass. Texture only — nothing solid, nothing the engine reads."""
+    laid = 0
+    for tx in range(cols):
+        for ty in range(rows):
+            if at(tx, ty) != "q": continue
+            if _h(tx, ty, 41) > density: continue
+            mx = tx * SUB + (1 if _h(tx, ty, 42) > 0.5 else 0)
+            my = ty * SUB + (1 if _h(tx, ty, 43) > 0.5 else 0)
+            col, row = vary(GRAVEL, tx, ty)
+            paint("Objects", mx, my, gid("Rocks", col, row))
+            laid += 1
+    return laid
+
 # CROPS — mature vegetables from Farm.png, one tile each. Each ROW of the sheet
 # is a crop and its columns are growth stages; these are the ripe ones. A garden
 # bed grows ONE of these, in rows, the way a real bed does — which is the single
