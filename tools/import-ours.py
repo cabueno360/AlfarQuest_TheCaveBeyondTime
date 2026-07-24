@@ -50,6 +50,9 @@ GRIDS = {
                         "the Cleric's nine frames, cut from a generated 8x12 sheet "
                         "by tools/import-hero-atlas.py. 74-wide cells because the "
                         "attack frames' sword reaches out past the body"),
+    "OurThiefFrames":  ("atlas_thief.png", 61, 56,
+                        "the Thief's nine frames, cut the same way from her green-"
+                        "cloaked sheet"),
     "OurCaveTiles":    ("Caves/MainLev2.0.png", 32, 32, "the cave's rock and floor"),
     "OurCaveDeco":     ("Caves/decorative.png", 32, 32, "cave decoration"),
     "OurOres":         ("Miner_Ores.png", 128, 128, "crystal spires and ore"),

@@ -24,6 +24,16 @@ export const ATLAS = {
     // The cell is 74x56 because the attack frames' sword reaches out of the body's
     // column; the body itself fills ~54px, so scale 1.0 stands him at the party's
     // height.
+    // The Thief, cut the same way from her generated sheet — green-cloaked,
+    // hooded, twin daggers. 57-wide cells for the blade's reach on the lunges.
+    thief: {
+        src: "assets/atlas_thief.png", cw: 61, ch: 56, ground: 55, scale: 1.0,
+        img: null, white: null, outlined: null, ready: false,
+        rows:   { Thief: 0 },
+        frames: { Thief: 6 },
+        attack:  { first: 6, count: 2, duration: 0.22 },
+        ability: { col: 8, duration: 0.45 },
+    },
     cleric: {
         src: "assets/atlas_cleric.png", cw: 74, ch: 56, ground: 55, scale: 1.0,
         img: null, white: null, outlined: null, ready: false,

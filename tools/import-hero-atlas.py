@@ -37,6 +37,7 @@ ASSETS = "src/AlfarQuest.Client/wwwroot/assets"
 FRAMES = {
     # 0-5 idle+walk, 6-7 attack, 8 channel
     "cleric": [0, 37, 39, 41, 43, 45, 50, 61, 66],
+    "thief":  [0, 41, 43, 45, 47, 49, 51, 55, 61],
 }
 
 CELL_H = 56          # the strip's cell height in pixels; the body is scaled to fit
@@ -47,11 +48,20 @@ def key_and_segment(im):
     reading order. Background is whatever floods in from the border."""
     W, H = im.size
     px = im.load()
-    bg0 = px[0, 0]
 
     def isbg(p):
-        return (abs(p[0] - bg0[0]) < 24 and abs(p[1] - bg0[1]) < 24
-                and abs(p[2] - bg0[2]) < 24)
+        # Background is any LOW-SATURATION MID-GREY: it catches both the flat
+        # backdrop and the baked drop-shadow the generator paints under the feet,
+        # which is a darker grey than the backdrop and would otherwise survive as
+        # a dirty smudge doubling the engine's own ground shadow. Saturated colour
+        # (cloak, boots, hair, skin), very dark pixels (black leggings) and
+        # near-white (a Cleric's tabard) all fail the test and are kept. And it is
+        # only ever applied by a flood inward from the border, so an interior grey
+        # — a dagger's steel — is never reached and never keyed.
+        r, g, bl = p[0], p[1], p[2]          # p is RGBA — never let alpha into sat
+        sat = max(r, g, bl) - min(r, g, bl)
+        b = (r + g + bl) // 3
+        return sat < 22 and 100 < b < 246
 
     bg = bytearray(W * H)
     q = deque()

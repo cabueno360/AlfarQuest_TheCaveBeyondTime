@@ -258,7 +258,7 @@ function drawHusk(e) {
 /// nine-column contract as atlas_party — loop, swing, channel — so giving a hero
 /// their own art is one entry here and one atlas, and nothing about how a hero
 /// is drawn has to change.
-const HERO_ATLAS = { Mage: "mage", Cleric: "cleric" };
+const HERO_ATLAS = { Mage: "mage", Cleric: "cleric", Thief: "thief" };
 
 function drawHero(e) {
     const { x, y, r } = e;
