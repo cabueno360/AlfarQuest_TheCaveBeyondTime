@@ -21,7 +21,7 @@ public partial class World
 
         // Each named region pays once for being reached. Radius from the room's
         // own size, so a large hall is not harder to "discover" than a closet.
-        foreach (var r in Regions)
+        foreach (var r in CaveRegions)
             Discoveries.Add(new Discovery(
                 r.Name,
                 TileCentre(r.Cx, r.Cy),

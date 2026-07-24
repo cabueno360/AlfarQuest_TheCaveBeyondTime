@@ -298,5 +298,31 @@ public partial class World
 
         // The cave mouths where a corridor leaves a room, as the map places them.
         foreach (var a in m.Objects("Arch")) Arches.Add(FromMap(a.X, a.Y));
+
+        ReadCaveRegions(m);
+    }
+
+    /// <summary>The cave's rooms, from the Region rectangles the map carries — the
+    /// Descent, the Drowned Hollow, the Crystal Heart. The dressing and the
+    /// rewards read these, so a room moved in Tiled moves the game with it. Left
+    /// empty when the map has none, and the generator's own room graph stands.
+    ///
+    /// A rectangle's x/y/width/height are map pixels; an engine tile is 16 of them
+    /// (a 32px cell over a 16px map). The Seed is the generator's business, so a
+    /// map-read room is given none.</summary>
+    void ReadCaveRegions(TmxMap m)
+    {
+        _caveRegions = null;
+        var rooms = new List<Region>();
+        foreach (var o in m.Objects("Region"))
+        {
+            int x0 = (int)(o.X / 16), y0 = (int)(o.Y / 16);
+            int w = (int)(o.Width / 16), h = (int)(o.Height / 16);
+            if (w <= 0 || h <= 0) continue;
+            rooms.Add(new Region(
+                o.Str("RegionKey", o.Name), o.Str("RegionName", o.Name),
+                x0 + w / 2, y0 + h / 2, w / 2, h / 2, 0f));
+        }
+        if (rooms.Count > 0) _caveRegions = rooms;
     }
 }

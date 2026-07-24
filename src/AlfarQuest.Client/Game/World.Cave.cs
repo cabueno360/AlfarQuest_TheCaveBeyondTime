@@ -46,7 +46,22 @@ public partial class World
         new("boss",      "The Crystal Heart",       71,  46, 12,  8, 9.5f),
     };
 
-    public static Region Reg(string key) => Array.Find(Regions, r => r.Key == key)!;
+    /// <summary>The cave's rooms as read from its map, or null when it was built
+    /// by the generator. When set it REPLACES the static array above — the static
+    /// one is the generator's own copy and the fallback. Filled by
+    /// BuildCaveFromTmx from the map's Region objects, exactly as the overworld's
+    /// safe zones are read from theirs.</summary>
+    List<Region>? _caveRegions;
+
+    /// <summary>The rooms in play: the map's if it gave any, else the generator's.
+    /// Everything downstream — dressing, rewards, the spawn and exit lookups —
+    /// reads this, so a room moved in Tiled moves the game with it.</summary>
+    IReadOnlyList<Region> CaveRegions => _caveRegions ?? (IReadOnlyList<Region>)Regions;
+
+    /// <summary>Instance now, not static: the room graph can come from the map.
+    /// The Seed only matters to the generator's carving, which uses the static
+    /// array, so a map-read room needing a Seed is never asked for one.</summary>
+    Region Reg(string key) => CaveRegions.First(r => r.Key == key);
 
     /// <summary>What the cave is, when nothing tells it otherwise. The authored
     /// map overrides both; the generator underneath has never had a size of its
@@ -71,6 +86,7 @@ public partial class World
             return;
         }
 
+        _caveRegions = null;                        // the generator uses its own rooms
         Tiles = new byte[COLS, ROWS];               // all rock to start
         Props.Clear();
 

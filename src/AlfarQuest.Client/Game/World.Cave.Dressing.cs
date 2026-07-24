@@ -63,7 +63,7 @@ public partial class World
 
     void DressRegions()
     {
-        foreach (var r in Regions)
+        foreach (var r in CaveRegions)
         {
             if (!RegionKits.TryGetValue(r.Key, out var kit)) continue;
             foreach (var k in kit)
