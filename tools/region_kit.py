@@ -177,6 +177,98 @@ TUFTS = [(1, 9), (2, 9), (3, 9), (1, 10), (2, 10), (3, 10),
          (1, 12), (2, 12), (3, 12), (1, 13), (2, 13), (3, 13)]
 CLUMPS = [(7, 11), (7, 14), (8, 11), (9, 11), (10, 11), (11, 11)]
 
+# A scatter of small flowers, for the ground between houses. Denser than a
+# planted flower BUSH but still an object, so it is placed near dwellings rather
+# than sprinkled everywhere.
+FLOWER_SPRIGS = [(12, 10), (13, 10), (12, 11), (13, 11), (14, 11)]
+
+# CROPS — mature vegetables from Farm.png, one tile each. Each ROW of the sheet
+# is a crop and its columns are growth stages; these are the ripe ones. A garden
+# bed grows ONE of these, in rows, the way a real bed does — which is the single
+# most reference-matching thing that can go on the worked ground.
+CROPS = {
+    "carrot":      ("Farm", [(5, 1), (6, 1)]),
+    "beet":        ("Farm", [(5, 3), (6, 3)]),
+    "cabbage":     ("Farm", [(5, 5), (6, 5)]),
+    "lettuce":     ("Farm", [(6, 7), (7, 7)]),
+    "cauliflower": ("Farm", [(5, 9), (6, 9)]),
+    "broccoli":    ("Farm", [(5, 11), (6, 11)]),
+}
+CROP_KINDS = list(CROPS)
+
+
+def crop_for(bed_x, bed_y):
+    """Which vegetable a bed grows — stable per bed, so a field is patches of
+    different crops rather than one uniform green, and re-runs are identical."""
+    return CROP_KINDS[((bed_x * 2654435761) ^ (bed_y * 40503)) % len(CROP_KINDS)]
+
+
+def _h(x, y, salt=0):
+    v = (x * 374761393 + y * 668265263 + salt * 2246822519) & 0xFFFFFFFF
+    v = (v ^ (v >> 13)) * 1274126177 & 0xFFFFFFFF
+    return ((v ^ (v >> 16)) & 0xFFFF) / 65535.0
+
+
+def dress_ground(at, paint, cols, rows, tuft_density=0.22):
+    """The density pass, shared by every region: what turns flat green into a
+    place that reads as lived-in. Three things, and the distinction between them
+    is the whole point —
+
+      * CROPS on worked ground ('g'). A bed grows one vegetable, in a row, so the
+        fields are patches of carrot, cabbage, beet rather than one green wash.
+        Objects, and INTENTIONAL — a real bed, not scatter.
+      * FLOWER SPRIGS near dwellings ('B'). Objects too, and clustered where
+        people would plant them, not sprinkled over the whole map.
+      * TUFTS everywhere else. TEXTURE — leaf sprigs and, by water, reed — under
+        everything and carrying no collision, denser than before because flat
+        grass at this zoom is the loudest tell of a hand-made map.
+
+    Returns (crops, sprigs, tufts) placed, for the builder's summary line."""
+    crops = sprigs = tufts = 0
+    for tx in range(cols):
+        for ty in range(rows):
+            c = at(tx, ty)
+            mx = tx * SUB + (1 if _h(tx, ty, 22) > 0.5 else 0)
+            my = ty * SUB + (1 if _h(tx, ty, 23) > 0.5 else 0)
+
+            if c == "g":
+                # A bed grows the crop of the bed it belongs to. Beds are found by
+                # snapping to a 4-cell grid so a run of 'g' is one crop, not a
+                # different vegetable every tile.
+                kind = crop_for(tx // 4, ty // 4)
+                setname, opts = CROPS[kind]
+                col, row = vary(opts, tx, ty)
+                paint("Objects", tx * SUB, ty * SUB, gid(setname, col, row))
+                if _h(tx, ty, 31) > 0.5:                 # a second seedling, offset
+                    col2, row2 = vary(opts, tx + 1, ty)
+                    paint("Objects", tx * SUB + 1, ty * SUB + 1, gid(setname, col2, row2))
+                crops += 1
+                continue
+
+            if c != ".":
+                continue
+
+            # Flower sprigs where a house is near — a dwelling's own ground.
+            near_house = any(at(tx + dx, ty + dy) == "B"
+                             for dx in range(-2, 3) for dy in range(-2, 3))
+            if near_house and _h(tx, ty, 24) < 0.35:
+                col, row = vary(FLOWER_SPRIGS, tx, ty)
+                paint("Objects", mx, my, gid("Vegetation", col, row))
+                sprigs += 1
+                continue
+
+            # Texture everywhere else.
+            if _h(tx, ty, 21) > tuft_density:
+                continue
+            near_water = any(at(tx + dx, ty + dy) == "~"
+                             for dx in range(-2, 3) for dy in range(-2, 3))
+            pool = CLUMPS if (near_water and _h(tx, ty, 21) < 0.09) else TUFTS
+            col, row = vary(pool, tx, ty)
+            paint("GroundDetails", mx, ty * SUB + 1, gid("Vegetation", col, row))
+            tufts += 1
+    return crops, sprigs, tufts
+
+
 _ALPHA = {}
 
 

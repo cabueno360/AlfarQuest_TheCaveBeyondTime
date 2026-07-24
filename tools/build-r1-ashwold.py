@@ -783,21 +783,9 @@ for (ex, ey, mat, roof, bays, storeys, name, door) in BUILDINGS:
 #      from the art it is trying to look like: real ground has sprigs, fern and
 #      reed in it. Sparse, unplanned, and under everything, so it reads as
 #      texture rather than as objects somebody placed.
-_tufts = 0
-for _tx in range(COLS):
-    for _ty in range(ROWS):
-        if at(_tx, _ty) != ".": continue
-        h = _hash(_tx, _ty, 21)
-        if h > 0.16: continue
-        mx_, my_ = _tx * K.SUB + (1 if _hash(_tx, _ty, 22) > 0.5 else 0), _ty * K.SUB + 1
-        # Reed and fern only where the ground is damp — beside the water, in the
-        # carr — and leaf sprigs everywhere else.
-        near_water = any(at(_tx + dx, _ty + dy) == "~"
-                         for dx in range(-2, 3) for dy in range(-2, 3))
-        pool = K.CLUMPS if (near_water and h < 0.09) else K.TUFTS
-        c, r = K.vary(pool, _tx, _ty)
-        paint("GroundDetails", mx_, my_, K.gid("Vegetation", c, r))
-        _tufts += 1
+# The density pass — crops on the worked ground, flower sprigs by the houses,
+# and leaf/reed texture on the open grass. See region_kit.dress_ground.
+_crops, _sprigs, _tufts = K.dress_ground(at, paint, COLS, ROWS)
 
 # ---- the trees, dealt across several layers so that overlapping crowns keep
 #      each other whole (see region_kit.plant) ----
@@ -919,7 +907,7 @@ print(f"wrote {path_out}  ({MW}x{MH} tiles = {COLS}x{ROWS} cells, "
       f"{os.path.getsize(path_out)/1024:.0f} KB)")
 print(f"  buildings {len(BUILDINGS)}   npcs {len(NPCS)}   placed props {len(PROPS)}")
 print(f"  trees {len(TREES)} across {len(K.TREE_LAYERS)} layers {_per_layer}   "
-      f"undergrowth {len(COVER)}   ground tufts {_tufts}")
+      f"undergrowth {len(COVER)}   ground: {_crops} crops, {_sprigs} flower sprigs, {_tufts} tufts")
 print(f"  examinables {len(EXAMINABLES)}   containers {len(CONTAINERS)}   "
       f"discoveries {len(DISCOVERIES)}")
 if _moved:
