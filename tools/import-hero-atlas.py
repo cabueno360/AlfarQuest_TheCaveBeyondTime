@@ -38,7 +38,21 @@ FRAMES = {
     # 0-5 idle+walk, 6-7 attack, 8 channel
     "cleric": [0, 37, 39, 41, 43, 45, 50, 61, 66],
     "thief":  [0, 41, 43, 45, 47, 49, 51, 55, 61],
-    "mage":   [16, 17, 18, 19, 20, 21, 34, 37, 50],
+    # The Mage's sheet is a regular GRID whose rows are all FRONT-facing — there
+    # are no side or up views to switch between, so no directional walk is
+    # possible from this art. But a row is a real walk CYCLE: the cloak sways and
+    # the boots alternate. So his frames are addressed by (row, col), and the walk
+    # is a proper cycle from the walk-down row rather than six near-identical
+    # frames. Row 2 = walk-down; row 4 = cast-down; row 6 = the ultimate.
+    "mage": [(2, 0), (2, 1), (2, 2), (2, 3), (2, 6), (2, 7),
+             (4, 3), (4, 6), (6, 0)],
+}
+
+# A hero whose sheet is a regular grid is addressed by (row, col): each figure is
+# still SEGMENTED so it comes out whole (the cloak on a wide stride overflows its
+# cell), then assigned to the grid cell its centre falls in. (cols, rows).
+GRID = {
+    "mage": (10, 8),
 }
 
 CELL_H = 56          # the strip's cell height in pixels; the body is scaled to fit
@@ -129,6 +143,23 @@ def leg_centre(keyed, box):
     return sum(xs) / len(xs) if xs else (x0 + x1) / 2
 
 
+def by_grid(comps, W, H, cols, rows):
+    """A lookup from (row, col) to the SEGMENTED figure nearest that cell's
+    centre. Nearest, not strictly inside, because a wide-stride figure's centre
+    can drift into a neighbour cell and leave its own cell empty — so every
+    (row, col) still resolves to the right figure. The figure keeps its whole
+    (overflowing) bounding box."""
+    cw, ch = W / cols, H / rows
+    cents = [((x0 + x1) / 2, (y0 + y1) / 2, (x0, y0, x1, y1)) for (x0, y0, x1, y1) in comps]
+
+    class Grid:
+        def __getitem__(self, rc):
+            r, c = rc
+            tx, ty = (c + 0.5) * cw, (r + 0.5) * ch
+            return min(cents, key=lambda p: (p[0] - tx) ** 2 + (p[1] - ty) ** 2)[2]
+    return Grid()
+
+
 def build(hero, src):
     im = Image.open(src).convert("RGBA")
     keyed, comps = key_and_segment(im)
@@ -145,10 +176,12 @@ def build(hero, src):
         return
 
     idx = FRAMES[hero]
+    cell = by_grid(comps, im.width, im.height, *GRID[hero]) if hero in GRID else None
     figs = []
     for i in idx:
-        x0, y0, x1, y1 = comps[i]
-        cx = leg_centre(keyed, comps[i])
+        box = cell[i] if cell is not None else comps[i]     # (row,col) or index
+        x0, y0, x1, y1 = box
+        cx = leg_centre(keyed, box)
         figs.append((keyed.crop((x0, y0, x1 + 1, y1 + 1)),
                      cx - x0, y1 - y0))          # sprite, legs-x within it, foot-y
 
