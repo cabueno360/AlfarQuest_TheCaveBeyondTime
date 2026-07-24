@@ -43,7 +43,7 @@ export const ATLAS = {
         ability: { col: 8, duration: 0.45 },
     },
     mage: {
-        src: "assets/atlas_mage.png", cw: 32, ch: 32, ground: 31, scale: 1.74,
+        src: "assets/atlas_mage.png", cw: 41, ch: 56, ground: 55, scale: 1.0,
         img: null, white: null, outlined: null, ready: false,
         rows:   { Mage: 0 },
         frames: { Mage: 6 },

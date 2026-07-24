@@ -37,15 +37,9 @@ GRIDS = {
     "OurHeroes":       ("atlas_party.png", 51, 63,
                         "the three heroes and the husk — rows Mage/Cleric/Thief/husk, "
                         "columns idle+walk 0-5, attack 6-7, ability 8"),
-    "OurMage":         ("atlas_mage_sheet.png", 32, 32,
-                        "the Mage's own sheet — an 8x8 grid of 64 variations of the "
-                        "same wizard, nearly all facing the camera. NOT an animation: "
-                        "tools/import-mage-atlas.py picks the nine the engine draws "
-                        "(idle+walk 0-5, attack 6-7, channel 8) and cuts them into "
-                        "atlas_mage.png. The other 55 are here to be used"),
-    "OurMageFrames":   ("atlas_mage.png", 32, 32,
-                        "the nine the Mage is actually animated from, in engine "
-                        "column order"),
+    "OurMageFrames":   ("atlas_mage.png", 41, 56,
+                        "the nine the Mage is animated from, in engine column "
+                        "order, cut from his generated sheet like the others"),
     "OurClericFrames": ("atlas_cleric.png", 74, 56,
                         "the Cleric's nine frames, cut from a generated 8x12 sheet "
                         "by tools/import-hero-atlas.py. 74-wide cells because the "

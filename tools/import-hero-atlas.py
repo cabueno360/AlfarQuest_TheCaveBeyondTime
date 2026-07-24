@@ -38,6 +38,7 @@ FRAMES = {
     # 0-5 idle+walk, 6-7 attack, 8 channel
     "cleric": [0, 37, 39, 41, 43, 45, 50, 61, 66],
     "thief":  [0, 41, 43, 45, 47, 49, 51, 55, 61],
+    "mage":   [8, 25, 27, 29, 30, 31, 36, 38, 50],
 }
 
 CELL_H = 56          # the strip's cell height in pixels; the body is scaled to fit
@@ -58,10 +59,17 @@ def key_and_segment(im):
         # near-white (a Cleric's tabard) all fail the test and are kept. And it is
         # only ever applied by a flood inward from the border, so an interior grey
         # — a dagger's steel — is never reached and never keyed.
+        if p[3] < 16:                        # actually transparent
+            return True
         r, g, bl = p[0], p[1], p[2]          # p is RGBA — never let alpha into sat
         sat = max(r, g, bl) - min(r, g, bl)
         b = (r + g + bl) // 3
-        return sat < 22 and 100 < b < 246
+        # Low-saturation and LIGHT: catches a flat grey backdrop, a baked shadow,
+        # and a painted "transparency" checkerboard (two light greys, one near
+        # white) alike. No upper bound — a figure's own near-white (a tabard, a
+        # highlight) is sealed inside its dark outline and never reached by the
+        # border flood, so keying it here costs nothing.
+        return sat < 22 and b > 120
 
     bg = bytearray(W * H)
     q = deque()
