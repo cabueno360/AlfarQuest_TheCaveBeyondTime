@@ -57,6 +57,15 @@
     box-shadow: inset 0 0 16px -6px var(--aq-gold);
     animation: aq-shop-portrait-in .3s .04s both cubic-bezier(.2, .9, .3, 1.2);
 }
+/* A real hand-made portrait when the merchant's kind has one — same footprint as
+   the glyph badge, framed as a bust, with the same slide-in. */
+.aq-shop-portrait-img {
+    width: 56px; height: 56px;
+    border-radius: 12px; object-fit: cover; object-position: center top;
+    border: 1px solid color-mix(in srgb, var(--aq-gold) 55%, transparent);
+    box-shadow: inset 0 0 16px -6px var(--aq-gold), 0 3px 10px -4px rgba(0, 0, 0, .6);
+    animation: aq-shop-portrait-in .3s .04s both cubic-bezier(.2, .9, .3, 1.2);
+}
 @keyframes aq-shop-portrait-in {
     from { opacity: 0; transform: translateX(-12px) rotate(-6deg); }
     to { opacity: 1; transform: none; }

@@ -61,19 +61,6 @@ public partial class World
 
     const float TalkRange = 56f;
 
-    void PlaceNpcs()
-    {
-        Npcs.Clear();
-        foreach (var (id, x, y) in NpcCatalog.Placements)
-        {
-            if (NpcCatalog.Find(id) is not { } def) continue;
-            var pos = TileCentre(x, y);
-            // Never strand a villager inside rock or water; nudge to open ground.
-            if (Blocked(pos, 14f)) pos = NearestOpen(pos);
-            Npcs.Add(new Npc(def, pos));
-        }
-    }
-
     Vec NearestOpen(Vec from)
     {
         for (float r = TILE; r <= TILE * 6; r += TILE)

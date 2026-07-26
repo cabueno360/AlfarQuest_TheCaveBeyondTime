@@ -51,6 +51,14 @@ public sealed partial class Home : IAsyncDisposable
 
     private SaveHeroDto? ProgressFor(string key) => _progress.GetValueOrDefault(key);
 
+    /// <summary>Whether a hero can be chosen yet. Unlocked from the start (the Mage
+    /// and the Thief), or already recruited in the save (the Cleric, once he has
+    /// joined at the Cave — he is then in the save's party). The Cleric stays
+    /// locked until that first descent.</summary>
+    private bool IsUnlocked(string key) =>
+        (Heroes?.FirstOrDefault(h => h.Key == key)?.UnlockedByDefault ?? false)
+        || _progress.ContainsKey(key);
+
     /// <summary>Where the party stands and when it last did — the save-level lines
     /// the selection screen shows above the roster. Null when there is no save to
     /// summarise, so the markup can leave the strip out for a new player.</summary>
@@ -86,7 +94,10 @@ public sealed partial class Home : IAsyncDisposable
         await _music.InvokeVoidAsync("playIntro", IntroTrack, ThemeTrack, IntroVolume);
     }
 
-    private void SelectLead(string key) => Lead = key;
+    private void SelectLead(string key)
+    {
+        if (IsUnlocked(key)) Lead = key;
+    }
 
     private async Task ToggleMusic()
     {
@@ -103,7 +114,12 @@ public sealed partial class Home : IAsyncDisposable
     {
         // The cavern track takes over from here, so fade the intro out first.
         await StopMusic();
-        GameSession.PartyKeys = [Lead, .. PartyOrder.Where(k => k != Lead)];
+        // Only heroes that are available — the Cleric is left out until he has
+        // joined at the Cave (and so appears in the save). The lead is whoever was
+        // chosen, if they are available; otherwise the first one who is.
+        var roster = PartyOrder.Where(IsUnlocked).ToList();
+        var lead = roster.Contains(Lead) ? Lead : roster[0];
+        GameSession.PartyKeys = [lead, .. roster.Where(k => k != lead)];
         Nav.NavigateTo("/play");
     }
 

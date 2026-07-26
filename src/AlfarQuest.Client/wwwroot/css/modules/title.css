@@ -68,6 +68,19 @@
     box-shadow: 0 0 0 1px rgba(216,180,90,.5), 0 14px 40px rgba(216,180,90,.22);
 }
 
+/* A hero not yet joined — the Cleric before the Cave. Shown, but dimmed and not
+   pickable, with a plate over the portrait saying when he arrives. */
+.aq-hero-card.locked { cursor: not-allowed; filter: grayscale(.5); opacity: .72; }
+.aq-hero-card.locked:hover { transform: none; border-color: rgba(185,199,255,.20); }
+.aq-hero-locked {
+    position: absolute; inset: 0; z-index: 3; display: flex;
+    flex-direction: column; align-items: center; justify-content: center; gap: .45rem;
+    background: rgba(6,5,16,.55); backdrop-filter: blur(1px);
+    color: var(--aq-crystal); font-size: .92rem; letter-spacing: .04em;
+    text-shadow: 0 1px 3px rgba(0,0,0,.7);
+}
+.aq-hero-locked-icon { font-size: 1.7rem; opacity: .9; }
+
 .aq-portrait { position: relative; height: 232px; background: rgba(0,0,0,.35); }
 .aq-portrait img {
     width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%;

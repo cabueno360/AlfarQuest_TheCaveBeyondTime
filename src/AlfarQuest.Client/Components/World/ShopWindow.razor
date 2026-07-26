@@ -22,7 +22,14 @@
              tabindex="0" @onkeydown="OnKeyDown">
 
         <header class="aq-shop-head">
-            <span class="aq-shop-portrait" aria-hidden="true">@Portrait(shop.Role)</span>
+            @if (Portraits.Has(shop.Kind))
+            {
+                <img class="aq-shop-portrait-img" src="@Portraits.Path(shop.Kind)" alt="" aria-hidden="true" />
+            }
+            else
+            {
+                <span class="aq-shop-portrait" aria-hidden="true">@Portrait(shop.Role)</span>
+            }
             <div class="aq-shop-who">
                 <h2 class="aq-shop-name">@shop.Name @if (shop.Special) { <span class="aq-shop-badge">Rare</span> }</h2>
                 <p class="aq-shop-role">@shop.Role</p>

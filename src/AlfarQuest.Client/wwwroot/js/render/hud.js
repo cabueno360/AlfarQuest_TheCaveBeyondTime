@@ -159,12 +159,44 @@ export function drawHud(hud, dt = 0.016) {
     const subline = inCave
         ? `${hud.region || ""}  ·  depth ${hud.level || 1}`
         : (hud.objective ? (hud.region || "") : "");
+    // Below ground the husk count is the headline and the depth its subline, so the
+    // Pact's current order hangs on a third line beneath them. On the surface the
+    // objective is already the headline, so there is nothing more to add.
+    const orders = inCave ? (hud.objective || "") : "";
 
-    ctx.fillStyle = "rgba(10,8,24,0.55)"; ctx.fillRect(18, 14, 210, 46);
+    ctx.font = "13px 'EB Garamond', serif";
+    const panelW = orders ? Math.max(230, ctx.measureText(`↳ ${orders}`).width + 36) : 210;
+    ctx.fillStyle = "rgba(10,8,24,0.55)"; ctx.fillRect(18, 14, panelW, orders ? 66 : 46);
     ctx.fillStyle = "#b9c7ff"; ctx.font = "14px 'EB Garamond', serif"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
     ctx.fillText(headline, 28, 28);
     ctx.fillStyle = "#f0d99a"; ctx.font = "italic 12px 'EB Garamond', serif";
     ctx.fillText(subline, 28, 48);
+    if (orders) {
+        ctx.fillStyle = "#d7e0ff"; ctx.font = "13px 'EB Garamond', serif";
+        ctx.fillText(`↳ ${orders}`, 28, 68);
+    }
+
+    // The chamber's boss: a broad health bar across the top, under the music pill,
+    // so a Guardian fight reads as a Guardian fight and you can watch it fall.
+    if (hud.boss) {
+        const b = hud.boss;
+        const frac = Math.max(0, Math.min(1, b.mhp > 0 ? b.hp / b.mhp : 0));
+        const bw = Math.min(520, W * 0.46), bh = 15;
+        const bx = (W - bw) / 2, by = 72;
+        ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+        ctx.font = "16px 'Cinzel', serif";
+        ctx.fillStyle = b.enraged ? "#ff9a6b" : "#e6d6a8";
+        ctx.fillText(b.name.toUpperCase() + (b.enraged ? "  —  ENRAGED" : ""), W / 2, by - 7);
+        ctx.fillStyle = "rgba(8,6,18,0.82)"; ctx.fillRect(bx - 3, by - 3, bw + 6, bh + 6);
+        ctx.fillStyle = "rgba(46,22,32,0.9)"; ctx.fillRect(bx, by, bw, bh);
+        const grad = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+        if (b.enraged) { grad.addColorStop(0, "#ff5a3a"); grad.addColorStop(1, "#ffb591"); }
+        else { grad.addColorStop(0, "#b93348"); grad.addColorStop(1, "#e2687a"); }
+        ctx.fillStyle = grad; ctx.fillRect(bx, by, bw * frac, bh);
+        ctx.strokeStyle = b.enraged ? "rgba(255,150,100,0.85)" : "rgba(216,180,90,0.55)";
+        ctx.lineWidth = 1; ctx.strokeRect(bx - 2.5, by - 2.5, bw + 5, bh + 5);
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    }
 
     // Over the corner panels but clear of the bottom prompt, at a fifth of the
     // way down, which is where the eye already is.

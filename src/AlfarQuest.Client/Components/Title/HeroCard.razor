@@ -6,8 +6,8 @@
 @* One selectable delver on the title screen. A <button> rather than a <div>:
    it is reachable by keyboard and announces its own pressed state. *@
 <button type="button"
-        class="aq-hero-card @(Selected ? "selected" : "")"
-        aria-pressed="@Selected"
+        class="aq-hero-card @(Selected ? "selected" : "") @(Locked ? "locked" : "")"
+        aria-pressed="@Selected" disabled="@Locked"
         @onclick="OnSelect">
     <div class="aq-portrait">
         <img src="@PortraitSrc" alt="" loading="lazy"
@@ -48,6 +48,13 @@
         }
     </div>
     <div class="aq-lead-badge">Leads the descent</div>
+    @if (Locked)
+    {
+        <div class="aq-hero-locked">
+            <span class="aq-hero-locked-icon">🔒</span>
+            <span>Joins at the Cave</span>
+        </div>
+    }
 </button>
 
 @code {
@@ -58,6 +65,11 @@
     [Parameter] public SaveHeroDto? Progress { get; set; }
 
     [Parameter] public bool Selected { get; set; }
+
+    /// <summary>A hero not yet available — the Cleric before he joins at the Cave.
+    /// The card shows him and his story but cannot be chosen to lead.</summary>
+    [Parameter] public bool Locked { get; set; }
+
     [Parameter] public EventCallback<string> SelectedChanged { get; set; }
 
     private Lore.HeroDef Def => Lore.ByKey(Hero.Key);
@@ -73,5 +85,5 @@
         : [.. Progress.Equipped.Select(id => ItemCatalog.Find(id)?.Icon)
             .Where(i => !string.IsNullOrEmpty(i)).Select(i => i!).Take(5)];
 
-    private Task OnSelect() => SelectedChanged.InvokeAsync(Hero.Key);
+    private Task OnSelect() => Locked ? Task.CompletedTask : SelectedChanged.InvokeAsync(Hero.Key);
 }

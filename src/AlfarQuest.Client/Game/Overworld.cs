@@ -1,98 +1,58 @@
 namespace AlfarQuest.Client.Game;
 
 // =====================================================================
-//  Stage 1 — "The Approach". Orchestration and the shared
-//  placement helpers; each concern is a partial alongside.
+//  Stage 1 — "The Approach".
+//
+//  The overworld is the ring of authored regions now — see
+//  Overworld.Regions.cs (the ring and the seams) and Overworld.Tmx.cs
+//  (reading a .tmx into a world). This file holds only what those share:
+//  the cave-mouth field, the prop helper the interiors furnish with, and
+//  a last-resort fallback for the case where no region map loads at all.
+//
+//  The old procedural generator that used to build Stage 1 here — some
+//  twenty Build* passes across Overworld.Detail/Expanse/Terrain/Zones/
+//  Rewards.cs — has been retired: the regions replaced it and it had
+//  become dead weight nothing ran. What is left below is not that world,
+//  only a guarantee that a missing shipped map yields a place to stand
+//  instead of a crash.
 // =====================================================================
 public partial class World
 {
-    // Four times the original 80×80, and wider than it is tall on purpose — the
-    // world is meant to open out east toward Kae Ychel and south toward Seoshe,
-    // not just run deeper north into the mountains. The original camp, crossroad,
-    // mine and cave keep their coordinates; everything past x72 / y80 is new.
-    public const int OW_COLS = 200, OW_ROWS = 128;
     public const string OverworldName = "The Approach";
 
-    // Where the mine mouth sits, and how close you must get to be taken in.
+    // Where the mine mouth sits — set by whichever region carries it, and by the
+    // fallback below when there is no region at all.
     public Vec CaveMouth;
 
-    const float MouthRadius = 46f;
-
+    /// <summary>Last resort only: reached when a region map failed to load, which
+    /// means a shipped asset is missing and should never happen in a real build.
+    /// The authored regions are the overworld; this just lays down a flat walkable
+    /// field with a spawn and a mouth, so the game opens on solid ground rather than
+    /// falling over. No props, no NPCs, no story — those live in the maps.</summary>
     void BuildOverworld()
     {
-        // Stage 1 is authored in Tiled. If its map is registered, it is the source
-        // of truth and everything below is skipped; the generator underneath stays
-        // as the fallback, so a missing or broken map still yields a playable world
-        // and the cave and interiors are untouched by the migration.
-        // See Overworld.Tmx.cs and docs/mapping-standard.md.
-        if (Tiled.MapCatalog.Find(Tiled.MapCatalog.Stage01) is { } authored)
-        {
-            BuildOverworldFromTmx(authored);
-            return;
-        }
-
         Rev++;
         Stage = 1;
-        COLS = OW_COLS; ROWS = OW_ROWS;
+        CurrentRegion = null;
+        COLS = 72; ROWS = 56;
         Tiles = new byte[COLS, ROWS];
-        Props.Clear(); Arches.Clear(); Crystals.Clear(); Husks.Clear(); Portals.Clear(); Examinables.Clear(); Reading = null;
+        Props.Clear(); Arches.Clear(); Crystals.Clear(); Husks.Clear();
+        Portals.Clear(); Examinables.Clear(); Reading = null;
+        Npcs.Clear(); Interactables.Clear(); Discoveries.Clear();
 
-        // Everything starts as open grass; the blocking is carved in after.
         for (int x = 0; x < COLS; x++)
             for (int y = 0; y < ROWS; y++)
                 Tiles[x, y] = FLOOR;
 
-        BuildMountain();      // ZONE F — northern barrier, now the full width
-        BuildRiver();         // ZONE C — river down to the southern lowlands
-        BuildRoads();         // the dirt route + the east and coast roads
-        BuildForest();        // ZONE B — the original wood
-        BuildEastVegetation();   // the drying scrub of the Kae Ychel road
-        BuildSouthVegetation();  // the wet lowland forest toward the coast
-        BuildSpawnCamp();     // ZONE A
-        BuildCrossroad();     // ZONE D
-        BuildMiningCamp();    // ZONE E
-        BuildCaveEntrance();  // ZONE G
-        BuildSecrets();       // waterfall cache + forest hollow
-        BuildOptional();      // pond, crystal field, abandoned wagon
-        BuildLandmarks();     // one memorable thing per area
-        BuildClericHamlet();  // the first enterable building — opens onto its own map
-        BuildEastReach();     // the road to Kae Ychel: caravan, ruins, watchtower
-        BuildSouthReach();    // the road to Seoshe: fishing steps, stones, smugglers
-        BuildMageSchool();    // the Academy outpost courtyard on the east road
-        BuildSeosheGate();    // the gate into Seoshe, on the coast road
-        BuildStories();       // what happened here, told in objects
-        PlaceNpcs();          // the village, and the last post before the graves
-        SpawnWildlife(180);   // ZONE-appropriate creatures, never inside a safe zone
-        PlaceOverworldRewards();  // zones to find, chests to open, seams to mine
-
-        Spawn = TileCentre(13, 70);
+        Spawn = TileCentre(COLS / 2, ROWS - 6);
+        CaveMouth = TileCentre(COLS / 2, 4);
         Exit = CaveMouth;
         Camera = Spawn;
     }
 
-    // ---- helpers ----------------------------------------------------
-    bool InRect(float x, float y, float x0, float y0, float x1, float y1) =>
-        x >= x0 && x <= x1 && y >= y0 && y <= y1;
-
-    bool OpenGround(float tx, float ty)
-    {
-        int x = (int)tx, y = (int)ty;
-        if (x < 1 || y < 1 || x >= COLS - 1 || y >= ROWS - 1) return false;
-        return Tiles[x, y] == FLOOR;      // never on road, water, bridge or rock
-    }
-
-    bool NearRoad(float tx, float ty, float rad)
-    {
-        for (int x = (int)(tx - rad); x <= tx + rad; x++)
-            for (int y = (int)(ty - rad); y <= ty + rad; y++)
-            {
-                if (x < 0 || y < 0 || x >= COLS || y >= ROWS) continue;
-                var t = Tiles[x, y];
-                if (t == PATH || t == BRIDGE) return true;
-            }
-        return false;
-    }
-
+    // A prop dropped into whichever world is standing. Shared with the interiors,
+    // which furnish themselves through it (see InteriorCatalog) — the one piece of
+    // the old placement code that outlived the generator.
     public void AddOw(float tx, float ty, string kind, float scale, bool solid, float radius)
     {
         Props.Add(new Prop

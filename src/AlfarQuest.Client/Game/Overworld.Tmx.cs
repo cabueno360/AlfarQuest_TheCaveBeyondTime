@@ -68,7 +68,14 @@ public partial class World
 
         // Where the party starts and where the mine takes them. Both are map
         // objects; the cave mouth doubles as the stage exit.
-        if (m.Objects("PlayerSpawn").FirstOrDefault() is { } sp) Spawn = FromMap(sp.X, sp.Y);
+        if (m.Objects("PlayerSpawn").FirstOrDefault() is { } sp)
+        {
+            Spawn = FromMap(sp.X, sp.Y);
+            // If the map's spawn was placed on water or rock — a hand-edit that
+            // dragged it onto the river, or a marker dropped a hair inside a wall —
+            // nudge it to the nearest walkable cell so the party never starts stuck.
+            if (Blocked(Spawn, 14f)) Spawn = NearestOpen(Spawn);
+        }
         if (m.Objects("CaveMouth").FirstOrDefault() is { } cm) CaveMouth = FromMap(cm.X, cm.Y);
         Exit = CaveMouth;
         Camera = Spawn;
@@ -106,8 +113,8 @@ public partial class World
                     m.Painted(l, mx, my + 1) || m.Painted(l, mx + 1, my + 1);
 
                 Tiles[x, y] = Any(walls) ? ROCK
+                            : Any(bridges) ? BRIDGE      // the deck beats the dock water it spans
                             : Any(water) ? WATER
-                            : Any(bridges) ? BRIDGE
                             : Any(roads) ? PATH
                             : FLOOR;
             }
@@ -118,7 +125,14 @@ public partial class World
         ReadExaminables(m);
         ReadContainers(m);
 
-        if (m.Objects("PlayerSpawn").FirstOrDefault() is { } sp) Spawn = FromMap(sp.X, sp.Y);
+        if (m.Objects("PlayerSpawn").FirstOrDefault() is { } sp)
+        {
+            Spawn = FromMap(sp.X, sp.Y);
+            // If the map's spawn was placed on water or rock — a hand-edit that
+            // dragged it onto the river, or a marker dropped a hair inside a wall —
+            // nudge it to the nearest walkable cell so the party never starts stuck.
+            if (Blocked(Spawn, 14f)) Spawn = NearestOpen(Spawn);
+        }
     }
 
     /// <summary>Terrain by layer precedence: whatever is painted highest wins.
@@ -126,11 +140,19 @@ public partial class World
     void ReadTerrain(TmxMap m)
     {
         var cliffs = m.Layer("Cliffs");
-        // A building's FACADE is on the Walls layer, and the wall you can see is
-        // the wall you cannot walk through. The roof above it lives on Buildings,
-        // which blocks nothing, so the eaves overhang the doorstep the way eaves
-        // do instead of fencing it off.
         var walls = m.Layer("Walls");
+        // Buildings and the tree layers block too: a house or a tree is a thing you
+        // walk AROUND, not through. NOTE this ends the eaves-overhang — a roof cell
+        // now carries a body, so a house is solid to its full drawn extent (mark a
+        // door's threshold on Roads/Ground, NOT Buildings, if you want to step onto
+        // it). Trees block their whole footprint, canopy included, so a dense wood
+        // reads as a wall you follow the road around.
+        var buildings = m.Layer("Buildings");
+        var trees = new[]
+        {
+            m.Layer("Trees"), m.Layer("Trees2"), m.Layer("Trees3"),
+            m.Layer("Trees4"), m.Layer("Trees5"), m.Layer("Trees6"),
+        };
         var water = m.Layer("Water");
         var bridges = m.Layer("Bridges");
         var roads = m.Layer("Roads");
@@ -140,14 +162,52 @@ public partial class World
             {
                 // Any of the cell's 2x2 map cells painted counts as painted, so a
                 // map drawn at 16px resolution never leaves half-blocking cells.
-                int mx = x * MapSub, my = y * MapSub;
-                bool Any(int[]? l) =>
-                    m.Painted(l, mx, my) || m.Painted(l, mx + 1, my) ||
-                    m.Painted(l, mx, my + 1) || m.Painted(l, mx + 1, my + 1);
+                bool AnyAt(int[]? l, int cx, int cy)
+                {
+                    int bx = cx * MapSub, by = cy * MapSub;
+                    return m.Painted(l, bx, by) || m.Painted(l, bx + 1, by)
+                        || m.Painted(l, bx, by + 1) || m.Painted(l, bx + 1, by + 1);
+                }
+                bool Any(int[]? l) => AnyAt(l, x, y);
+                bool AnyTreeAt(int cx, int cy)
+                {
+                    foreach (var t in trees) if (AnyAt(t, cx, cy)) return true;
+                    return false;
+                }
 
-                Tiles[x, y] = Any(cliffs) || Any(walls) ? ROCK
-                            : Any(water) ? WATER
+                // A tree and a building are TALL sprites: the canopy and the roof are
+                // drawn where you may still walk — behind them — and only the FOOT of
+                // the sprite, the trunk and the doorsill course, stops you. So each
+                // blocks only at its base: painted in this cell but NOT in the cell
+                // below it, which is where it meets the ground. Everything above that
+                // is walk-behind. (A house's solid front is the Walls-layer courses
+                // stamp_house lays under the sprite, which still block in full.)
+                bool treeBlocks = AnyTreeAt(x, y) && !AnyTreeAt(x, y + 1);
+                // A house is SOLID over its whole drawn footprint (the Buildings
+                // layer) — you cannot walk into it or behind it. That is what keeps
+                // an actor always in FRONT of the house, drawn over it and visible,
+                // instead of slipping behind a wall or a roof and being hidden. The
+                // door threshold sits on Roads/Ground out front, so a solid house is
+                // still enterable. Trees stay base-only (their trunk) so a wood is
+                // still walkable.
+                bool bldgBlocks = AnyAt(buildings, x, y);
+
+                // A BRIDGE is the crossing, and it beats EVERYTHING drawn on its deck —
+                // the water it spans, the railings (whether the author painted them on
+                // Walls or Buildings), and any overhanging canopy (Trees). Only a Cliff
+                // outranks a bridge, since a deck cannot pass through a rock face. This
+                // is what keeps a railed wooden bridge walkable now that Walls, Buildings
+                // and Trees all block: the deck stays a deck, and it is the water off its
+                // sides — not the railing tiles — that keeps you on it. (Reading water
+                // before bridges once sank every ford whose water was not cleared under
+                // it, splitting Ashwold in two; reading walls before bridges then walled
+                // the Ashwold footbridge mid-span where a railing tile sat on the Walls
+                // layer — the party could step onto the deck but never off the far end.)
+                Tiles[x, y] = Any(cliffs) ? ROCK
                             : Any(bridges) ? BRIDGE
+                            : Any(walls) || bldgBlocks ? ROCK   // walls AND the whole house body are solid
+                            : treeBlocks ? TRUNK                // a soft, narrow trunk — not a full block
+                            : Any(water) ? WATER
                             : Any(roads) ? PATH
                             : FLOOR;
             }
@@ -291,8 +351,8 @@ public partial class World
                     m.Painted(l, mx, my + 1) || m.Painted(l, mx + 1, my + 1);
 
                 Tiles[x, y] = Any(walls) ? ROCK
+                            : Any(bridges) ? BRIDGE      // a plank walk beats the water it crosses
                             : Any(water) ? WATER
-                            : Any(bridges) ? BRIDGE
                             : FLOOR;
             }
 

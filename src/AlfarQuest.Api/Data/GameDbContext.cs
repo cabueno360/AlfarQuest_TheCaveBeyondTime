@@ -90,7 +90,7 @@ public class GameDbContext : DbContext
         // Seed the three canonical delvers from "Story for Music".
         b.Entity<HeroEntity>().HasData(
             new HeroEntity { Key = "mage", Name = "The Fallen Mage", Title = "Bearer of the Caged Fire", HeroClass = "Mage", BaseHp = 90, UnlockedByDefault = true, Description = "An exile of Kae Ychel with a greater demon bound inside his heart. Hurls discs of light — and, when pressed, unleashes the hellfire he can barely contain." },
-            new HeroEntity { Key = "cleric", Name = "The Grieving Cleric", Title = "Whose Faith Fractured", HeroClass = "Cleric", BaseHp = 140, UnlockedByDefault = true, Description = "A priest who traded his own descent into madness for a phial of panacea. Wades in with blessed plate and gilded mace, and can loose a nova of holy light." },
+            new HeroEntity { Key = "cleric", Name = "The Grieving Cleric", Title = "Whose Faith Fractured", HeroClass = "Cleric", BaseHp = 140, UnlockedByDefault = false, Description = "A priest who traded his own descent into madness for a phial of panacea. Wades in with blessed plate and gilded mace, and can loose a nova of holy light." },
             new HeroEntity { Key = "thief", Name = "The Hollow Thief", Title = "Whose Crew the Crystal Took", HeroClass = "Thief", BaseHp = 100, UnlockedByDefault = true, Description = "A Seoshe gambler with a shard of the stolen crystal fused into his arm. Fires a crossbow from the dark and dashes through danger with reckless luck." }
         );
     }

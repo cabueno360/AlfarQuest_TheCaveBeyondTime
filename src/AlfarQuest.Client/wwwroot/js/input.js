@@ -51,7 +51,7 @@ function latchPress(k, shift) {
 
 // Keys that open menus rather than drive the hero. Held separately so the
 // gameplay latch stays purely about actions, and so rebinding is one map.
-const MENU_KEYS = { c: "character", escape: "close" };
+const MENU_KEYS = { c: "character", l: "journal", escape: "close" };
 
 export function attachInput(canvas, onMenuKey) {
     const onKeyDown = (e) => {

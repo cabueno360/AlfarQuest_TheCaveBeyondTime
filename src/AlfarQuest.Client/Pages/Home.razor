@@ -43,6 +43,7 @@
                     <HeroCard Hero="hero"
                               Progress="ProgressFor(hero.Key)"
                               Selected="@(Lead == hero.Key)"
+                              Locked="@(!IsUnlocked(hero.Key))"
                               SelectedChanged="SelectLead" />
                 }
             </div>

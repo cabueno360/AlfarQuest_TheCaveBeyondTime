@@ -53,6 +53,48 @@ public sealed class PartyState
 
     public event Action? Changed;
 
+    /// <summary>Fires with the quest the instant a newly-set flag completes it, once
+    /// per quest — the quest-complete toast listens here for its title and payout.</summary>
+    public event Action<QuestDef>? QuestCompleted;
+
+    /// <summary>The one door every flag goes through, whether the engine set it
+    /// (a descent, a discovery) or a conversation did. Adds it to the claimed set,
+    /// and if it just carried any quest over the line, PAYS that quest's reward and
+    /// announces it — so a completion is granted and toasted exactly once, never
+    /// missed and never doubled.</summary>
+    private bool AddFlag(string key)
+    {
+        if (!ClaimedRewards.Add(key)) return false;
+        foreach (var q in QuestCatalog.CompletedBy(key, ClaimedRewards))
+        {
+            GrantReward(q.Reward);
+            QuestCompleted?.Invoke(q);
+        }
+        Changed?.Invoke();
+        return true;
+    }
+
+    /// <summary>Pays a finished quest's reward to the party's leader — XP to them,
+    /// coin to their purse, the rare story items into their pack. The leader, not
+    /// "everyone", because the pack and the purse are individual now, like every
+    /// other drop. XP may level them up; GainXp raises that on its own.</summary>
+    private void GrantReward(QuestReward r)
+    {
+        if (r.IsEmpty) return;
+        var owner = Selected ?? Members.FirstOrDefault();
+        if (owner is null) return;
+
+        if (r.Xp > 0) GainXp(r.Xp, owner.Key);
+        if (r.Gold > 0)
+        {
+            PurseFor(owner).Add("gold", r.Gold);
+            owner.Stats.Add(HeroStats.Kind.GoldEarned, r.Gold);
+        }
+        foreach (var id in r.ItemIds)
+            if (ItemCatalog.Find(id) is { } item && owner.Bag.Add(item))
+                owner.Stats.Add(HeroStats.Kind.ItemsCollected, 1);
+    }
+
     public PartyState()
     {
         // Publish attribute-derived modifiers to the simulation. Registered once,
@@ -112,10 +154,12 @@ public sealed class PartyState
         // One-shot rewards already taken, so re-entering the world does not
         // refill every chest. Read on world build, written as each is claimed.
         RewardBridge.ClaimedRewards = () => ClaimedRewards;
-        RewardBridge.OnClaimed = key =>
-        {
-            if (ClaimedRewards.Add(key)) Changed?.Invoke();
-        };
+        RewardBridge.OnClaimed = key => AddFlag(key);
+
+        // The Cleric joining at the Cave: the engine adds him to its own party and
+        // calls here so he gets a sheet, gear and a purse and lands in the save,
+        // exactly like a hero chosen at the start.
+        PartyBridge.OnRecruit = Recruit;
 
         RewardBridge.ContainerStates = () => Containers;
         RewardBridge.OnContainerSaved = state =>
@@ -180,6 +224,25 @@ public sealed class PartyState
         Selected ??= Members.FirstOrDefault();
         Changed?.Invoke();
     }
+
+    /// <summary>Adds a hero to the party mid-campaign — the Cleric joining at the
+    /// Cave — with a full sheet, starting gear and a purse, exactly like a hero
+    /// chosen at the start. Idempotent: a hero already in the party is left as they
+    /// are, so a reloaded save that already lists him neither duplicates nor resets
+    /// him. Wired to <see cref="PartyBridge"/> so the simulation can call it.</summary>
+    public void Recruit(string key)
+    {
+        var c = _byKey.TryGetValue(key, out var e) ? e : Create(key);
+        if (Members.Contains(c)) return;
+        Members = [.. Members, c];
+        Changed?.Invoke();
+    }
+
+    /// <summary>Raises a persisted story/quest flag. It rides the same
+    /// <see cref="ClaimedRewards"/> set one-shot rewards do, so it saves with the
+    /// campaign for free and the engine reads it through RewardBridge on the next
+    /// build. Conversations call this to advance a quest when a topic is asked.</summary>
+    public void ClaimFlag(string key) => AddFlag(key);
 
     private Models.Character Create(string key)
     {

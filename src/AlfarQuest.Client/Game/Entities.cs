@@ -193,10 +193,21 @@ public class Husk
     /// bite, which is gated separately by <see cref="HitCool"/>.</summary>
     public float AbilityCool;
 
+    /// <summary>Which ability of a boss's kit comes next — it cycles through them
+    /// in turn rather than repeating one. Unused by ordinary creatures.</summary>
+    public int KitIndex;
+
     /// <summary>Who struck last, so the kill pays the hero who landed the killing
     /// blow rather than the whole party. Null until something hits it — a death
     /// with no striker (a future trap) falls back to the steered hero.</summary>
     public string? LastHitBy;
+
+    /// <summary>Once its health is gone it does not vanish — it plays out a death
+    /// reel (kneel, crawl, collapse, lie) over <see cref="DeathT"/> seconds, and is
+    /// removed only when that runs out. Set once, in the death sweep, which pays the
+    /// kill and rolls the loot a single time. A dying husk neither moves nor bites.</summary>
+    public bool Dying;
+    public float DeathT;
 
     /// <summary>Status effects currently on it — a stun from a hammer, venom from
     /// a spider. The engine ticks these; the list is the runtime half of the
@@ -228,6 +239,10 @@ public class Husk
     /// training dummy sets this, so a hero can keep swinging at a target that does
     /// not fly out of reach on the first hit.</summary>
     public bool Rooted;
+
+    /// <summary>A boss below its enrage line: quicker on its feet and, in
+    /// MonsterAct, quicker to act. False for everything without an EnrageBelow.</summary>
+    public bool Enraged => Def.EnrageBelow > 0 && Hp <= MaxHp * Def.EnrageBelow;
 
     public Husk(Vec p) : this(p, CreatureCatalog.Of("husk")) { }
 

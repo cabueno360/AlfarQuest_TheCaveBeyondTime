@@ -4,6 +4,25 @@
 .aq-stage { position: relative; height: 100vh; width: 100vw; background: #04030a; }
 #gameCanvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 
+/* ---------- fullscreen cutscene ---------- */
+/* Above every other overlay (feedback toast is z-index 200), opaque black, so the
+   world freezing behind it is never seen. */
+.aq-cutscene {
+    position: fixed; inset: 0; z-index: 400; background: #000;
+    display: flex; align-items: center; justify-content: center;
+}
+.aq-cutscene video {
+    width: 100%; height: 100%; object-fit: contain; background: #000;
+}
+.aq-cutscene-skip {
+    position: absolute; bottom: 1.4rem; right: 1.6rem; z-index: 401;
+    background: rgba(10,8,24,.6); color: var(--aq-crystal);
+    border: 1px solid rgba(185,199,255,.3); border-radius: 999px;
+    padding: .4rem 1.1rem; font-size: .85rem; cursor: pointer;
+    backdrop-filter: blur(4px); transition: background .15s, opacity .15s; opacity: .75;
+}
+.aq-cutscene-skip:hover { background: rgba(30,24,54,.85); opacity: 1; }
+
 .aq-topbar {
     position: absolute; top: 12px; left: 0; right: 0; display: flex;
     justify-content: center; gap: 10px; pointer-events: none;
@@ -68,3 +87,45 @@
     display: none; left: 0; padding: .6rem 1.25rem; position: fixed; width: 100%; z-index: 1000;
 }
 #blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: .75rem; top: .5rem; }
+
+/* ---------- the old clock ----------
+   Called up from the menubar to read the hour. Ivory dial, roman numerals, dark
+   hands, a brass frame — a mantel clock, not a HUD gauge. Non-blocking: it floats
+   top-right and the world keeps running behind it. */
+.aq-clock {
+    position: fixed; top: 78px; right: 18px; z-index: 60;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 14px 14px 11px; width: 208px;
+    background: radial-gradient(130% 120% at 50% -10%, rgba(44,35,22,.96), rgba(13,10,22,.97));
+    border: 1px solid var(--aq-gold); border-radius: 14px;
+    box-shadow: 0 16px 44px rgba(0,0,0,.6), 0 0 26px rgba(216,180,90,.14);
+}
+.aq-clock-face { width: 178px; height: 178px; }
+.aq-clock-ring-outer { fill: none; stroke: var(--aq-gold); stroke-width: 4; }
+.aq-clock-ring-mid   { fill: none; stroke: rgba(216,180,90,.55); stroke-width: 1.5; }
+.aq-clock-dial       { fill: #e9dcc2; stroke: rgba(120,90,40,.45); stroke-width: 1; }
+.aq-clock-tick        { stroke: #7a6038; stroke-width: 1; }
+.aq-clock-tick.major  { stroke: #3a2c18; stroke-width: 2.4; }
+.aq-clock-num {
+    fill: #33251a; font-family: 'Cinzel', serif; font-size: 13px;
+    font-weight: 600; text-anchor: middle;
+}
+.aq-clock-hand-hour   { stroke: #241a10; stroke-width: 4; stroke-linecap: round; }
+.aq-clock-hand-minute { stroke: #241a10; stroke-width: 2.4; stroke-linecap: round; }
+.aq-clock-hub     { fill: var(--aq-gold); }
+.aq-clock-hub-pin { fill: #241a10; }
+.aq-clock-readout { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.aq-clock-digital {
+    font-family: 'Cinzel', serif; font-size: 1.16rem; letter-spacing: .05em;
+    color: var(--aq-gold-soft);
+}
+.aq-clock-period {
+    font-family: 'EB Garamond', serif; font-style: italic; font-size: .82rem;
+    color: var(--aq-muted);
+}
+.aq-clock-close {
+    position: absolute; top: 6px; right: 9px;
+    background: none; border: none; cursor: pointer; color: var(--aq-muted);
+    font-size: .9rem; line-height: 1; padding: 2px 4px; border-radius: 5px;
+}
+.aq-clock-close:hover { color: var(--aq-text); background: rgba(185,199,255,.12); }

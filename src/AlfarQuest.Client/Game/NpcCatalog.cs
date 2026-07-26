@@ -45,16 +45,77 @@ public static class NpcCatalog
                          "I mark the trees that are safe to fell. Lately I have been marking fewer.",
                          "Deer will not cross the high path any more. Ask yourself what taught them that."] },
         new() { Id = "chapel_keeper", Kind = "npcPriest", Name = "Brother Enoch", Role = "Chapel Keeper",
+                Greeting = "Peace of the Dawn on you, travellers. You have the look of the road about you — and of the road's end, the one that climbs to the mine. Sit. Ask what you like.",
+                Topics =
+                [
+                    new("Who are you?",
+                        "Brother Enoch, keeper of this poor chapel of the Holy Light — the Bringer of Dawn, King of all Kings. There is no priest left to lead it: the Cleric went down into the dark, and I keep the candles lit in his place."),
+                    new("What is that book you carry?",
+                        "The tally. Every soul that goes up the mine road, I write down — the day they went, and the day they came back.",
+                        "I have run out of pages twice. And the second column, the coming-back one, has gone very quiet. I leave it blank now, and pray I am wrong to."),
+                    new("Have you heard of the Cave Beyond Time?",
+                        "The whole vale has heard of it. It is why we die by inches — the men go up to the old workings for want of anything else, and the cave keeps them.",
+                        "They say time runs wrong down there. I only know it runs one way for those who go in: away from us.")
+                        { SetsFlag = "quest_cave_learned" },
+                    new("Is it true the Cleric's wife is dying?",
+                        "Mirka. Yes. The wasting has her, and it does not let go. Her father keeps the house on the hill — speak with him if you would know what drove a priest down into that pit.",
+                        "Pray at her door if you pass it. Not in it. She has had enough of prayers said over her."),
+                    new("What is the Holy Light?",
+                        "The Light is not a lamp you carry, child. It is the one you are seen by. The Dawn breaks whether or not we wake to it.",
+                        "I am no theologian. I bury the dead, I keep the tally, and I trust the morning comes. In a place like this, that is faith enough."),
+                    // He receives them differently once they have gone down and returned.
+                    new("We have been into the cave, Brother.",
+                        "Then you stand in my tally twice — gone, and come back. Do you know how few names carry that second mark? Sit a while, and let me look at you. The Dawn is kind today.")
+                        { ShowWhen = "cave_entered" },
+                ],
                 Lines = ["The Light is not a lamp you carry. It is one you are seen by.",
                          "Every soul that goes up the mine road is written in my book. I have run out of pages twice.",
                          "The Cleric's wife lies in that house. Pray at her door, not in it."] },
         new() { Id = "vale_widow", Kind = "npcOldWoman", Name = "Goodwife Marrow", Role = "Of the Vale",
+                Greeting = "Delvers. I can always tell — you walk toward the mine road, not away from it. Come here, then, and let an old woman say her piece before you go.",
+                Topics =
+                [
+                    new("Who are you?",
+                        "Goodwife Marrow. I have kept a house in this vale sixty years, and buried a husband and two brothers out of it. The vale takes more than it gives — and lately it gives nothing at all."),
+                    new("Why does the bell ring?",
+                        "It rings once for a delve going up the road. It rings twice for one coming back down it.",
+                        "I sit by my window and I count. It has been a long, long while since I heard it ring twice."),
+                    new("What happened to your family?",
+                        "The wasting took my husband, same as it is taking the cleric's poor wife. My brothers went up the mine road for want of bread, and never rang the bell coming home.",
+                        "You will smell the corpse-pyres on the far slope. We have too many to bury the old way now."),
+                    new("Have you heard of the cave?",
+                        "The Cave Beyond Time. Aye. It is the mouth this whole valley is being fed into, one man at a time.",
+                        "If you mean to go — and you do, I can see it in you — then go with your eyes open. It gives no one back whole.")
+                        { SetsFlag = "quest_cave_learned" },
+                    new("Have you any counsel for the road?",
+                        "Take bread before the ford. There is nothing to eat past it, and nothing past it that will not try to eat you.",
+                        "And keep together. The ones who go down alone are the ones the bell never rings for at all."),
+                    // Her manner softens toward them once they have come back up.
+                    new("We came back from the cave, Goodwife.",
+                        "Came back, did you. Then I will ring the bell myself tonight — twice, and loud, so the whole dying vale hears it once more. Bless you. It has been so long.")
+                        { ShowWhen = "cave_entered" },
+                ],
                 Lines = ["I have buried a husband and two brothers out of this vale.",
                          "The bell rings for a delve going up. It rings twice for one coming back.",
                          "Take bread before the ford. There is nothing to eat past it."] },
 
         new() { Id = "elder", Kind = "npcOldMan", Name = "Old Halvard", Role = "Elder",
                 Services = NpcServices.Quest,
+                Greeting = "You've the look of folk bound for the mine. Sit a moment — an old man's word is cheaper than a healer's.",
+                Topics =
+                [
+                    new("What can you tell me of the mine?",
+                        "The old workings north of the graves. My own son's crew went in and did not come up — that was the spring, and no one since.",
+                        "It is not the rock that took them. It is what the rock opened onto: the cave below the cave, that the priest went down to find."),
+                    new("What is this 'cave below the cave'?",
+                        "The Cave Beyond Time, the old songs call it. I took it for a song until Cerno came back from it with his mind half gone and a phial of the water that stayed the Wasting a month.",
+                        "The Cleric went down after him, in Cerno's stead, to buy more of it for his wife. Find him, if you go — and mind you come back up, which is more than most manage.")
+                        { SetsFlag = "quest_cave_learned" },
+                    new("Where should we make for?",
+                        "North, past the graves, to the old mine. The road still remembers the way even if the men who walked it do not.",
+                        "Take light, and take more of it than you think you need.")
+                        { ShowWhen = "quest_cave_learned" },
+                ],
                 Lines = ["The mine took my son's crew. Do not go in light.",
                          "Follow the road north. It still remembers the way.",
                          "Nobody has come back up since the spring."] },
@@ -108,8 +169,24 @@ public static class NpcCatalog
         // ---- from the book "Story for Music" ----------------------------
         // Cerno of Kaladash — the adventurer who found the panacea in the Cave and
         // came back half-mad, the one soul here who has been down and returned.
-        new() { Id = "cerno", Kind = "npcHunter", Name = "Cerno", Role = "Adventurer of Kaladash",
+        new() { Id = "cerno", Kind = "npcCerno", Name = "Cerno", Role = "Adventurer of Kaladash",
                 Services = NpcServices.Quest,
+                Greeting = "You have the smell of the deep road on you already. I am Cerno — I went down, and I came back, which is more than the cave usually allows. Ask, then.",
+                Topics =
+                [
+                    new("You have been inside the Cave?",
+                        "I drew the panacea from its very halls, and left the rest of my mind behind to carry it out.",
+                        "Time runs strange down there — a day below is a year of your sleep. I turned back too soon, and still what I saw follows me up here.")
+                        { SetsFlag = "sq_cerno_heard" },
+                    new("What should we know before we descend?",
+                        "Light. Take more than you think you need, then more again. The dark down there is not the absence of light — it is the presence of something else.",
+                        "And when your own mind starts to argue with you in a voice you almost know — that is the cave. Do not answer it."),
+                    new("You led the Cleric down?",
+                        "I did. His wife was dying and the panacea was the only thing that stayed it, so I struck the bargain: his descent for the phial. He took it without flinching.",
+                        "Find him below, if you can. Tell him the old man in the vale keeps the hearth lit."),
+                    new("Where do the other roads lead?",
+                        "Three run from the crossing: east to Kae Ychel and its Academy, west to Seoshe on the coast, north to the Vale. Every one of them safer than this one."),
+                ],
                 Lines = ["This cave of myth is real. I drew the panacea from its very halls, and left the rest of my mind behind.",
                          "I turned back too soon. What waits below, no man was meant to carry back out.",
                          "You mean to descend? Then hear me plainly — you will descend into madness.",
@@ -120,7 +197,7 @@ public static class NpcCatalog
         // of questions rather than cycling one-liners, since the priest himself is
         // gone below and he is the only one left who can tell any of it. Lines are
         // kept as the fallback for a headless run with no dialogue window attached.
-        new() { Id = "mirkafather", Kind = "npcOldMan", Name = "Mirka's Father", Role = "Villager of the Vale",
+        new() { Id = "mirkafather", Kind = "npcMirkaFather", Name = "Mirka's Father", Role = "Villager of the Vale",
                 Greeting = "You'll be the delvers, then. Come in — she is asleep, she is always asleep. Ask what you like; I have little left to do but answer.",
                 Topics =
                 [
@@ -136,7 +213,8 @@ public static class NpcCatalog
                         "No fever you can sweat out. It draws the colour from a body, then the strength, then the waking hours — until only breath is left.",
                         "It took her by inches. He tried prayer, ritual, divination, every miracle he was blessed with. It did not so much as slow."),
                     new("Can I help?",
-                        "If you are truly going down into that cave — find the cleric in the gilded plate, and tell him she still breathes. That is help enough."),
+                        "If you are truly going down into that cave — find the cleric in the gilded plate, and tell him she still breathes. That is help enough.")
+                        { OffersQuest = "word_for_cleric" },
                     new("What is that journal?",
                         "He kept it at her bedside, in his own careful hand. Every remedy he tried, every prayer, every bargain.",
                         "Read it, if you have the stomach. It is a year of a man's hope running out, written down."),
@@ -145,10 +223,17 @@ public static class NpcCatalog
                         "And below the graves, the old mine — and past that, the cave. Every one of them safer than the last."),
                     new("Have you heard of the Cave Beyond Time?",
                         "I did not believe in it either, till Cerno set a phial of its water into my hand.",
-                        "They say time runs strange down there, and that men who go in come back changed — if they come back at all. My son-in-law has not."),
+                        "They say time runs strange down there, and that men who go in come back changed — if they come back at all. My son-in-law has not.")
+                        { SetsFlag = "quest_cave_learned" },
+                    // Only once they know to look for it — the road to the mine.
+                    new("Then where does the old mine lie?",
+                        "North and east, past the graves on the high road. The old workings first, and past them the mouth of the cave itself.",
+                        "Follow the ford up out of the vale and keep to the road. You will not mistake the dark of it.")
+                        { ShowWhen = "quest_cave_learned" },
                     new("Who is Cerno?",
                         "Cerno of Kaladash. A warrior, grim and honest. He brought the panacea up out of the dark, and left half his mind behind to do it.",
-                        "It was he who led my son-in-law down. I asked him to. God forgive me — I asked him to."),
+                        "It was he who led my son-in-law down. I asked him to. God forgive me — I asked him to. He keeps to the cave forecourt now; seek him there before you go in.")
+                        { OffersQuest = "seek_cerno" },
                     new("What is the Panacea?",
                         "Six drops, drawn from the Cave. It slowed the wasting a month — her fingers looked human again, and she woke, and she knew me.",
                         "Then it stopped. The gift was only a loan. And Cerno's price for those drops was the cleric's own descent into madness."),
@@ -187,7 +272,7 @@ public static class NpcCatalog
                          "We had an apprentice once who reached past his grasp. He bound a greater demon at the tests, and it took half his year with it. The Regent sealed the thing in his heart and cast him out. We do not say his name.",
                          "If you are bound for the mine, mage-craft will not save you down there. That is not our kind of magic. It is not anyone's."] },
         // Apprentices walking the courtyard outside.
-        new() { Id = "apprentice_ward", Kind = "npcMage", Name = "An Apprentice", Role = "Of the Academy",
+        new() { Id = "apprentice_ward", Kind = "npcApprentice", Name = "An Apprentice", Role = "Of the Academy",
                 Lines = ["Wards, always wards. Boring, the others say. Boring keeps you alive when a working turns on you.",
                          "Gersimo did wards too. He put one up at the tests, the year of the fire. It did not matter. Nothing did.",
                          "A five-point array is stable. Fewer points and it wants to come apart in your hands. Never trust a three-point array — whatever they tell you about prodigies."] },
@@ -195,7 +280,7 @@ public static class NpcCatalog
                 Lines = ["Lightning's the thing. A good enough show at the tests and you're Evoker Corps, the King's own war-mages.",
                          "Thami tried lightning three years running. They say he cared more for the Corps than the boon itself. They say a lot about Thami now.",
                          "Fire and force. Who wants to spend their life warding doors that were never going to open?"] },
-        new() { Id = "apprentice_scry", Kind = "npcGirl", Name = "An Apprentice", Role = "Of the Academy",
+        new() { Id = "apprentice_scry", Kind = "npcScryer", Name = "An Apprentice", Role = "Of the Academy",
                 Lines = ["I'm reading up on scrying spheres. A three-point array to hold one — mad, unstable, the grandmasters gasp when anyone manages it.",
                          "There's a whole shelf gone from the library. Bindings, summonings. Chained shut, and still someone took them, years back.",
                          "You feel it too, out east? The air's wrong past the caravan. Like the light down in that mine, only... reaching."] },
@@ -219,33 +304,10 @@ public static class NpcCatalog
                          "Foreign goods, foreign luck. Both spend the same."] },
     ];
 
-    /// <summary>Where each one stands, in tile coordinates. Placed by hand so the
-    /// village reads as a place people chose to live, not a scatter.</summary>
-    public static readonly (string Id, int X, int Y)[] Placements =
-    [
-        ("elder",      15, 68),   // by the campfire
-        ("wife",       11, 71),
-        ("farmwife",   18, 73),
-        ("boy",        16, 64),
-        ("girl",       19, 66),
-        ("smith",      20, 62),
-        ("alchemist",  12, 64),
-        ("woodcutter", 24, 58),   // out along the road
-        ("hunter",     27, 52),   // near the bridge
-        ("fisher",     30, 55),   // at the water
-        ("wagoner",    45, 37),   // the crossroad
-        ("guard",      37, 23),   // last post before the graves
-        ("scholar",    52, 26),   // out past the mining camp — a walk to find
-        ("cerno",      43, 12),   // at the cave forecourt — the guide who has been down
-        ("mirkafather", 22, 26),  // on the path below the Cleric's house
-        ("trader",    116, 55),   // the traveling merchant, at the caravan on the east road
-        ("coastfisher", 48, 107), // at the fishing steps on the coast road
-        ("apprentice_ward", 92, 48),  // the Academy outpost courtyard, east road
-        ("apprentice_fire", 99, 47),
-        ("apprentice_scry", 96, 51),
-        ("seoshe_guard",   28, 77),   // the gate of Seoshe, on the coast road
-        ("seoshe_guard",   34, 77),
-    ];
+    // The old hand-placed overworld positions lived here (a (Id,X,Y) table read by
+    // the retired generator's PlaceNpcs). The regions place their own NPCs now, as
+    // NPCSpawn objects in each .tmx, so the table went with the generator. The
+    // definitions above are still the single source of who each villager is.
 
     public static NpcDefinition? Find(string id) => All.FirstOrDefault(n => n.Id == id);
 }

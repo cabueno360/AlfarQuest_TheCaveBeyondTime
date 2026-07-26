@@ -473,3 +473,6 @@ tools/refs/seg/
 tools/refs/extracted/
 # The art pack ships extracted alongside; the archive is redundant weight.
 src/AlfarQuest.Client/wwwroot/Maps/*.zip
+
+# Source audio masters (WAV) — the game ships the .m4a in wwwroot/audio
+audio-masters/

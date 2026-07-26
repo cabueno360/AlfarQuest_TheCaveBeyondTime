@@ -18,11 +18,16 @@
 
     <NowPlaying Track="The Ballad of the Wandering" Muted="Muted" OnToggle="ToggleMute" />
 
-    <MenuBar OnCharacter="OpenCharacterSheet" OnQuit="Quit" />
+    <MenuBar OnClock="ToggleClock" OnCharacter="OpenCharacterSheet" OnQuit="Quit" />
+
+    <WorldClock Visible="_clockOpen" OnClose="CloseClock" />
 
     <ControlsHelp />
 
     <CharacterWindow Visible="SheetOpen" AtCraftsman="AtCraftsman" OnClose="CloseSheet" />
+
+    @* The quest journal (J) — the main line and any side quests begun, with steps. *@
+    <QuestJournal Visible="JournalOpen" OnClose="CloseJournal" />
 
     @* Sits above the character window in the markup so that when a level-up
        hands off to the sheet, the celebration is on top until it is dismissed. *@
@@ -42,4 +47,46 @@
     <DialogueWindow />
 
     <ReadingWindow />
+
+    @* Quest-complete banners: they stack at the top and drop themselves, and never
+       take the input or pause the game (pointer-events off, no Clock hold). *@
+    @if (_questToasts.Count > 0)
+    {
+        <div class="aq-quest-toasts">
+            @foreach (var t in _questToasts)
+            {
+                <div class="aq-quest-toast" @key="t.Id">
+                    <span class="aq-quest-toast-eyebrow">✦ Quest Complete</span>
+                    <span class="aq-quest-toast-title">@t.Title</span>
+                    @if (t.Items.Count > 0 || t.Xp > 0 || t.Gold > 0)
+                    {
+                        <div class="aq-quest-toast-rewards">
+                            @foreach (var it in t.Items)
+                            {
+                                <span class="aq-quest-toast-item" style="color:@it.Colour">@it.Icon&nbsp;@it.Name</span>
+                            }
+                            @if (t.Xp > 0)
+                            {
+                                <span class="aq-quest-toast-tally">+@t.Xp XP</span>
+                            }
+                            @if (t.Gold > 0)
+                            {
+                                <span class="aq-quest-toast-tally aq-quest-toast-gold">+@t.Gold gold</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @* The fullscreen cutscene — the first descent into the Cave. Above everything,
+       and it freezes the game behind it until it ends (or is skipped). *@
+    @if (_cutscene is { } cutscene)
+    {
+        <div class="aq-cutscene">
+            <video src="@cutscene" autoplay playsinline @onended="EndCutscene"></video>
+            <button class="aq-cutscene-skip" @onclick="EndCutscene">Skip ▸</button>
+        </div>
+    }
 </div>

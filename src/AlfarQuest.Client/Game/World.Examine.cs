@@ -21,6 +21,11 @@ public partial class World
         public string Verb = "Examine";
         public string Kind = "note";     // note | journal | letter | plaque — for styling
         public required IReadOnlyList<string> Pages;
+
+        /// <summary>Optional, one per page: a story flag that must be set before that
+        /// page can be read, so a journal fills in as the tale earns it. An empty
+        /// flag (or no list at all) means the page is always open.</summary>
+        public IReadOnlyList<string>? PageFlags;
     }
 
     public List<Examinable> Examinables { get; } = [];
@@ -49,7 +54,26 @@ public partial class World
     /// hero while it is up.</summary>
     void OpenReading(Examinable e)
     {
-        if (ReadBridge.Offer(new OpenedReading(e.Title, e.Kind, e.Pages))) Reading = e;
+        var pages = e.Pages;
+        if (e.PageFlags is { } gates)
+        {
+            // Only the pages the story has earned. The gates run in story order, so
+            // what shows is a growing prefix; when any remain locked, a closing line
+            // says so, and the reader comes back to a fuller book later.
+            var claimed = RewardBridge.Claimed();
+            var shown = new List<string>();
+            bool locked = false;
+            for (int i = 0; i < e.Pages.Count; i++)
+            {
+                var flag = i < gates.Count ? gates[i] : "";
+                if (flag.Length == 0 || claimed.Contains(flag)) shown.Add(e.Pages[i]);
+                else locked = true;
+            }
+            if (locked)
+                shown.Add("The entries that follow are pressed deep and torn, the hand grown wild — you cannot yet make them out. Perhaps when you have gone where he went.");
+            pages = shown;
+        }
+        if (ReadBridge.Offer(new OpenedReading(e.Title, e.Kind, pages))) Reading = e;
     }
 
     /// <summary>Closes the reading from the engine's side. Wired to
@@ -64,6 +88,19 @@ public partial class World
         Examinables.Add(new Examinable
         {
             Pos = TileCentre(tx, ty), Verb = verb, Kind = kind, Title = title, Pages = pages,
+        });
+    }
+
+    /// <summary>Like <see cref="AddExamine"/>, but each page carries a flag that
+    /// gates it: the later leaves of a journal open as the story sets them (empty
+    /// flag = always open). See <see cref="Examinable.PageFlags"/>.</summary>
+    public void AddExamineGated(float tx, float ty, string verb, string kind, string title, params (string Page, string Flag)[] pages)
+    {
+        Examinables.Add(new Examinable
+        {
+            Pos = TileCentre(tx, ty), Verb = verb, Kind = kind, Title = title,
+            Pages = pages.Select(p => p.Page).ToArray(),
+            PageFlags = pages.Select(p => p.Flag).ToArray(),
         });
     }
 }

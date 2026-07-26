@@ -70,6 +70,17 @@ public partial class World
             lights.Add(new RLight { x = ExitPos.X, y = ExitPos.Y, rad = 260, c = "#8fd0ff" });
         }
 
+        // A name-plate floating over each doorway, so a building says what it is at
+        // a glance — the Cleric's house, the Academy outpost — rather than only when
+        // you step to its door. The y is nudged up so the plate rides above the
+        // doorframe. In the cave the one labelled portal is the way out, so the
+        // "Leave the cave" step shows the same way — a mark you can steer toward in
+        // the dark rather than stumble onto. Interiors keep their doors unlabelled.
+        if (Stage == 1 || Stage == 2)
+            foreach (var portal in Portals)
+                if (!string.IsNullOrEmpty(portal.Label))
+                    ents.Add(new REnt { t = "label", x = portal.Pos.X, y = portal.Pos.Y - TILE, name = portal.Label });
+
         foreach (var p in Fx)
             ents.Add(new REnt
             {
@@ -81,7 +92,9 @@ public partial class World
 
         foreach (var k in Husks)
             ents.Add(new REnt { t = "husk", x = k.Pos.X, y = k.Pos.Y, r = k.R, hp = k.Hp, mhp = k.MaxHp,
-                                flash = k.Flash, name = k.Def.Kind, s = k.Def.Scale });
+                                flash = k.Flash, name = k.Def.Kind, s = k.Def.Scale,
+                                dying = k.Dying,
+                                dprog = k.Dying ? Math.Clamp(1f - k.DeathT / (k.Def.Boss ? 0.9f : 0.55f), 0f, 1f) : 0f });
 
         foreach (var s in Shots)
             ents.Add(new REnt { t = "proj", x = s.Pos.X, y = s.Pos.Y, r = 6, c = s.Color, f = (float)Math.Atan2(s.Vel.Y, s.Vel.X) });
@@ -93,6 +106,12 @@ public partial class World
 
         foreach (var sl in Slashes)
             ents.Add(new REnt { t = sl.Nova ? "nova" : "slash", x = sl.Pos.X, y = sl.Pos.Y, f = sl.Angle, c = sl.Color, life = sl.Life, r = sl.Radius });
+
+        // Charging area bursts, drawn as a warning ring that fills toward the blow.
+        // `life` carries the fraction of the wind-up still left (1 -> 0).
+        foreach (var a in Aoe)
+            ents.Add(new REnt { t = "telegraph", x = a.Pos.X, y = a.Pos.Y, c = a.Colour,
+                                life = a.Total > 0 ? a.Timer / a.Total : 0f, r = a.Radius });
 
         for (int i = 0; i < Party.Count; i++)
         {
@@ -118,6 +137,10 @@ public partial class World
         {
             phase = Phase,
             enemies = Husks.Count,
+            // The chamber's boss, if one still stands, for its health bar.
+            boss = Husks.FirstOrDefault(k => k.Def.Boss && k.Hp > 0) is { } bossHusk
+                ? new RBoss { name = bossHusk.Def.Name, hp = bossHusk.Hp, mhp = bossHusk.MaxHp, enraged = bossHusk.Enraged }
+                : null,
             asleep = Husks.Count(k => k.State == AiState.Sleep),
             chasing = Husks.Count(k => k.State == AiState.Chase),
             fleeing = Husks.Count(k => k.State == AiState.Flee),
@@ -132,7 +155,7 @@ public partial class World
                          && InSafeZone(Party[Active].Pos.X, Party[Active].Pos.Y),
             heroTx = Party.Count > 0 && Active < Party.Count ? (int)(Party[Active].Pos.X / TILE) : 0,
             heroTy = Party.Count > 0 && Active < Party.Count ? (int)(Party[Active].Pos.Y / TILE) : 0,
-            castsFired = MonsterCastsFired, boltsFired = MonsterBoltsFired,
+            castsFired = MonsterCastsFired, boltsFired = MonsterBoltsFired, husksSummoned = HusksSummoned,
             crits = CritCount, misses = MissCount, blocks = BlockCount,
             dodges = DodgeCount, stuns = StunCount,
             stunnedNow = Husks.Count(k => k.Immobilised),
@@ -143,10 +166,16 @@ public partial class World
             potionReady = Party.Count > 0 && Active < Party.Count && Party[Active].PotionCool <= 0,
             stage = Stage,
             level = Level,
+            timeOfDay = GameSession.TimeOfDay,
             region = RegionName,
             shake = Shake,
             clearedFor = ClearedFor,
-            objective = Stage == 1 ? "Find the old mine" : "",
+            // The main quest's current step, read from the persisted flag set. Shown
+            // on the surface AND below ground now that the Pact runs into the Cave —
+            // the HUD keeps the husk count as the cave's headline and hangs the
+            // objective beneath it. A building interior (Stage 3) still carries only
+            // its own name, so a house never wears the delve's orders.
+            objective = Stage == 1 || Stage == 2 ? QuestCatalog.HudObjective(RewardBridge.Claimed()) : "",
             dropsTried = LootBridge.Attempted,
             dropsDelivered = LootBridge.Delivered,
             // What [E] would do right now, in the same order Interact() resolves

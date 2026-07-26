@@ -54,9 +54,12 @@ export const ATLAS = {
         // cw/ch/ground are reported by tools/extract-sprites.mjs — keep in sync.
         src: "assets/atlas_party.png", cw: 51, ch: 63, ground: 61, img: null, white: null, outlined: null, ready: false,
         rows:   { Mage: 0, Cleric: 1, Thief: 2, husk: 3 },
-        frames: { Mage: 6, Cleric: 6, Thief: 6, husk: 3 },   // columns 0..5 = idle/walk
+        frames: { Mage: 6, Cleric: 6, Thief: 6, husk: 5 },   // heroes 0..5 idle/walk; husk 0..4 walk
         attack:  { first: 6, count: 2, duration: 0.22 },     // columns 6..7, matches Hero.AttackAnim
         ability: { col: 8, duration: 0.45 },                 // column 8, matches Hero.AbilityAnim
+        // The husk's own death reel — columns 5..8 of its row: kneel, crawl,
+        // collapse, lie. Played once, over Husk.DeathT, then the corpse is gone.
+        huskDeath: { first: 5, count: 4 },
     },
     ores: { src: "assets/Miner_Ores.png", cw: 128, ch: 128, img: null, ready: false },
     deco: { src: "assets/Miner_Decorations.png", cw: 128, ch: 128, img: null, ready: false },
@@ -252,9 +255,12 @@ export function animFrame(key, e, count, stride = 7) {
 /// outdoor tiles are a busy green-brown, and so is the Thief — no adjustment to
 /// the floor separates those two, because they are the same colour. A silhouette
 /// one pixel out in every direction separates anything from anything.
-export function drawSprite(a, col, row, cx, footY, scale, flip, alpha, flash, outline = false) {
-    const dw = a.cw * scale, dh = a.ch * scale;
-    const top = footY - (a.ground ?? a.ch) * scale;
+export function drawSprite(a, col, row, cx, footY, scale, flip, alpha, flash, outline = false, yScale = 1) {
+    // `yScale` squashes HEIGHT only, keeping the width — a shorter, stouter figure
+    // rather than a smaller one. The ground offset is squashed with it, so the feet
+    // stay on footY while the head comes down.
+    const dw = a.cw * scale, dh = a.ch * scale * yScale;
+    const top = footY - (a.ground ?? a.ch) * scale * yScale;
     ctx.save();
     ctx.imageSmoothingEnabled = false;      // keep the pixel art crisp
     ctx.globalAlpha = alpha;

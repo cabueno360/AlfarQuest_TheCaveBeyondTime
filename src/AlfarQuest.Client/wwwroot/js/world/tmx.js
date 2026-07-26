@@ -95,8 +95,10 @@ export async function loadTmx(url) {
 }
 
 /// Paints the map's tile layers onto a context, in file order. `skip` names layers
-/// to leave out — the ones drawn above the actors rather than under them.
-export function drawTmxLayers(g, tmx, skip = []) {
+/// to leave out — the ones drawn above the actors rather than under them. Pass
+/// `only` instead to paint JUST those layers (the above-player canvas): a layer is
+/// kept when it is in `only`, or — when `only` is null — when it is not in `skip`.
+export function drawTmxLayers(g, tmx, skip = [], only = null) {
     const { width, height, tileW, tileH, tilesets, layers } = tmx;
     // Resolving a gid to its tileset is the hot path here — hundreds of thousands
     // of tiles — so the lookup walks a short sorted list backwards rather than
@@ -107,7 +109,8 @@ export function drawTmxLayers(g, tmx, skip = []) {
         return null;
     };
     for (const layer of layers) {
-        if (!layer.visible || skip.includes(layer.name)) continue;
+        if (!layer.visible) continue;
+        if (only ? !only.includes(layer.name) : skip.includes(layer.name)) continue;
         const d = layer.data;
         for (let y = 0; y < height; y++) {
             const row = y * width;

@@ -189,13 +189,17 @@ public static class InteriorCatalog
         // The bedside table, and on it the journal — the heart of the house.
         w.AddHouseObj(8.4f, 5, "bedside", 0.78f, true, 11f);
         w.AddHouseObj(8.4f, 4.3f, "journal", 0.5f, false, 0f);
-        w.AddExamine(8.4f, 5, "Read", "journal", "the Cleric's journal",
-            "The Cleric's journal, in his own careful hand, left open on the nightstand the morning he followed Cerno down into the cave.",
-            "Her father came in the dark with a stranger — Cerno, a warrior of Kaladash, grim and honest. He put into my hand a phial of panacea, drawn, he swore, from the Cave Beyond Time. I did not believe him. I drank his word like a dying man drinks water.",
-            "The first month, the wasting slowed. Her fingers looked human again. She wakes only minutes a day, but each waking is more determined than the last. I have not told her of my bargain — only that through her father's diligence and the will of God, we found a way.",
-            "A letter from my Order. More healers called to the war than exist to send; Blazwitz and Koerig have joined against Tellaran, and the line is pushed north. They speak of recalling me. Outside my window they light the corpse-pyres now, great pillars of flame, and all I can do is pray He accepts the departed.",
-            "Three months, and her progress has stalled. Then her skin grew pale as the snow again, and bruises rose wherever I touched her, as though her flesh rejected me. The panacea's gift was only a loan. There has been no waking in weeks.",
-            "Cerno comes tomorrow to lead me to the cave, and I will descend into the madness he promised. Mirka — tomorrow is the first time I will leave your side in nearly a year. By God, at least I had this year with you. Come, Cerno. Lead me on to damnation.");
+        // The journal fills in as the tale is earned: the setup is open from the
+        // first read, but the two darkest leaves — the panacea's price coming due,
+        // and the Cleric's own descent — reveal only once the party has entered the
+        // cave and reached its heart, so the ending lands where the player is.
+        w.AddExamineGated(8.4f, 5, "Read", "journal", "the Cleric's journal",
+            ("The Cleric's journal, in his own careful hand, left open on the nightstand the morning he followed Cerno down into the cave.", ""),
+            ("Her father came in the dark with a stranger — Cerno, a warrior of Kaladash, grim and honest. He put into my hand a phial of panacea, drawn, he swore, from the Cave Beyond Time. I did not believe him. I drank his word like a dying man drinks water.", ""),
+            ("The first month, the wasting slowed. Her fingers looked human again. She wakes only minutes a day, but each waking is more determined than the last. I have not told her of my bargain — only that through her father's diligence and the will of God, we found a way.", ""),
+            ("A letter from my Order. More healers called to the war than exist to send; Blazwitz and Koerig have joined against Tellaran, and the line is pushed north. They speak of recalling me. Outside my window they light the corpse-pyres now, great pillars of flame, and all I can do is pray He accepts the departed.", ""),
+            ("Three months, and her progress has stalled. Then her skin grew pale as the snow again, and bruises rose wherever I touched her, as though her flesh rejected me. The panacea's gift was only a loan. There has been no waking in weeks.", "cave_entered"),
+            ("Cerno comes tomorrow to lead me to the cave, and I will descend into the madness he promised. Mirka — tomorrow is the first time I will leave your side in nearly a year. By God, at least I had this year with you. Come, Cerno. Lead me on to damnation.", "cave_heart"));
         // The medicine table — everything he tried, none of it enough.
         w.AddHouseObj(11.5f, 7, "apothecary", 0.78f, true, 18f);
         w.AddExamine(11.5f, 7, "Examine", "note", "the medicine table",

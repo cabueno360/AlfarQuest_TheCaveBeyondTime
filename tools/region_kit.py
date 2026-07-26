@@ -47,6 +47,11 @@ SETS = {
     "TreePineMid":  "Environment/Props/Static/Trees/Model_02/Size_03.png",
     "TreePineLow":  "Environment/Props/Static/Trees/Model_02/Size_02.png",
     "TreeTall":     "Environment/Props/Static/Trees/Model_03/Size_03.png",
+    # Furniture carries the plank deck and picket railing a wooden footbridge is
+    # dressed with — the same tiles Ashwold's hand-built bridge uses. Registered
+    # last so it never shifts the firstgid of a set a committed map already refers
+    # to by index.
+    "Furniture":    "Environment/Props/Static/Furniture.png",
 }
 
 GID, TSREFS = {}, []
@@ -68,6 +73,20 @@ for _name, _rel in SETS.items():
 ''')
     TSREFS.append(f' <tileset firstgid="{_firstgid}" source="../Tilesets/{_name}.tsx"/>')
     _firstgid += _cols * _rows
+
+# Our own houses, packed into one atlas by tools/import-buildings.py and addressed
+# as a plain 16px grid. Registered here with a stable firstgid so a region can
+# stamp a whole house by name (stamp_house) and carry the one tileset ref. It sits
+# in Tilesets/Ours/, so its ref path differs from the Pixel Crawler sets above.
+_BLD_ATLAS = os.path.join(ROOT, "assets", "atlas_buildings.png")
+_BLD_ALPHA = None
+if os.path.exists(_BLD_ATLAS):
+    _bi = Image.open(_BLD_ATLAS).convert("RGBA")
+    _bcols, _brows = _bi.width // T, _bi.height // T
+    GID["OurBuildings"] = (_firstgid, _bcols)
+    TSREFS.append(f' <tileset firstgid="{_firstgid}" source="../Tilesets/Ours/OurBuildings.tsx"/>')
+    _firstgid += _bcols * _brows
+    _BLD_ALPHA = _bi.split()[3].load()
 
 
 def gid(setname, col, row):
@@ -103,6 +122,27 @@ def floor_tile(mat, x, y, n, e, s, w):
         return gid("Floors", bx + dx, dy)
     dx, dy = vary(RING[miss], x, y)
     return gid("Floors", bx + dx, dy)
+
+
+# --------------------------------------------------------- the wooden footbridge
+# Ashwold's bridge is a plank deck with a picket rail, and every crossing is meant
+# to read the same way. The deck tile goes on the BRIDGES layer itself — collision
+# is read from which layer is painted, never from which tile, so a plank there is
+# as walkable as the cobble it replaces, and it renders under the rail instead of
+# over it. The rail is a single picket segment dropped on BUILDINGS along whichever
+# deck edge looks out over open water — since a bridge now outranks Buildings, the
+# rail dresses the edge without ever walling the deck.
+DECK_PLANK = [(c, r) for r in (35, 36) for c in (1, 2, 3)]   # Furniture, interior planks
+RAIL_PICKET = (2, 31)                                        # Furniture, a picket run
+
+
+def deck_plank(x, y):
+    c, r = vary(DECK_PLANK, x, y)
+    return gid("Furniture", c, r)
+
+
+def bridge_rail():
+    return gid("Furniture", RAIL_PICKET[0], RAIL_PICKET[1])
 
 
 WATER_BLOCK = [0, 6]
@@ -461,6 +501,78 @@ def house_tiles(material, roof, bays=1, storeys=1):
                 roofs.append((ox + dx, dy, "BuildRoofs", rc + dx, dy))
 
     return walls, roofs, (width, HOUSE_H + extra)
+
+
+# =====================================================================
+#  OUR OWN HOUSE SPRITES
+#
+#  The assembled kit above builds a house out of the pack's facade and roof
+#  strips; these are whole houses, drawn by hand (well — generated, cleaned and
+#  cut by tools/import-buildings.py) and packed into one atlas. A region stamps
+#  one by name with stamp_house, which is the sprite equivalent of house_tiles:
+#  the picture on `Buildings`, its ground-floor wall on `Walls` so it blocks, the
+#  doorway left walkable.
+#
+#  HOUSES is read from the catalog import-buildings.py writes, so the sizes here
+#  and the pixels there never drift: resize a house at import and it moves in the
+#  game with no hand-edit.
+# =====================================================================
+import json as _json
+
+_BLD_CAT = os.path.join("tools", "refs", "buildings.json")
+HOUSES = _json.load(open(_BLD_CAT))["houses"] if os.path.exists(_BLD_CAT) else {}
+
+
+def house_opaque(col, row):
+    """Whether the buildings atlas has anything in tile (col, row) — the empty
+    tiles around a house are skipped so they never blank what is under them."""
+    if _BLD_ALPHA is None: return False
+    return any(_BLD_ALPHA[col * T + px, row * T + py] > 12
+               for py in range(0, T, 2) for px in range(0, T, 2))
+
+
+def stamp_house(paint, name, ex, ey, wall_h=4, anchor="left"):
+    """Stamp one of our house sprites, its base on the row below engine cell
+    (ex, ey). `anchor` places its LEFT edge at ex (the convention the region
+    layouts were drawn to — the doors fall off the lane the same as before) or
+    CENTRES it on ex.
+
+    Its opaque tiles go on `Buildings` (drawn, never blocking) EXCEPT the bottom
+    `wall_h` courses, which go on `Walls` — drawn AND read as solid, so the
+    ground-floor wall is what you cannot walk through while the eaves overhang the
+    doorstep. The detected doorway is left off `Walls`, two tiles wide, so the
+    threshold stays walkable and a warp there is reachable.
+
+    Returns (w, h) in map tiles, so the builder can keep clear of the footprint."""
+    hp = HOUSES[name]
+    col, row, w, h, door = hp["col"], hp["row"], hp["w"], hp["h"], hp["door"]
+    ox = ex * SUB if anchor == "left" else ex * SUB - w // 2
+    oy = (ey + 1) * SUB - h
+    for dy in range(h):
+        for dx in range(w):
+            if not house_opaque(col + dx, row + dy): continue
+            g = gid("OurBuildings", col + dx, row + dy)
+            solid = dy >= h - wall_h and not (door <= dx <= door + 1)
+            paint("Walls" if solid else "Buildings", ox + dx, oy + dy, g)
+    return w, h
+
+
+def house_for(material="log", roof="shingle", name="", bays=1, storeys=1, key=0):
+    """Pick one of our five sprites for a building the region already describes,
+    keeping its intent: a green-tile roof was the region's shrine or school, a
+    two-storey frame its hall or inn. `key` (e.g. a position hash) splits the two
+    log houses so a hamlet is not all the same cabin."""
+    n = name.lower()
+    if any(w in n for w in ("chapel", "shrine", "temple", "church", "bell")):
+        return "chapel"        # the teal-roofed, tower-and-porch sprite
+    if bays >= 2 or storeys >= 2 or any(w in n for w in
+                                        ("hall", "inn", "lodge", "manor", "school", "academy")):
+        return "timber_hall"   # the tall two-storey timber frame on posts
+    if material in ("plaster", "board"):
+        return "cottage"       # the plaster-and-beam cottage
+    if material == "log":
+        return "log_cabin" if key % 2 else "log_gable"   # two log houses, split by place
+    return "cottage"
 
 
 # ----------------------------------------------------------------- the seams

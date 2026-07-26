@@ -1,0 +1,43 @@
+{
+ "atlas": "atlas_buildings.png",
+ "atlas_w": 1024,
+ "atlas_h": 256,
+ "cols": 64,
+ "houses": {
+  "log_gable": {
+   "col": 1,
+   "row": 1,
+   "w": 10,
+   "h": 13,
+   "door": 6
+  },
+  "timber_hall": {
+   "col": 12,
+   "row": 1,
+   "w": 13,
+   "h": 13,
+   "door": 3
+  },
+  "cottage": {
+   "col": 26,
+   "row": 1,
+   "w": 10,
+   "h": 10,
+   "door": 6
+  },
+  "log_cabin": {
+   "col": 37,
+   "row": 1,
+   "w": 10,
+   "h": 10,
+   "door": 4
+  },
+  "chapel": {
+   "col": 48,
+   "row": 1,
+   "w": 15,
+   "h": 15,
+   "door": 13
+  }
+ }
+}

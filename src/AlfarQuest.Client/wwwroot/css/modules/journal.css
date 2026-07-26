@@ -1,0 +1,85 @@
+/* The quest journal (J) — a parchment of the party's tales over a dimming scrim. */
+
+.aq-journal-scrim {
+    position: fixed; inset: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(4, 3, 12, .6); backdrop-filter: blur(3px);
+}
+
+.aq-journal {
+    width: min(680px, 92vw); max-height: 84vh; display: flex; flex-direction: column;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .96), rgba(9, 7, 22, .98));
+    border: 1px solid rgba(216, 180, 90, .35); border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+    color: var(--aq-crystal); overflow: hidden;
+}
+
+.aq-journal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.4rem; border-bottom: 1px solid rgba(185, 199, 255, .15);
+}
+.aq-journal-head h2 {
+    margin: 0; font: 600 1.35rem 'EB Garamond', serif; color: var(--aq-gold);
+    letter-spacing: .02em;
+}
+.aq-journal-close {
+    background: none; border: none; color: var(--aq-crystal); opacity: .6;
+    font-size: 1.2rem; cursor: pointer; padding: .2rem .5rem; border-radius: 8px;
+}
+.aq-journal-close:hover { opacity: 1; background: rgba(185, 199, 255, .12); }
+
+.aq-journal-list { padding: .8rem 1.4rem 1.2rem; overflow-y: auto; }
+.aq-journal-empty {
+    padding: 2rem 1.6rem; text-align: center; opacity: .75;
+    font: italic 1.02rem 'EB Garamond', serif; line-height: 1.5;
+}
+
+.aq-quest {
+    padding: .9rem 0 1rem; border-bottom: 1px solid rgba(185, 199, 255, .1);
+}
+.aq-quest:last-child { border-bottom: none; }
+.aq-quest.done { opacity: .62; }
+
+.aq-quest-top { display: flex; align-items: center; gap: .6rem; margin-bottom: .3rem; }
+.aq-quest-top h3 {
+    margin: 0; font: 600 1.12rem 'EB Garamond', serif; color: #eef0ff;
+}
+.aq-quest-kind {
+    font-size: .66rem; text-transform: uppercase; letter-spacing: .08em;
+    padding: .12rem .5rem; border-radius: 999px; font-weight: 700;
+}
+.aq-quest-kind.main { background: rgba(216, 180, 90, .18); color: var(--aq-gold);
+    border: 1px solid rgba(216, 180, 90, .4); }
+.aq-quest-kind.side { background: rgba(143, 208, 166, .14); color: #8fd0a6;
+    border: 1px solid rgba(143, 208, 166, .35); }
+.aq-quest-complete {
+    margin-left: auto; font-size: .72rem; letter-spacing: .06em; color: #8fd0a6;
+    text-transform: uppercase; font-weight: 700;
+}
+
+.aq-quest-summary {
+    margin: .1rem 0 .6rem; font: .95rem 'EB Garamond', serif;
+    line-height: 1.45; opacity: .82;
+}
+
+.aq-quest-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+.aq-quest-steps li {
+    display: flex; gap: .55rem; align-items: baseline;
+    font: .96rem 'EB Garamond', serif; line-height: 1.35;
+}
+.aq-step-mark { width: 1rem; flex: none; text-align: center; }
+.aq-quest-steps li.done { opacity: .6; }
+.aq-quest-steps li.done .aq-step-text { text-decoration: line-through; }
+.aq-quest-steps li.done .aq-step-mark { color: #8fd0a6; }
+.aq-quest-steps li.current .aq-step-mark { color: var(--aq-gold); }
+.aq-quest-steps li.current .aq-step-text { color: #fff; }
+.aq-quest-steps li.upcoming { opacity: .5; }
+
+.aq-journal-foot {
+    padding: .7rem 1.4rem; border-top: 1px solid rgba(185, 199, 255, .15);
+    font-size: .78rem; opacity: .6; text-align: center;
+}
+.aq-journal-foot kbd {
+    background: rgba(185, 199, 255, .14); border: 1px solid rgba(185, 199, 255, .25);
+    border-radius: 5px; padding: .05rem .35rem; font-size: .72rem;
+}

@@ -19,13 +19,16 @@ root = ET.parse(TMX).getroot()
 MW, MH = int(root.get("width")), int(root.get("height"))
 T = int(root.get("tilewidth"))
 
-# tilesets: firstgid -> (image, columns)
+# tilesets: firstgid -> (image, columns). Paths are resolved relative to the file
+# that gave them — the .tsx relative to the .tmx, its image relative to the .tsx —
+# so a tileset in Tilesets/Ours/ resolves the same as one in Tilesets/.
 sets = []
 for ts in root.findall("tileset"):
     first = int(ts.get("firstgid"))
-    tsx = ET.parse(os.path.join(TSDIR, os.path.basename(ts.get("source")))).getroot()
+    tsx_path = os.path.normpath(os.path.join(os.path.dirname(TMX), ts.get("source")))
+    tsx = ET.parse(tsx_path).getroot()
     img_rel = tsx.find("image").get("source")
-    img = Image.open(os.path.normpath(os.path.join(TSDIR, img_rel))).convert("RGBA")
+    img = Image.open(os.path.normpath(os.path.join(os.path.dirname(tsx_path), img_rel))).convert("RGBA")
     sets.append((first, img, int(tsx.get("columns"))))
 sets.sort(key=lambda s: s[0])
 

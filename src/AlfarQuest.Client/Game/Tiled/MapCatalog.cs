@@ -7,21 +7,13 @@ namespace AlfarQuest.Client.Game.Tiled;
 /// cannot be read at build time. Instead the page fetches and registers a map
 /// before the world is created (see Play.razor.cs), and the builder asks here.
 ///
-/// A map that is not registered is simply not migrated: the engine falls back to
-/// its old generator for that stage. That is what keeps the migration incremental —
-/// Stage 1 loads from Tiled, the cave and the interiors keep working as they were,
-/// and nothing needs a flag to say so.</summary>
+/// A map that is not registered is simply not migrated. The overworld is the ring
+/// of regions below; the cave and the interiors are their own maps. A region that
+/// fails to register drops the game onto a bare fallback world (World.BuildOverworld)
+/// — a place to stand, not the procedural Stage 1 that used to live there, which
+/// has been retired.</summary>
 public static class MapCatalog
 {
-    /// <summary>The id the generator's Stage 1 answers to. No longer fetched or
-    /// registered: Stage 1 is the ring of regions now, and the game opens in
-    /// Ashwold. The old map still lives under wwwroot/Maps/Outside as the export
-    /// baseline behind tools/make-tmx.py, but shipping its 1.2 MB to every player
-    /// at startup — for a map none of them play — was dead weight. If every region
-    /// fails to load, BuildOverworld finds this unregistered and falls through to
-    /// the procedural generator, which is the true last-resort world.</summary>
-    public const string Stage01 = "Stage01_Outside";
-
     /// <summary>The maps fetched and registered at startup, as (id, path under
     /// wwwroot). An interior's id is its <see cref="InteriorDef"/> id, so the
     /// builder can simply ask whether the interior it is about to build has a map.</summary>
@@ -58,7 +50,8 @@ public static class MapCatalog
 
     /// <summary>Parses and registers a map. Bad map data must never take the game
     /// down with it: a map that fails to parse is left unregistered, so the stage
-    /// builds from the old generator and the player still gets a world.</summary>
+    /// falls back (a region to the bare fallback world, the cave/interior to their
+    /// own builders) and the player still gets a world.</summary>
     public static bool Register(string id, string xml)
     {
         try
@@ -68,7 +61,7 @@ public static class MapCatalog
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"map '{id}' failed to parse, falling back to the generator: {ex.Message}");
+            Console.Error.WriteLine($"map '{id}' failed to parse, falling back: {ex.Message}");
             Maps.Remove(id);
             return false;
         }
@@ -79,6 +72,6 @@ public static class MapCatalog
     public static bool Has(string id) => Maps.ContainsKey(id);
 
     /// <summary>Test seam: forget every registered map, so a probe can prove the
-    /// generator fallback still produces a playable stage.</summary>
+    /// fallback world still produces a playable stage.</summary>
     public static void Clear() => Maps.Clear();
 }

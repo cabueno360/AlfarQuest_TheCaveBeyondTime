@@ -9,6 +9,33 @@ import { ctx, hexA } from "../gfx.js";
 /// at load time — see makeOutlined — so this costs nothing per frame.
 const OUTLINE = true;
 
+/// How big the people on the map are drawn, against their own art. The sheets
+/// stand a hero ~56px tall — near two engine cells — which towered over the
+/// world once the houses were redrawn to a believable four or five cells and a
+/// door to one. This brings everyone who WALKS the map — heroes, villagers,
+/// wildlife — down toward a door's height, so a person reads as a person beside
+/// a house rather than half of one. Enemies (husks) keep their size: a looming
+/// husk is the point. Only the DRAWING shrinks; collision, reach and the
+/// grounding shadow still come from the engine's `r`, so nothing about how the
+/// game plays moves.
+/// 1.0 = drawn at the sheet's own size. We chose to grow the world instead —
+/// the houses were scaled up to meet the heroes rather than shrinking the heroes.
+const CHAR_SCALE = 1;
+
+/// The character-draw multiplier shared by heroes AND villagers, so the two are
+/// the same height on the map. Their sheet figures are already the same size
+/// (~54px), so a single factor keeps them in step — raising it grows both. This
+/// used to live only in drawNpc (heroes drew at ×1, villagers at ×1.15), which is
+/// exactly why a full-height NPC stood a head taller than the party.
+const FIG_SCALE = 1.15;
+
+/// A HEIGHT-only squash for everyone who walks or lurches on the map — heroes,
+/// villagers, wildlife AND the husks. It keeps the width and pulls the height
+/// down, so a figure reads shorter and stouter rather than smaller: a deliberate
+/// stocky look, not a scale. Feet stay grounded (the ground offset squashes with
+/// it). Purely cosmetic — collision and reach are the engine's `r`, untouched.
+const CHAR_SQUASH = 0.8;
+
 export function drawEntity(e) {
     switch (e.t) {
         case "crystal": drawCrystal(e); break;
@@ -19,9 +46,30 @@ export function drawEntity(e) {
         case "proj": drawProjectile(e); break;
         case "slash": drawSlash(e); break;
         case "nova": drawNova(e); break;
+        case "telegraph": drawTelegraph(e); break;
         case "particle": drawParticle(e); break;
         case "exit": drawExit(e); break;
+        case "label": drawLabel(e); break;
     }
+}
+
+/// A place name-plate floating over a doorway (the Cleric's house, the Academy
+/// outpost), drawn in world space so it rides with the map. A dark gilt-edged plate
+/// keeps the text legible over any ground.
+function drawLabel(e) {
+    if (!e.name) return;
+    ctx.save();
+    ctx.font = "600 13px 'EB Garamond', serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const w = ctx.measureText(e.name).width + 18, h = 21, x = e.x, y = e.y;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 7);
+    else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fillStyle = "rgba(10,8,24,0.74)"; ctx.fill();
+    ctx.strokeStyle = "rgba(216,180,90,0.5)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = "#f0d99a";
+    ctx.fillText(e.name, x, y + 0.5);
+    ctx.restore();
 }
 
 function drawCrystal(e) {
@@ -146,8 +194,8 @@ function drawNpc(e) {
     // never is.
     const facingLeft = Math.cos(e.f) < 0;
     const f = list.reduce((a, b) => (b.h > a.h ? b : a));
-    const s = 1.15;
-    const dw = f.w * s, dh = f.h * s;
+    const s = FIG_SCALE * CHAR_SCALE;
+    const dw = f.w * s, dh = f.h * s * CHAR_SQUASH;
 
     groundShadow(e.x, e.y - 2, dw * 0.40, dw * 0.15);
     drawFramed(a, f, e.x, e.y, dw, dh, facingLeft);
@@ -190,8 +238,8 @@ function drawCreature(e) {
 
     // Cycle the species' frames by distance travelled, like the heroes.
     const f = list[animFrame("mob:" + e._i, e, list.length, 11)];
-    const s = (e.s || 1) * 1.1;
-    const dw = f.w * s, dh = f.h * s;
+    const s = (e.s || 1) * 1.1 * CHAR_SCALE;
+    const dw = f.w * s, dh = f.h * s * CHAR_SQUASH;
     const foot = e.y + (e.r || 15) * 0.9;
 
     groundShadow(e.x, foot - 2, dw * 0.42, dw * 0.15);
@@ -233,22 +281,32 @@ function drawHusk(e) {
 
     groundShadow(x, y + r * 0.95, r * 0.9, r * 0.32);
 
-    // Keyed by list index, not position: husks move, so a position-derived key
-    // would mint a new clock every frame (no animation, and an unbounded Map).
-    const f = animFrame("husk:" + e._i, e, a.frames.husk, 9);
-    drawSprite(a, f, a.rows.husk, x, y + r * 0.95, 1, false, 1, e.flash, OUTLINE);
+    // Dying: play the death reel (kneel, crawl, collapse, lie) once across dprog,
+    // instead of the walk. Otherwise cycle the walk by distance travelled, keyed by
+    // list index — husks move, so a position-derived key would mint a new clock
+    // every frame (no animation, and an unbounded Map).
+    let f;
+    if (e.dying) {
+        const d = a.huskDeath;
+        f = d.first + Math.min(d.count - 1, Math.floor((e.dprog ?? 0) * d.count));
+    } else {
+        f = animFrame("husk:" + e._i, e, a.frames.husk, 9);
+    }
+    drawSprite(a, f, a.rows.husk, x, y + r * 0.95, 1, false, 1, e.flash, OUTLINE, CHAR_SQUASH);
 
-    // the crystal that rides in them, glowing through the ribs
+    // the crystal that rides in them, glowing through the ribs — it dims as the
+    // husk falls, guttering out with the body.
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
+    const glow = e.dying ? 0.35 * (1 - (e.dprog ?? 0) * 0.85) : 0.35;
     const g = ctx.createRadialGradient(x, y - r * 0.2, 0, x, y - r * 0.2, r * 0.9);
-    g.addColorStop(0, "rgba(150,210,255,0.35)");
+    g.addColorStop(0, `rgba(150,210,255,${glow})`);
     g.addColorStop(1, "rgba(90,150,255,0)");
     ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(x, y - r * 0.2, r * 0.9, 0, 7); ctx.fill();
     ctx.restore();
 
-    if (e.hp < e.mhp) {
+    if (!e.dying && e.hp < e.mhp) {
         ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(x - r, y - r - 34, r * 2, 4);
         ctx.fillStyle = "#c85a8a"; ctx.fillRect(x - r, y - r - 34, r * 2 * (e.hp / e.mhp), 4);
     }
@@ -295,8 +353,8 @@ function drawHero(e) {
     // Ability outranks the basic attack: DoAbility can fire on the same frame
     // as an attack, and the channel pose is the more dramatic of the two.
     if (e.abl > 0) f = a.ability.col;
-    drawSprite(a, f, row, x, y + r * 0.95, a.scale ?? 1,
-               Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash, OUTLINE);
+    drawSprite(a, f, row, x, y + r * 0.95, (a.scale ?? 1) * CHAR_SCALE * FIG_SCALE,
+               Math.cos(e.f) < 0, e.dead ? 0.35 : 1, e.flash, OUTLINE, CHAR_SQUASH);
 }
 
 /// Stamps a packed frame with a dark rim behind it.
@@ -354,6 +412,30 @@ function drawNova(e) {
     ctx.strokeStyle = hexA(e.c, 1 - prog);
     ctx.lineWidth = 10;
     ctx.beginPath(); ctx.arc(e.x, e.y, (e.r || 200) * prog, 0, 7); ctx.stroke();
+}
+
+// The wind-up of a ground burst: a danger zone the player is given a moment to
+// leave. `e.life` is the fraction of the wind-up still LEFT (1 -> 0), so `fill`
+// swells to the blast radius and everything sharpens as the blow nears.
+function drawTelegraph(e) {
+    const remain = Math.max(0, Math.min(1, e.life ?? 1));
+    const fill = 1 - remain;
+    const R = e.r || 120;
+    ctx.save();
+    // the danger filling toward the edge — translucent red, urgent
+    ctx.beginPath(); ctx.arc(e.x, e.y, R * fill, 0, 7);
+    ctx.fillStyle = hexA("#ff4d3d", 0.14 + 0.20 * fill);
+    ctx.fill();
+    // the extent you must clear — a ring at full radius in the blow's own colour,
+    // brightening as it charges, with a red pulse riding on top
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = hexA(e.c || "#9fe4ff", 0.4 + 0.5 * fill);
+    ctx.beginPath(); ctx.arc(e.x, e.y, R, 0, 7); ctx.stroke();
+    const pulse = 0.6 + 0.4 * Math.sin(fill * Math.PI * 7);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = hexA("#ff7a68", (0.35 + 0.5 * fill) * pulse);
+    ctx.beginPath(); ctx.arc(e.x, e.y, R, 0, 7); ctx.stroke();
+    ctx.restore();
 }
 
 function drawParticle(e) {

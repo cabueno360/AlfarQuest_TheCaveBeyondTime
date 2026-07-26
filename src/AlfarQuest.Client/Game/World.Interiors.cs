@@ -61,7 +61,7 @@ public partial class World
     /// (the cave). The renderer uses it to draw the same .tmx the engine built
     /// from, so picture and geometry can never drift apart.</summary>
     public string MapId => IsInterior ? CurrentInterior ?? ""
-                         : Stage == 1 ? CurrentRegion ?? Tiled.MapCatalog.Stage01
+                         : Stage == 1 ? CurrentRegion ?? StartRegion
                          : Stage == 2 ? Tiled.MapCatalog.Cave : "";
 
     /// <summary>The doorway within reach of the steered hero, or null. Recomputed
@@ -86,7 +86,11 @@ public partial class World
     /// portal is the thing in reach.</summary>
     public void UsePortal(Portal p)
     {
-        if (p.Target == Portal.Overworld) ExitInterior();
+        if (p.Target == Portal.Overworld)
+        {
+            if (Stage == 2) LeaveCave();     // out of the DELVE — back to the region, not a doorstep
+            else ExitInterior();             // out of a building — back to the doorstep
+        }
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
         else EnterInterior(p.Target, p.Return);                    // a door from the world
     }
@@ -121,7 +125,7 @@ public partial class World
         // whose tiles happen to sit where they stood. Leaving rebuilds the overworld
         // (and its rewards) from seed.
         Interactables.Clear(); Discoveries.Clear();
-        Crystals.Clear(); Husks.Clear(); Shots.Clear(); Bolts.Clear(); Slashes.Clear(); Fx.Clear();
+        Crystals.Clear(); Husks.Clear(); Shots.Clear(); Bolts.Clear(); Slashes.Clear(); Aoe.Clear(); Fx.Clear();
 
         _interiorOutdoor = def.Outdoor;
         _interiorFloor = def.FloorTile;

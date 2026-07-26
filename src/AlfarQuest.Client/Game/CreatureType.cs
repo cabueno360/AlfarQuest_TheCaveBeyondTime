@@ -41,6 +41,15 @@ public enum MonsterAbility
     Smash,
     /// <summary>A weak, wandering bolt of raw magic. The swarm.</summary>
     MagicMissile,
+
+    // --- boss kit: bigger, and used in rotation, not one trick ---
+    /// <summary>A fanned spray of crystal shards. The Guardian's opener.</summary>
+    CrystalVolley,
+    /// <summary>A burst of crystal light that fills the chamber's heart — a wide
+    /// ring, heavy, and it shoves. Get clear of it.</summary>
+    ShardNova,
+    /// <summary>Tears fresh husks out of the walls to swarm the party.</summary>
+    SummonHusks,
 }
 
 /// <summary>What a creature is. Static data shared by every instance, so a new
@@ -97,6 +106,19 @@ public sealed record CreatureType
     /// <summary>Marks the rare, dangerous ones. Their kill pays the mini-boss
     /// rate and announces itself.</summary>
     public bool MiniBoss { get; init; }
+
+    /// <summary>The chamber-holding kind: a health bar of its own, a KIT it rotates
+    /// through instead of one trick, and an enrage. A step above MiniBoss — this is
+    /// the fight a room is built around, not just a dangerous variant.</summary>
+    public bool Boss { get; init; }
+
+    /// <summary>A boss's kit — the abilities it cycles through, in order. Empty for
+    /// everything else, which falls back to its single <see cref="Ability"/>.</summary>
+    public IReadOnlyList<MonsterAbility> Kit { get; init; } = [];
+
+    /// <summary>Below this fraction of its health it ENRAGES: faster, and its
+    /// cooldowns shorten. Zero = it never does.</summary>
+    public float EnrageBelow { get; init; } = 0f;
 
     /// <summary>What it is made of. Decides what flies off when it is struck —
     /// a blade landing on crystal should not look like the same blade landing on
@@ -223,6 +245,21 @@ public static class CreatureCatalog
                 Magical = true,
                 Material = "crystal", Resist = Crystal,
                 Loot = [("Small Crystal", 0.4f)] },
+
+        // --- the Crystal Heart's keeper: the fight the deepest chamber is built
+        // around. A husk grown vast around the Heart's shard, holding the descent.
+        // Its kit cycles volley → summon → nova, and below a third of its health it
+        // enrages. Scaled up per depth where it is spawned (World.Cave boss room).
+        new() { Id = "guardian", Kind = "husk", Name = "Guardian of the Crystal Heart",
+                Biome = Biome.Cave,
+                MaxHp = 720, Damage = 16, Speed = 40, Radius = 26, Scale = 1.9f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Magical = true, Material = "crystal", Resist = Crystal,
+                Boss = true,
+                Kit = [MonsterAbility.CrystalVolley, MonsterAbility.SummonHusks, MonsterAbility.ShardNova],
+                EnrageBelow = 0.3f, AbilityRangeTiles = 9f, AbilityCooldown = 2.6f,
+                Xp = 240, Loot = [("Small Crystal", 1f), ("Coins", 0.9f)] },
     ];
 
     public static CreatureType Of(string id) => All.First(c => c.Id == id);

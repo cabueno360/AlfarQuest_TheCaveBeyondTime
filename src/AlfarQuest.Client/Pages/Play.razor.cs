@@ -1,6 +1,7 @@
 using AlfarQuest.Client.Game;
 using AlfarQuest.Client.Models;
 using AlfarQuest.Client.Services;
+using AlfarQuest.Client.Services.Character;
 using AlfarQuest.Client.Services.Profile;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
@@ -10,11 +11,19 @@ namespace AlfarQuest.Client.Pages;
 
 public sealed partial class Play : IAsyncDisposable
 {
-    // Above ground and below it. Which one plays is decided by the world's own
-    // stage, frame by frame, rather than by a transition — so entering the mine
-    // and loading a save that is already in it sound the same.
-    private const string ApproachTrack = "audio/the-cleric-game.mp3";
-    private const string CavernTrack = "audio/ballad-of-the-wandering.mp3";
+    // One track per place, chosen by the world's own stage frame by frame (not by
+    // a transition) — so loading a save already in the mine sounds the same as
+    // walking into it. The overworld wanders, the deep is the crystal cave, and a
+    // roof overhead — the Cleric's house and the rest — takes the quiet interior
+    // theme. (Seoshe, an open-air city, keeps the road's ballad; see game.js.)
+    private const string ApproachTrack = "audio/ballad-of-the-wandering.mp3";
+    private const string CavernTrack = "audio/into-the-crystal-deep.mp3";
+    // The interior theme is in two parts — Pt.1 opens once, Pt.2 loops beneath it
+    // (the same intro-then-loop shape the title screen uses). Converted from the
+    // orchestral .wav masters in /audio-masters to m4a so the game isn't shipping
+    // 140 MB of uncompressed audio.
+    private const string InteriorIntroTrack = "audio/the-cleric-pt1.m4a";
+    private const string InteriorLoopTrack = "audio/the-cleric-pt2.m4a";
 
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private NavigationManager Nav { get; set; } = default!;
@@ -29,6 +38,21 @@ public sealed partial class Play : IAsyncDisposable
 
     private const string SheetHold = "character-window";
     private const string LevelUpHold = "level-up";
+    private const string CutsceneHold = "cutscene";
+    private const string JournalHold = "quest-journal";
+
+    /// <summary>Whether the quest journal (J) is open. Freezes the game like the
+    /// character sheet while it shows.</summary>
+    private bool JournalOpen;
+
+    /// <summary>The fullscreen cutscene playing right now, or null. Set when the
+    /// engine asks for a video (the first descent into the Cave); cleared when it
+    /// ends or is skipped. While set, the game is frozen behind it.</summary>
+    private string? _cutscene;
+
+    /// <summary>Whether the current cutscene has already been nudged into playing —
+    /// so the autoplay fallback fires once per cutscene, not every render.</summary>
+    private bool _cuePlaying;
 
     private IJSObjectReference? _module;
     private bool Muted;
@@ -41,9 +65,50 @@ public sealed partial class Play : IAsyncDisposable
     /// deliberate step.</summary>
     private LevelUp? CurrentLevelUp;
 
+    /// <summary>Quest-complete banners currently on screen. Non-blocking, unlike a
+    /// level-up — each is added when a quest finishes and drops itself after its
+    /// animation, so several can stack without ever pausing the game.</summary>
+    private readonly List<QuestToast> _questToasts = [];
+    private int _questToastSeq;
+
+    private sealed record QuestToast(int Id, string Title, IReadOnlyList<RewardChip> Items, int Xp, int Gold);
+    private sealed record RewardChip(string Name, string Icon, string Colour);
+
+    /// <summary>Whether the old clock is up. Non-blocking — the world runs behind it —
+    /// so it does not go through the pause-hold path the sheet and journal use.</summary>
+    private bool _clockOpen;
+    private void ToggleClock() => _clockOpen = !_clockOpen;
+    private void CloseClock() => _clockOpen = false;
+
+    private void OnQuestCompleted(QuestDef quest) => _ = InvokeAsync(async () =>
+    {
+        var id = ++_questToastSeq;
+        var items = quest.Reward.ItemIds
+            .Select(ItemCatalog.Find)
+            .Where(i => i is not null)
+            .Select(i => new RewardChip(i!.Name, i.Icon, RarityInfo.Of(i.Rarity).Colour))
+            .ToList();
+        _questToasts.Add(new QuestToast(id, quest.Title, items, quest.Reward.Xp, quest.Reward.Gold));
+        StateHasChanged();
+        await Task.Delay(5400);   // a little longer: there is a reward to read now
+        _questToasts.RemoveAll(t => t.Id == id);
+        StateHasChanged();
+    });
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            // The cutscene <video> only exists once it has rendered; nudge it into
+            // playing in case the browser declines the `autoplay` attribute. Once
+            // per cutscene, guarded by _cuePlaying.
+            if (_cutscene is not null && !_cuePlaying && _module is not null)
+            {
+                _cuePlaying = true;
+                await _module.InvokeVoidAsync("playCutscene");
+            }
+            return;
+        }
 
         // Nothing above this line touches game state. Reaching here at all means
         // the route guard let the page render, which means there is a session.
@@ -61,6 +126,21 @@ public sealed partial class Play : IAsyncDisposable
         // on [E], and without one a villager just cycles their one-line balloon.
         Dialogue.Attach();
 
+        // The engine can ask for a fullscreen cutscene — the first descent into the
+        // Cave. It fires from inside a tick, so the handler marshals onto the
+        // renderer and is fire-and-forget (the engine must not await a dialog); the
+        // game freezes behind the video until it ends.
+        VideoBridge.OnPlay = src =>
+        {
+            _ = InvokeAsync(async () =>
+            {
+                _cutscene = src;
+                await ApplyPause();
+                StateHasChanged();
+            });
+            return true;
+        };
+
         // Before the world is built, so a returning player starts the session at
         // the level they left it — the engine reads attribute-derived numbers on
         // its first tick, and restoring after that would spend a frame with the
@@ -68,6 +148,7 @@ public sealed partial class Play : IAsyncDisposable
         await Campaign.LoadAsync();
 
         Party.LevelledUp += OnLevelledUp;
+        Party.QuestCompleted += OnQuestCompleted;
         PlayTime.Start();
 
         // Stage 1 is authored in Tiled. The world is built synchronously inside
@@ -82,6 +163,8 @@ public sealed partial class Play : IAsyncDisposable
             string.Join(',', GameSession.PartyKeys),
             Nav.BaseUri + ApproachTrack,
             Nav.BaseUri + CavernTrack,
+            Nav.BaseUri + InteriorIntroTrack,
+            Nav.BaseUri + InteriorLoopTrack,
             _self);
     }
 
@@ -97,7 +180,8 @@ public sealed partial class Play : IAsyncDisposable
     [JSInvokable]
     public async Task MenuKey(string action, string? activeHeroKey = null)
     {
-        if (action != "close") { await ToggleCharacterSheet(activeHeroKey); return; }
+        if (action == "character") { await ToggleCharacterSheet(activeHeroKey); return; }
+        if (action == "journal") { await ToggleJournal(); return; }
 
         // The level-up window is deliberately not in this list: it is dismissed
         // by reading it, and an Escape reflex should not skip past a level.
@@ -107,6 +191,7 @@ public sealed partial class Play : IAsyncDisposable
         if (Read.Open is not null) { Read.Close(); StateHasChanged(); return; }
         if (Shop.Open is not null) { Shop.Close(); StateHasChanged(); return; }
         if (Loot.Open is not null) { Loot.Close(); StateHasChanged(); return; }
+        if (JournalOpen) { await CloseJournal(); StateHasChanged(); return; }
         if (SheetOpen) { await CloseSheet(); StateHasChanged(); }
     }
 
@@ -147,6 +232,22 @@ public sealed partial class Play : IAsyncDisposable
     private Task CloseSheet()
     {
         SheetOpen = false;
+        return ApplyPause();
+    }
+
+    /// <summary>Open or close the quest journal (J). Not stacked over the counter or
+    /// a page, like the character sheet.</summary>
+    private async Task ToggleJournal()
+    {
+        if (Shop.Open is not null || Read.Open is not null) return;
+        JournalOpen = !JournalOpen;
+        await ApplyPause();
+        StateHasChanged();
+    }
+
+    private Task CloseJournal()
+    {
+        JournalOpen = false;
         return ApplyPause();
     }
 
@@ -198,10 +299,25 @@ public sealed partial class Play : IAsyncDisposable
         StateHasChanged();
     }
 
+    /// <summary>The cutscene ended, or the player skipped it. Unfreeze and let the
+    /// cave — already built behind the video, with the Cleric now at the party's
+    /// side — come into view.</summary>
+    private async Task EndCutscene()
+    {
+        if (_cutscene is null) return;
+        _cutscene = null;
+        _cuePlaying = false;
+        await ApplyPause();
+        VideoBridge.NotifyEnded();
+        StateHasChanged();
+    }
+
     private async Task ApplyPause()
     {
         if (SheetOpen) Clock.Hold(SheetHold); else Clock.Release(SheetHold);
         if (CurrentLevelUp is not null) Clock.Hold(LevelUpHold); else Clock.Release(LevelUpHold);
+        if (_cutscene is not null) Clock.Hold(CutsceneHold); else Clock.Release(CutsceneHold);
+        if (JournalOpen) Clock.Hold(JournalHold); else Clock.Release(JournalHold);
         if (_module is not null) await _module.InvokeVoidAsync("setPaused", Clock.IsPaused);
     }
 
@@ -243,8 +359,12 @@ public sealed partial class Play : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         Party.LevelledUp -= OnLevelledUp;
+        Party.QuestCompleted -= OnQuestCompleted;
+        VideoBridge.OnPlay = null;
         Clock.Release(SheetHold);
         Clock.Release(LevelUpHold);
+        Clock.Release(CutsceneHold);
+        Clock.Release(JournalHold);
         await StopAsync();
         // Covers leaving by any other route — the top bar, the back button.
         // Both calls are idempotent, so Quit having already run is harmless.

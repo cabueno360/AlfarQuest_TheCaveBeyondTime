@@ -15,7 +15,7 @@ import { initGfx, sizeToParent, canvas, ctx, lightCanvas, lctx, hexA } from "./g
 import { attachInput, detachInput, readInput, resetLatch, mousePos } from "./input.js";
 import { setHotbarMouse } from "./render/hotbar.js";
 import { ATLAS, loadAtlases } from "./atlas.js";
-import { buildFloorCanvas, drawFloor, setStageMap, hasStageMap } from "./world/floor.js";
+import { buildFloorCanvas, drawFloor, setStageMap, hasStageMap, buildAboveCanvas, drawStageAbove } from "./world/floor.js";
 import { loadTmx } from "./world/tmx.js";
 import { buildScenery } from "./world/scenery.js";
 import { drawEntity, drawDecal } from "./render/entities.js";
@@ -50,11 +50,12 @@ let muted = false;
 // Music is per-session: created by startGame, dropped by stopGame. The stage
 // each track belongs to is remembered so the frame loop can ask for the right
 // one every frame without knowing which is already playing.
-let music = null, tracks = null;
+let music = null, tracks = null, interiorIntro = null, interiorLoop = null;
 let onResize = null;
 
 let scenery = null;      // cave scenery, scattered client-side
 let floorCanvas = null;  // the whole chamber floor, pre-painted
+let aboveCanvas = null;  // the roofs/canopies, drawn over the actors
 let builtRev = -1;       // which world revision the caches belong to
 let snap = null, snapRev = -1;
 // A quick fade-from-black whenever the map is swapped (a door, the cave), so a
@@ -95,7 +96,7 @@ function render(s, dt = 0.016) {
         snapRev = s.rev;
         try { snap = JSON.parse(DotNet.invokeMethod(ASM, "Snapshot")); }
         catch (err) { console.error("world snapshot failed", err); }
-        floorCanvas = null; scenery = null; builtRev = s.rev;
+        floorCanvas = null; aboveCanvas = null; scenery = null; builtRev = s.rev;
         // A door earns a fade; a seam must not have one. Walking from one region
         // into the next is the same walk, and the whole point of cutting the
         // world into maps is that the player cannot tell where the cuts are.
@@ -118,6 +119,7 @@ function render(s, dt = 0.016) {
 
     if (!floorCanvas && (ATLAS.caves.ready || ATLAS.outTiles.ready)) floorCanvas = buildFloorCanvas(s);
     drawFloor(s, view, floorCanvas);
+    if (!aboveCanvas) aboveCanvas = buildAboveCanvas(s);   // roofs/canopies, blitted after the actors
 
     // Props are authored by the engine now (it owns their collision), so the
     // client only draws what it is told.
@@ -139,7 +141,7 @@ function render(s, dt = 0.016) {
 
     // sort: floor decals & scenery first, then dynamic. Props share the crystals'
     // tier so the cavern's static furniture behaves as one layer behind the actors.
-    const order = { exit: 0, crystal: 3, prop: 3, npc: 3, particle: 2, husk: 3, proj: 4, slash: 5, nova: 5, hero: 3 };
+    const order = { exit: 0, telegraph: 1, crystal: 3, prop: 3, npc: 3, particle: 2, husk: 3, proj: 4, slash: 5, nova: 5, hero: 3, label: 8 };
     // Culling before the sort matters twice over: fewer draw calls, and a much
     // shorter list to sort every frame. Stage 1 carries ~1400 props and only a
     // few dozen are ever on screen.
@@ -151,6 +153,10 @@ function render(s, dt = 0.016) {
     const ents = [...s.ents, ...props, ...npcs].filter(inView)
         .sort((a, b) => (order[a.t] ?? 9) - (order[b.t] ?? 9) || ground(a) - ground(b));
     for (let i = 0; i < ents.length; i++) { ents[i]._i = i; drawEntity(ents[i]); }
+
+    // Roofs and canopies, over anyone standing behind them — an actor walking
+    // north of a house slips behind its roof instead of onto it.
+    drawStageAbove(view, aboveCanvas);
 
     drawFloaters(s.floats, cam);
 
@@ -168,10 +174,39 @@ function render(s, dt = 0.016) {
     }
     ctx.restore();
 
-    // Daylight outdoors: the torch-and-darkness model belongs to the cave, and
-    // running it on the overworld — or a city's open streets — would hide the map
-    // the player is meant to read.
-    if (s.outdoor) { drawHud(s.hud, dt); return; }
+    // Outdoors the torch-and-darkness model of the cave does not apply — but the
+    // OVERWORLD has a sky, so it wears the day/night tint: clear at noon, warm at
+    // dusk and dawn, deep blue at night, with the lamps and hearths glowing through
+    // once it is dark enough. (A building interior, stage 3, keeps its own lamplight
+    // and is left alone.)
+    if (s.outdoor) {
+        if (s.hud?.stage === 1) {
+            const sky = skyTint(s.hud.timeOfDay ?? 12);
+            if (sky.a > 0.004) {
+                lctx.clearRect(0, 0, W, H);
+                lctx.globalCompositeOperation = "source-over";
+                lctx.fillStyle = `rgba(${sky.r},${sky.g},${sky.b},${sky.a})`;
+                lctx.fillRect(0, 0, W, H);
+                if (sky.a > 0.10) {
+                    lctx.globalCompositeOperation = "destination-out";
+                    for (const L of (s.lights || [])) {
+                        const lx = L.x - cam.x + W / 2 + sx, ly = L.y - cam.y + H / 2 + sy;
+                        const rad = L.rad * 0.9;
+                        const g = lctx.createRadialGradient(lx, ly, 0, lx, ly, rad);
+                        g.addColorStop(0, "rgba(0,0,0,0.92)");
+                        g.addColorStop(0.6, "rgba(0,0,0,0.4)");
+                        g.addColorStop(1, "rgba(0,0,0,0)");
+                        lctx.fillStyle = g;
+                        lctx.beginPath(); lctx.arc(lx, ly, rad, 0, 7); lctx.fill();
+                    }
+                    lctx.globalCompositeOperation = "source-over";
+                }
+                ctx.drawImage(lightCanvas, 0, 0);
+            }
+        }
+        drawHud(s.hud, dt);
+        return;
+    }
 
     // darkness overlay with light holes
     lctx.globalCompositeOperation = "source-over";
@@ -205,6 +240,49 @@ function render(s, dt = 0.016) {
     } else fadeAlpha = 0;
 }
 
+// The overworld sky as a screen tint {r,g,b,a} for an hour of the day, lerped
+// between keyframes so noon → dusk → night → dawn glides rather than snaps.
+const SKY_KEYS = [
+    // Night runs deep now — a darker, less-saturated blue reaching toward the
+    // cave's near-black (3,2,12 @0.87), so the dark presses in and the lamps and
+    // hearths that punch through it carry the scene, cave-style. Day, dawn and
+    // sunset are unchanged; only the dark hours were deepened.
+    [0.0, 4, 6, 22, 0.78],     // midnight — deepest, near the cave's dark
+    [5.0, 4, 6, 22, 0.75],     // the small hours
+    [6.0, 52, 30, 46, 0.44],   // first light, cool
+    [7.5, 92, 62, 42, 0.16],   // sunrise, warm
+    [9.0, 0, 0, 0, 0.0],       // full day, clear
+    [16.0, 0, 0, 0, 0.0],      // full day, clear
+    [18.0, 96, 54, 30, 0.18],  // sunset, warm
+    [19.5, 54, 30, 48, 0.48],  // dusk, cooling
+    [21.0, 4, 6, 22, 0.73],    // night falls
+    [24.0, 4, 6, 22, 0.78],    // back to midnight
+];
+function skyTint(t) {
+    t = ((t % 24) + 24) % 24;
+    for (let i = 0; i < SKY_KEYS.length - 1; i++) {
+        const a = SKY_KEYS[i], b = SKY_KEYS[i + 1];
+        if (t >= a[0] && t <= b[0]) {
+            const f = (t - a[0]) / (b[0] - a[0] || 1);
+            return {
+                r: Math.round(a[1] + (b[1] - a[1]) * f),
+                g: Math.round(a[2] + (b[2] - a[2]) * f),
+                b: Math.round(a[3] + (b[3] - a[3]) * f),
+                a: a[4] + (b[4] - a[4]) * f,
+            };
+        }
+    }
+    return { r: 8, g: 12, b: 42, a: 0.55 };
+}
+
+/// The world clock in hours (0–24), for the clock UI. Read from the last frame.
+export function timeOfDay() { return lastState?.hud?.timeOfDay ?? 8; }
+
+/// Sets the world clock to an hour — a test seam to preview any time of day.
+export function debugSetTime(hour) {
+    try { DotNet.invokeMethod(ASM, "DebugSetTime", hour); } catch { /* engine not up */ }
+}
+
 function loop(now) {
     if (!running) return;
     if (paused) {
@@ -232,8 +310,20 @@ function loop(now) {
     setHotbarMouse(mp.x, mp.y);
     // Asked every frame and answered once: play() with the track already on is
     // deliberately nothing, so this costs a string comparison.
-    const track = tracks?.[state.hud?.stage];
-    if (track) music?.play(track);
+    // Stage picks the music (1 overworld, 2 cave, 3 interior). Interiors play the
+    // two-part Cleric theme — Pt.1 opens once, then Pt.2 loops beneath it — except
+    // Seoshe, an open-air city, which keeps the road's ballad. Asked every frame;
+    // play() with the track already on is a no-op, and while either Cleric part is
+    // on we leave it be so Pt.1 is never restarted once it has handed off to Pt.2.
+    const stage = state.hud?.stage;
+    if (stage === 3 && state.mapId !== "seoshe") {
+        const on = music?.url;
+        if (on !== interiorIntro && on !== interiorLoop)
+            music?.play(interiorIntro, { loop: false, onEnded: () => music?.play(interiorLoop) });
+    } else {
+        const track = stage === 3 ? tracks[1] : tracks?.[stage];   // Seoshe keeps the ballad
+        if (track) music?.play(track);
+    }
     // The frame's sound events — swings, hits, footfalls, a chest opening. The
     // engine has already faded each for distance; this just turns them into
     // voices. Empty on a quiet frame, which is most of them.
@@ -256,7 +346,7 @@ function loop(now) {
     raf = requestAnimationFrame(loop);
 }
 
-export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
+export function startGame(heroKeysCsv, approachUrl, cavernUrl, interiorIntroUrl, interiorLoopUrl, host) {
     const el = document.getElementById("gameCanvas");
     if (!el) return;
     initGfx(el);
@@ -272,7 +362,7 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
     onResize = () => sizeToParent();
     window.addEventListener("resize", onResize);
 
-    loadAtlases(() => { floorCanvas = null; });
+    loadAtlases(() => { floorCanvas = null; aboveCanvas = null; });
 
     // Stage 1 is painted in Tiled. Fetch it and, once it lands, throw away the
     // ground already drawn so the next frame repaints from the map. Deliberately
@@ -300,7 +390,7 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
         loadTmx(path).then(tmx => {
             if (!tmx) return;
             setStageMap(id, tmx);
-            floorCanvas = null;
+            floorCanvas = null; aboveCanvas = null;
         });
     }
 
@@ -309,6 +399,8 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, host) {
     // by a transition handler, so loading a save straight into the mine starts
     // on the right track rather than switching a moment after arriving.
     tracks = { 1: approachUrl, 2: cavernUrl };
+    interiorIntro = interiorIntroUrl;
+    interiorLoop = interiorLoopUrl;
     music = createMusic(0.55);
     // Starts decoding the effect library now, so the first swing has its sound
     // ready rather than a beat late.
@@ -354,6 +446,16 @@ export function partyVitals() {
 export function setPaused(value) {
     paused = !!value;
     return paused;
+}
+
+/// Nudge the cutscene <video> into playing, for the browsers that decline the
+/// `autoplay` attribute. The element is rendered by Blazor; by the time Play calls
+/// this it is in the DOM. The play() promise is swallowed — a browser that still
+/// refuses (no user gesture yet) leaves the first frame up and the Skip button
+/// carries the player on, so the game never stalls on a blocked video.
+export function playCutscene() {
+    const v = document.querySelector(".aq-cutscene video");
+    if (v) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
 }
 
 /// The level-up chime.
@@ -431,6 +533,10 @@ export function sfxCount() { return sfxPlayed(); }
 /// played.
 export function lastSounds() { return lastState?.sounds ?? []; }
 
+/// The last frame's render entities — a seam so a probe can assert what the
+/// renderer was actually handed (name-plates, husks, projectiles). Never used in play.
+export function lastEnts() { return lastState?.ents ?? []; }
+
 /// The creature catalogue as data. A seam for the probe to assert the bestiary is
 /// varied and lore-placed, without depending on what happened to spawn.
 export function bestiary() {
@@ -468,6 +574,12 @@ export function debugTradeWith(npcId) {
     try { DotNet.invokeMethod(ASM, "DebugTradeWith", npcId); } catch { /* engine not up */ }
 }
 
+/// Opens a named NPC's dialogue (and any quest offer) as the steered hero, so the
+/// quest probe can reach a conversation without walking to it. Never used in play.
+export function debugTalkTo(npcId) {
+    try { DotNet.invokeMethod(ASM, "DebugTalkTo", npcId); } catch { /* engine not up */ }
+}
+
 /// Drops the steered hero on a tile — so the probe can stand at a doorway without
 /// steering the whole way there.
 export function debugWarp(tx, ty) {
@@ -487,6 +599,22 @@ export function debugLoadRegion(id) {
 
 export function debugEnterCave() {
     try { DotNet.invokeMethod(ASM, "DebugEnterCave"); } catch { /* engine not up */ }
+}
+
+export function debugLeaveCave() {
+    try { DotNet.invokeMethod(ASM, "DebugLeaveCave"); } catch { /* engine not up */ }
+}
+
+/// Sets a quest/progress flag directly — so the quest probe can walk the cave
+/// objectives without a full five-level descent. Never used in play.
+export function debugClaim(flag) {
+    try { DotNet.invokeMethod(ASM, "DebugClaim", flag); } catch { /* engine not up */ }
+}
+
+/// Drops the steered hero beside the chamber's boss, so the quest probe can watch
+/// the Guardian's kit fire without walking to the Crystal Heart. Never used in play.
+export function debugWarpToBoss() {
+    try { DotNet.invokeMethod(ASM, "DebugWarpToBoss"); } catch { /* engine not up */ }
 }
 
 export function debugExportMap() {

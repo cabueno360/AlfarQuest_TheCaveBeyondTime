@@ -18,14 +18,51 @@ const maps = {};
 // thousands of tiles and none of them change, so repainting on every world
 // rebuild — which happens each time a door is stepped through — was pure waste.
 const painted = {};
-export function setStageMap(id, tmx) { maps[id] = tmx; delete painted[id]; }
+// The above-player slice of each map, cached the same way — only the tall things
+// (roofs, canopies) that must draw OVER an actor standing behind them.
+const aboveMaps = {};
+export function setStageMap(id, tmx) { maps[id] = tmx; delete painted[id]; delete aboveMaps[id]; }
 export function mapFor(id) { return (id && maps[id]) || null; }
 /// Whether the place currently loaded is drawn from a map rather than from code.
 export function hasStageMap(id) { return mapFor(id) !== null; }
 
-/// Layers drawn over the actors rather than under them, so a canopy can hide a
-/// hero who walks behind it. Everything else goes into the ground canvas.
+/// Layers drawn OVER the actors rather than under them. Only the explicit
+/// `AbovePlayer` layer qualifies. Houses (the `Buildings` layer) do NOT: an actor
+/// always draws in FRONT of a house — over its walls and roof alike — and never
+/// vanishes behind it, because the house is SOLID and cannot be walked into. Roof
+/// occlusion was tried and dropped: it hid actors standing right where you expect
+/// to see them (in front of the wall, or behind a fence).
 const ABOVE = ["AbovePlayer"];
+
+/// The above-player canvas for the loaded map — JUST the ABOVE layers, transparent
+/// everywhere else — cached like the floor. Drawn after the actors (drawStageAbove).
+export function buildAboveCanvas(s) {
+    const tmx = mapFor(s.mapId);
+    if (!tmx) return null;
+    if (aboveMaps[s.mapId]) return aboveMaps[s.mapId];
+    const c = document.createElement("canvas");
+    c.width = Math.ceil(s.chamberW / 32) * 32;
+    c.height = Math.ceil(s.chamberH / 32) * 32;
+    const g = c.getContext("2d");
+    g.imageSmoothingEnabled = false;
+    drawTmxLayers(g, tmx, [], ABOVE);   // only the above-player layers
+    aboveMaps[s.mapId] = c;
+    return c;
+}
+
+/// Blits the above-player canvas over whatever has been drawn — call it after the
+/// actors so roofs and canopies hide those standing behind them. Same camera-slice
+/// blit as drawFloor.
+export function drawStageAbove(view, aboveCanvas) {
+    if (!aboveCanvas) return;
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    const vx = Math.max(0, view.x0), vy = Math.max(0, view.y0);
+    const vw = Math.min(aboveCanvas.width - vx, view.x1 - vx);
+    const vh = Math.min(aboveCanvas.height - vy, view.y1 - vy);
+    if (vw > 0 && vh > 0) ctx.drawImage(aboveCanvas, vx, vy, vw, vh, vx, vy, vw, vh);
+    ctx.restore();
+}
 
 // Stage 1 floor: grass, dirt road, river, bridge deck and the mountain.
 export function buildOutdoorCanvas(s) {

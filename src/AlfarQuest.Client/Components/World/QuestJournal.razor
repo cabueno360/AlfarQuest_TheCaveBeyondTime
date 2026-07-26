@@ -1,0 +1,79 @@
+@using AlfarQuest.Client.Game
+@using AlfarQuest.Client.Services
+@implements IDisposable
+@inject PartyState Party
+
+@* The quest journal (J). Reads the persisted flag set and renders each begun quest
+   with its steps — the main line first, then any side work. It is where side
+   quests are seen at all: the HUD only ever shows the main quest's next step. *@
+@if (Visible)
+{
+    <div class="aq-journal-scrim" @onclick="Close">
+        <div class="aq-journal" @onclick:stopPropagation="true">
+            <header class="aq-journal-head">
+                <h2>Quest Journal</h2>
+                <button class="aq-journal-close" title="Close (L / Esc)" @onclick="Close">✕</button>
+            </header>
+
+            @{
+                var flags = Party.ClaimedRewards;
+                var quests = QuestCatalog.Started(flags);
+            }
+            @if (quests.Count == 0)
+            {
+                <p class="aq-journal-empty">
+                    No tales to your name yet. Speak with the folk of the vale — the
+                    Cleric's kin will set you on the road.
+                </p>
+            }
+            else
+            {
+                <div class="aq-journal-list">
+                    @foreach (var q in quests)
+                    {
+                        var status = q.Status(flags);
+                        <article class="aq-quest @(status == QuestStatus.Complete ? "done" : "")">
+                            <div class="aq-quest-top">
+                                <span class="aq-quest-kind @(q.Kind == QuestKind.Main ? "main" : "side")">
+                                    @(q.Kind == QuestKind.Main ? "Main" : "Side")
+                                </span>
+                                <h3>@q.Title</h3>
+                                @if (status == QuestStatus.Complete)
+                                {
+                                    <span class="aq-quest-complete">Complete</span>
+                                }
+                            </div>
+                            <p class="aq-quest-summary">@q.Summary</p>
+                            <ul class="aq-quest-steps">
+                                @foreach (var entry in q.Progress(flags))
+                                {
+                                    <li class="@entry.State.ToString().ToLowerInvariant()">
+                                        <span class="aq-step-mark">
+                                            @(entry.State == StepState.Done ? "✔"
+                                              : entry.State == StepState.Current ? "▸" : "·")
+                                        </span>
+                                        <span class="aq-step-text">@entry.Step.Objective</span>
+                                    </li>
+                                }
+                            </ul>
+                        </article>
+                    }
+                </div>
+            }
+
+            <footer class="aq-journal-foot">Press <kbd>L</kbd> or <kbd>Esc</kbd> to close</footer>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private Task Close() => OnClose.InvokeAsync();
+
+    // Re-render if the flag set changes (e.g. a topic asked just before opening).
+    protected override void OnInitialized() => Party.Changed += OnChanged;
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Party.Changed -= OnChanged;
+}

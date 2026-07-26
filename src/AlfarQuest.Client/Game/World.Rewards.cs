@@ -117,6 +117,14 @@ public partial class World
             d.Found = true;
             Claim(d.Name);
             Award(XpAward.Value(d.Source), d.Source, hero.Pos, d.Name);
+
+            // The boss chamber is a story milestone, not cave loot. Ordinary cave
+            // claims are deliberately forgotten each descent (Claim() only persists
+            // in Stage 1, so the regenerating cave stays full) — but the Pact's
+            // "find the Crystal Heart" step has to STICK once reached, so it rides a
+            // dedicated flag persisted straight through the bridge. Once-ever.
+            if (Stage == 2 && d.Name == "The Crystal Heart")
+                RewardBridge.Claim("cave_heart");
         }
 
         ThingInReach = null;

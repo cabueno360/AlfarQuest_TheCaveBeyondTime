@@ -151,4 +151,24 @@ public partial class World
             Husks.Add(new Husk(p));
         }
     }
+
+    /// <summary>The Guardian of the Crystal Heart, set in the boss chamber it holds —
+    /// the fight that gates the descent, since the level only quiets once every husk
+    /// (this one included) is down. Scaled up with depth, so the Guardian met deeper
+    /// is the harder Guardian.</summary>
+    void SpawnBoss()
+    {
+        var boss = Reg("boss");
+        var at = TileCentre(boss.Cx, boss.Cy);
+        if (Blocked(at, 26f)) at = NearestOpen(at);
+
+        var def = CreatureCatalog.Of("guardian");
+        var scaled = def with
+        {
+            MaxHp = def.MaxHp * (1f + (Level - 1) * 0.35f),
+            Damage = def.Damage + (Level - 1) * 3,
+            Xp = def.Xp + (Level - 1) * 60,
+        };
+        Husks.Add(new Husk(at, scaled) { State = AiState.Chase });
+    }
 }

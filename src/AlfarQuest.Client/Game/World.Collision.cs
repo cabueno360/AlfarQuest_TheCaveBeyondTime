@@ -23,11 +23,25 @@ public partial class World
         return t == ROCK || t == WATER;      // FLOOR, PATH and BRIDGE carry a body
     }
 
+    // A tree trunk stops a body only at its narrow core — not the whole 32px cell a
+    // ROCK would — so trunks read as the slim things they are and you can slip
+    // between them. Only the body CENTRE entering the core is blocked; the edges are
+    // free, which is what makes weaving through a wood stop feeling like snagging.
+    bool TrunkAt(float wx, float wy)
+    {
+        int x = (int)(wx / TILE), y = (int)(wy / TILE);
+        if (x < 0 || y < 0 || x >= COLS || y >= ROWS || Tiles[x, y] != TRUNK) return false;
+        float cx = x * TILE + TILE * 0.5f, cy = y * TILE + TILE * 0.5f;
+        float dx = wx - cx, dy = wy - cy;
+        return dx * dx + dy * dy < 9f * 9f;
+    }
+
     bool Blocked(Vec p, float radius)
     {
         if (IsWallAt(p.X, p.Y)) return true;
         if (IsWallAt(p.X + radius, p.Y) || IsWallAt(p.X - radius, p.Y)) return true;
         if (IsWallAt(p.X, p.Y + radius) || IsWallAt(p.X, p.Y - radius)) return true;
+        if (TrunkAt(p.X, p.Y)) return true;   // trunks: core only, not the ±radius cross
         foreach (var pr in Props)
         {
             if (!pr.Solid) continue;

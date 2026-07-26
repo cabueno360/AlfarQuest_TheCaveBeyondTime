@@ -1,6 +1,9 @@
 @* Buttons for the menus a player might not think to press a key for. Sits with
    Abandon Delve in the top-right, the corner the canvas HUD leaves alone. *@
 <div class="aq-menubar">
+    <button class="aq-icon-btn" title="The hour (click to read the clock)" @onclick="OnClock">
+        <span class="aq-icon">🕰</span><span class="aq-icon-label">Clock</span>
+    </button>
     <button class="aq-icon-btn" title="Character sheet (C)" @onclick="OnCharacter">
         <span class="aq-icon">🛡</span><span class="aq-icon-label">Character</span>
     </button>
@@ -8,6 +11,7 @@
 </div>
 
 @code {
+    [Parameter] public EventCallback OnClock { get; set; }
     [Parameter] public EventCallback OnCharacter { get; set; }
     [Parameter] public EventCallback OnQuit { get; set; }
 }

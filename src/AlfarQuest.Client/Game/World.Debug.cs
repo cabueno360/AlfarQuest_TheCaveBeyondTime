@@ -98,6 +98,27 @@ public partial class World
         }
     }
 
+    /// <summary>Opens a named NPC's dialogue as the steered hero, through the same
+    /// bridge play uses — so a test can reach a conversation (and a quest offer)
+    /// without steering across the map. The NPC must be in the region now loaded.
+    /// Never called from play.</summary>
+    public void DebugTalkTo(string npcId)
+    {
+        if (Party.Count == 0 || Active >= Party.Count) return;
+        var npc = Npcs.FirstOrDefault(n => n.Def.Id == npcId);
+        if (npc is null) return;
+
+        Talking = null; TradingWith = null;
+        Party[Active].Pos = npc.Pos + new Vec(28f, 0f);
+        Camera = npc.Pos;
+        NpcInReach = npc;
+        if (npc.Def.HasDialogue && DialogueBridge.Offer(npc.Def.Id))
+        {
+            Conversing = npc;
+            FaceHero(Conversing);
+        }
+    }
+
     /// <summary>Drops the steered hero onto a tile — a test seam so a probe can
     /// reach a doorway or a landmark without walking the whole map to it.</summary>
     public void DebugWarp(float tx, float ty)
@@ -128,6 +149,34 @@ public partial class World
     /// The cave's layout is hand-authored and identical at every depth — only its
     /// population changes — so one capture describes every level.</summary>
     public void DebugEnterCave() => EnterCave();
+    public void DebugLeaveCave() => LeaveCave();
+
+    /// <summary>Sets a persisted quest/progress flag directly, so a test can drive
+    /// the quest chain to any state without playing every step to it — used by
+    /// quest-probe to walk the cave objectives without a five-level descent. Never
+    /// called from play. Just the flag: no XP, no discovery, unlike Claim().</summary>
+    public void DebugClaim(string flag) => RewardBridge.Claim(flag);
+
+    /// <summary>Sets the world clock to a given hour (0–24), so a test can see any
+    /// time of day without waiting out the cycle. Never called from play.</summary>
+    public void DebugSetTime(float hour) => GameSession.TimeOfDay = ((hour % 24f) + 24f) % 24f;
+
+    /// <summary>Gathers the party around the chamber's boss and tops them up, so a
+    /// test can watch the WHOLE kit fire — volley, summon, nova — instead of the
+    /// fight ending in one exchange. Healing is fine here: this is never play, and
+    /// without a live target beside it the boss simply walks off and stops casting.</summary>
+    public void DebugWarpToBoss()
+    {
+        if (Party.Count == 0) return;
+        var boss = Husks.FirstOrDefault(k => k.Def.Boss && k.Hp > 0);
+        if (boss is null) return;
+        for (int i = 0; i < Party.Count; i++)
+        {
+            Party[i].Hp = Party[i].MaxHp;
+            Party[i].Pos = boss.Pos + new Vec(64f, (i - 1) * 34f);
+        }
+        Camera = boss.Pos;
+    }
 
     /// <summary>The whole built map, as plain data — the export side of the Tiled
     /// migration. Stage 1 is generated from a fixed seed rather than authored, so
@@ -145,7 +194,7 @@ public partial class World
         spawn = new { x = Spawn.X, y = Spawn.Y },
         exit = new { x = Exit.X, y = Exit.Y },
         caveMouth = new { x = CaveMouth.X, y = CaveMouth.Y },
-        safeZones = SafeZones.Select(z => new { x0 = z.X0, y0 = z.Y0, x1 = z.X1, y1 = z.Y1 }),
+        safeZones = EffectiveSafeZones.Select(z => new { x0 = z.X0, y0 = z.Y0, x1 = z.X1, y1 = z.Y1 }),
         props = Props.Select(p => new { x = p.X, y = p.Y, kind = p.Kind, v = p.Variant,
                                        s = p.S, solid = p.Solid, r = p.R, flip = p.Flip,
                                        cx = p.Cx, cy = p.Cy }),   // cave props are a cell, not a name

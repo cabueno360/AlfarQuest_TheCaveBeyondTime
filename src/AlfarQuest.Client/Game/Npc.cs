@@ -39,8 +39,38 @@ public sealed record NpcDefinition
 }
 
 /// <summary>One question a traveller may ask and the answer it draws. The answer is
-/// a list of pages so a long reply turns a leaf at a time, like a letter.</summary>
-public sealed record DialogueTopic(string Q, params string[] A);
+/// a list of pages so a long reply turns a leaf at a time, like a letter.
+///
+/// A topic may depend on quest state through the flag set (the persisted
+/// ClaimedRewards). This is how NPCs give hints that change as the story moves and
+/// how talking advances a quest — without it, every villager says the same thing
+/// forever.</summary>
+public sealed record DialogueTopic(string Q, params string[] A)
+{
+    /// <summary>Shown only once this flag is set — a topic that makes no sense until
+    /// the player has reached a point in the story. Empty = always shown.</summary>
+    public string ShowWhen { get; init; } = "";
+
+    /// <summary>Hidden once this flag is set — a topic spent, or superseded by a
+    /// later one. Empty = never hidden.</summary>
+    public string HideWhen { get; init; } = "";
+
+    /// <summary>A flag raised the first time this topic is asked — how a conversation
+    /// advances a quest (learning of the Cave sets <c>quest_cave_learned</c>). Empty
+    /// = the topic sets nothing. The flag persists, so the step stays done.</summary>
+    public string SetsFlag { get; init; } = "";
+
+    /// <summary>The id of a quest this topic OFFERS. Asking it does not start the
+    /// quest outright — it raises the offer panel (terms and reward shown up front),
+    /// and only Accept sets the quest's own StartFlag. Empty = the topic offers no
+    /// quest. Use this instead of SetsFlag for the start of a takeable side quest.</summary>
+    public string OffersQuest { get; init; } = "";
+
+    /// <summary>Whether this topic should appear, given the flags set so far.</summary>
+    public bool Visible(IReadOnlyCollection<string> flags) =>
+        (ShowWhen.Length == 0 || flags.Contains(ShowWhen)) &&
+        (HideWhen.Length == 0 || !flags.Contains(HideWhen));
+}
 
 [Flags]
 public enum NpcServices

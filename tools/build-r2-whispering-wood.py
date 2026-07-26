@@ -10,7 +10,7 @@ WHY IT IS HERE
     river at the Grey Ford, and runs east along the foot of the mountains toward
     the pass. Two kinds of people live off it — the colliers, who burn the
     charcoal Ashwold's forge eats, and the hamlet in the vale across the water,
-    which is where the Cleric's house is.
+    which is where The Cleric's House is.
 
 HOW IT IS BUILT
     The south edge is not a design decision. It is a CONTRACT with Ashwold, read
@@ -164,6 +164,11 @@ path([(35, 34), (31, 33), (26, 32), (22, 31)], 2, "t", over=".#")
 # reach the kilns.
 path([(37, 40), (43, 41), (49, 42)], 2, "t", over=".#")
 
+# The deer trail: a single faint track worn up to the forester's high seat in the
+# north wood. Width 1, because a deer made it, not a cart — but without it the
+# secret cache at its foot sits behind a wall of trees and can never be reached.
+path([(24, 21), (24, 15), (20, 15)], 1, "t", over=".#")
+
 _deck = crossing()
 
 # =====================================================================
@@ -186,20 +191,14 @@ def building(ex, ey, material, roof, name, bays=1, storeys=1):
             put(x, y, "B")
 
 
-# ---- the hamlet in the vale. Six roofs and a bell, on ground that floods, which
-#      is why it never grew and why the village up the road did.
+# ---- the vale. Once a whole hamlet stood here; now only The Cleric's House is
+#      left standing, alone on the cleared terrace so it reads at a glance in the
+#      editor and the way to its door is open ground, not a lane between walls.
 rect(12, 26, 28, 39, ".")                       # the vale floor, clear of wood
-# One lane along the vale floor with the doors off it, which is what a hamlet on
-# a terrace is; the spur comes in at its east end.
-path([(22, 31), (21, 34), (17, 35), (14, 37)], 2, "t", over=".")
-path([(21, 34), (21, 30), (24, 30)], 1, "t", over=".")
-path([(19, 34), (19, 33)], 1, "t", over=".")
+# The lane the spur comes in on, straight to the one door that is left.
+path([(22, 31), (21, 34), (19, 34)], 2, "t", over=".")
 
-building(19, 32, "plaster", "tile", "the Cleric's house", bays=2)   # the door out of this map
-building(14, 29, "log", "shingle", "a vale cottage")
-building(24, 29, "log", "shingle", "Goodwife Marrow's")
-building(24, 37, "board", "shingle", "the byre")
-building(14, 36, "plaster", "tile", "the chapel")
+building(19, 32, "plaster", "tile", "The Cleric's House", bays=2)   # the door out of this map
 
 # ---- the colliers' burn. Cleared ground, blackened, with the kilns on it.
 rect(*BURN, ch=".")
@@ -260,7 +259,6 @@ prop(17, 33, "well", 0.8, True, 16)
 prop(12, 33, "graveyard", 0.85)
 for _gx, _gy in ((11, 31), (13, 32), (12, 33), (14, 31)):
     prop(_gx, _gy, "gravestone", 0.7)
-prop(16, 32, "statue", 0.85, True, 15)                # the chapel's mark
 prop(18, 34, "lantern", 0.65); prop(22, 33, "lantern", 0.65)
 prop(24, 33, "h_flowerbush", 0.75); prop(22, 35, "h_flowerbush", 0.75)
 prop(25, 34, "h_fence", 0.85, True, 13); prop(26, 34, "h_fence", 0.85, True, 13)
@@ -344,6 +342,26 @@ for (x0, y0, x1, y1, dens, mix) in STANDS:
             if _hash(x, y, 1) < p:
                 TREES.append((x, y, kinds[int(_hash(x, y, 2) * len(kinds)) % len(kinds)]))
 
+# The hollow was left pathless on purpose — "no clearing was made here" — but a
+# way in still has to exist or its ruin can never be reached. Rather than cut a
+# road to it, thin the wood on its north lip so the trees simply break for a stride:
+# a natural gap you stumble through, not a track someone laid. A tree is tall, so
+# a neighbour's CANOPY reaches over a cell whose own trunk is gone — clearing has to
+# drop every tree whose stamped footprint touches the gap, not just the ones rooted in it.
+def _clear_canopy_over(cells):
+    want = {(cx * K.SUB + dx, cy * K.SUB + dy)
+            for (cx, cy) in cells for dx in range(K.SUB) for dy in range(K.SUB)}
+    kept = []
+    for (ex, ey, kind) in TREES:
+        _, _, _, ox, oy, tw, th = K.tree_box(kind, ex, ey, int(_hash(ex, ey, 7) * 997))
+        foot = {(ox + dx, oy + dy) for dy in range(th) for dx in range(tw)}
+        if not (foot & want):
+            kept.append((ex, ey, kind))
+    TREES[:] = kept
+
+
+_clear_canopy_over([(13, y) for y in range(37, 42)])
+
 planted = {(x, y) for x, y, _ in TREES}
 for (x0, y0, x1, y1, dens, kinds) in UNDER:
     for x in range(x0, x1 + 1):
@@ -388,8 +406,6 @@ CONTAINERS = [
     ("A collier's crate", 51, 42, "crate"),
     ("The kiln-master's barrel", 50, 43, "barrel"),
     ("A cache under the cross", 35, 24, "chest_wood"),
-    ("The chapel's poor-box", 16, 37, "chest_wood"),
-    ("A byre corner", 25, 38, "crate"),
     ("Something in the ruin", 11, 47, "chest_iron"),
     ("A delver's abandoned pack", 51, 21, "crate"),
     ("Under the high seat", 20, 14, "chest_wood"),
@@ -411,11 +427,6 @@ EXAMINABLES = [
      "The trick, the colliers will tell you if you stand still long enough, is that "
      "the fire must never see the air. Everything they make goes down the road to "
      "Ashwold's forge, and the forge sharpens what goes up to the mine."),
-    ("the chapel", 15, 37, "Read", "plaque",
-     "A low chapel of grey stone with a bell in a wooden frame beside it, because "
-     "the tower fell in the year of the great water and was never rebuilt. The "
-     "board by the door keeps the count: one stroke for a party going up, two for "
-     "one coming down. The going-up column has three times the marks."),
     ("the Cleric's door", 20, 34, "Examine", "note",
      "A good house for this vale, and shut. The step is swept and the sill has been "
      "kept oiled by somebody who still does it every week. There is a bowl of water "
@@ -522,9 +533,11 @@ for my in range(MH):
             paint("Roads", mx, my, K.floor_tile("cobble", mx, my,
                   k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
         elif c == "=":
-            k = lambda xx, yy: m(xx, yy) in "=,ct"
-            paint("Bridges", mx, my, K.floor_tile("cobble", mx, my,
-                  k(mx, my - 1), k(mx + 1, my), k(mx, my + 1), k(mx - 1, my)))
+            # The deck is a plank walk, laid straight onto the Bridges layer so it
+            # stays the walkable crossing (collision reads the layer, not the tile)
+            # and renders under its own rail. The picket rail comes in a pass of its
+            # own below, once every deck cell is known.
+            paint("Bridges", mx, my, K.deck_plank(mx, my))
         elif c == "~":
             paint("Water", mx, my, K.water_solid(mx, my))
         elif c == "#":
@@ -550,21 +563,25 @@ for my in range(MH):
         if wn or ws or we or ww:
             paint("Shore", mx, my, K.shore_tile(mx, my, wn, we, ws, ww))
 
+# The rail: every deck cell that looks out over open water takes a picket on the
+# Buildings layer — the deck's edge, dressed but not walled (a bridge outranks
+# Buildings, so the rail never blocks the walk). The lip cells where the deck
+# meets the road are left open, which is where you step on and off.
+for my in range(MH):
+    for mx in range(MW):
+        if m(mx, my) != "=":
+            continue
+        if any(m(mx + dx, my + dy) == "~"
+               for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            paint("Buildings", mx, my, K.bridge_rail())
+
+# Our own house sprites now, one whole picture each, in place of the assembled
+# facade-and-roof kit. house_for keeps each building's intent — the chapel keeps
+# its bell-tower roof, the Cleric's two-bay house its tall frame — and the sprite
+# is stamped centred over the ground the building() call reserved for it.
 for (ex, ey, mat, roof, bays, storeys, name) in BUILDINGS:
-    walls, roofs, (bw, bh) = K.house_tiles(mat, roof, bays, storeys)
-    ox = ex * K.SUB - 1
-    oy = (ey + 1) * K.SUB - bh
-    for dx, dy, s_, c_, r_ in roofs:
-        if K.opaque(s_, c_, r_): paint("Buildings", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    for dx, dy, s_, c_, r_ in walls:
-        if K.opaque(s_, c_, r_): paint("Walls", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    # A door in the middle of the visible facade, two tiles of it, drawn over the
-    # wall rather than under the roof — the old stamp was keyed to a four-course
-    # facade and now landed halfway up the roof.
-    dxm = ox + bw // 2 - 1
-    dym = oy + K.HOUSE_H + (storeys - 1) * len(K.FACADE_ROWS) - 2
-    for i, (c_, r_) in enumerate(((6, 2), (7, 2), (6, 3), (7, 3))):
-        paint("Buildings", dxm + (i % 2), dym + (i // 2), K.gid("BuildProps", c_, r_))
+    sprite = K.house_for(mat, roof, name, bays, storeys, key=ex + ey)
+    K.stamp_house(paint, sprite, ex, ey)
 
 # The ground itself: sprigs everywhere, reed and fern where it is wet. A wood
 # floor of flat green is the one thing that gives a hand-made map away.
@@ -620,9 +637,9 @@ og["Props"] += [obj(k, x + 0.5, y + 0.5,
                      ("Painted", "true")])
                 for x, y, k in COVER]
 # The Cleric's house opens onto its own map, as it always has.
-og["Warp"] = [obj("the Cleric's house", 20.5, 34.5,
+og["Warp"] = [obj("The Cleric's House", 20.5, 34.5,
                   [("DestinationMap", "cleric_house"), ("DestinationSpawn", "0.0,0.0"),
-                   ("Label", "the Cleric's house"), ("Verb", "Enter"), ("Radius", 40)])]
+                   ("Label", "The Cleric's House"), ("Verb", "Enter"), ("Radius", 40)])]
 og["Interaction"] = [obj(t, x + 0.5, y + 0.5,
                          [("InteractionType", "Examine"), ("Verb", v), ("ReadKind", k),
                           ("Radius", 46), ("Pages", p)])

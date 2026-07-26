@@ -81,6 +81,7 @@ public partial class World
             BuildCaveFromTmx(authored);
             Spawn = TileCentre(Reg("entrance").Cx, Reg("entrance").Cy + 2);
             Exit  = TileCentre(Reg("boss").Cx, Reg("boss").Cy);
+            AddCaveExit();
             DressRegions();
             PlaceCaveRewards();
             return;
@@ -118,8 +119,23 @@ public partial class World
 
         Spawn = TileCentre(Reg("entrance").Cx, Reg("entrance").Cy + 2);
         Exit  = TileCentre(Reg("boss").Cx, Reg("boss").Cy);
+        AddCaveExit();
 
         DressRegions();
         PlaceCaveRewards();
+    }
+
+    /// <summary>The way back up. A "Leave the cave" step is placed at the entrance
+    /// region — the mouth the party came in by — on every level, so the delve is not
+    /// one-way. Stepping it runs <see cref="LeaveCave"/>. Cleared first so descending
+    /// never stacks a second one.</summary>
+    void AddCaveExit()
+    {
+        Portals.Clear();
+        Portals.Add(new Portal
+        {
+            Pos = TileCentre(Reg("entrance").Cx, Reg("entrance").Cy),
+            Target = Portal.Overworld, Verb = "Step", Label = "Leave the cave", R = 44f,
+        });
     }
 }

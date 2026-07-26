@@ -54,10 +54,54 @@
 }
 .aq-notfound { text-align: center; padding: 4rem 1rem; color: var(--aq-crystal); font-style: italic; }
 
+/* ---------- quest-complete banner ----------
+   A prominent, centred, IN-GAME banner — distinct from the .aq-toast system
+   messages up in the corner. It never takes input or pauses the game; it drops in
+   from the top, holds, and fades, dropping itself from the DOM as it goes. */
+.aq-quest-toasts {
+    position: fixed; top: 82px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    z-index: 350; pointer-events: none;
+}
+.aq-quest-toast {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 12px 40px; text-align: center; max-width: 560px;
+    background: linear-gradient(180deg, rgba(26, 21, 52, .96), rgba(11, 8, 26, .97));
+    border: 1px solid var(--aq-gold); border-radius: 4px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .6), 0 0 30px rgba(216, 180, 90, .16);
+    animation: aq-quest-toast 5.4s ease-out forwards;
+}
+.aq-quest-toast-eyebrow {
+    font-family: 'EB Garamond', serif; font-size: .72rem;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--aq-gold);
+}
+.aq-quest-toast-title {
+    font-family: 'EB Garamond', serif; font-size: 1.3rem; font-style: italic;
+    color: var(--aq-text);
+}
+.aq-quest-toast-rewards {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 3px 16px; margin-top: 5px;
+    border-top: 1px solid rgba(185, 199, 255, .14); padding-top: 6px;
+}
+.aq-quest-toast-item { font-family: 'EB Garamond', serif; font-size: 1.02rem; }
+.aq-quest-toast-tally {
+    font-family: 'EB Garamond', serif; font-size: .9rem; color: var(--aq-muted);
+}
+.aq-quest-toast-gold { color: var(--aq-gold); }
+@keyframes aq-quest-toast {
+    0%   { opacity: 0; transform: translateY(-22px); }
+    6%   { opacity: 1; transform: translateY(0); }
+    82%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
 /* Anyone who has asked their system to reduce motion gets the state changes
    without the movement — the spinner still turns, because a frozen spinner reads
    as a hang. */
 @media (prefers-reduced-motion: reduce) {
     .aq-toast, .aq-dropdown { animation: none; }
+    .aq-quest-toast { animation: aq-quest-fade 5.4s steps(1) forwards; }
     .aq-btn, .aq-input, .aq-topnav-link { transition: none; }
 }
+@keyframes aq-quest-fade { 0%, 92% { opacity: 1; } 100% { opacity: 0; } }

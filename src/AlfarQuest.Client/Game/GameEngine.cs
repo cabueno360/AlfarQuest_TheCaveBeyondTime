@@ -51,6 +51,23 @@ public static class GameEngine
     [JSInvokable]
     public static void DebugEnterCave() => _world?.DebugEnterCave();
 
+    [JSInvokable]
+    public static void DebugLeaveCave() => _world?.DebugLeaveCave();
+
+    // Set a quest/progress flag directly, so a test can drive the quest chain
+    // without playing every step — see World.Debug. Never called from play.
+    [JSInvokable]
+    public static void DebugClaim(string flag) => _world?.DebugClaim(flag);
+
+    // Set the world clock to an hour, so a test can see any time of day at once.
+    [JSInvokable]
+    public static void DebugSetTime(double hour) => _world?.DebugSetTime((float)hour);
+
+    // Drop the steered hero beside the chamber's boss, so a test can watch the
+    // fight without walking to it. Never called from play — see World.Debug.
+    [JSInvokable]
+    public static void DebugWarpToBoss() => _world?.DebugWarpToBoss();
+
     // Stands up a hand-authored overworld region, so one can be walked and judged
     // before the ring is closed and Stage 1 moves onto it. Never called from play.
     [JSInvokable]
@@ -75,6 +92,11 @@ public static class GameEngine
     // same [E] path as play — see World.Debug.
     [JSInvokable]
     public static void DebugTradeWith(string npcId) => _world?.DebugTradeWith(npcId);
+
+    // Open a named NPC's dialogue (and any quest offer it carries) as the steered
+    // hero, without walking there. Never called from play — see World.Debug.
+    [JSInvokable]
+    public static void DebugTalkTo(string npcId) => _world?.DebugTalkTo(npcId);
 
     // A test seam: drop the steered hero on a tile (e.g. beside a door).
     [JSInvokable]

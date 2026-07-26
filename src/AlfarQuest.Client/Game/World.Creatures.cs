@@ -38,12 +38,16 @@ public partial class World
     public bool InSafeZone(float wx, float wy)
     {
         int tx = (int)(wx / TILE), ty = (int)(wy / TILE);
-        var zones = _mapSafeZones.Count > 0
-            ? (IReadOnlyList<(int, int, int, int)>)_mapSafeZones : SafeZones;
-        foreach (var (x0, y0, x1, y1) in zones)
+        foreach (var (x0, y0, x1, y1) in EffectiveSafeZones)
             if (tx >= x0 && tx <= x1 && ty >= y0 && ty <= y1) return true;
         return false;
     }
+
+    /// <summary>The safe zones actually in force: the standing map's own, or the
+    /// static fallback when no map has spoken. One source, so the AI and the debug
+    /// export never disagree about where people live.</summary>
+    IReadOnlyList<(int X0, int Y0, int X1, int Y1)> EffectiveSafeZones =>
+        _mapSafeZones.Count > 0 ? _mapSafeZones : SafeZones;
 
     /// <summary>Which biome a point belongs to, read from the TERRAIN around it
     /// rather than from fixed bands — so it is right on any map, not just the one

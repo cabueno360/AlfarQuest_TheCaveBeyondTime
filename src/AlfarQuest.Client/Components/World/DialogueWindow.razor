@@ -1,5 +1,7 @@
 @using AlfarQuest.Client.Game
+@using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Character
 @implements IDisposable
 @inject DialogueState Talk
 
@@ -18,7 +20,14 @@
              tabindex="0" @ref="_panel" @onkeydown="OnKeyDown">
 
         <header class="aq-talk-head">
-            <span class="aq-talk-portrait" aria-hidden="true">@Portrait(talk.Role)</span>
+            @if (Portraits.Has(talk.Kind))
+            {
+                <img class="aq-talk-portrait-img" src="@Portraits.Path(talk.Kind)" alt="" aria-hidden="true" />
+            }
+            else
+            {
+                <span class="aq-talk-portrait" aria-hidden="true">@Portrait(talk.Role)</span>
+            }
             <div class="aq-talk-who">
                 <h2 class="aq-talk-name">@talk.Name</h2>
                 <p class="aq-talk-role">@talk.Role</p>
@@ -26,7 +35,41 @@
             <button class="aq-talk-close" aria-label="Take your leave" @onclick="Close">✕</button>
         </header>
 
-        @if (Talk.Asked is { } asked)
+        @if (Talk.Offer is { } offer)
+        {
+            @* A quest laid out to accept or leave — its terms, and its reward, up front,
+               so nobody takes on a delve without knowing what is on the table. *@
+            <span class="aq-offer-eyebrow">✦ New Quest</span>
+            <h3 class="aq-offer-title">@offer.Title</h3>
+            <p class="aq-offer-summary">@offer.Summary</p>
+
+            @if (!offer.Reward.IsEmpty)
+            {
+                <div class="aq-offer-reward">
+                    <span class="aq-offer-reward-label">Reward</span>
+                    <div class="aq-offer-chips">
+                        @foreach (var chip in RewardChips(offer))
+                        {
+                            <span class="aq-offer-item" style="color:@chip.Colour">@chip.Icon&nbsp;@chip.Name</span>
+                        }
+                        @if (offer.Reward.Xp > 0)
+                        {
+                            <span class="aq-offer-tally">+@offer.Reward.Xp XP</span>
+                        }
+                        @if (offer.Reward.Gold > 0)
+                        {
+                            <span class="aq-offer-tally aq-offer-gold">+@offer.Reward.Gold gold</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            <footer class="aq-talk-foot aq-offer-foot">
+                <button class="aq-offer-decline" @onclick="Talk.DeclineOffer">Maybe later</button>
+                <button class="aq-talk-go aq-offer-accept" @onclick="Talk.AcceptOffer">Accept the quest</button>
+            </footer>
+        }
+        else if (Talk.Asked is { } asked)
         {
             @* An answer. The question is echoed above it so the exchange reads as one. *@
             <p class="aq-talk-asked">“@asked.Q”</p>
@@ -38,7 +81,9 @@
                     <span class="aq-talk-pages">@(Talk.Page + 1) / @asked.A.Length</span>
                 }
                 <button class="aq-talk-go" @onclick="Talk.Next">
-                    @(Talk.Page + 1 < asked.A.Length ? "Go on…" : "Ask something else")
+                    @(Talk.Page + 1 < asked.A.Length ? "Go on…"
+                        : Talk.WillOffer(asked) ? "Hear them out…"
+                        : "Ask something else")
                 </button>
             </footer>
         }
@@ -99,13 +144,32 @@
     {
         switch (e.Key)
         {
-            case "Escape": Close(); break;
-            // Enter/Space turn the page of an answer, exactly as the button does.
+            // Escape backs out of a quest offer (leaving it on the table) before it
+            // closes the whole conversation.
+            case "Escape": if (Talk.Offer is not null) Talk.DeclineOffer(); else Close(); break;
+            // Enter/Space accept an offer, else turn the page of an answer.
             case "Enter":
-            case " ": if (Talk.Asked is not null) Talk.Next(); break;
-            case "Backspace": if (Talk.Asked is not null) Talk.BackToMenu(); break;
+            case " ":
+                if (Talk.Offer is not null) Talk.AcceptOffer();
+                else if (Talk.Asked is not null) Talk.Next();
+                break;
+            case "Backspace":
+                if (Talk.Offer is not null) Talk.DeclineOffer();
+                else if (Talk.Asked is not null) Talk.BackToMenu();
+                break;
         }
     }
+
+    private sealed record Chip(string Name, string Icon, string Colour);
+
+    /// <summary>The offered quest's item rewards as name/icon/rarity-colour, resolved
+    /// from the catalogue — the same chips the completion toast shows.</summary>
+    private static IReadOnlyList<Chip> RewardChips(QuestDef q) =>
+        q.Reward.ItemIds
+            .Select(ItemCatalog.Find)
+            .Where(i => i is not null)
+            .Select(i => new Chip(i!.Name, i.Icon, RarityInfo.Of(i.Rarity).Colour))
+            .ToList();
 
     /// <summary>A glyph standing in for a portrait, chosen from the role — the same
     /// trick the shop counter uses, so a villager reads as themselves at a glance.</summary>

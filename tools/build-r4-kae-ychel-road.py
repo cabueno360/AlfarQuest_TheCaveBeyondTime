@@ -211,8 +211,10 @@ building(48, 20, "plaster", "tile", "the apprentices' hall")
 building(58, 21, "log", "shingle", "the outpost stable")
 
 # The caravan rest at the oasis: a way-house and a store, where the road waters.
+# The store stands a few cells clear of the way-house — the bigger sprites would
+# share a wall otherwise.
 building(28, 30, "board", "shingle", "the way-house", bays=2)
-building(33, 31, "log", "shingle", "the caravan store")
+building(36, 31, "log", "shingle", "the caravan store")
 
 # =====================================================================
 #  4. THE PROPS
@@ -551,21 +553,13 @@ for my in range(MH):
         if wn or ws or we or ww:
             paint("Shore", mx, my, K.shore_tile(mx, my, wn, we, ws, ww))
 
+# Our own house sprites now, one whole picture each, in place of the assembled
+# facade-and-roof kit. house_for keeps each building's intent — the Academy
+# Outpost and apprentices' hall become the tall timber frame — stamped centred
+# over the ground the building() call reserved.
 for (ex, ey, mat, roof, bays, storeys, name) in BUILDINGS:
-    walls, roofs, (bw, bh) = K.house_tiles(mat, roof, bays, storeys)
-    ox = ex * K.SUB - 1
-    oy = (ey + 1) * K.SUB - bh
-    for dx, dy, s_, c_, r_ in roofs:
-        if K.opaque(s_, c_, r_): paint("Buildings", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    for dx, dy, s_, c_, r_ in walls:
-        if K.opaque(s_, c_, r_): paint("Walls", ox + dx, oy + dy, K.gid(s_, c_, r_))
-    # A door in the middle of the visible facade, two tiles of it, drawn over the
-    # wall rather than under the roof — the old stamp was keyed to a four-course
-    # facade and now landed halfway up the roof.
-    dxm = ox + bw // 2 - 1
-    dym = oy + K.HOUSE_H + (storeys - 1) * len(K.FACADE_ROWS) - 2
-    for i, (c_, r_) in enumerate(((6, 2), (7, 2), (6, 3), (7, 3))):
-        paint("Buildings", dxm + (i % 2), dym + (i // 2), K.gid("BuildProps", c_, r_))
+    sprite = K.house_for(mat, roof, name, bays, storeys, key=ex + ey)
+    K.stamp_house(paint, sprite, ex, ey)
 
 # Ground texture: dry tufts everywhere, reed only at the oasis.
 # The density pass — crops on the worked ground, flower sprigs by the houses,

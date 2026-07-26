@@ -38,8 +38,8 @@ public class WorldSnapshot
 
 public class REnt
 {
-    public string t = ""; public float x, y, r, f, life, flash, iframe, hp, mhp, atk, abl, s = 1;
-    public string? c, a, name; public bool hero, active, dead;
+    public string t = ""; public float x, y, r, f, life, flash, iframe, hp, mhp, atk, abl, s = 1, dprog;
+    public string? c, a, name; public bool hero, active, dead, dying;
 
     /// <summary>Particles only: the fraction of life left, and whether to draw
     /// with lighter compositing. Sent rather than derived, because the client has
@@ -58,7 +58,12 @@ public class RHud
     public string phase = ""; public int enemies, level, stage, dropsTried, dropsDelivered;
     public string objective = "", talkName = "", talkRole = "", talkLine = "", promptName = "";
     public bool atCraftsman, outdoor; public float shake, clearedFor;
+    public float timeOfDay;    // world clock, 0–24 hours — drives day/night and the clock UI
     public string message = "", region = ""; public List<RHero> party = new();
+
+    // The chamber's boss, when one is alive — drives its own health bar across the
+    // top of the screen. Null when there is no boss in play.
+    public RBoss? boss;
 
     // Progression, read by the canvas HUD. heroLevel is the steered hero's level,
     // distinct from `level` above, which is the cave depth — two different things
@@ -110,7 +115,7 @@ public class RHud
     /// <summary>Cumulative counts, never reset: every monster ability performed and
     /// every hostile bolt loosed this session. A live count misses an instant bolt;
     /// a running total does not.</summary>
-    public int castsFired, boltsFired;
+    public int castsFired, boltsFired, husksSummoned;
 
     /// <summary>Cumulative combat tallies — criticals, misses, blocks, dodges,
     /// stuns — and the last few damage numbers dealt, so a test can see the weapon
@@ -124,6 +129,15 @@ public class RHud
     public List<RSkill> hotbar = new();
     public float potionCdFrac;
     public bool potionReady;
+}
+
+/// <summary>A boss on the field, for its own health bar: its name, how much of its
+/// health is left, and whether it has crossed into its enrage.</summary>
+public class RBoss
+{
+    public string name = "";
+    public float hp, mhp;
+    public bool enraged;
 }
 
 /// <summary>One hotbar slot as the HUD needs it: what it is, its shortcut, how

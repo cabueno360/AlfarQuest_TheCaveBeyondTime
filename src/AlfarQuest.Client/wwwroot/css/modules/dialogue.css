@@ -47,6 +47,14 @@
     background: radial-gradient(80% 80% at 50% 25%, rgba(216, 180, 90, .22), rgba(10, 8, 24, .6));
     color: var(--aq-gold-soft); font-size: 1.15rem;
 }
+/* A real hand-made portrait, when the speaker's kind has one — sits where the
+   role glyph did, a shade larger and framed as a bust. */
+.aq-talk-portrait-img {
+    width: 50px; height: 50px; flex: none;
+    border-radius: 9px; object-fit: cover; object-position: center top;
+    border: 1px solid color-mix(in srgb, var(--aq-gold) 55%, transparent);
+    box-shadow: inset 0 0 14px -6px var(--aq-gold), 0 2px 8px -4px rgba(0, 0, 0, .6);
+}
 .aq-talk-who { flex: 1 1 auto; min-width: 0; }
 .aq-talk-name {
     margin: 0; font-family: 'Cinzel', serif; font-size: 1.02rem;
@@ -129,6 +137,45 @@
     border: 1px solid rgba(185, 199, 255, .3);
 }
 .aq-talk-leave:hover { color: var(--aq-text); background: rgba(185, 199, 255, .16); }
+
+/* ---------- a quest, offered: its terms and reward, to accept or leave ---------- */
+.aq-offer-eyebrow {
+    display: block; margin: .55rem 1.2rem 0;
+    font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--aq-gold);
+}
+.aq-offer-title {
+    margin: .15rem 1.2rem .15rem; font-family: 'Cinzel', serif; font-size: 1.15rem;
+    color: var(--aq-gold-soft);
+}
+.aq-offer-summary {
+    margin: 0 1.2rem .7rem; font-family: 'EB Garamond', serif; font-size: 1rem;
+    line-height: 1.55; color: var(--aq-text); overflow-y: auto;
+}
+.aq-offer-reward {
+    margin: 0 1.2rem .2rem; padding: .55rem .8rem;
+    background: rgba(216, 180, 90, .07);
+    border: 1px solid color-mix(in srgb, var(--aq-gold) 26%, transparent);
+    border-radius: 10px;
+}
+.aq-offer-reward-label {
+    display: block; margin-bottom: .3rem;
+    font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--aq-muted);
+}
+.aq-offer-chips { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; }
+.aq-offer-item { font-family: 'EB Garamond', serif; font-size: 1.02rem; }
+.aq-offer-tally { font-family: 'EB Garamond', serif; font-size: .9rem; color: var(--aq-muted); }
+.aq-offer-gold { color: var(--aq-gold); }
+.aq-offer-foot { justify-content: space-between; }
+.aq-offer-decline {
+    cursor: pointer; font-family: 'Cinzel', serif; font-size: .8rem; letter-spacing: .06rem;
+    padding: .48rem 1rem; border-radius: 999px;
+    color: var(--aq-crystal); background: rgba(185, 199, 255, .08);
+    border: 1px solid rgba(185, 199, 255, .3);
+    transition: background .14s ease, color .14s ease;
+}
+.aq-offer-decline:hover { color: var(--aq-text); background: rgba(185, 199, 255, .16); }
 
 @media (max-width: 560px) {
     .aq-talk { width: calc(100vw - 1rem); }

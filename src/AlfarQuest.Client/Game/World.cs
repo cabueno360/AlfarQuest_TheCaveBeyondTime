@@ -22,7 +22,10 @@ public partial class World
 
     // 0 blocks (rock outside, cliff/mountain in the open), 1 and 4 are walkable
     // ground, 2 is water, 3 a bridge deck.
-    public const byte ROCK = 0, FLOOR = 1, WATER = 2, BRIDGE = 3, PATH = 4;
+    // TRUNK is a soft block — a tree's foot. Unlike ROCK it stops you only at its
+    // narrow core (see World.Collision), so you can weave between trunks and brush
+    // past them instead of snagging on a full 32px cell.
+    public const byte ROCK = 0, FLOOR = 1, WATER = 2, BRIDGE = 3, PATH = 4, TRUNK = 5;
 
     public byte[,] Tiles = new byte[88, 56];
 
@@ -114,6 +117,9 @@ public partial class World
     public void Update(float dt, InputState input)
     {
         TorchTime += dt;
+        // The world clock. Only moves here, so it holds still in every menu; slow, so
+        // an afternoon is an afternoon. Wraps at midnight.
+        GameSession.TimeOfDay = (GameSession.TimeOfDay + dt / GameSession.SecondsPerHour) % 24f;
         Shake = Math.Max(0, Shake - dt * 4f);
         // Emptied here so the sounds raised during this tick are exactly what the
         // frame's render payload carries — see World.Sfx.
@@ -205,6 +211,10 @@ public partial class World
         // --- husks ---
         foreach (var k in Husks)
         {
+            // Down and out: a husk whose health is gone (or already falling) plays
+            // only its death reel, ticked in the sweep below — no more moving or
+            // biting.
+            if (k.Dying || k.Hp <= 0) continue;
             k.HitCool = Math.Max(0, k.HitCool - dt);
             k.AbilityCool = Math.Max(0, k.AbilityCool - dt);
             TickHuskEffects(k, dt);
@@ -225,7 +235,8 @@ public partial class World
             }
 
             var dir = StepAi(k, target, dt);
-            k.Pos = MoveBlocked(k.Pos, dir * k.Speed * (1f - k.Slow) * dt + k.Knock, 13f);
+            float speed = k.Speed * (k.Enraged ? 1.4f : 1f);
+            k.Pos = MoveBlocked(k.Pos, dir * speed * (1f - k.Slow) * dt + k.Knock, 13f);
             k.Knock *= 0.86f;
             if (target is not null)
             {
@@ -243,17 +254,22 @@ public partial class World
             k.Pos = Clamp(k.Pos, TILE);
             k.Flash = Math.Max(0, k.Flash - dt);
         }
-        // Roll before removing: the corpse still knows what species it was.
-        foreach (var dead in Husks.Where(k => k.Hp <= 0))
-        {
-            AwardKill(dead);
-            RollLoot(dead);
-            // A death threw nothing until now — the catalogue had the effects but
-            // nobody played them. Flesh falls to dust; anything conjured comes
-            // apart into light. The sound rides along with each.
-            Play(dead.Def.Material == "flesh" ? "death_dust" : "death_magic", dead.Pos);
-        }
-        Husks.RemoveAll(k => k.Hp <= 0);
+        FlushSummons();   // fold in any husks a boss called up mid-loop
+        // Death is a beat, not a blink. A husk whose health is gone BEGINS its death
+        // reel here — the kill and its loot are paid once, as it falls — and it is
+        // removed only when the reel has run out. Flesh falls to dust; anything
+        // conjured comes apart into light; the great husk falls a little slower.
+        foreach (var k in Husks)
+            if (k.Hp <= 0 && !k.Dying)
+            {
+                k.Dying = true;
+                k.DeathT = k.Def.Boss ? 0.9f : 0.55f;
+                AwardKill(k);
+                RollLoot(k);
+                Play(k.Def.Material == "flesh" ? "death_dust" : "death_magic", k.Pos);
+            }
+        foreach (var k in Husks) if (k.Dying) k.DeathT -= dt;
+        Husks.RemoveAll(k => k.Dying && k.DeathT <= 0);
         UpdateFloaters(dt);
 
         // --- projectiles ---
@@ -290,6 +306,9 @@ public partial class World
 
         // --- hostile bolts (the monsters' spit and missiles) ---
         UpdateBolts(dt);
+
+        // --- charging area bursts (the nova and the pound), landed on wind-up end ---
+        UpdateAoe(dt);
 
         // --- slashes (melee arcs, damage applied on spawn; here just fade) ---
         foreach (var sl in Slashes) sl.Life -= dt;
