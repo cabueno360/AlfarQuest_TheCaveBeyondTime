@@ -66,15 +66,27 @@ export async function loadTmx(url) {
         // seconds and the map arrived long after the player did.
         const tilesets = await Promise.all(
             [...map.querySelectorAll(":scope > tileset")].map(async (ts) => {
-                const tsxUrl = resolve(url, ts.getAttribute("source"));
-                const tsxDoc = new DOMParser().parseFromString(
-                    await (await fetch(encodeURI(tsxUrl))).text(), "application/xml");
-                const el = tsxDoc.querySelector("tileset");
+                // A tileset is either external — a `source` pointing at a .tsx — or
+                // written into the map itself, which is what Tiled saves when the
+                // author imports a sheet without exporting it. Both are read here:
+                // an embedded one has no `source`, and fetching that null took the
+                // whole map down, falling the region back to procedural art.
+                const src = ts.getAttribute("source");
+                let el = ts, base = url;
+                if (src) {
+                    base = resolve(url, src);
+                    el = new DOMParser().parseFromString(
+                        await (await fetch(encodeURI(base))).text(), "application/xml")
+                        .querySelector("tileset");
+                    if (!el) throw new Error(`tmx: tileset failed ${src}`);
+                }
+                // An embedded tileset gives its image relative to the map; an
+                // external one relative to the .tsx. `base` is already whichever.
                 return {
                     firstgid: +ts.getAttribute("firstgid"),
                     columns: +el.getAttribute("columns"),
                     tw: +el.getAttribute("tilewidth"), th: +el.getAttribute("tileheight"),
-                    image: await loadImage(resolve(tsxUrl, el.querySelector("image").getAttribute("source"))),
+                    image: await loadImage(resolve(base, el.querySelector("image").getAttribute("source"))),
                 };
             }));
         tilesets.sort((a, b) => a.firstgid - b.firstgid);
