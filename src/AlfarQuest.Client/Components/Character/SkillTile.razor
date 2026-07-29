@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* One skill in the grid.
 
@@ -9,11 +10,11 @@
 <button type="button"
         class="aq-skilltile @(Rank > 0 ? "known" : "") @(Maxed ? "maxed" : "") @(Selected ? "on" : "")"
         aria-pressed="@(Selected ? "true" : "false")"
-        aria-label="@($"{Skill.Name}, rank {Rank} of {Skill.MaxLevel}")"
+        aria-label="@L.Format("{0}, rank {1} of {2}", L[Skill.Name], Rank, Skill.MaxLevel)"
         @onclick="() => OnSelect.InvokeAsync(Skill)">
 
     <span class="aq-skilltile-icon" aria-hidden="true">@Skill.Icon</span>
-    <span class="aq-skilltile-name">@Skill.Name</span>
+    <span class="aq-skilltile-name">@L[Skill.Name]</span>
 
     <span class="aq-skilltile-rank @(Maxed ? "maxed" : "")">
         @Rank / @Skill.MaxLevel
@@ -31,7 +32,7 @@
         @* A dot rather than a "+": the tile selects, and putting a second action
            inside a button is how a click ends up doing the wrong one. Raising the
            rank happens in the detail panel. *@
-        <span class="aq-skilltile-ready" title="Can be raised" aria-hidden="true">●</span>
+        <span class="aq-skilltile-ready" title="@L["Can be raised"]" aria-hidden="true">●</span>
     }
 </button>
 

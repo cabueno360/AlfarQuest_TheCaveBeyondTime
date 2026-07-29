@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Components.Common
+@inject Translator L
 
 @* What the portrait will look like. Shows the pending image once one is chosen
    and the stored one otherwise, so "Upload" is confirming something already
@@ -8,9 +9,9 @@
     @if (Pending is { Length: > 0 })
     {
         <span class="aq-avatar aq-avatar-lg">
-            <img src="@Pending" alt="The portrait about to be uploaded" class="aq-avatar-img" />
+            <img src="@Pending" alt="@L["The portrait about to be uploaded"]" class="aq-avatar-img" />
         </span>
-        <span class="aq-avatar-badge" role="status">Not saved yet</span>
+        <span class="aq-avatar-badge" role="status">@L["Not saved yet"]</span>
     }
     else
     {

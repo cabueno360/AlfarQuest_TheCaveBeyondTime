@@ -2,6 +2,7 @@
 @using AlfarQuest.Client.Services
 @implements IDisposable
 @inject PartyState Party
+@inject Translator L
 
 @* The quest journal (J). Reads the persisted flag set and renders each begun quest
    with its steps — the main line first, then any side work. It is where side
@@ -11,8 +12,8 @@
     <div class="aq-journal-scrim" @onclick="Close">
         <div class="aq-journal" @onclick:stopPropagation="true">
             <header class="aq-journal-head">
-                <h2>Quest Journal</h2>
-                <button class="aq-journal-close" title="Close (L / Esc)" @onclick="Close">✕</button>
+                <h2>@L["Quest Journal"]</h2>
+                <button class="aq-journal-close" title="@L["Close (L / Esc)"]" @onclick="Close">✕</button>
             </header>
 
             @{
@@ -22,8 +23,7 @@
             @if (quests.Count == 0)
             {
                 <p class="aq-journal-empty">
-                    No tales to your name yet. Speak with the folk of the vale — the
-                    Cleric's kin will set you on the road.
+                    @L["No tales to your name yet. Speak with the folk of the vale — the Cleric's kin will set you on the road."]
                 </p>
             }
             else
@@ -35,15 +35,15 @@
                         <article class="aq-quest @(status == QuestStatus.Complete ? "done" : "")">
                             <div class="aq-quest-top">
                                 <span class="aq-quest-kind @(q.Kind == QuestKind.Main ? "main" : "side")">
-                                    @(q.Kind == QuestKind.Main ? "Main" : "Side")
+                                    @L[q.Kind == QuestKind.Main ? "Main" : "Side"]
                                 </span>
-                                <h3>@q.Title</h3>
+                                <h3>@L[q.Title]</h3>
                                 @if (status == QuestStatus.Complete)
                                 {
-                                    <span class="aq-quest-complete">Complete</span>
+                                    <span class="aq-quest-complete">@L["Complete"]</span>
                                 }
                             </div>
-                            <p class="aq-quest-summary">@q.Summary</p>
+                            <p class="aq-quest-summary">@L[q.Summary]</p>
                             <ul class="aq-quest-steps">
                                 @foreach (var entry in q.Progress(flags))
                                 {
@@ -52,7 +52,7 @@
                                             @(entry.State == StepState.Done ? "✔"
                                               : entry.State == StepState.Current ? "▸" : "·")
                                         </span>
-                                        <span class="aq-step-text">@entry.Step.Objective</span>
+                                        <span class="aq-step-text">@L[entry.Step.Objective]</span>
                                     </li>
                                 }
                             </ul>
@@ -61,7 +61,7 @@
                 </div>
             }
 
-            <footer class="aq-journal-foot">Press <kbd>L</kbd> or <kbd>Esc</kbd> to close</footer>
+            <footer class="aq-journal-foot">@L["Press"] <kbd>L</kbd> @L["or"] <kbd>Esc</kbd> @L["to close"]</footer>
         </div>
     </div>
 }

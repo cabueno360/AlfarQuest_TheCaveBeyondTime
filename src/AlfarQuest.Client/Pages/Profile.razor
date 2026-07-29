@@ -8,16 +8,17 @@
 @using AlfarQuest.Client.Services.Profile
 @inject CurrentUserProvider Me
 @inject ProfileService Profiles
+@inject Translator L
 
 @* The profile page: sections assembled, nothing computed. Every panel below is
    its own component, so this file stays a description of the page rather than an
    implementation of it. *@
 
-<PageTitle>Profile · Alfar Quest</PageTitle>
+<PageTitle>@L["Profile"] · Alfar Quest</PageTitle>
 
 @if (Me.Player is not { } player)
 {
-    <div class="aq-page-loading"><Spinner Label="Reading your records" /></div>
+    <div class="aq-page-loading"><Spinner Label="@L["Reading your records"]" /></div>
 }
 else
 {
@@ -25,26 +26,26 @@ else
         <ProfileHeader Player="player" />
 
         <div class="aq-profile-grid">
-            <ProfileCard Title="Avatar" Icon="◈">
+            <ProfileCard Title="@L["Avatar"]" Icon="◈">
                 <AvatarUploader />
             </ProfileCard>
 
-            <ProfileCard Title="Game Statistics" Icon="⚔">
+            <ProfileCard Title="@L["Game Statistics"]" Icon="⚔">
                 <GameStatsPanel Stats="player.Stats" />
             </ProfileCard>
 
-            <ProfileCard Title="Personal Information" Icon="✦" Class="wide">
+            <ProfileCard Title="@L["Personal Information"]" Icon="✦" Class="wide">
                 <PersonalInfoForm />
             </ProfileCard>
 
-            <ProfileCard Title="Account Settings" Icon="⚙">
+            <ProfileCard Title="@L["Account Settings"]" Icon="⚙">
                 <AccountSettings />
                 <p class="aq-hint aq-card-more">
-                    <a class="aq-link" href="/settings#password">Change your password →</a>
+                    <a class="aq-link" href="/settings#password">@L["Change your password →"]</a>
                 </p>
             </ProfileCard>
 
-            <ProfileCard Title="Recent Activity" Icon="✧">
+            <ProfileCard Title="@L["Recent Activity"]" Icon="✧">
                 <AchievementsPanel Achievements="player.Achievements" />
             </ProfileCard>
         </div>

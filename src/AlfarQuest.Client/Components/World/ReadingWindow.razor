@@ -1,6 +1,7 @@
 @using AlfarQuest.Client.Services
 @implements IDisposable
 @inject ReadState Read
+@inject Translator L
 
 @* A page of something read or examined — the Cleric's journal, a letter from his
    Order, the description of an armour stand standing empty. Parchment rather than
@@ -12,16 +13,18 @@
 {
     <div class="aq-read-scrim" @onclick="Close"></div>
 
-    <section class="aq-read @open.Kind" role="dialog" aria-modal="true" aria-label="@open.Title"
+    <section class="aq-read @open.Kind" role="dialog" aria-modal="true" aria-label="@L[open.Title]"
              tabindex="0" @onkeydown="OnKeyDown">
         <header class="aq-read-head">
             <span class="aq-read-mark" aria-hidden="true">@Mark(open.Kind)</span>
-            <h2 class="aq-read-title">@open.Title</h2>
-            <button class="aq-read-close" aria-label="Close" @onclick="Close">✕</button>
+            <h2 class="aq-read-title">@L[open.Title]</h2>
+            <button class="aq-read-close" aria-label="@L["Close"]" @onclick="Close">✕</button>
         </header>
 
         <div class="aq-read-body">
-            @foreach (var para in Read.Text.Split('\n'))
+            @* The whole page is translated before it is split, so a translation is
+               free to break its paragraphs differently from the English. *@
+            @foreach (var para in L[Read.Text].Split('\n'))
             {
                 <p class="aq-read-para">@para</p>
             }
@@ -30,13 +33,13 @@
         <footer class="aq-read-foot">
             @if (open.Pages.Count > 1)
             {
-                <button type="button" class="aq-read-turn" disabled="@(!Read.HasPrev)" @onclick="Read.Prev">‹ Back</button>
+                <button type="button" class="aq-read-turn" disabled="@(!Read.HasPrev)" @onclick="Read.Prev">‹ @L["Back"]</button>
                 <span class="aq-read-page">@(Read.Page + 1) / @open.Pages.Count</span>
-                <button type="button" class="aq-read-turn" disabled="@(!Read.HasNext)" @onclick="Read.Next">Next ›</button>
+                <button type="button" class="aq-read-turn" disabled="@(!Read.HasNext)" @onclick="Read.Next">@L["Next"] ›</button>
             }
             else
             {
-                <span class="aq-read-hint">Esc to close</span>
+                <span class="aq-read-hint">@L["Esc to close"]</span>
             }
         </footer>
     </section>

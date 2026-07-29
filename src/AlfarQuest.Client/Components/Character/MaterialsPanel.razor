@@ -1,19 +1,20 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* Gathered resources. Driven by Material.All, so a new drop shows up here on its
    own once something reports it. *@
 @if (!Pouch.Held().Any())
 {
-    <p class="aq-cw-soon">Nothing gathered yet.</p>
+    <p class="aq-cw-soon">@L["Nothing gathered yet."]</p>
 }
 else
 {
     <div class="aq-mats">
         @foreach (var (mat, count) in Pouch.Held())
         {
-            <div class="aq-mat" title="@mat.Name">
+            <div class="aq-mat" title="@L[mat.Name]">
                 <span class="aq-mat-icon" style="color:@mat.Colour">@mat.Icon</span>
-                <span class="aq-mat-name">@mat.Name</span>
+                <span class="aq-mat-name">@L[mat.Name]</span>
                 <span class="aq-mat-count">@count</span>
             </div>
         }

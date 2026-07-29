@@ -2,6 +2,7 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services.Character
 @using AlfarQuest.Shared
+@inject Translator L
 
 @* One selectable delver on the title screen. A <button> rather than a <div>:
    it is reachable by keyboard and announces its own pressed state. *@
@@ -16,19 +17,21 @@
         <div class="aq-portrait-fade"></div>
         @if (Progress is not null)
         {
-            <div class="aq-hero-level" title="Level @Progress.Level">Lv @Progress.Level</div>
+            <div class="aq-hero-level" title="@L.Format("Level {0}", Progress.Level)">@L["Lv"] @Progress.Level</div>
         }
     </div>
     <div class="aq-hero-body">
-        <div class="aq-hero-class" style="color:@Def.ColorAccent">@Hero.HeroClass</div>
-        <div class="aq-hero-name">@Hero.Name</div>
-        <div class="aq-hero-title">@Hero.Title</div>
+        @* Name, class and title arrive from the API, which serves them in English —
+           they go through the same table as the rest of the words on the page. *@
+        <div class="aq-hero-class" style="color:@Def.ColorAccent">@L[Hero.HeroClass]</div>
+        <div class="aq-hero-name">@L[Hero.Name]</div>
+        <div class="aq-hero-title">@L[Hero.Title]</div>
 
         @if (Progress is not null)
         {
             @* What the save remembers about this hero: how far along, and what they
                are wearing. Each hero's own — the whole point of the change. *@
-            <div class="aq-hero-xp" title="@Progress.Xp / @XpNext experience">
+            <div class="aq-hero-xp" title="@L.Format("{0} / {1} experience", Progress.Xp, XpNext)">
                 <span class="aq-hero-xp-bar" style="width:@(XpPercent)%"></span>
             </div>
             <div class="aq-hero-gear">
@@ -38,21 +41,21 @@
                 }
                 @if (EquipIcons.Count == 0)
                 {
-                    <span class="aq-hero-gear-empty">No gear yet</span>
+                    <span class="aq-hero-gear-empty">@L["No gear yet"]</span>
                 }
             </div>
         }
         else
         {
-            <div class="aq-hero-desc">@Hero.Description</div>
+            <div class="aq-hero-desc">@L[Hero.Description]</div>
         }
     </div>
-    <div class="aq-lead-badge">Leads the descent</div>
+    <div class="aq-lead-badge">@L["Leads the descent"]</div>
     @if (Locked)
     {
         <div class="aq-hero-locked">
             <span class="aq-hero-locked-icon">🔒</span>
-            <span>Joins at the Cave</span>
+            <span>@L["Joins at the Cave"]</span>
         </div>
     }
 </button>

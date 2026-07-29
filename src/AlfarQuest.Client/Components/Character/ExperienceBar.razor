@@ -1,14 +1,15 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 <div class="aq-cw-xp">
     <div class="aq-cw-xp-head">
-        <span>Experience</span>
+        <span>@L["Experience"]</span>
         <span class="aq-cw-xp-num">@Xp / @Needed</span>
     </div>
     <div class="aq-cw-bar" role="progressbar" aria-valuenow="@Xp" aria-valuemin="0" aria-valuemax="@Needed">
         <div class="aq-cw-bar-fill xp" style="width:@(Fraction * 100)%"></div>
     </div>
-    <p class="aq-cw-xp-foot">@Remaining XP to level @(Level + 1)</p>
+    <p class="aq-cw-xp-foot">@L.Format("{0} XP to level {1}", Remaining, Level + 1)</p>
 </div>
 
 @code {

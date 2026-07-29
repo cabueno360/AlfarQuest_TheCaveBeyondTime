@@ -1,0 +1,30 @@
+@using AlfarQuest.Client.Services.I18n
+@inject Translator L
+
+@* Two flags, the current one held down. Not a dropdown: with exactly two
+   choices a select costs a click to show what a pair of flags already says. *@
+
+<div class="aq-langpick @(Compact ? "compact" : "")" role="group" aria-label="@L["Language"]">
+    @foreach (var language in new[] { Language.Portuguese, Language.English })
+    {
+        var chosen = L.Current == language;
+        <button type="button"
+                class="aq-langpick-btn @(chosen ? "on" : "")"
+                aria-pressed="@(chosen ? "true" : "false")"
+                title="@language.NativeName()"
+                @onclick="() => Choose(language)">
+            <FlagIcon For="language" />
+            @if (!Compact)
+            {
+                <span class="aq-langpick-name">@language.NativeName()</span>
+            }
+        </button>
+    }
+</div>
+
+@code {
+    /// <summary>Flags only — for the top bar, where there is no room for words.</summary>
+    [Parameter] public bool Compact { get; set; }
+
+    private Task Choose(Language language) => L.SetAsync(language);
+}

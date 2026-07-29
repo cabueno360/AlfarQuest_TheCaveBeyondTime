@@ -4,6 +4,7 @@
 @implements IDisposable
 @inject SessionBootstrapper Bootstrapper
 @inject NavigationManager Nav
+@inject Translator L
 
 @* Nothing renders until the stored session has been checked with the server.
 
@@ -18,7 +19,7 @@
         <img class="aq-boot-logo" src="assets/ui/wordmark.png" alt="Alfar Quest"
              onerror="this.closest('.aq-boot').classList.add('no-art')" />
         <div class="aq-boot-title">ALFAR&nbsp;QUEST</div>
-        <div class="aq-boot-sub">lighting the torch…</div>
+        <div class="aq-boot-sub">@L["lighting the torch…"]</div>
     </div>
 }
 else
@@ -35,7 +36,7 @@ else
                     </NotAuthorized>
                     <Authorizing>
                         <div class="aq-page-loading">
-                            <div class="aq-boot-sub">checking your seal…</div>
+                            <div class="aq-boot-sub">@L["checking your seal…"]</div>
                         </div>
                     </Authorizing>
                 </AuthorizeRouteView>
@@ -47,7 +48,7 @@ else
             </Found>
             <NotFound>
                 <LayoutView Layout="@typeof(MainLayout)">
-                    <p role="alert" class="aq-notfound">The path you seek is lost beyond time.</p>
+                    <p role="alert" class="aq-notfound">@L["The path you seek is lost beyond time."]</p>
                 </LayoutView>
             </NotFound>
         </Router>

@@ -1,3 +1,5 @@
+@inject Translator L
+
 @* Bottom-right, lifted above the canvas hotbar (which shares this corner) — see
    .aq-controls-help in game.css for the offset. The party panel owns bottom-left.
 
@@ -5,7 +7,10 @@
 <div class="aq-controls-help">
     @foreach (var (action, keys) in Bindings)
     {
-        <div class="aq-key-row"><b>@action</b> <span>@keys</span></div>
+        @* The action is translated; the keys are not. "WASD" and "Tab" are what
+           is printed on the keyboard, and printing "TAB" in Portuguese would be
+           naming a key that is not there. *@
+        <div class="aq-key-row"><b>@L[action]</b> <span>@L[keys]</span></div>
     }
 </div>
 

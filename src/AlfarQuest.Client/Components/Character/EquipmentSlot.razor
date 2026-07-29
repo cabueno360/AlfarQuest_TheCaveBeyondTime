@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* One place on the paper doll.
 
@@ -16,7 +17,7 @@
      tabindex="@(Available ? 0 : -1)"
      aria-label="@AriaLabel"
      aria-disabled="@(Available ? null : "true")"
-     title="@(Item is null ? Info.Name : null)"
+     title="@(Item is null ? L[Info.Name] : null)"
      draggable="@((Item is not null).ToString().ToLowerInvariant())"
      @ondragstart="OnDragStart"
      @ondragend="OnDragEnd"
@@ -29,7 +30,7 @@
      @onkeydown="OnKeyDown">
 
     <span class="aq-slot-icon">@(Item?.Icon ?? Info.Icon)</span>
-    <span class="aq-slot-tag">@Info.Name</span>
+    <span class="aq-slot-tag">@L[Info.Name]</span>
 
     @if (Item is not null)
     {
@@ -72,8 +73,8 @@
     }.Where(s => s.Length > 0));
 
     private string AriaLabel => Item is null
-        ? $"{Info.Name}, empty"
-        : $"{Info.Name}: {Item.Name}. Activate to remove.";
+        ? L.Format("{0}, empty", L[Info.Name])
+        : L.Format("{0}: {1}. Activate to remove.", L[Info.Name], L[Item.Name]);
 
     private Task Activate() =>
         Item is null || !Available ? Task.CompletedTask : OnUnequip.InvokeAsync(Info.Slot);

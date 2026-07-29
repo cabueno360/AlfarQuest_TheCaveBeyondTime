@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* The paper doll.
 
@@ -18,7 +19,7 @@
     <div class="aq-doll-figure">
         <CharacterPortrait Character="Character" />
         <p class="aq-doll-name">@Character.Name</p>
-        <p class="aq-doll-sub">@Character.Class · Level @Character.Level</p>
+        <p class="aq-doll-sub">@L[Character.Class] · @L.Format("Level {0}", Character.Level)</p>
 
         <div class="aq-doll-hands">
             @foreach (var info in SlotInfo.In(DollColumn.Hands))
@@ -27,7 +28,7 @@
             }
         </div>
 
-        <div class="aq-doll-future" aria-label="Not yet available">
+        <div class="aq-doll-future" aria-label="@L["Not yet available"]">
             @foreach (var info in SlotInfo.In(DollColumn.Future))
             {
                 @Slot(info)

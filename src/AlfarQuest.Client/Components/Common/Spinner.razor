@@ -1,9 +1,13 @@
+@inject Translator L
+
 @* A busy indicator. role="status" so a screen reader announces the wait rather
    than leaving the user in silence while something loads. *@
 
 <span class="aq-spinner @(Small ? "sm" : "")" role="status" aria-live="polite">
     <span class="aq-spinner-ring" aria-hidden="true"></span>
-    <span class="aq-visually-hidden">@Label</span>
+    @* Callers pass a translated label, but the default is set here — so it goes
+       through the table rather than reading "Loading" to a Portuguese screen. *@
+    <span class="aq-visually-hidden">@L[Label]</span>
 </span>
 
 @code {

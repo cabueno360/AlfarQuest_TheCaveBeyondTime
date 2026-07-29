@@ -2,6 +2,7 @@
 @using Microsoft.JSInterop
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject Translator L
 
 @* An old-style clock the player calls up to read the hour. Non-blocking: the world
    runs behind it and the hands move live, reading the same world clock the day and
@@ -9,7 +10,7 @@
 
 @if (Visible)
 {
-    <aside class="aq-clock" role="dialog" aria-label="The hour">
+    <aside class="aq-clock" role="dialog" aria-label="@L["The hour"]">
         <svg viewBox="0 0 200 200" class="aq-clock-face" aria-hidden="true">
             <circle cx="100" cy="100" r="97" class="aq-clock-ring-outer" />
             <circle cx="100" cy="100" r="90" class="aq-clock-ring-mid" />
@@ -39,7 +40,7 @@
             <span class="aq-clock-period">@_period</span>
         </div>
 
-        <button class="aq-clock-close" @onclick="Close" aria-label="Put the clock away">✕</button>
+        <button class="aq-clock-close" @onclick="Close" aria-label="@L["Put the clock away"]">✕</button>
     </aside>
 }
 

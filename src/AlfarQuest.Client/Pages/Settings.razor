@@ -2,21 +2,30 @@
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @using AlfarQuest.Client.Components.Profile
+@inject Translator L
 
-<PageTitle>Settings · Alfar Quest</PageTitle>
+<PageTitle>@L["Settings"] · Alfar Quest</PageTitle>
 
 <div class="aq-profile">
-    <h1 class="aq-page-title">Settings</h1>
+    <h1 class="aq-page-title">@L["Settings"]</h1>
 
     <div class="aq-profile-grid">
+        @* Language first. It is the setting that decides how every other setting
+           on this page reads, so burying it under the password form would be
+           asking someone to navigate a page they cannot yet read. *@
+        <ProfileCard Title="@L["Language"]" Icon="🌐">
+            <p class="aq-settings-note">@L["Choose the language for menus, the journal and everything the world says."]</p>
+            <LanguagePicker />
+        </ProfileCard>
+
         @* The id is what /settings#password lands on, so the dropdown's "Change
            password" arrives at the form rather than at the top of the page. *@
-        <ProfileCard Title="Change Password" Icon="🔑" Class="wide">
+        <ProfileCard Title="@L["Change Password"]" Icon="🔑" Class="wide">
             <div id="password"></div>
             <PasswordChangeForm />
         </ProfileCard>
 
-        <ProfileCard Title="Account" Icon="⚙">
+        <ProfileCard Title="@L["Account"]" Icon="⚙">
             <AccountSettings />
         </ProfileCard>
     </div>

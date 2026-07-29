@@ -4,11 +4,12 @@
 @using AlfarQuest.Client.Services.Auth
 @inject CurrentUserProvider Me
 @inject NavigationManager Nav
+@inject Translator L
 
-<PageTitle>Create an account · Alfar Quest</PageTitle>
+<PageTitle>@L["Create an account"] · Alfar Quest</PageTitle>
 
-<h1 class="aq-auth-title">Create an Account</h1>
-<p class="aq-auth-sub">Your name in the records, so the cave remembers you.</p>
+<h1 class="aq-auth-title">@L["Create an Account"]</h1>
+<p class="aq-auth-sub">@L["Your name in the records, so the cave remembers you."]</p>
 
 <SignUpForm ReturnUrl="@ReturnUrl" />
 

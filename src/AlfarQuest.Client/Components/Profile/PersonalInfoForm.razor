@@ -5,6 +5,7 @@
 @inject ProfileService Profiles
 @inject CurrentUserProvider Me
 @inject NotificationService Notifications
+@inject Translator L
 
 <EditForm Model="Model" OnValidSubmit="Save" class="aq-form" novalidate>
     @* novalidate hands validation to Blazor alone. Without it the browser's own
@@ -15,7 +16,7 @@
 
     <FormErrorSummary Message="@_error" />
 
-    <FormField Id="profile-name" Label="Full name">
+    <FormField Id="profile-name" Label="@L["Full name"]">
         <InputText id="profile-name" class="aq-input" @bind-Value="Model.FullName" autocomplete="name" />
         <ValidationMessage For="@(() => Model.FullName)" class="aq-field-error" />
     </FormField>
@@ -23,24 +24,24 @@
     @* Email is shown but not editable. Changing it has to be confirmed at the new
        address, and until that exists an editable box here would be a promise the
        server would refuse to keep. *@
-    <FormField Id="profile-email" Label="Email"
-               Hint="Changing your email will need confirmation — not available yet.">
+    <FormField Id="profile-email" Label="@L["Email"]"
+               Hint="@L["Changing your email will need confirmation — not available yet."]">
         <input id="profile-email" class="aq-input" type="email" value="@Me.Player?.Email" disabled readonly />
     </FormField>
 
     <div class="aq-form-split">
-        <FormField Id="profile-country" Label="Country" Required="false">
+        <FormField Id="profile-country" Label="@L["Country"]" Required="false">
             <InputText id="profile-country" class="aq-input" @bind-Value="Model.Country" autocomplete="country-name" />
             <ValidationMessage For="@(() => Model.Country)" class="aq-field-error" />
         </FormField>
 
-        <FormField Id="profile-phone" Label="Phone" Required="false">
+        <FormField Id="profile-phone" Label="@L["Phone"]" Required="false">
             <InputText id="profile-phone" class="aq-input" @bind-Value="Model.PhoneNumber" type="tel" autocomplete="tel" />
             <ValidationMessage For="@(() => Model.PhoneNumber)" class="aq-field-error" />
         </FormField>
     </div>
 
-    <SubmitButton Label="Save changes" BusyLabel="Saving…" Busy="_busy" />
+    <SubmitButton Label="@L["Save changes"]" BusyLabel="@L["Saving…"]" Busy="_busy" />
 </EditForm>
 
 @code {
@@ -66,7 +67,7 @@
 
         _busy = false;
 
-        if (result.Ok) Notifications.Success("Your details have been saved.");
+        if (result.Ok) Notifications.Success(L["Your details have been saved."]);
         else _error = result.Error;
     }
 }

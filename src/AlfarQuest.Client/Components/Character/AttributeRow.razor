@@ -1,8 +1,11 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
-<div class="aq-attr @(Raised ? "raised" : "")" title="@Info.Description">
-    <span class="aq-attr-abbr">@Info.Abbr</span>
-    <span class="aq-attr-name">@Info.Name</span>
+@* The abbreviation goes through the table too: STR/DEX are English initials, and
+   Portuguese wants FOR/DES. *@
+<div class="aq-attr @(Raised ? "raised" : "")" title="@L[Info.Description]">
+    <span class="aq-attr-abbr">@L[Info.Abbr]</span>
+    <span class="aq-attr-name">@L[Info.Name]</span>
     <span class="aq-attr-val">
         @Value
         @if (Spent > 0)
@@ -11,7 +14,7 @@
         }
     </span>
     <button class="aq-mini-btn" disabled="@(!CanRaise)"
-            title="@(CanRaise ? $"Raise {Info.Name}" : "No attribute points")"
+            title="@(CanRaise ? L.Format("Raise {0}", L[Info.Name]) : L["No attribute points"])"
             @onclick="Raise">+</button>
 </div>
 

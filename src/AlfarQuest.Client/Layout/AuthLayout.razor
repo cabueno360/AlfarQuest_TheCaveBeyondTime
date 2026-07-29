@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @using AlfarQuest.Client.Components.Common
+@inject Translator L
 
 @* The frame around sign-in, sign-up and password recovery: key art behind, a
    single lit panel in front. No navigation — these pages have exactly one thing
@@ -14,11 +15,11 @@
     </main>
 
     <footer class="aq-auth-foot">
-        <a class="aq-link" href="/">Back to the gate</a>
+        <a class="aq-link" href="/">@L["Back to the gate"]</a>
         <span aria-hidden="true">·</span>
-        <a class="aq-link" href="/privacy">Privacy</a>
+        <a class="aq-link" href="/privacy">@L["Privacy"]</a>
         <span aria-hidden="true">·</span>
-        <a class="aq-link" href="/terms">Terms</a>
+        <a class="aq-link" href="/terms">@L["Terms"]</a>
     </footer>
 
     <ToastHost />

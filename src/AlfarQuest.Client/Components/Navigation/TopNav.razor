@@ -1,5 +1,6 @@
 @using AlfarQuest.Client.Components.Auth
 @using Microsoft.AspNetCore.Components.Authorization
+@inject Translator L
 
 @* The application's top bar. Two faces of the same strip: the player menu once
    signed in, the way in before that. AuthorizeView decides which — so the bar
@@ -15,16 +16,19 @@
         <span class="aq-topnav-wordmark">Alfar Quest</span>
     </a>
 
-    <nav class="aq-topnav-links" aria-label="Main">
+    <nav class="aq-topnav-links" aria-label="@L["Main"]">
+        @* Flags first, and outside the AuthorizeView: the language is the one
+           control that means the same thing signed in or not. *@
+        <LanguagePicker Compact="true" />
         <AuthorizeView>
             <Authorized>
-                <a class="aq-topnav-link" href="/heroes">Play</a>
-                <a class="aq-topnav-link" href="/profile">Profile</a>
+                <a class="aq-topnav-link" href="/heroes">@L["Play"]</a>
+                <a class="aq-topnav-link" href="/profile">@L["Profile"]</a>
                 <PlayerMenu />
             </Authorized>
             <NotAuthorized>
-                <a class="aq-topnav-link" href="/signin">Sign in</a>
-                <a class="aq-btn aq-btn-sm" href="/signup">Create account</a>
+                <a class="aq-topnav-link" href="/signin">@L["Sign in"]</a>
+                <a class="aq-btn aq-btn-sm" href="/signup">@L["Create account"]</a>
             </NotAuthorized>
         </AuthorizeView>
     </nav>

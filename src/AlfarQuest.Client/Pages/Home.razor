@@ -2,6 +2,7 @@
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @using AlfarQuest.Client.Components.Title
+@inject Translator L
 
 @* Hero select. Behind [Authorize]: it is the first screen that reads game data,
    and the API it reads from requires the same token.
@@ -16,13 +17,13 @@
         <BrandHeader />
 
         <p class="aq-tagline">
-            Three souls stand at the mouth of the Cave Beyond Time.<br />
-            Choose who leads the descent — you may take up any of them once the dark closes in.
+            @L["Three souls stand at the mouth of the Cave Beyond Time."]<br />
+            @L["Choose who leads the descent — you may take up any of them once the dark closes in."]
         </p>
 
         @if (Heroes is null)
         {
-            <p class="aq-hint">Reading the old records…</p>
+            <p class="aq-hint">@L["Reading the old records…"]</p>
         }
         else
         {
@@ -31,9 +32,9 @@
                 @* The save at a glance — where the party stands, and when. Per-hero
                    level and gear ride on the cards below. *@
                 <dl class="aq-save-strip">
-                    <div><dt>Location</dt><dd>@Location</dd></div>
-                    <div><dt>Last played</dt><dd>@LastPlayed</dd></div>
-                    <div><dt>Party time</dt><dd>@PartyPlayTime</dd></div>
+                    <div><dt>@L["Location"]</dt><dd>@L[Location]</dd></div>
+                    <div><dt>@L["Last played"]</dt><dd>@LastPlayed</dd></div>
+                    <div><dt>@L["Party time"]</dt><dd>@PartyPlayTime</dd></div>
                 </dl>
             }
 
@@ -49,11 +50,11 @@
             </div>
 
             <button class="aq-btn aq-begin" @onclick="Begin">
-                @(HasSave ? "Continue the Descent" : "Begin the Descent")
+                @L[HasSave ? "Continue the Descent" : "Begin the Descent"]
             </button>
 
-            <button type="button" class="aq-mute" title="Mute / unmute the intro"
-                    @onclick="ToggleMusic">@(Muted ? "🔇" : "🔊") <span>Intro theme</span></button>
+            <button type="button" class="aq-mute" title="@L["Mute / unmute the intro"]"
+                    @onclick="ToggleMusic">@(Muted ? "🔇" : "🔊") <span>@L["Intro theme"]</span></button>
         }
     </div>
 </div>

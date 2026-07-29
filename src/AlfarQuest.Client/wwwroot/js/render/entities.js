@@ -4,6 +4,7 @@
 import { ATLAS, animFrame, drawSprite, getOutsideFrames, getCharFrames, HOUSE_OBJ } from "../atlas.js";
 import { CRYSTAL_CELLS } from "../world/tiles.js";
 import { ctx, hexA } from "../gfx.js";
+import { t } from "../i18n.js";
 
 /// Draw actors from the outlined copy of their atlas. The rim itself is baked in
 /// at load time — see makeOutlined — so this costs nothing per frame.
@@ -61,14 +62,17 @@ function drawLabel(e) {
     ctx.save();
     ctx.font = "600 13px 'EB Garamond', serif";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    const w = ctx.measureText(e.name).width + 18, h = 21, x = e.x, y = e.y;
+    // Translate before measuring: the plate is sized to its text, and a
+    // Portuguese name is rarely the same width as the English one.
+    const name = t(e.name);
+    const w = ctx.measureText(name).width + 18, h = 21, x = e.x, y = e.y;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 7);
     else ctx.rect(x - w / 2, y - h / 2, w, h);
     ctx.fillStyle = "rgba(10,8,24,0.74)"; ctx.fill();
     ctx.strokeStyle = "rgba(216,180,90,0.5)"; ctx.lineWidth = 1; ctx.stroke();
     ctx.fillStyle = "#f0d99a";
-    ctx.fillText(e.name, x, y + 0.5);
+    ctx.fillText(name, x, y + 0.5);
     ctx.restore();
 }
 
@@ -472,5 +476,5 @@ function drawExit(e) {
     ctx.lineTo(e.x - e.r * 0.9, e.y + e.r);
     ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#8fd0ff"; ctx.font = "italic 16px 'EB Garamond', serif"; ctx.textAlign = "center";
-    ctx.fillText("↓ deeper ↓", e.x, e.y + e.r + 24);
+    ctx.fillText(`↓ ${t("deeper")} ↓`, e.x, e.y + e.r + 24);
 }

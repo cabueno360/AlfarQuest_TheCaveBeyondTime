@@ -1,0 +1,68 @@
+/* ---------------------------------------------------------------
+   The language picker.
+
+   Two flags side by side, the current one lit. The unchosen flag is
+   desaturated rather than dimmed: a half-transparent flag over the
+   parchment reads as a disabled control, and this one is not disabled —
+   it is the thing to press.
+   --------------------------------------------------------------- */
+
+.aq-langpick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.aq-langpick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid transparent;
+    border-radius: 0.4rem;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, filter 120ms ease;
+}
+
+.aq-langpick-btn .aq-flag {
+    width: 1.4rem;
+    height: 1rem;
+    display: block;
+    border-radius: 0.14rem;
+    /* A hairline, so a white stripe still has an edge against parchment. */
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35);
+    filter: saturate(0.25) contrast(0.85);
+}
+
+.aq-langpick-btn:hover .aq-flag,
+.aq-langpick-btn:focus-visible .aq-flag {
+    filter: none;
+}
+
+.aq-langpick-btn.on {
+    border-color: var(--aq-gold, #c9a227);
+    background: rgb(201 162 39 / 0.12);
+}
+
+.aq-langpick-btn.on .aq-flag {
+    filter: none;
+}
+
+.aq-langpick-btn:focus-visible {
+    outline: 2px solid var(--aq-gold, #c9a227);
+    outline-offset: 2px;
+}
+
+.aq-langpick-name {
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* In the top bar there is no room for the names, and no border either —
+   the strip is already a row of links. */
+.aq-langpick.compact .aq-langpick-btn {
+    padding: 0.25rem;
+}

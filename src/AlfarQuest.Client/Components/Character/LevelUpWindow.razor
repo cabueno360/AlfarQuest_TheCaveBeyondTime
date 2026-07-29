@@ -1,5 +1,6 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services
+@inject Translator L
 
 @* The moment the whole progression system exists to produce.
 
@@ -18,31 +19,31 @@
             <div class="aq-levelup-rays" aria-hidden="true"></div>
 
             <p class="aq-levelup-kicker" id="levelup-title">
-                <span aria-hidden="true">⭐</span> Level Up! <span aria-hidden="true">⭐</span>
+                <span aria-hidden="true">⭐</span> @L["Level Up!"] <span aria-hidden="true">⭐</span>
             </p>
 
             <CharacterPortrait Character="up.Hero" />
 
-            <h2 class="aq-levelup-name">@up.Hero.Name</h2>
-            <p class="aq-levelup-title">@up.Hero.Title</p>
+            <h2 class="aq-levelup-name">@L[up.Hero.Name]</h2>
+            <p class="aq-levelup-title">@L[up.Hero.Title]</p>
 
             <p class="aq-levelup-level">
                 <span class="from">@up.FromLevel</span>
                 <span class="arrow" aria-hidden="true">→</span>
                 <span class="to">@up.ToLevel</span>
             </p>
-            <p class="aq-levelup-reached">Level @up.ToLevel reached!</p>
+            <p class="aq-levelup-reached">@L.Format("Level {0} reached!", up.ToLevel)</p>
 
             <ul class="aq-levelup-rewards">
-                <li><strong>+@up.AttributePoints</strong> attribute points</li>
+                <li>@L.Format("+{0} attribute points", up.AttributePoints)</li>
                 @if (up.SkillPoints > 0)
                 {
-                    <li><strong>+@up.SkillPoints</strong> skill @(up.SkillPoints == 1 ? "point" : "points")</li>
+                    <li>@L.Format(up.SkillPoints == 1 ? "+{0} skill point" : "+{0} skill points", up.SkillPoints)</li>
                 }
             </ul>
 
             <p class="aq-levelup-flavour">
-                The dark has taught @(up.Hero.Name.Split(' ').Last()) something. Spend it well.
+                @L.Format("The dark has taught {0} something. Spend it well.", up.Hero.Name.Split(' ').Last())
             </p>
 
             @* The party levels together, but only one window opens. Naming the
@@ -51,17 +52,17 @@
             @if (up.Companions.Count > 0)
             {
                 <p class="aq-levelup-party">
-                    @string.Join(" and ", up.Companions) also grew.
+                    @L.Format("{0} also grew.", string.Join(L[" and "], up.Companions.Select(c => L[c])))
                 </p>
             }
 
             @if (Remaining > 0)
             {
-                <p class="aq-levelup-more">@Remaining more waiting</p>
+                <p class="aq-levelup-more">@L.Format("{0} more waiting", Remaining)</p>
             }
 
             <button class="aq-btn aq-levelup-go" @ref="_continue" @onclick="Continue">
-                Continue
+                @L["Continue"]
             </button>
         </div>
     </section>

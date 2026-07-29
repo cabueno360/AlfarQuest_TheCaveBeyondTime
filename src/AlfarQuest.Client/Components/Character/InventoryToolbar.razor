@@ -1,6 +1,7 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services.Character
 @inject CharacterWindowState State
+@inject Translator L
 
 @* Search, category, sort and view.
 
@@ -20,49 +21,49 @@
         <input type="text"
                class="aq-input"
                inputmode="search"
-               placeholder="Search the pack…"
-               aria-label="Search the pack"
+               placeholder="@L["Search the pack…"]"
+               aria-label="@L["Search the pack"]"
                value="@State.Search"
                @oninput="OnSearch"
                @onkeydown="OnKeyDown"
                @onkeydown:stopPropagation="true" />
         @if (State.Search.Length > 0)
         {
-            <button type="button" class="aq-search-clear" aria-label="Clear search"
+            <button type="button" class="aq-search-clear" aria-label="@L["Clear search"]"
                     @onclick="ClearSearch">✕</button>
         }
     </div>
 
-    <div class="aq-chips" role="group" aria-label="Filter by category">
+    <div class="aq-chips" role="group" aria-label="@L["Filter by category"]">
         @foreach (var c in ItemCategoryInfo.All)
         {
             <button type="button"
                     class="aq-chip @(State.Filter == c.Category ? "on" : "")"
                     aria-pressed="@(State.Filter == c.Category ? "true" : "false")"
                     @onclick="() => SetFilter(c.Category)">
-                <span aria-hidden="true">@c.Icon</span> @c.Name
+                <span aria-hidden="true">@c.Icon</span> @L[c.Name]
             </button>
         }
     </div>
 
     <div class="aq-packbar-right">
         <label class="aq-sort">
-            <span>Sort</span>
-            <select class="aq-select" aria-label="Sort the pack"
+            <span>@L["Sort"]</span>
+            <select class="aq-select" aria-label="@L["Sort the pack"]"
                     value="@State.Sort" @onchange="OnSort">
-                <option value="@InventorySortOrder.Rarity">Rarity</option>
-                <option value="@InventorySortOrder.Name">Name</option>
-                <option value="@InventorySortOrder.Slot">Slot</option>
+                <option value="@InventorySortOrder.Rarity">@L["Rarity"]</option>
+                <option value="@InventorySortOrder.Name">@L["Name"]</option>
+                <option value="@InventorySortOrder.Slot">@L["Slot"]</option>
             </select>
         </label>
 
-        <div class="aq-viewtoggle" role="group" aria-label="View">
+        <div class="aq-viewtoggle" role="group" aria-label="@L["View"]">
             <button type="button" class="@(State.View == InventoryView.Grid ? "on" : "")"
                     aria-pressed="@(State.View == InventoryView.Grid ? "true" : "false")"
-                    title="Grid view" @onclick="() => SetView(InventoryView.Grid)">▦</button>
+                    title="@L["Grid view"]" @onclick="() => SetView(InventoryView.Grid)">▦</button>
             <button type="button" class="@(State.View == InventoryView.Compact ? "on" : "")"
                     aria-pressed="@(State.View == InventoryView.Compact ? "true" : "false")"
-                    title="Compact view" @onclick="() => SetView(InventoryView.Compact)">☰</button>
+                    title="@L["Compact view"]" @onclick="() => SetView(InventoryView.Compact)">☰</button>
         </div>
     </div>
 </div>

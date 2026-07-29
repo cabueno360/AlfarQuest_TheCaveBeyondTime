@@ -1,6 +1,7 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services
 @inject PartyState Party
+@inject Translator L
 
 @* Crafting, promoted from a strip inside the old scrolling column to its own
    tab. The recipes and the gate are unchanged — what a craftsman will make is
@@ -9,10 +10,10 @@
 <div class="aq-tab-grid two">
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🔨</span> Recipes</h3>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🔨</span> @L["Recipes"]</h3>
             @if (!AtStation)
             {
-                <span class="aq-card-hint">Find a craftsman to work</span>
+                <span class="aq-card-hint">@L["Find a craftsman to work"]</span>
             }
         </header>
         <div class="aq-card-body">
@@ -24,7 +25,7 @@
     <div class="aq-stack">
         <section class="aq-card">
             <header class="aq-card-head">
-                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> Materials</h3>
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> @L["Materials"]</h3>
             </header>
             <div class="aq-card-body">
                 <MaterialsPanel Pouch="Party.Pouch" />
@@ -33,7 +34,7 @@
 
         <section class="aq-card">
             <header class="aq-card-head">
-                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> @L["Purse"]</h3>
             </header>
             <div class="aq-card-body">
                 <MoneyPanel Wallet="Party.PurseFor(Character)" />

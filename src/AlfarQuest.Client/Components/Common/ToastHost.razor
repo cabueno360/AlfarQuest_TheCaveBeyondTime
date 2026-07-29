@@ -1,5 +1,6 @@
 @implements IDisposable
 @inject NotificationService Notifications
+@inject Translator L
 
 @* Lives once, in the layout. aria-live="polite" means each message is read out
    when the user is idle instead of interrupting them mid-sentence. *@
@@ -8,8 +9,8 @@
     {
         <div class="aq-toast @Kind(toast.Kind)" role="@(toast.Kind == NotificationKind.Error ? "alert" : "status")">
             <span class="aq-toast-icon" aria-hidden="true">@Icon(toast.Kind)</span>
-            <span class="aq-toast-text">@toast.Message</span>
-            <button type="button" class="aq-toast-close" aria-label="Dismiss"
+            <span class="aq-toast-text">@L[toast.Message]</span>
+            <button type="button" class="aq-toast-close" aria-label="@L["Dismiss"]"
                     @onclick="() => Notifications.Dismiss(toast.Id)">×</button>
         </div>
     }

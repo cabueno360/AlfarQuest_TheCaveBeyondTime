@@ -1,0 +1,48 @@
+@using AlfarQuest.Client.Services.I18n
+
+@* The flags are drawn, not typed.
+   Regional-indicator emoji (🇧🇷) render as the bare letters "BR" on Windows,
+   which ships no flag glyphs — so a picker built from emoji shows a player on
+   Windows two pairs of letters instead of two flags. These are simplified at
+   the size they are used: the Brazilian motto band and the American star field
+   are suggested rather than drawn, because at 20px neither reads anyway. *@
+
+@if (For == Language.Portuguese)
+{
+    <svg class="aq-flag" viewBox="0 0 28 20" role="img" aria-label="Brasil" focusable="false">
+        <rect width="28" height="20" fill="#009b3a" />
+        <path d="M14 2.4 25.6 10 14 17.6 2.4 10Z" fill="#ffdf00" />
+        <circle cx="14" cy="10" r="4.3" fill="#002776" />
+        <path d="M9.9 8.6a11 11 0 0 1 8.2 2.6" stroke="#fff" stroke-width="1.15" fill="none" />
+    </svg>
+}
+else
+{
+    <svg class="aq-flag" viewBox="0 0 28 20" role="img" aria-label="United States" focusable="false">
+        <rect width="28" height="20" fill="#fff" />
+        @* Seven red stripes over white, the same proportions as the real flag. *@
+        @for (var i = 0; i < 7; i++)
+        {
+            <rect y="@(i * 20 / 6.5)" width="28" height="1.54" fill="#b22234" />
+        }
+        <rect width="12" height="10.8" fill="#3c3b6e" />
+        <g fill="#fff">
+            @foreach (var (cx, cy) in Canton)
+            {
+                <circle cx="@cx" cy="@cy" r="0.62" />
+            }
+        </g>
+    </svg>
+}
+
+@code {
+    [Parameter, EditorRequired] public Language For { get; set; }
+
+    // Five rows of stars, offset row to row — enough to read as a star field
+    // without pretending to be fifty at this size.
+    private static readonly (double, double)[] Canton =
+        Enumerable.Range(0, 5)
+            .SelectMany(row => Enumerable.Range(0, 5)
+                .Select(col => (1.6 + col * 2.2 + (row % 2 == 0 ? 0 : 1.1), 1.5 + row * 2.0)))
+            .ToArray();
+}

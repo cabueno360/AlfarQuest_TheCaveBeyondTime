@@ -5,6 +5,7 @@
 @inject AvatarService Avatars
 @inject CurrentUserProvider Me
 @inject NotificationService Notifications
+@inject Translator L
 
 @* Choose, preview, upload. The choosing and the uploading are separate steps on
    purpose: an avatar that changed the instant a file was picked would leave no
@@ -22,19 +23,19 @@
                    accept="@AvatarService.Accept" />
 
         <label for="avatar-file" class="aq-btn ghost aq-uploader-choose">
-            @(_preview is null ? "Change avatar" : "Choose another")
+            @(_preview is null ? L["Change avatar"] : L["Choose another"])
         </label>
 
         @if (_preview is not null)
         {
             <button type="button" class="aq-btn" disabled="@_busy" @onclick="Upload">
-                @(_busy ? "Uploading…" : "Upload image")
+                @(_busy ? L["Uploading…"] : L["Upload image"])
             </button>
-            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Discard">Cancel</button>
+            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Discard">@L["Cancel"]</button>
         }
         else if (Me.Player?.AvatarUrl is not null)
         {
-            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Remove">Remove</button>
+            <button type="button" class="aq-btn ghost" disabled="@_busy" @onclick="Remove">@L["Remove"]</button>
         }
     </div>
 
@@ -90,7 +91,7 @@
         // The session now holds the new profile, so every portrait on screen has
         // already changed; dropping the preview reveals the stored one.
         Discard();
-        Notifications.Success("Your portrait has been changed.");
+        Notifications.Success(L["Your portrait has been changed."]);
     }
 
     private async Task Remove()
@@ -99,7 +100,7 @@
         var result = await Avatars.RemoveAsync();
         _busy = false;
 
-        if (result.Ok) Notifications.Success("Your portrait has been removed.");
+        if (result.Ok) Notifications.Success(L["Your portrait has been removed."]);
         else _error = result.Error;
     }
 

@@ -1,14 +1,15 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* Shown when hovering a packed item that would replace something worn. The
    point of a comparison is the delta, so the numbers are signed and coloured by
    direction rather than merely listed side by side. *@
 <div class="aq-tip compare">
-    <div class="aq-tip-name" style="color:@RarityInfo.Of(Candidate.Rarity).Colour">@Candidate.Name</div>
-    <div class="aq-tip-kind">@RarityInfo.Of(Candidate.Rarity).Name @SlotInfo.Of(Candidate.Slot).Name</div>
+    <div class="aq-tip-name" style="color:@RarityInfo.Of(Candidate.Rarity).Colour">@L[Candidate.Name]</div>
+    <div class="aq-tip-kind">@L[RarityInfo.Of(Candidate.Rarity).Name] @L[SlotInfo.Of(Candidate.Slot).Name]</div>
 
     <ul class="aq-tip-bonuses">
-        @foreach (var line in Candidate.Bonuses())
+        @foreach (var line in Candidate.Bonuses(s => L[s], (f, a) => L.Format(f, a)))
         {
             <li>@line</li>
         }
@@ -16,7 +17,7 @@
 
     @if (Worn is not null)
     {
-        <div class="aq-tip-vs">replacing @Worn.Name</div>
+        <div class="aq-tip-vs">@L.Format("replacing {0}", L[Worn.Name])</div>
         <ul class="aq-tip-bonuses">
             @foreach (var (label, delta) in Deltas())
             {
@@ -29,7 +30,7 @@
 
     @if (!string.IsNullOrWhiteSpace(Candidate.Flavour))
     {
-        <p class="aq-tip-flavour">@Candidate.Flavour</p>
+        <p class="aq-tip-flavour">@L[Candidate.Flavour]</p>
     }
 </div>
 
@@ -37,6 +38,9 @@
     [Parameter, EditorRequired] public required Item Candidate { get; set; }
     [Parameter] public Item? Worn { get; set; }
 
+    /// <summary>Each delta as a translated line and its signed size — the size is
+    /// what colours the row, so it stays a number rather than being read back off
+    /// the text.</summary>
     private IEnumerable<(string Label, float Delta)> Deltas()
     {
         if (Worn is null) yield break;
@@ -48,16 +52,16 @@
         })
         {
             var d = now - then;
-            if (d != 0) yield return ($"{d:+0;-0} {name}", d);
+            if (d != 0) yield return (L.Format("{0} {1}", d.ToString("+0;-0"), L[name]), d);
         }
 
         var crit = (Candidate.CritChance - Worn.CritChance) * 100;
-        if (crit != 0) yield return ($"{crit:+0.0;-0.0}% Critical", crit);
+        if (crit != 0) yield return (L.Format("{0}% Critical", crit.ToString("+0.0;-0.0")), crit);
 
         foreach (var a in AttributeInfo.All)
         {
             var d = Candidate.Attributes[a.Kind] - Worn.Attributes[a.Kind];
-            if (d != 0) yield return ($"{d:+0;-0} {a.Name}", d);
+            if (d != 0) yield return (L.Format("{0} {1}", d.ToString("+0;-0"), L[a.Name]), d);
         }
     }
 }

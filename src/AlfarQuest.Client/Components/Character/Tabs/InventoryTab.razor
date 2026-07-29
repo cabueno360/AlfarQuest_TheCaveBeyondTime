@@ -3,6 +3,7 @@
 @using AlfarQuest.Client.Services.Character
 @inject PartyState Party
 @inject CharacterWindowState State
+@inject Translator L
 
 @* The pack in full: toolbar, grid, and the gathered materials beside it.
 
@@ -13,7 +14,7 @@
 <div class="aq-tab-grid pack">
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> @L["Pack"]</h3>
             <span class="aq-cw-badge pack">@Character.Bag.Items.Count / @Character.Bag.Capacity</span>
         </header>
         <div class="aq-card-body">
@@ -30,8 +31,8 @@
                 @* Saying what the filter is hiding, so a pack that looks empty is
                    never mistaken for a pack that is. *@
                 <p class="aq-pack-note">
-                    Showing @Shown.Count of @Character.Bag.Items.Count.
-                    <button type="button" class="aq-link-btn" @onclick="Reset">Clear filters</button>
+                    @L.Format("Showing {0} of {1}.", Shown.Count, Character.Bag.Items.Count)
+                    <button type="button" class="aq-link-btn" @onclick="Reset">@L["Clear filters"]</button>
                 </p>
             }
         </div>
@@ -40,7 +41,7 @@
     <div class="aq-stack">
         <section class="aq-card">
             <header class="aq-card-head">
-                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> Materials</h3>
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◆</span> @L["Materials"]</h3>
             </header>
             <div class="aq-card-body">
                 <MaterialsPanel Pouch="Party.Pouch" />
@@ -49,7 +50,7 @@
 
         <section class="aq-card">
             <header class="aq-card-head">
-                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Purse</h3>
+                <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> @L["Purse"]</h3>
             </header>
             <div class="aq-card-body">
                 <MoneyPanel Wallet="Party.PurseFor(Character)" />
@@ -64,9 +65,9 @@
     private IReadOnlyList<Item> Shown =>
         [.. ItemFilter.Apply(Character.Bag.Items, State.Filter, State.Search, State.Sort)];
 
-    private string EmptyMessage => Character.Bag.Items.Count == 0
+    private string EmptyMessage => L[Character.Bag.Items.Count == 0
         ? "The pack is empty."
-        : "Nothing here matches that.";
+        : "Nothing here matches that."];
 
     private void Equip(Item item) => Party.Equip(Character, item);
 

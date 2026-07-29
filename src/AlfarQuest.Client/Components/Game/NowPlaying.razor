@@ -1,7 +1,11 @@
+@inject Translator L
+
 <div class="aq-topbar">
     <div class="aq-nowplaying">
-        <span>♪ Now playing — <i>@Track</i> (@Artist)</span>
-        <button title="Mute / unmute" @onclick="OnToggle">@(Muted ? "🔇" : "🔊")</button>
+        @* The track title and the band's name are not translated — a song keeps
+           its name in every language. Only the label around them changes. *@
+        <span>♪ @L["Now playing"] — <i>@Track</i> (@Artist)</span>
+        <button title="@L["Mute / unmute"]" @onclick="OnToggle">@(Muted ? "🔇" : "🔊")</button>
     </div>
 </div>
 

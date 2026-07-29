@@ -4,6 +4,7 @@
 @using AlfarQuest.Client.Services.Character
 @implements IDisposable
 @inject DialogueState Talk
+@inject Translator L
 
 @* A conversation with someone who has more than one thing to say.
 
@@ -16,7 +17,7 @@
 {
     <div class="aq-talk-scrim" @onclick="Close"></div>
 
-    <section class="aq-talk" role="dialog" aria-modal="true" aria-label="@($"Speaking with {talk.Name}")"
+    <section class="aq-talk" role="dialog" aria-modal="true" aria-label="@L.Format("Speaking with {0}", L[talk.Name])"
              tabindex="0" @ref="_panel" @onkeydown="OnKeyDown">
 
         <header class="aq-talk-head">
@@ -29,51 +30,51 @@
                 <span class="aq-talk-portrait" aria-hidden="true">@Portrait(talk.Role)</span>
             }
             <div class="aq-talk-who">
-                <h2 class="aq-talk-name">@talk.Name</h2>
-                <p class="aq-talk-role">@talk.Role</p>
+                <h2 class="aq-talk-name">@L[talk.Name]</h2>
+                <p class="aq-talk-role">@L[talk.Role]</p>
             </div>
-            <button class="aq-talk-close" aria-label="Take your leave" @onclick="Close">✕</button>
+            <button class="aq-talk-close" aria-label="@L["Take your leave"]" @onclick="Close">✕</button>
         </header>
 
         @if (Talk.Offer is { } offer)
         {
             @* A quest laid out to accept or leave — its terms, and its reward, up front,
                so nobody takes on a delve without knowing what is on the table. *@
-            <span class="aq-offer-eyebrow">✦ New Quest</span>
-            <h3 class="aq-offer-title">@offer.Title</h3>
-            <p class="aq-offer-summary">@offer.Summary</p>
+            <span class="aq-offer-eyebrow">✦ @L["New Quest"]</span>
+            <h3 class="aq-offer-title">@L[offer.Title]</h3>
+            <p class="aq-offer-summary">@L[offer.Summary]</p>
 
             @if (!offer.Reward.IsEmpty)
             {
                 <div class="aq-offer-reward">
-                    <span class="aq-offer-reward-label">Reward</span>
+                    <span class="aq-offer-reward-label">@L["Reward"]</span>
                     <div class="aq-offer-chips">
                         @foreach (var chip in RewardChips(offer))
                         {
-                            <span class="aq-offer-item" style="color:@chip.Colour">@chip.Icon&nbsp;@chip.Name</span>
+                            <span class="aq-offer-item" style="color:@chip.Colour">@chip.Icon&nbsp;@L[chip.Name]</span>
                         }
                         @if (offer.Reward.Xp > 0)
                         {
-                            <span class="aq-offer-tally">+@offer.Reward.Xp XP</span>
+                            <span class="aq-offer-tally">+@offer.Reward.Xp @L["XP"]</span>
                         }
                         @if (offer.Reward.Gold > 0)
                         {
-                            <span class="aq-offer-tally aq-offer-gold">+@offer.Reward.Gold gold</span>
+                            <span class="aq-offer-tally aq-offer-gold">+@offer.Reward.Gold @L["gold"]</span>
                         }
                     </div>
                 </div>
             }
 
             <footer class="aq-talk-foot aq-offer-foot">
-                <button class="aq-offer-decline" @onclick="Talk.DeclineOffer">Maybe later</button>
-                <button class="aq-talk-go aq-offer-accept" @onclick="Talk.AcceptOffer">Accept the quest</button>
+                <button class="aq-offer-decline" @onclick="Talk.DeclineOffer">@L["Maybe later"]</button>
+                <button class="aq-talk-go aq-offer-accept" @onclick="Talk.AcceptOffer">@L["Accept the quest"]</button>
             </footer>
         }
         else if (Talk.Asked is { } asked)
         {
             @* An answer. The question is echoed above it so the exchange reads as one. *@
-            <p class="aq-talk-asked">“@asked.Q”</p>
-            <p class="aq-talk-answer">@asked.A[Math.Min(Talk.Page, asked.A.Length - 1)]</p>
+            <p class="aq-talk-asked">“@L[asked.Q]”</p>
+            <p class="aq-talk-answer">@L[asked.A[Math.Min(Talk.Page, asked.A.Length - 1)]]</p>
 
             <footer class="aq-talk-foot">
                 @if (asked.A.Length > 1)
@@ -81,16 +82,16 @@
                     <span class="aq-talk-pages">@(Talk.Page + 1) / @asked.A.Length</span>
                 }
                 <button class="aq-talk-go" @onclick="Talk.Next">
-                    @(Talk.Page + 1 < asked.A.Length ? "Go on…"
+                    @L[Talk.Page + 1 < asked.A.Length ? "Go on…"
                         : Talk.WillOffer(asked) ? "Hear them out…"
-                        : "Ask something else")
+                        : "Ask something else"]
                 </button>
             </footer>
         }
         else
         {
             @* The greeting, then everything you may ask. *@
-            <p class="aq-talk-greeting">@talk.Greeting</p>
+            <p class="aq-talk-greeting">@L[talk.Greeting]</p>
 
             <ul class="aq-talk-topics">
                 @foreach (var topic in talk.Topics)
@@ -100,14 +101,14 @@
                         <button type="button" class="aq-talk-topic @(heard ? "heard" : "")"
                                 @onclick="() => Talk.Ask(topic)">
                             <span class="aq-talk-bullet" aria-hidden="true">@(heard ? "✓" : "❧")</span>
-                            @topic.Q
+                            @L[topic.Q]
                         </button>
                     </li>
                 }
             </ul>
 
             <footer class="aq-talk-foot">
-                <button class="aq-talk-leave" @onclick="Close">Take your leave</button>
+                <button class="aq-talk-leave" @onclick="Close">@L["Take your leave"]</button>
             </footer>
         }
     </section>

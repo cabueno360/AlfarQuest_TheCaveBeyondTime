@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* Health, mana and stamina. The values are mirrored from the simulation, so this
    shows what the party actually has, not what the sheet thinks it should. *@
@@ -6,7 +7,7 @@
     @foreach (var v in Bars)
     {
         <div class="aq-cw-vital">
-            <div class="aq-cw-xp-head"><span>@v.Label</span><span class="aq-cw-xp-num">@($"{v.Now:0} / {v.Max:0}")</span></div>
+            <div class="aq-cw-xp-head"><span>@L[v.Label]</span><span class="aq-cw-xp-num">@($"{v.Now:0} / {v.Max:0}")</span></div>
             <div class="aq-cw-bar">
                 <div class="aq-cw-bar-fill @v.Css" style="width:@(v.Max > 0 ? v.Now / v.Max * 100 : 0)%"></div>
             </div>

@@ -1,4 +1,5 @@
 @using AlfarQuest.Client.Components.Common
+@inject Translator L
 
 @* Submit with a busy state. Disabled while working, which is the only reliable
    way to stop a double submit — and on a sign-up that would mean two accounts
@@ -10,9 +11,12 @@
 <button type="submit" class="aq-btn aq-submit @Class" disabled="@(Busy || Disabled)" aria-busy="@Busy">
     @if (Busy)
     {
-        <Spinner Small="true" Label="@BusyLabel" />
+        <Spinner Small="true" Label="@L[BusyLabel]" />
     }
-    <span>@(Busy ? BusyLabel : Label)</span>
+    @* Callers pass translated labels, but the default BusyLabel is set here — so
+       it goes through the table too rather than being the one English word left
+       on an otherwise translated form. *@
+    <span>@L[Busy ? BusyLabel : Label]</span>
 </button>
 
 @code {

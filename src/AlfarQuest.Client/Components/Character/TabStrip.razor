@@ -1,6 +1,7 @@
 @using AlfarQuest.Client.Models
 @using AlfarQuest.Client.Services.Character
 @inject CharacterWindowState State
+@inject Translator L
 
 @* The tab strip. Rendered from CharacterTab.All, so a future tab is one row in
    that catalogue and nothing here changes.
@@ -10,7 +11,7 @@
 
 @* stopPropagation because the window listens for the same arrows. Without it a
    single press was handled twice and skipped a tab. *@
-<div class="aq-tabs" role="tablist" aria-label="Character sections"
+<div class="aq-tabs" role="tablist" aria-label="@L["Character sections"]"
      @onkeydown="OnKeyDown" @onkeydown:stopPropagation="true">
     @foreach (var tab in CharacterTab.All)
     {
@@ -24,10 +25,10 @@
                 tabindex="@(State.Tab == tab.Key ? 0 : -1)"
                 @onclick="() => Select(tab)">
             <span class="aq-tab-icon" aria-hidden="true">@tab.Icon</span>
-            <span class="aq-tab-name">@tab.Name</span>
+            <span class="aq-tab-name">@L[tab.Name]</span>
             @if (!tab.Available)
             {
-                <span class="aq-soon">soon</span>
+                <span class="aq-soon">@L["soon"]</span>
             }
         </button>
     }

@@ -1,19 +1,20 @@
 @using AlfarQuest.Client.Models
+@inject Translator L
 
 @* Shown on hover over a filled slot. Positioned by the slot, so this only knows
    how to describe an item. *@
 <div class="aq-tip">
-    <div class="aq-tip-name" style="color:@Info.Colour">@Item.Name</div>
-    <div class="aq-tip-kind">@Info.Name @SlotInfo.Of(Item.Slot).Name</div>
+    <div class="aq-tip-name" style="color:@Info.Colour">@L[Item.Name]</div>
+    <div class="aq-tip-kind">@L[Info.Name] @L[SlotInfo.Of(Item.Slot).Name]</div>
     <ul class="aq-tip-bonuses">
-        @foreach (var line in Item.Bonuses())
+        @foreach (var line in Item.Bonuses(s => L[s], (f, a) => L.Format(f, a)))
         {
             <li>@line</li>
         }
     </ul>
     @if (!string.IsNullOrWhiteSpace(Item.Flavour))
     {
-        <p class="aq-tip-flavour">@Item.Flavour</p>
+        <p class="aq-tip-flavour">@L[Item.Flavour]</p>
     }
 </div>
 

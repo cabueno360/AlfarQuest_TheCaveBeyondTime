@@ -4,6 +4,7 @@
 @implements IDisposable
 @inject LootState Loot
 @inject PartyState Party
+@inject Translator L
 
 @* What was inside.
 
@@ -17,28 +18,28 @@
     <div class="aq-loot-scrim" @onclick="Close"></div>
 
     <section class="aq-loot" role="dialog" aria-modal="true"
-             aria-label="@($"{open.Kind.Name} contents")"
+             aria-label="@L.Format("{0} contents", L[open.Kind.Name])"
              style="--rarity:@RarityInfo.Of(open.Kind.Tier).Colour"
              @onkeydown="OnKeyDown">
 
         <header class="aq-loot-head">
             <span class="aq-loot-mark" aria-hidden="true">@Icon(open.Kind)</span>
             <div>
-                <h2 class="aq-loot-name">@open.Kind.Name</h2>
-                <p class="aq-loot-tier">@RarityInfo.Of(open.Kind.Tier).Name</p>
+                <h2 class="aq-loot-name">@L[open.Kind.Name]</h2>
+                <p class="aq-loot-tier">@L[RarityInfo.Of(open.Kind.Tier).Name]</p>
             </div>
-            <button class="aq-loot-close" aria-label="Close" @onclick="Close">✕</button>
+            <button class="aq-loot-close" aria-label="@L["Close"]" @onclick="Close">✕</button>
         </header>
 
         <div class="aq-loot-grid" role="list">
             @if (open.Contents.Coin > 0)
             {
                 <button type="button" class="aq-loot-cell coin" role="listitem"
-                        aria-label="@($"{open.Contents.Coin} gold. Take.")"
+                        aria-label="@L.Format("{0} gold. Take.", open.Contents.Coin)"
                         @onclick="Loot.TakeCoin">
                     <span class="aq-loot-icon">◈</span>
                     <span class="aq-loot-qty">@open.Contents.Coin</span>
-                    <span class="aq-loot-label">Gold</span>
+                    <span class="aq-loot-label">@L["Gold"]</span>
                 </button>
             }
 
@@ -48,11 +49,11 @@
                 var (id, n) = open.Contents.Materials[i];
                 var mat = Material.Find(id);
                 <button type="button" class="aq-loot-cell" role="listitem"
-                        aria-label="@($"{n} {mat?.Name ?? id}. Take.")"
+                        aria-label="@L.Format("{0} {1}. Take.", n, L[mat?.Name ?? id])"
                         @onclick="() => Loot.TakeMaterial(index)">
                     <span class="aq-loot-icon" style="color:@(mat?.Colour ?? "#b8b6c8")">@(mat?.Icon ?? "◆")</span>
                     <span class="aq-loot-qty">@n</span>
-                    <span class="aq-loot-label">@(mat?.Name ?? id)</span>
+                    <span class="aq-loot-label">@L[mat?.Name ?? id]</span>
                 </button>
             }
 
@@ -63,10 +64,10 @@
                 if (item is null) { continue; }
                 <button type="button" class="aq-loot-cell gear" role="listitem"
                         style="--rarity:@RarityInfo.Of(item.Rarity).Colour"
-                        aria-label="@($"{item.Name}, {RarityInfo.Of(item.Rarity).Name}. Take.")"
+                        aria-label="@L.Format("{0}, {1}. Take.", L[item.Name], L[RarityInfo.Of(item.Rarity).Name])"
                         @onclick="() => Loot.TakeItem(index)">
                     <span class="aq-loot-icon">@item.Icon</span>
-                    <span class="aq-loot-label">@item.Name</span>
+                    <span class="aq-loot-label">@L[item.Name]</span>
                     @* The same tooltip the pack and the paper doll use, so an
                        item reads identically wherever it is seen. *@
                     <ItemTooltip Item="item" />
@@ -76,12 +77,12 @@
 
         @if (Loot.Full)
         {
-            <p class="aq-loot-warn">Your pack is full — what will not fit stays here.</p>
+            <p class="aq-loot-warn">@L["Your pack is full — what will not fit stays here."]</p>
         }
 
         <footer class="aq-loot-foot">
-            <span class="aq-loot-hint">Click to take · Esc closes</span>
-            <button type="button" class="aq-btn aq-loot-all" @onclick="Loot.TakeAll">Take All</button>
+            <span class="aq-loot-hint">@L["Click to take · Esc closes"]</span>
+            <button type="button" class="aq-btn aq-loot-all" @onclick="Loot.TakeAll">@L["Take All"]</button>
         </footer>
     </section>
 }

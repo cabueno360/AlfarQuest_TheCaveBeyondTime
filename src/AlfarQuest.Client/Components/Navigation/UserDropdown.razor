@@ -1,3 +1,5 @@
+@inject Translator L
+
 @* The menu itself: only the list of destinations, so what the menu *contains* can
    change without touching how it opens.
 
@@ -5,10 +7,10 @@
    keyboard handling and middle-click-to-open-in-a-tab come free, and a screen
    reader announces it as a menu rather than as loose text. *@
 
-<ul class="aq-dropdown" role="menu" aria-label="Player menu">
+<ul class="aq-dropdown" role="menu" aria-label="@L["Player menu"]">
     <li role="none">
         <a role="menuitem" class="aq-dropdown-item" href="/profile" @onclick="Choose" @onclick:preventDefault="false">
-            <span class="aq-dropdown-icon" aria-hidden="true">◈</span> Profile
+            <span class="aq-dropdown-icon" aria-hidden="true">◈</span> @L["Profile"]
         </a>
     </li>
     <li role="none">
@@ -16,18 +18,18 @@
            menu tells the truth about what is coming instead of changing shape
            the day it lands. *@
         <span role="menuitem" class="aq-dropdown-item disabled" aria-disabled="true">
-            <span class="aq-dropdown-icon" aria-hidden="true">⚔</span> Characters
-            <span class="aq-soon">soon</span>
+            <span class="aq-dropdown-icon" aria-hidden="true">⚔</span> @L["Characters"]
+            <span class="aq-soon">@L["soon"]</span>
         </span>
     </li>
     <li role="none">
         <a role="menuitem" class="aq-dropdown-item" href="/settings" @onclick="Choose">
-            <span class="aq-dropdown-icon" aria-hidden="true">⚙</span> Settings
+            <span class="aq-dropdown-icon" aria-hidden="true">⚙</span> @L["Settings"]
         </a>
     </li>
     <li role="none">
         <a role="menuitem" class="aq-dropdown-item" href="/settings#password" @onclick="Choose">
-            <span class="aq-dropdown-icon" aria-hidden="true">🔑</span> Change password
+            <span class="aq-dropdown-icon" aria-hidden="true">🔑</span> @L["Change password"]
         </a>
     </li>
 
@@ -35,7 +37,7 @@
 
     <li role="none">
         <button type="button" role="menuitem" class="aq-dropdown-item danger" @onclick="OnSignOut">
-            <span class="aq-dropdown-icon" aria-hidden="true">⤴</span> Log out
+            <span class="aq-dropdown-icon" aria-hidden="true">⤴</span> @L["Log out"]
         </button>
     </li>
 </ul>

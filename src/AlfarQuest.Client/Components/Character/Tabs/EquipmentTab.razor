@@ -3,6 +3,7 @@
 @using AlfarQuest.Client.Services.Character
 @inject PartyState Party
 @inject CharacterWindowState State
+@inject Translator L
 
 @* Paper doll and pack, side by side.
 
@@ -17,8 +18,8 @@
 <div class="aq-tab-grid doll">
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🛡</span> Equipment</h3>
-            <span class="aq-card-hint">Drag to wear · click to take off</span>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🛡</span> @L["Equipment"]</h3>
+            <span class="aq-card-hint">@L["Drag to wear · click to take off"]</span>
         </header>
         <div class="aq-card-body">
             <PaperDoll Character="Character"
@@ -32,7 +33,7 @@
 
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> Pack</h3>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">🎒</span> @L["Pack"]</h3>
             <span class="aq-cw-badge pack">@Character.Bag.Items.Count / @Character.Bag.Capacity</span>
         </header>
         <div class="aq-card-body">

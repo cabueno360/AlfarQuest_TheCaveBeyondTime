@@ -1,4 +1,5 @@
 @using AlfarQuest.Shared.Profiles
+@inject Translator L
 
 @* The numbers a player earned. A dl rather than divs: each figure genuinely is a
    term and its value, and that pairing is what a screen reader needs to read
@@ -6,19 +7,19 @@
 
 <dl class="aq-gamestats">
     <div class="aq-gamestat">
-        <dt>Current delver</dt>
-        <dd class="aq-gamestat-value">@(Stats.CurrentCharacter is { Length: > 0 } who ? who : "None yet")</dd>
+        <dt>@L["Current delver"]</dt>
+        <dd class="aq-gamestat-value">@(Stats.CurrentCharacter is { Length: > 0 } who ? L[who] : L["None yet"])</dd>
     </div>
     <div class="aq-gamestat">
-        <dt>Highest level</dt>
+        <dt>@L["Highest level"]</dt>
         <dd class="aq-gamestat-value">@Stats.HighestLevel</dd>
     </div>
     <div class="aq-gamestat">
-        <dt>Total gold</dt>
+        <dt>@L["Total gold"]</dt>
         <dd class="aq-gamestat-value gold">@Stats.TotalGold.ToString("N0")</dd>
     </div>
     <div class="aq-gamestat">
-        <dt>Time in the dark</dt>
+        <dt>@L["Time in the dark"]</dt>
         <dd class="aq-gamestat-value">@Stats.PlayTimeDisplay</dd>
     </div>
 </dl>

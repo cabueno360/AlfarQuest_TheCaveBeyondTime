@@ -1,5 +1,6 @@
 @using AlfarQuest.Client.Components.Common
 @using AlfarQuest.Shared.Profiles
+@inject Translator L
 
 @* The banner: portrait, name, and the two dates that say how long someone has
    been here. Presentation only — it takes a profile and draws it, which is why
@@ -19,19 +20,19 @@
            the page never actually *displays* what it stores. *@
         <dl class="aq-profile-dates">
             <div>
-                <dt>Joined</dt>
+                <dt>@L["Joined"]</dt>
                 <dd>@Player.RegisteredAt.ToLocalTime().ToString("d MMM yyyy")</dd>
             </div>
             <div>
-                <dt>Last seen</dt>
+                <dt>@L["Last seen"]</dt>
                 <dd>@(Player.LastLoginAt is { } seen ? seen.ToLocalTime().ToString("d MMM yyyy, HH:mm") : "—")</dd>
             </div>
             <div>
-                <dt>Country</dt>
+                <dt>@L["Country"]</dt>
                 <dd>@Blank(Player.Country)</dd>
             </div>
             <div>
-                <dt>Phone</dt>
+                <dt>@L["Phone"]</dt>
                 <dd>@Blank(Player.PhoneNumber)</dd>
             </div>
         </dl>

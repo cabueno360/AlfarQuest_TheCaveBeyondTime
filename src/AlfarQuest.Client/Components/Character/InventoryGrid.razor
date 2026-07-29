@@ -56,6 +56,9 @@
     [Parameter, EditorRequired] public required Loadout Gear { get; set; }
     [Parameter] public InventoryView View { get; set; } = InventoryView.Grid;
     [Parameter] public string? Selected { get; set; }
+    /// <summary>Already translated by the caller — the grid is handed a finished
+    /// sentence rather than choosing one, because which sentence is right depends
+    /// on why the grid is empty.</summary>
     [Parameter] public string EmptyMessage { get; set; } = "The pack is empty.";
 
     [Parameter] public EventCallback<Item> OnEquip { get; set; }

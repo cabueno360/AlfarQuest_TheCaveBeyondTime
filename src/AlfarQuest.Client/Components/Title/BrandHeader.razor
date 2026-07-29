@@ -1,13 +1,17 @@
+@inject Translator L
+
 @* The wordmark is art, not text. The heading below only appears if the file is
    missing, so a fresh clone still shows a title instead of a broken image. *@
 <header class="aq-brand">
     <img class="aq-logo" src="assets/ui/logo.png" alt="@FullTitle"
          onerror="this.closest('.aq-brand').classList.add('no-art')" />
-    <h1 class="aq-logo-fallback">@Name<span>@Subtitle</span></h1>
+    @* "Àlfar Quest" is the band's name and stays; the subtitle is a phrase and
+       reads as one in the player's language. *@
+    <h1 class="aq-logo-fallback">@Name<span>@L[Subtitle]</span></h1>
 </header>
 
 @code {
     [Parameter] public string Name { get; set; } = "Àlfar Quest";
     [Parameter] public string Subtitle { get; set; } = "The Cave Beyond Time";
-    private string FullTitle => $"{Name} — {Subtitle}";
+    private string FullTitle => $"{Name} — {L[Subtitle]}";
 }

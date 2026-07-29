@@ -2,6 +2,7 @@
 @using AlfarQuest.Client.Services.Auth
 @inject AuthenticationService Auth
 @inject NavigationManager Nav
+@inject Translator L
 
 <EditForm Model="Model" OnValidSubmit="Submit" class="aq-form" novalidate>
     @* novalidate hands validation to Blazor alone. Without it the browser's own
@@ -12,14 +13,14 @@
 
     <FormErrorSummary Message="@_error" />
 
-    <FormField Id="signin-email" Label="Email">
+    <FormField Id="signin-email" Label="@L["Email"]">
         <InputText id="signin-email" class="aq-input" @bind-Value="Model.Email"
                    type="email" autocomplete="username" placeholder="you@example.com"
                    @ref="_first" />
         <ValidationMessage For="@(() => Model.Email)" class="aq-field-error" />
     </FormField>
 
-    <FormField Id="signin-password" Label="Password">
+    <FormField Id="signin-password" Label="@L["Password"]">
         <PasswordField Id="signin-password" @bind-Value="Model.Password"
                        AutoComplete="current-password" />
         <ValidationMessage For="@(() => Model.Password)" class="aq-field-error" />
@@ -28,15 +29,15 @@
     <div class="aq-form-row">
         <label class="aq-check">
             <InputCheckbox @bind-Value="Model.RememberMe" />
-            <span>Remember me</span>
+            <span>@L["Remember me"]</span>
         </label>
-        <a class="aq-link" href="/forgot-password">Forgot your password?</a>
+        <a class="aq-link" href="/forgot-password">@L["Forgot your password?"]</a>
     </div>
 
-    <SubmitButton Label="Enter the Realm" BusyLabel="Opening the way…" Busy="_busy" />
+    <SubmitButton Label="@L["Enter the Realm"]" BusyLabel="@L["Opening the way…"]" Busy="_busy" />
 
     <p class="aq-form-foot">
-        No account yet? <a class="aq-link" href="@SignUpHref">Create one</a>
+        @L["No account yet?"] <a class="aq-link" href="@SignUpHref">@L["Create one"]</a>
     </p>
 </EditForm>
 

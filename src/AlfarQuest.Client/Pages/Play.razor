@@ -5,6 +5,7 @@
 @using AlfarQuest.Client.Components.Game
 @using AlfarQuest.Client.Components.Character
 @using AlfarQuest.Client.Components.World
+@inject Translator L
 
 @* The game itself, and the only page that loads it.
 
@@ -86,7 +87,7 @@
     {
         <div class="aq-cutscene">
             <video src="@cutscene" autoplay playsinline @onended="EndCutscene"></video>
-            <button class="aq-cutscene-skip" @onclick="EndCutscene">Skip ▸</button>
+            <button class="aq-cutscene-skip" @onclick="EndCutscene">@L["Skip"] ▸</button>
         </div>
     }
 </div>

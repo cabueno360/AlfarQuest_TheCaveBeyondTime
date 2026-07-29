@@ -1,7 +1,10 @@
 using AlfarQuest.Client.Services;
 using AlfarQuest.Client.Services.Auth;
+using AlfarQuest.Client.Services.I18n;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<AlfarQuest.Client.App>("#app");
@@ -38,6 +41,20 @@ builder.Services.AddSingleton<ReadState>();
 // wired once and every talking NPC feeds the same window.
 builder.Services.AddSingleton<DialogueState>();
 
+// The player's language. Its own HttpClient: the shared one is aimed at the API
+// and carries a bearer token, while the phrase tables are static files served
+// from this app's own origin — and must load whether or not anyone is signed in.
+builder.Services.AddSingleton(sp => new Translator(
+    new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) },
+    sp.GetRequiredService<IJSRuntime>(),
+    sp.GetRequiredService<NavigationManager>()));
+
 builder.Services.AddAuthorizationCore();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+// Before the first render, not during it: a screen that painted in English and
+// then redrew itself in Portuguese would look like a bug.
+await host.Services.GetRequiredService<Translator>().InitialiseAsync();
+
+await host.RunAsync();

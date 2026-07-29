@@ -5,6 +5,7 @@
 @inject PartyState Party
 @inject CurrentUserProvider Me
 @inject CharacterWindowState State
+@inject Translator L
 
 @* Who this hero is, at a glance. Two columns so nothing here scrolls: the pools
    and the story on the left, the ledger on the right. *@
@@ -12,7 +13,7 @@
 <div class="aq-tab-grid two">
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">❤</span> Condition</h3>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">❤</span> @L["Condition"]</h3>
         </header>
         <div class="aq-card-body">
             <VitalsPanel Character="Character" />
@@ -23,8 +24,14 @@
                    goes to the Stats tab, which is where attributes are spent —
                    a button that only said "you have points" would still leave
                    the player looking for where. *@
+                @* One string per plural rather than a stitched-together sentence:
+                   Portuguese agrees the noun with the number, and gluing a
+                   translated "Point"/"Points" onto a translated "Spend" gives a
+                   sentence no translator ever saw whole. *@
                 <button type="button" class="aq-btn aq-spend" @onclick="@(() => State.GoTo("stats"))">
-                    Spend @Character.AttributePoints Attribute @(Character.AttributePoints == 1 ? "Point" : "Points")
+                    @L.Format(Character.AttributePoints == 1
+                        ? "Spend {0} Attribute Point"
+                        : "Spend {0} Attribute Points", Character.AttributePoints)
                 </button>
             }
         </div>
@@ -32,33 +39,33 @@
 
     <section class="aq-card">
         <header class="aq-card-head">
-            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> Ledger</h3>
+            <h3 class="aq-card-title"><span class="aq-card-icon" aria-hidden="true">◈</span> @L["Ledger"]</h3>
         </header>
         <div class="aq-card-body">
             <dl class="aq-ledger">
-                <div><dt>Class</dt><dd>@Character.Class</dd></div>
-                <div><dt>Race</dt><dd>@Character.Race</dd></div>
-                <div><dt>Level</dt><dd class="hi">@Character.Level</dd></div>
-                <div><dt>Experience</dt><dd>@Character.Xp / @Progression.XpForNext(Character.Level)</dd></div>
-                <div><dt>Play time</dt><dd>@PlayTime</dd></div>
+                <div><dt>@L["Class"]</dt><dd>@L[Character.Class]</dd></div>
+                <div><dt>@L["Race"]</dt><dd>@L[Character.Race]</dd></div>
+                <div><dt>@L["Level"]</dt><dd class="hi">@Character.Level</dd></div>
+                <div><dt>@L["Experience"]</dt><dd>@Character.Xp / @Progression.XpForNext(Character.Level)</dd></div>
+                <div><dt>@L["Play time"]</dt><dd>@PlayTime</dd></div>
             </dl>
 
-            <h4 class="aq-card-sub">Purse</h4>
+            <h4 class="aq-card-sub">@L["Purse"]</h4>
             <MoneyPanel Wallet="Party.PurseFor(Character)" />
 
-            <h4 class="aq-card-sub">Record</h4>
+            <h4 class="aq-card-sub">@L["Record"]</h4>
             @* This hero's own deeds — never the party's. A veteran's record and a
                fresh recruit's stand apart, which is the point of the whole
                individual-progression change. *@
             <dl class="aq-record">
                 @foreach (var (label, value) in Character.Stats.Lines())
                 {
-                    <div><dt>@label</dt><dd class="@(value > 0 ? "hi" : "")">@value.ToString("N0")</dd></div>
+                    <div><dt>@L[label]</dt><dd class="@(value > 0 ? "hi" : "")">@value.ToString("N0")</dd></div>
                 }
             </dl>
 
-            <p class="aq-flavour">@Character.Title</p>
-            <p class="aq-flavour dim">@Character.Description</p>
+            <p class="aq-flavour">@L[Character.Title]</p>
+            <p class="aq-flavour dim">@L[Character.Description]</p>
         </div>
     </section>
 </div>

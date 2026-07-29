@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
 @using AlfarQuest.Client.Components.Common
 @using AlfarQuest.Client.Components.Navigation
+@inject Translator L
 
 @* The default frame: top bar, page, notifications.
 
@@ -14,7 +15,7 @@
 
     @* The skip link's target. Without it, reaching page content by keyboard means
        tabbing past the whole navigation on every single page. *@
-    <a class="aq-skip" href="#main">Skip to content</a>
+    <a class="aq-skip" href="#main">@L["Skip to content"]</a>
 
     <main id="main" class="aq-shell" tabindex="-1">
         @Body

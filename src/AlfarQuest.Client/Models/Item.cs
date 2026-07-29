@@ -199,24 +199,41 @@ public sealed record Item
     public DamageType EffectiveDamage => DamageKind ?? WeaponInfo?.Damage ?? DamageType.Slashing;
 
     /// <summary>The lines a tooltip shows. Built here so every surface that
-    /// describes an item words it identically.</summary>
-    public IEnumerable<string> Bonuses()
+    /// describes an item words it identically.
+    ///
+    /// The caller supplies the wording. These lines used to be interpolated
+    /// strings, which baked English word order into the model — "18–24 Fire
+    /// Damage" cannot be reordered into "18–24 de Dano de Fogo" once it is one
+    /// finished string. Each line is now a format looked up by its English text,
+    /// with the numbers passed in, so a translation is free to put them
+    /// elsewhere in the sentence. With no formatter this yields the English,
+    /// which keeps the model usable on its own.</summary>
+    /// <param name="phrase">Translate a bare phrase (a damage type, an attribute).</param>
+    /// <param name="format">Translate a format and fill it in.</param>
+    public IEnumerable<string> Bonuses(Func<string, string>? phrase = null,
+                                       Func<string, object?[], string>? format = null)
     {
+        string P(string english) => phrase is null ? english : phrase(english);
+        string F(string english, params object?[] args) =>
+            format is null ? string.Format(english, args) : format(english, args);
+
         if (IsWeapon && DamageMax > 0)
         {
             var d = DamageTypeInfo.Of(EffectiveDamage);
-            yield return $"{DamageMin}–{DamageMax} {d.Name} Damage";
-            yield return $"{WeaponInfo!.Name} — {Speed(WeaponInfo.SpeedFactor)} attack";
-            if (WeaponInfo.CritBonus > 0) yield return $"+{WeaponInfo.CritBonus * 100:0}% Critical Chance";
-            if (WeaponInfo.StunChance > 0) yield return $"{WeaponInfo.StunChance * 100:0}% chance to stun";
+            yield return F("{0}–{1} {2} Damage", DamageMin, DamageMax, P(d.Name));
+            yield return F("{0} — {1} attack", P(WeaponInfo!.Name), P(Speed(WeaponInfo.SpeedFactor)));
+            if (WeaponInfo.CritBonus > 0)
+                yield return F("+{0}% Critical Chance", (WeaponInfo.CritBonus * 100).ToString("0"));
+            if (WeaponInfo.StunChance > 0)
+                yield return F("{0}% chance to stun", (WeaponInfo.StunChance * 100).ToString("0"));
         }
-        if (Damage != 0) yield return $"+{Damage:0} Physical Damage";
-        if (Armour != 0) yield return $"+{Armour:0} Armour";
-        if (CritChance != 0) yield return $"+{CritChance * 100:0.0}% Critical Chance";
+        if (Damage != 0) yield return F("+{0} Physical Damage", Damage.ToString("0"));
+        if (Armour != 0) yield return F("+{0} Armour", Armour.ToString("0"));
+        if (CritChance != 0) yield return F("+{0}% Critical Chance", (CritChance * 100).ToString("0.0"));
         foreach (var a in AttributeInfo.All)
         {
             var v = Attributes[a.Kind];
-            if (v != 0) yield return $"+{v} {a.Name}";
+            if (v != 0) yield return F("+{0} {1}", v, P(a.Name));
         }
     }
 

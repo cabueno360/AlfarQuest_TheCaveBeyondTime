@@ -5,6 +5,7 @@
 @implements IDisposable
 @inject PartyState Party
 @inject CharacterWindowState State
+@inject Translator L
 
 @* The shell: frame, header, tab strip, one panel.
 
@@ -30,20 +31,20 @@
        read out" — opacity and pointer-events say nothing about focus. *@
     <section class="aq-cw @(Visible ? "shown" : "")"
              inert="@(Visible ? null : "")"
-             role="dialog" aria-modal="true" aria-label="Character"
+             role="dialog" aria-modal="true" aria-label="@L["Character"]"
              @onkeydown="OnKeyDown">
         <div class="aq-cw-frame">
             <header class="aq-cw-top">
                 <CharacterPortrait Character="c" />
 
                 <div class="aq-cw-ident">
-                    <h2 class="aq-cw-who">@c.Name</h2>
+                    <h2 class="aq-cw-who">@L[c.Name]</h2>
                     <p class="aq-cw-what">
-                        <span class="aq-cw-cls">@c.Class</span>
+                        <span class="aq-cw-cls">@L[c.Class]</span>
                         <span aria-hidden="true">·</span>
-                        <span>@c.Race</span>
+                        <span>@L[c.Race]</span>
                         <span aria-hidden="true">·</span>
-                        <span class="aq-cw-lvl">Level @c.Level</span>
+                        <span class="aq-cw-lvl">@L.Format("Level {0}", c.Level)</span>
                     </p>
                     <ExperienceBar Level="c.Level" Xp="c.Xp" />
                 </div>
@@ -51,20 +52,20 @@
                 @* Switching hero without leaving the window: the party is the
                    point of this game, and closing the sheet to change who it is
                    about would be a strange way to run it. *@
-                <div class="aq-cw-swap" role="group" aria-label="Party member">
+                <div class="aq-cw-swap" role="group" aria-label="@L["Party member"]">
                     @foreach (var member in Party.Members)
                     {
                         <button type="button"
                                 class="aq-cw-swap-btn @(member == c ? "on" : "")"
-                                title="@member.Name"
+                                title="@L[member.Name]"
                                 aria-pressed="@(member == c ? "true" : "false")"
                                 @onclick="() => Party.Select(member.Key)">
-                            @member.Class
+                            @L[member.Class]
                         </button>
                     }
                 </div>
 
-                <button class="aq-cw-close" title="Close (C or Esc)" aria-label="Close"
+                <button class="aq-cw-close" title="@L["Close (C or Esc)"]" aria-label="@L["Close"]"
                         @onclick="Close">✕</button>
             </header>
 
@@ -93,17 +94,21 @@
                 {
                     <button type="button" class="aq-cw-points"
                             @onclick="@(() => State.GoTo("stats"))">
-                        @c.AttributePoints attribute points to spend
+                        @L.Format(c.AttributePoints == 1
+                            ? "{0} attribute point to spend"
+                            : "{0} attribute points to spend", c.AttributePoints)
                     </button>
                 }
                 @if (c.SkillPoints > 0)
                 {
                     <button type="button" class="aq-cw-points skill"
                             @onclick="@(() => State.GoTo("skills"))">
-                        @c.SkillPoints skill points to spend
+                        @L.Format(c.SkillPoints == 1
+                            ? "{0} skill point to spend"
+                            : "{0} skill points to spend", c.SkillPoints)
                     </button>
                 }
-                <span class="aq-cw-hint">← → switch tabs · Esc closes</span>
+                <span class="aq-cw-hint">@L["← → switch tabs · Esc closes"]</span>
             </footer>
         </div>
     </section>
