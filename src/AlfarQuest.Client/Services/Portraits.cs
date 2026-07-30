@@ -19,6 +19,8 @@ public static class Portraits
         "npcNoble",
         "npcBlacksmith",
         "npcAlchemist",
+        "npcOldWoman",
+        "npcApprentice",
     };
 
     /// <summary>Whether this sprite-kind has a portrait asset to show.</summary>
