@@ -26,8 +26,9 @@ public partial class World
             // its spoils. XP goes to the killer; the loot goes to the one holding
             // the reins, which is usually but not always the same hero.
             LootBridge.Drop(item, count, SteeredKey);
-            Floaters.Add(new FloatText(k.Pos, item == "Coins" ? $"+{count} coins" : $"+{item}",
-                                       item == "Coins" ? "#f0d99a" : "#9fe4ff"));
+            Floaters.Add(item == "Coins"
+                ? new FloatText(k.Pos, "+{0} coins", "#f0d99a", count.ToString())
+                : new FloatText(k.Pos, "+{0}", "#9fe4ff", item));
         }
     }
 
@@ -38,10 +39,18 @@ public partial class World
     }
 }
 
-public sealed class FloatText(Vec pos, string text, string colour)
+public sealed class FloatText(Vec pos, string text, string colour, string? arg = null, bool up = false)
 {
     public Vec Pos = pos;
     public string Text { get; } = text;
     public string Colour { get; } = colour;
+    /// <summary>Optional value for a {0} placeholder in <see cref="Text"/>. Kept
+    /// apart rather than interpolated here so the display side can translate the
+    /// format and the value separately — a sentence assembled in the engine
+    /// would bake English word order into the frame.</summary>
+    public string? Arg { get; } = arg;
+    /// <summary>Uppercase after translation. Set instead of shouting in the text
+    /// itself, which would defeat the key lookup.</summary>
+    public bool Up { get; } = up;
     public float Life = 1.6f;
 }

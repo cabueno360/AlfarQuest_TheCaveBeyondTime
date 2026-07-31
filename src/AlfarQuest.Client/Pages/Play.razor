@@ -57,22 +57,22 @@
             @foreach (var t in _questToasts)
             {
                 <div class="aq-quest-toast" @key="t.Id">
-                    <span class="aq-quest-toast-eyebrow">✦ Quest Complete</span>
-                    <span class="aq-quest-toast-title">@t.Title</span>
+                    <span class="aq-quest-toast-eyebrow">✦ @L["Quest Complete"]</span>
+                    <span class="aq-quest-toast-title">@L[t.Title]</span>
                     @if (t.Items.Count > 0 || t.Xp > 0 || t.Gold > 0)
                     {
                         <div class="aq-quest-toast-rewards">
                             @foreach (var it in t.Items)
                             {
-                                <span class="aq-quest-toast-item" style="color:@it.Colour">@it.Icon&nbsp;@it.Name</span>
+                                <span class="aq-quest-toast-item" style="color:@it.Colour">@it.Icon&nbsp;@L[it.Name]</span>
                             }
                             @if (t.Xp > 0)
                             {
-                                <span class="aq-quest-toast-tally">+@t.Xp XP</span>
+                                <span class="aq-quest-toast-tally">+@t.Xp @L["XP"]</span>
                             }
                             @if (t.Gold > 0)
                             {
-                                <span class="aq-quest-toast-tally aq-quest-toast-gold">+@t.Gold gold</span>
+                                <span class="aq-quest-toast-tally aq-quest-toast-gold">+@t.Gold @L["gold"]</span>
                             }
                         </div>
                     }

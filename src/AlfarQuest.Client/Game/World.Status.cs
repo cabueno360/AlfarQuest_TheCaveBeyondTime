@@ -21,14 +21,14 @@ public partial class World
     {
         Refresh(k.Effects, kind, seconds, magnitude, source);
         var info = StatusEffectInfo.Of(kind);
-        Floaters.Add(new FloatText(k.Pos + new Vec(0, -k.R - 8), info.Name.ToUpperInvariant(), info.Colour));
+        Floaters.Add(new FloatText(k.Pos + new Vec(0, -k.R - 8), info.Name, info.Colour, up: true));
     }
 
     void ApplyEffect(Hero h, StatusEffectKind kind, float seconds, float magnitude, string? source)
     {
         Refresh(h.Effects, kind, seconds, magnitude, source);
         var info = StatusEffectInfo.Of(kind);
-        Floaters.Add(new FloatText(h.Pos + new Vec(0, -26), info.Name.ToUpperInvariant(), info.Colour));
+        Floaters.Add(new FloatText(h.Pos + new Vec(0, -26), info.Name, info.Colour, up: true));
     }
 
     static void Refresh(List<ActiveEffect> effects, StatusEffectKind kind, float seconds, float magnitude, string? source)

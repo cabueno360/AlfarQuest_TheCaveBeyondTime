@@ -30,7 +30,7 @@ function noteRegion(name, dt) {
         // Track the English name but announce the translated one, so switching
         // language cannot make the same place read as a new one.
         title.last = name;
-        title.name = t(name);
+        title.name = trRegion(name);
         title.t = TITLE_LIFE;
     }
     if (title.t > 0) title.t = Math.max(0, title.t - dt);
@@ -91,13 +91,28 @@ export function drawFloaters(floats, cam) {
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.font = "bold 13px 'EB Garamond', serif";
     for (const f of floats) {
+        // The engine sends English and, for a composed line, the value for its
+        // {0} apart — assembled HERE so the format and the value each go through
+        // the table ("+12 XP" can never match a key; "+{0} XP" can). `up` is
+        // uppercased after the lookup, or the shout would defeat it.
+        let text = f.arg != null ? tf(f.text, t(f.arg)) : t(f.text);
+        if (f.up) text = text.toUpperCase();
         ctx.globalAlpha = Math.min(1, f.life / 0.6);
         ctx.fillStyle = "rgba(0,0,0,0.65)";
-        ctx.fillText(f.text, f.x + 1, f.y - 22 + 1);
+        ctx.fillText(text, f.x + 1, f.y - 22 + 1);
         ctx.fillStyle = f.c;
-        ctx.fillText(f.text, f.x, f.y - 22);
+        ctx.fillText(text, f.x, f.y - 22);
     }
     ctx.restore();
+}
+
+/// A region name through the table — including the one the cave composes past
+/// its named depths, which arrives as "The Deep — level N" and has to be taken
+/// apart to match its format key.
+function trRegion(name) {
+    if (!name) return "";
+    const deep = /^The Deep — level (\d+)$/.exec(name);
+    return deep ? tf("The Deep — level {0}", deep[1]) : t(name);
 }
 
 export function drawHud(hud, dt = 0.016) {
@@ -160,10 +175,10 @@ export function drawHud(hud, dt = 0.016) {
     // go through the same table as the labels around them.
     const headline = inCave
         ? (hud.phase === "cleared" ? t("Chamber cleared") : tf("Husks: {0}", hud.enemies))
-        : (t(hud.objective || "") || t(hud.region || ""));
+        : (t(hud.objective || "") || trRegion(hud.region));
     const subline = inCave
-        ? tf("{0}  ·  depth {1}", t(hud.region || ""), hud.level || 1)
-        : (hud.objective ? t(hud.region || "") : "");
+        ? tf("{0}  ·  depth {1}", trRegion(hud.region), hud.level || 1)
+        : (hud.objective ? trRegion(hud.region) : "");
     // Below ground the husk count is the headline and the depth its subline, so the
     // Pact's current order hangs on a third line beneath them. On the surface the
     // objective is already the headline, so there is nothing more to add.
@@ -191,7 +206,9 @@ export function drawHud(hud, dt = 0.016) {
         ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
         ctx.font = "16px 'Cinzel', serif";
         ctx.fillStyle = b.enraged ? "#ff9a6b" : "#e6d6a8";
-        ctx.fillText(b.name.toUpperCase() + (b.enraged ? "  —  ENRAGED" : ""), W / 2, by - 7);
+        // Translated FIRST, then shouted — uppercasing the English would stop
+        // the name ever matching its key.
+        ctx.fillText(t(b.name).toUpperCase() + (b.enraged ? `  —  ${t("ENRAGED")}` : ""), W / 2, by - 7);
         ctx.fillStyle = "rgba(8,6,18,0.82)"; ctx.fillRect(bx - 3, by - 3, bw + 6, bh + 6);
         ctx.fillStyle = "rgba(46,22,32,0.9)"; ctx.fillRect(bx, by, bw, bh);
         const grad = ctx.createLinearGradient(bx, 0, bx + bw, 0);

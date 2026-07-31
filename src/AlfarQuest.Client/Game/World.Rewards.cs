@@ -68,7 +68,7 @@ public partial class World
         var levels = RewardBridge.Grant(xp, source, heroKey);
 
         Floaters.Add(new FloatText(at, label ?? award.Label, award.Colour));
-        Floaters.Add(new FloatText(at + new Vec(0, -16), $"+{xp} XP", "#cfe8ff"));
+        Floaters.Add(new FloatText(at + new Vec(0, -16), "+{0} XP", "#cfe8ff", xp.ToString()));
 
         if (levels > 0) CelebrateLevelUp();
     }
@@ -155,11 +155,11 @@ public partial class World
             if (!ContainerBridge.CarryingKey(key))
             {
                 Floaters.Add(new FloatText(thing.Pos + new Vec(0, -30),
-                                           $"Locked — needs a {key}", "#d98a8a"));
+                                           "Locked — needs a {0}", "#d98a8a", key));
                 return true;               // handled: it must not fall through to an NPC
             }
             ContainerBridge.SpendKey(key);
-            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), $"{key} turns", "#f0d99a"));
+            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "{0} turns", "#f0d99a", key));
         }
 
         // First opening rolls it; later ones show whatever is still inside.

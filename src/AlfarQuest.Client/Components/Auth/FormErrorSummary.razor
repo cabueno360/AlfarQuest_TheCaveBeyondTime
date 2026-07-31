@@ -5,11 +5,15 @@
    role="alert" so the failure is announced the moment it appears — a sighted
    user sees the box, and everyone else should hear it. *@
 
+@inject AlfarQuest.Client.Services.I18n.Translator L
+
 @if (!string.IsNullOrWhiteSpace(Message))
 {
     <div class="aq-form-error" role="alert">
         <span aria-hidden="true">⚠</span>
-        <span>@Message</span>
+        @* Through the table: the known API messages have entries, and an
+           unexpected one falls back to itself — never to a blank box. *@
+        <span>@L[Message!]</span>
     </div>
 }
 

@@ -12,6 +12,7 @@
 //  cooldown wipe would be the one expensive thing on screen.
 // =====================================================================
 import { ctx, canvas } from "../gfx.js";
+import { t, tf } from "../i18n.js";
 
 const SLOT = 48, GAP = 7, PAD = 18;
 
@@ -93,10 +94,10 @@ function drawSlot(x, y, icon, shortcut, cdFrac, st) {
     if (!st.unlocked) {
         ctx.fillStyle = "#9a95b6"; ctx.font = "10px 'EB Garamond', serif";
         ctx.fillText("🔒", x + SLOT / 2, y + SLOT / 2 - 12);
-        ctx.fillText(`Lv ${st.lockLevel}`, x + SLOT / 2, y + SLOT - 9);
+        ctx.fillText(`${t("Lv")} ${st.lockLevel}`, x + SLOT / 2, y + SLOT - 9);
     } else if (!st.affordable && cdFrac <= 0.001 && !st.potion) {
         ctx.fillStyle = "#6f8ce0"; ctx.font = "italic 10px 'EB Garamond', serif";
-        ctx.fillText("mana", x + SLOT / 2, y + SLOT - 8);
+        ctx.fillText(t("mana"), x + SLOT / 2, y + SLOT - 8);
     }
 
     // Keyboard shortcut, top-left.
@@ -106,12 +107,15 @@ function drawSlot(x, y, icon, shortcut, cdFrac, st) {
 }
 
 function drawTooltip(h, barY) {
+    // Through the table, every line: the names and descriptions arrive in
+    // English from the catalogue, and the shortcut line is a format key so a
+    // translation can put its words around the values in its own order.
     const lines = h.potion
-        ? ["Healing Draught", "Restores 40% of your health.", "Shortcut: Q   ·   No mana cost"]
-        : [`${h.s.name}`,
-           h.s.desc,
-           `Shortcut: ${h.s.shortcut}   ·   ${h.s.manaCost} mana` +
-             (h.s.unlocked ? "" : `   ·   unlocks at level ${h.s.unlockLevel}`)];
+        ? [t("Healing Draught"), t("Restores 40% of your health."), t("Shortcut: Q   ·   No mana cost")]
+        : [t(h.s.name),
+           t(h.s.desc),
+           tf("Shortcut: {0}   ·   {1} mana", h.s.shortcut, h.s.manaCost) +
+             (h.s.unlocked ? "" : "   ·   " + tf("unlocks at level {0}", h.s.unlockLevel))];
 
     ctx.font = "13px 'EB Garamond', serif";
     const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + 24;
