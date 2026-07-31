@@ -14,37 +14,14 @@ namespace AlfarQuest.Client.Game.Tiled;
 /// has been retired.</summary>
 public static class MapCatalog
 {
-    /// <summary>The maps fetched and registered at startup, as (id, path under
-    /// wwwroot). An interior's id is its <see cref="InteriorDef"/> id, so the
-    /// builder can simply ask whether the interior it is about to build has a map.</summary>
-    public static readonly (string Id, string Path)[] Migrated =
-    [
-        ("cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"),
-        ("cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"),
-        ("mage_school", "Maps/Interiors/MageSchool.tmx"),
-        ("seoshe", "Maps/Interiors/Seoshe.tmx"),
-        ("thieves_warehouse", "Maps/Interiors/ThievesWarehouse.tmx"),
-        (Cave, "Maps/Cave/Cave_Descent.tmx"),
-    ];
-
     /// <summary>The cave's map id. One map serves every depth: the layout is the
     /// same each time and only the population changes.</summary>
     public const string Cave = "cave";
 
-    /// <summary>The hand-authored overworld REGIONS that will replace Stage 1.
-    ///
-    /// Kept apart from <see cref="Migrated"/> on purpose: a region registers and
-    /// can be walked and judged, but it does not become the overworld. Stage 1
-    /// stays on its own map until the ring of regions is closed and the cave is
-    /// reachable again, because half a world is not a world and the game has to
-    /// stay finishable between iterations.</summary>
-    public static readonly (string Id, string Path)[] Regions =
-    [
-        ("r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"),
-        ("r2_whispering_wood", "Maps/Regions/R2_WhisperingWood.tmx"),
-        ("r3_deepdelve", "Maps/Regions/R3_Deepdelve.tmx"),
-        ("r4_kae_ychel_road", "Maps/Regions/R4_KaeYchelRoad.tmx"),
-    ];
+    // WHICH maps exist lives in wwwroot/Maps/manifest.json now — one list that
+    // the engine (Play.razor.cs) and the renderer (game.js) both read, so adding
+    // a map is a Tiled save plus one JSON line, never a code edit in two
+    // languages that have to agree.
 
     static readonly Dictionary<string, TmxMap> Maps = [];
 

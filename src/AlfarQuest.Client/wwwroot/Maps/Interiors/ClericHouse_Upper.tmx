@@ -11,6 +11,7 @@
   <property name="Interior" value="cleric_house_upper"/>
   <property name="DisplayName" value="The Cleric's House — Upstairs"/>
   <property name="EngineTile" type="int" value="32"/>
+  <property name="FloorTile" value="wood"/>
  </properties>
  <tileset firstgid="1" source="../Tilesets/IntWalls.tsx"/>
  <tileset firstgid="1026" source="../Tilesets/IntProps.tsx"/>
@@ -90,6 +91,7 @@
     <property name="Verb" value="Read"/>
     <property name="ReadKind" value="journal"/>
     <property name="Radius" value="44"/>
+    <property name="PageFlags" value="␟␟␟␟cave_entered␟cave_heart"/>
     <property name="Pages" value="The Cleric's journal, in his own careful hand, left open on the nightstand the morning he followed Cerno down into the cave.␟Her father came in the dark with a stranger — Cerno, a warrior of Kaladash, grim and honest. He put into my hand a phial of panacea, drawn, he swore, from the Cave Beyond Time. I did not believe him. I drank his word like a dying man drinks water.␟The first month, the wasting slowed. Her fingers looked human again. She wakes only minutes a day, but each waking is more determined than the last. I have not told her of my bargain — only that through her father's diligence and the will of God, we found a way.␟A letter from my Order. More healers called to the war than exist to send; Blazwitz and Koerig have joined against Tellaran, and the line is pushed north. They speak of recalling me. Outside my window they light the corpse-pyres now, great pillars of flame, and all I can do is pray He accepts the departed.␟Three months, and her progress has stalled. Then her skin grew pale as the snow again, and bruises rose wherever I touched her, as though her flesh rejected me. The panacea's gift was only a loan. There has been no waking in weeks.␟Cerno comes tomorrow to lead me to the cave, and I will descend into the madness he promised. Mirka — tomorrow is the first time I will leave your side in nearly a year. By God, at least I had this year with you. Come, Cerno. Lead me on to damnation."/>
    </properties>
    <point/>

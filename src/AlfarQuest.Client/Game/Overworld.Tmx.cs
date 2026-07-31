@@ -50,8 +50,22 @@ public partial class World
         ReadExaminables(m);
 
         // The cave mouth first, because the wildlife pass keys its NearCave biome
-        // off it — the husks gather where the cold comes out.
-        if (m.Objects("CaveMouth").FirstOrDefault() is { } cm0) CaveMouth = FromMap(cm0.X, cm0.Y);
+        // off it — the husks gather where the cold comes out. It is also a
+        // doorway now, not a trap: the descent asks for [E] like every other
+        // door, reading the destination the map has carried all along, instead
+        // of firing the moment a hero strays within 46 pixels.
+        if (m.Objects("CaveMouth").FirstOrDefault() is { } cm0)
+        {
+            CaveMouth = FromMap(cm0.X, cm0.Y);
+            Portals.Add(new Portal
+            {
+                Pos = CaveMouth,
+                Target = cm0.Str("DestinationMap", Tiled.MapCatalog.Cave),
+                Label = cm0.Str("Label", cm0.Name),
+                Verb = cm0.Str("Verb", "Descend"),
+                R = cm0.Num("Radius", 46f),
+            });
+        }
 
         // Populate the wild parts of the map. A region says how many with a
         // Wildlife property; the spawner keeps them out of the safe zones (read
@@ -76,7 +90,6 @@ public partial class World
             // nudge it to the nearest walkable cell so the party never starts stuck.
             if (Blocked(Spawn, 14f)) Spawn = NearestOpen(Spawn);
         }
-        if (m.Objects("CaveMouth").FirstOrDefault() is { } cm) CaveMouth = FromMap(cm.X, cm.Y);
         Exit = CaveMouth;
         Camera = Spawn;
     }
@@ -85,9 +98,8 @@ public partial class World
     /// overworld — an NPC, a door, a chest and a thing to read are the same objects
     /// wherever they stand — over a simpler terrain rule: a room is walls and floor.
     ///
-    /// Called by LoadInterior in place of the C# builder when the interior has a
-    /// map. The def still supplies the name, the daylight flag and the floor
-    /// material, because those describe the place rather than its geometry.</summary>
+    /// Called by LoadInterior, which has already read the place's name, daylight
+    /// flag and floor material from the map's own properties.</summary>
     void BuildInteriorFromTmx(TmxMap m)
     {
         COLS = m.Width / MapSub; ROWS = m.Height / MapSub;
@@ -245,12 +257,19 @@ public partial class World
         }
     }
 
+    // A reader that cannot resolve an id SAYS SO. These lookups used to
+    // `continue` silently, so a typo in Tiled cost an object with no diagnostic —
+    // the worst failure mode a map editor can have.
     void ReadNpcs(TmxMap m)
     {
         foreach (var o in m.Objects("NPCSpawn"))
         {
             var id = o.Str("NpcId", o.Name);
-            if (NpcCatalog.Find(id) is not { } def) continue;
+            if (NpcCatalog.Find(id) is not { } def)
+            {
+                Console.Error.WriteLine($"tmx: NPCSpawn '{id}' at ({o.X:0},{o.Y:0}) matches no NpcCatalog entry — skipped");
+                continue;
+            }
             var pos = FromMap(o.X, o.Y);
             if (Blocked(pos, 14f)) pos = NearestOpen(pos);
             Npcs.Add(new Npc(def, pos));
@@ -262,7 +281,11 @@ public partial class World
         foreach (var o in m.Objects("EnemySpawn"))
         {
             var id = o.Str("EnemyId", o.Name);
-            if (CreatureCatalog.All.FirstOrDefault(c => c.Id == id) is not { } def) continue;
+            if (CreatureCatalog.All.FirstOrDefault(c => c.Id == id) is not { } def)
+            {
+                Console.Error.WriteLine($"tmx: EnemySpawn '{id}' at ({o.X:0},{o.Y:0}) matches no creature — skipped");
+                continue;
+            }
             Husks.Add(new Husk(FromMap(o.X, o.Y), def));
         }
     }
@@ -279,10 +302,16 @@ public partial class World
                 && float.TryParse(back[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var rx)
                 && float.TryParse(back[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var ry)
                 ? new Vec(rx, ry) : default;
+            var target = o.Str("DestinationMap", Portal.Overworld);
+            // The door is still placed when its far side is unknown — a visibly
+            // dead door beats one that silently never existed — but the author is
+            // told which manifest line or DestinationMap spelling is wrong.
+            if (target != Portal.Overworld && !Tiled.MapCatalog.Has(target))
+                Console.Error.WriteLine($"tmx: Warp '{o.Name}' leads to unregistered map '{target}' — the door will do nothing");
             Portals.Add(new Portal
             {
                 Pos = FromMap(o.X, o.Y),
-                Target = o.Str("DestinationMap", Portal.Overworld),
+                Target = target,
                 Label = o.Str("Label", o.Name),
                 Verb = o.Str("Verb", "Enter"),
                 R = o.Num("Radius", 42f),
@@ -295,7 +324,12 @@ public partial class World
     {
         foreach (var o in m.Objects("TreasureSpawn"))
         {
-            if (ContainerKind.Find(o.Str("ContainerKind")) is not { } kind) continue;
+            var kindId = o.Str("ContainerKind");
+            if (ContainerKind.Find(kindId) is not { } kind)
+            {
+                Console.Error.WriteLine($"tmx: TreasureSpawn '{o.Name}' names unknown ContainerKind '{kindId}' — skipped");
+                continue;
+            }
             Interactables.Add(new Interactable(o.Name, FromMap(o.X, o.Y), kind));
         }
     }
@@ -304,20 +338,45 @@ public partial class World
     {
         foreach (var o in m.Objects("Discovery"))
         {
-            if (!Enum.TryParse<XpSource>(o.Str("XpSource"), out var source)) source = XpSource.RegionDiscovered;
+            if (!Enum.TryParse<XpSource>(o.Str("XpSource"), out var source))
+            {
+                if (o.Has("XpSource"))
+                    Console.Error.WriteLine($"tmx: Discovery '{o.Name}' has unknown XpSource '{o.Str("XpSource")}' — using RegionDiscovered");
+                source = XpSource.RegionDiscovered;
+            }
             Discoveries.Add(new Discovery(o.Name, FromMap(o.X, o.Y), o.Num("Radius", 90f), source));
         }
     }
 
     /// <summary>Things to read out in the world. Pages are held in one property,
-    /// separated by a unit separator, because Tiled has no list type.</summary>
+    /// separated by a unit separator, because Tiled has no list type. An optional
+    /// PageFlags property — same separator, index-aligned with Pages, empty entry
+    /// = always open — gates later pages behind story flags, so a journal in a
+    /// Tiled map fills in as the tale is earned exactly as a C#-built one did.</summary>
     void ReadExaminables(TmxMap m)
     {
         foreach (var o in m.Objects("Interaction"))
         {
-            if (!o.Str("InteractionType", "Examine").Equals("Examine", StringComparison.OrdinalIgnoreCase)) continue;
+            var itype = o.Str("InteractionType", "Examine");
+            if (!itype.Equals("Examine", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.Error.WriteLine($"tmx: Interaction '{o.Name}' has type '{itype}', which nothing implements yet — skipped");
+                continue;
+            }
             var pages = o.Str("Pages").Split('␟', StringSplitOptions.RemoveEmptyEntries);
-            if (pages.Length == 0) continue;
+            if (pages.Length == 0)
+            {
+                Console.Error.WriteLine($"tmx: Interaction '{o.Name}' has no Pages — skipped");
+                continue;
+            }
+            string[]? flags = null;
+            if (o.Has("PageFlags"))
+            {
+                // Split WITHOUT dropping empties: alignment with Pages is the point.
+                flags = o.Str("PageFlags").Split('␟');
+                if (flags.Length != pages.Length)
+                    Console.Error.WriteLine($"tmx: Interaction '{o.Name}' has {pages.Length} pages but {flags.Length} PageFlags — unmatched pages stay open");
+            }
             Examinables.Add(new Examinable
             {
                 Pos = FromMap(o.X, o.Y),
@@ -326,6 +385,7 @@ public partial class World
                 Verb = o.Str("Verb", "Examine"),
                 Kind = o.Str("ReadKind", "note"),
                 Pages = pages,
+                PageFlags = flags,
             });
         }
     }
@@ -360,6 +420,27 @@ public partial class World
         foreach (var a in m.Objects("Arch")) Arches.Add(FromMap(a.X, a.Y));
 
         ReadCaveRegions(m);
+    }
+
+    /// <summary>The cave's authored dressing — Miner_Decorations cells placed by
+    /// hand in Tiled, Cx/Cy naming the sheet cell — read for depth 1 in place of
+    /// the procedural kits, so the Cistern can be furnished visually. Deeper
+    /// floors are the delve and stay rolled.</summary>
+    void ReadCaveProps(TmxMap m)
+    {
+        foreach (var o in m.Objects("Props"))
+        {
+            var p = FromMap(o.X, o.Y);
+            Props.Add(new Prop
+            {
+                X = p.X, Y = p.Y,
+                Cx = o.Int("Cx"), Cy = o.Int("Cy"),
+                S = o.Num("Scale", 0.5f),
+                Solid = o.Flag("Solid"),
+                R = o.Num("Radius"),
+                Flip = o.Flag("Flip"),
+            });
+        }
     }
 
     /// <summary>The cave's rooms, from the Region rectangles the map carries — the

@@ -41,6 +41,10 @@ public partial class World
     /// was entered from, so stepping in and back out never moves you.</summary>
     Vec _interiorReturn;
 
+    /// <summary>The current interior's display name, from its map's DisplayName
+    /// property — what the HUD's corner panel and the title card announce.</summary>
+    string _interiorName = "Indoors";
+
     /// <summary>Whether the current interior is open-air (a city's streets) and
     /// should be lit as daylight rather than as a dungeon.</summary>
     bool _interiorOutdoor;
@@ -91,6 +95,7 @@ public partial class World
             if (Stage == 2) LeaveCave();     // out of the DELVE — back to the region, not a doorstep
             else ExitInterior();             // out of a building — back to the doorstep
         }
+        else if (p.Target == Tiled.MapCatalog.Cave) EnterCave();   // the mouth — down into the delve
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
         else EnterInterior(p.Target, p.Return);                    // a door from the world
     }
@@ -109,10 +114,20 @@ public partial class World
 
     /// <summary>Throws away the current map and lays down an interior, standing the
     /// party at <paramref name="arriveAt"/> or, if none is given, the map's own
-    /// entry point.</summary>
+    /// entry point.
+    ///
+    /// The map IS the interior now. The C# room builders are retired: a missing or
+    /// unparsed map leaves the door doing nothing — and says why in the console —
+    /// rather than silently standing up geometry that no longer matches the
+    /// picture. That visibility is the point of authoring in Tiled: a broken map
+    /// should be fixed in Tiled, not papered over by code.</summary>
     void LoadInterior(string id, Vec? arriveAt)
     {
-        if (InteriorCatalog.Find(id) is not { } def) return;
+        if (Tiled.MapCatalog.Find(id) is not { } map)
+        {
+            Console.Error.WriteLine($"interior '{id}' has no registered map — the door does nothing. Is it in Maps/manifest.json?");
+            return;
+        }
 
         CurrentInterior = id;
         Stage = 3;
@@ -127,22 +142,13 @@ public partial class World
         Interactables.Clear(); Discoveries.Clear();
         Crystals.Clear(); Husks.Clear(); Shots.Clear(); Bolts.Clear(); Slashes.Clear(); Aoe.Clear(); Fx.Clear();
 
-        _interiorOutdoor = def.Outdoor;
-        _interiorFloor = def.FloorTile;
+        // The place describes itself: its name, whether it is open-air and what
+        // its floor is made of are map properties, not rows in a C# table.
+        _interiorName = map.Property("DisplayName", id);
+        _interiorOutdoor = map.Property("Outdoor") == "true";
+        _interiorFloor = map.Property("FloorTile");
 
-        // Authored in Tiled? Then the map is the source of truth and the C# builder
-        // is skipped. The def still describes the PLACE — its name, whether it is
-        // open-air, what its floor is made of — because none of that is geometry.
-        if (Tiled.MapCatalog.Find(id) is { } authored)
-        {
-            BuildInteriorFromTmx(authored);
-        }
-        else
-        {
-            COLS = def.Cols; ROWS = def.Rows;
-            Tiles = new byte[COLS, ROWS];   // all ROCK (0) — walls; the builder carves the rooms
-            def.Build(this);                // fills floor, furniture, doors; sets Spawn
-        }
+        BuildInteriorFromTmx(map);
 
         // The save says what this player has already taken from this room. Only
         // the overworld build did this, so stepping out and back in rebuilt every

@@ -50,9 +50,8 @@ public partial class World
         Camera = Spawn;
     }
 
-    // A prop dropped into whichever world is standing. Shared with the interiors,
-    // which furnish themselves through it (see InteriorCatalog) — the one piece of
-    // the old placement code that outlived the generator.
+    // A prop dropped into whichever world is standing — the one piece of the old
+    // placement code that outlived the generator, kept for tests and tooling.
     public void AddOw(float tx, float ty, string kind, float scale, bool solid, float radius)
     {
         Props.Add(new Prop

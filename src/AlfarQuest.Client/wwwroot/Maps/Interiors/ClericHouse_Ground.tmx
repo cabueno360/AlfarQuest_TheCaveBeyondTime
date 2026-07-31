@@ -3,6 +3,7 @@
  <properties>
   <property name="DisplayName" value="The Cleric's House"/>
   <property name="EngineTile" type="int" value="32"/>
+  <property name="FloorTile" value="wood"/>
   <property name="Interior" value="cleric_house"/>
  </properties>
  <tileset firstgid="1" source="../Tilesets/IntWalls.tsx"/>

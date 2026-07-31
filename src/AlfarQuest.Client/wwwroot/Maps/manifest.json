@@ -1,0 +1,15 @@
+{
+  "_comment": "Every map the game loads, id -> path under wwwroot. Both the engine (Play.razor.cs) and the renderer (game.js) read THIS file, so adding a place is: draw it in Tiled, save it under Maps/, add one line here. An id is what warps' DestinationMap and the region seam properties refer to.",
+  "maps": {
+    "cleric_house": "Maps/Interiors/ClericHouse_Ground.tmx",
+    "cleric_house_upper": "Maps/Interiors/ClericHouse_Upper.tmx",
+    "mage_school": "Maps/Interiors/MageSchool.tmx",
+    "seoshe": "Maps/Interiors/Seoshe.tmx",
+    "thieves_warehouse": "Maps/Interiors/ThievesWarehouse.tmx",
+    "cave": "Maps/Cave/Cave_Descent.tmx",
+    "r1_ashwold": "Maps/Regions/R1_Ashwold.tmx",
+    "r2_whispering_wood": "Maps/Regions/R2_WhisperingWood.tmx",
+    "r3_deepdelve": "Maps/Regions/R3_Deepdelve.tmx",
+    "r4_kae_ychel_road": "Maps/Regions/R4_KaeYchelRoad.tmx"
+  }
+}

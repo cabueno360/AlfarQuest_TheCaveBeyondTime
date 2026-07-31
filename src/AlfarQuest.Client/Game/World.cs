@@ -359,12 +359,11 @@ public partial class World
         UpdateRewards(dt);
         if (input.interact) Interact();
 
-        // Stage 1 has no enemies: the objective is simply to reach the mine.
-        if (Stage == 1)
-        {
-            if (Party[Active].Alive && (Party[Active].Pos - CaveMouth).Len() < 46f) EnterCave();
-            return;
-        }
+        // Stage 1's descent is a doorway now, not a trap: the mouth is a Portal
+        // read from the map (see BuildOverworldFromTmx), so going down asks for
+        // [E] like every other door instead of firing the moment a hero strays
+        // within 46 pixels of it. UsePortal carries the party down.
+        if (Stage == 1) return;
 
         // Interiors (Stage 3) are safe rooms — no husks, no clearing, no descent.
         // The only way on is back out through the door.

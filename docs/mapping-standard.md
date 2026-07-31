@@ -340,42 +340,21 @@ generator and the full worldmap probe still passes 61/61.
 3. Paint terrain, respecting the precedence order.
 4. Place objects, filling in ids that match the C# catalogues.
 5. Save under `Maps/<Area>/`.
-6. Register it: add its id to `MapCatalog` and fetch it alongside Stage 1.
-7. Point the stage's builder at `BuildOverworldFromTmx`.
+6. Register it: add one line to `wwwroot/Maps/manifest.json` — the one list both
+   the engine and the renderer read.
 
-Steps 6–7 are a few lines. Everything else is Tiled.
+Step 6 is one JSON line. Everything else is Tiled.
 
 ---
 
-## Re-baselining from the generator
+## The generators are retired
 
-Stage 1 was **exported** from its generator rather than redrawn, because it was
-procedural (`Random(42)`), and exporting is the only way to reproduce it exactly:
-
-```bash
-node tools/export-stage01.mjs     # Stage 1     → tools/refs/stage01-world.json
-python3 tools/make-tmx.py
-
-node tools/export-interiors.mjs   # the interiors → tools/refs/cleric-house.json
-python3 tools/make-house-tmx.py   #   the Cleric's house, both floors
-python3 tools/make-places-tmx.py  #   the Academy, Seoshe, the burnt warehouse
-
-node tools/export-cave.mjs        # the cave    → tools/refs/cave.json
-python3 tools/make-cave-tmx.py
-```
-
-> **Run this only to re-baseline.** Once a map is authored in Tiled the `.tmx` is
-> the source of truth, and regenerating overwrites hand edits. `export-stage01.mjs`
-> also reads whatever the engine currently builds — so with the map in place it
-> exports the map back to itself. Move the `.tmx` aside first if you truly mean to
-> re-baseline from the generator.
->
-> This is not theoretical. Exporting with the maps in place, then regenerating,
-> fed a rendering bug back in as if it were level design: the shoreline had been
-> painted on the collision layer, so the beach exported as water, and the next
-> generation drew it as water on purpose. **A round trip only proves the map is
-> faithful if the JSON came from the generator.** Diff the two — an interior
-> should come back byte for byte.
+The scripts that originally **emitted** these maps (`build-r*.py`,
+`make-*-tmx.py` and their exporters) live in `tools/retired/` now. The maps are
+hand-authored in Tiled and the `.tmx` files are the sole source of truth —
+re-running a generator would overwrite hand work, which is exactly the accident
+the retirement prevents. See `tools/retired/README.md` before ever reaching for
+one.
 
 ---
 

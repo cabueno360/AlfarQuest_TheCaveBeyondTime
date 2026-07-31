@@ -14,10 +14,10 @@ public partial class World
         "The Mirror Halls", "The Cave Beyond Time",
     };
 
-    // Stage 1 is one named place; an interior is named for itself; the cave
-    // numbers its depths.
+    // Stage 1 is one named place; an interior is named by its own map's
+    // DisplayName property; the cave numbers its depths.
     public string RegionName =>
-        IsInterior ? (InteriorCatalog.Find(CurrentInterior!)?.Name ?? "Indoors")
+        IsInterior ? _interiorName
         : Stage == 1 ? (CurrentRegion is null ? OverworldName : RegionTitle)
         : Level <= RegionNames.Length ? RegionNames[Level - 1] : $"The Deep — level {Level}";
 
@@ -73,17 +73,34 @@ public partial class World
         Rev++;
 
         // Authored in Tiled? Then the rock, the water and the ways between are read
-        // from the map. Only the PLACE comes from there: the crystals, the husks
-        // and the rewards are still placed per descent below, because those are the
-        // delve rather than the cave. See docs/mapping-standard.md.
+        // from the map — and depth 1 is the authored Cistern: its dressing, and any
+        // chests, discoveries or enemies the map places, are read rather than
+        // rolled. Deeper floors are the delve and stay procedural. Empty layers
+        // fall through to the generator, so authoring can begin one layer at a
+        // time. See docs/mapping-standard.md.
         if (Tiled.MapCatalog.Find(Tiled.MapCatalog.Cave) is { } authored)
         {
             BuildCaveFromTmx(authored);
-            Spawn = TileCentre(Reg("entrance").Cx, Reg("entrance").Cy + 2);
-            Exit  = TileCentre(Reg("boss").Cx, Reg("boss").Cy);
+            Spawn = authored.Objects("PlayerSpawn").FirstOrDefault() is { } sp
+                ? FromMap(sp.X, sp.Y)
+                : TileCentre(Reg("entrance").Cx, Reg("entrance").Cy + 2);
+            // Where the next descent begins — the map's own Descend marker when it
+            // placed one, the boss room's centre otherwise.
+            Exit = authored.Objects("Descent").FirstOrDefault() is { } dn
+                ? FromMap(dn.X, dn.Y)
+                : TileCentre(Reg("boss").Cx, Reg("boss").Cy);
             AddCaveExit();
-            DressRegions();
+
+            if (Level == 1 && authored.Objects("Props").Any()) ReadCaveProps(authored);
+            else DressRegions();
+
             PlaceCaveRewards();
+            if (Level == 1)
+            {
+                if (authored.Objects("Discovery").Any()) { Discoveries.Clear(); ReadDiscoveries(authored); }
+                if (authored.Objects("TreasureSpawn").Any()) { Interactables.Clear(); ReadContainers(authored); }
+                ReadCreatures(authored);   // authored extras stand beside the rolled husks
+            }
             return;
         }
 

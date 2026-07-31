@@ -316,7 +316,11 @@ function loop(now) {
     // play() with the track already on is a no-op, and while either Cleric part is
     // on we leave it be so Pt.1 is never restarted once it has handed off to Pt.2.
     const stage = state.hud?.stage;
-    if (stage === 3 && state.mapId !== "seoshe") {
+    // A map can name its own track — the Music map property, one line in Tiled —
+    // and when it does, it outranks the stage defaults below.
+    if (state.music) {
+        music?.play(state.music);
+    } else if (stage === 3 && state.mapId !== "seoshe") {
         const on = music?.url;
         if (on !== interiorIntro && on !== interiorLoop)
             music?.play(interiorIntro, { loop: false, onEnded: () => music?.play(interiorLoop) });
@@ -364,35 +368,23 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, interiorIntroUrl,
 
     loadAtlases(() => { floorCanvas = null; aboveCanvas = null; });
 
-    // Stage 1 is painted in Tiled. Fetch it and, once it lands, throw away the
-    // ground already drawn so the next frame repaints from the map. Deliberately
-    // not awaited: a slow or missing map must not hold up the first frame, and
-    // until it arrives the stage draws itself the way it always did.
-    // Every place authored in Tiled. Each lands independently; whichever the
-    // player is standing in repaints as soon as its map arrives. Deliberately not
-    // awaited — a slow map must not hold up the first frame, and until it comes
-    // that place draws itself the way it always did.
-    for (const [id, path] of [
-        ["cleric_house", "Maps/Interiors/ClericHouse_Ground.tmx"],
-        ["cleric_house_upper", "Maps/Interiors/ClericHouse_Upper.tmx"],
-        ["mage_school", "Maps/Interiors/MageSchool.tmx"],
-        ["seoshe", "Maps/Interiors/Seoshe.tmx"],
-        ["thieves_warehouse", "Maps/Interiors/ThievesWarehouse.tmx"],
-        ["cave", "Maps/Cave/Cave_Descent.tmx"],
-        // The hand-authored regions Stage 1 is being rebuilt as. They load like
-        // any other map; until the ring is closed only the debug seam stands one
-        // up, so nothing here changes what a player sees.
-        ["r1_ashwold", "Maps/Regions/R1_Ashwold.tmx"],
-        ["r2_whispering_wood", "Maps/Regions/R2_WhisperingWood.tmx"],
-        ["r3_deepdelve", "Maps/Regions/R3_Deepdelve.tmx"],
-        ["r4_kae_ychel_road", "Maps/Regions/R4_KaeYchelRoad.tmx"],
-    ]) {
-        loadTmx(path).then(tmx => {
-            if (!tmx) return;
-            setStageMap(id, tmx);
-            floorCanvas = null; aboveCanvas = null;
-        });
-    }
+    // Every place authored in Tiled, from the same manifest the engine reads —
+    // one list, two consumers, so a new map is one JSON line for both. Each map
+    // lands independently; whichever the player is standing in repaints as soon
+    // as its map arrives. Deliberately not awaited — a slow map must not hold up
+    // the first frame, and until it comes that place draws itself as it can.
+    fetch("Maps/manifest.json")
+        .then(r => r.json())
+        .then(man => {
+            for (const [id, path] of Object.entries(man.maps || {})) {
+                loadTmx(path).then(tmx => {
+                    if (!tmx) return;
+                    setStageMap(id, tmx);
+                    floorCanvas = null; aboveCanvas = null;
+                });
+            }
+        })
+        .catch(err => console.warn("map manifest failed — drawing procedurally:", err));
 
     // Above ground and below it are different places and get different music.
     // Which one is playing is decided by the world's own stage every frame, not

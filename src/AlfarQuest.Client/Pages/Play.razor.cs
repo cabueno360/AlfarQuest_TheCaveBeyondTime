@@ -376,31 +376,39 @@ public sealed partial class Play : IAsyncDisposable
         }
     }
 
-    /// <summary>Fetches the maps that have been migrated to Tiled and registers
-    /// them for the engine to build from. Only Stage 1 so far — every other map
-    /// still comes from its own builder, which is what keeps the migration
-    /// incremental. Failure is logged and swallowed: an unregistered map means the
-    /// stage builds from its generator, so the player still gets a world.</summary>
+    /// <summary>Fetches every map named in Maps/manifest.json and registers it for
+    /// the engine to build from. The manifest is the ONE list of maps — game.js
+    /// draws from the same file — so adding a place is a Tiled save plus one JSON
+    /// line. Failure is logged and swallowed: an unregistered map means that place
+    /// falls back (a region to the bare world, an interior to a door that says why).</summary>
     private async Task LoadStageMapsAsync()
     {
         try
         {
             using var http = new System.Net.Http.HttpClient { BaseAddress = new Uri(Nav.BaseUri) };
-            foreach (var (id, path) in Game.Tiled.MapCatalog.Migrated
-                                        .Concat(Game.Tiled.MapCatalog.Regions))
+            var manifest = await System.Net.Http.Json.HttpClientJsonExtensions
+                .GetFromJsonAsync<MapManifest>(http, "Maps/manifest.json");
+            foreach (var (id, path) in manifest?.Maps ?? [])
             {
                 var xml = await http.GetStringAsync(path);
-                // A map that is simply not there is not an error: the dev server
-                // answers a missing asset with the SPA's index.html, so anything
-                // that is not a map document just means "not migrated yet" — build
-                // that place from its own builder, quietly.
+                // The dev server answers a missing asset with the SPA's index.html,
+                // so anything that is not a map document is a manifest line whose
+                // file is absent — say so, rather than quietly playing without it.
                 if (xml.TrimStart().StartsWith("<?xml", StringComparison.Ordinal))
                     Game.Tiled.MapCatalog.Register(id, xml);
+                else
+                    Console.Error.WriteLine($"map '{id}': '{path}' did not return a map document");
             }
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"maps not loaded, using the builders: {ex.Message}");
+            Console.Error.WriteLine($"map manifest not loaded, using the fallbacks: {ex.Message}");
         }
+    }
+
+    /// <summary>The shape of Maps/manifest.json: id → path under wwwroot.</summary>
+    private sealed class MapManifest
+    {
+        public Dictionary<string, string> Maps { get; set; } = [];
     }
 }

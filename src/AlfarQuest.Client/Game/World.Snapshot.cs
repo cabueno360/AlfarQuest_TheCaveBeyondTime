@@ -247,6 +247,9 @@ public partial class World
 
         return new RenderState { cam = new RVec { x = Camera.X, y = Camera.Y }, outdoor = OutdoorLook,
                                  floorStyle = FloorStyle, mapId = MapId,
+                                 // A map can name its own track (the Music map property);
+                                 // the renderer lets it outrank the stage defaults.
+                                 music = Tiled.MapCatalog.Find(MapId)?.Property("Music") ?? "",
                                  chamberW = ChamberW, chamberH = ChamberH, level = Level,
                                  tile = TILE, stage = Stage, rev = Rev,
                                  ents = ents, lights = lights, hud = hud,
