@@ -95,6 +95,33 @@ public partial class World
         Camera = at;
     }
 
+    /// <summary>Stands a wiped party back up, once the fall has had its moment.
+    /// A wipe in the cave loses the delve — the party comes to at the mouth,
+    /// outside — and a wipe on the surface or indoors wakes them at the place's
+    /// spawn. Deliberately no cost beyond the ground lost: taxing the purse on
+    /// top of the walk back would read as punishment, not consequence.</summary>
+    void Revive()
+    {
+        foreach (var h in Party)
+        {
+            h.Hp = h.MaxHp * 0.6f;
+            h.Mana = Math.Max(h.Mana, h.MaxMana * 0.5f);
+            h.Stamina = h.MaxStamina;
+            h.Effects.Clear();
+            h.Cool = h.AbilityCool = h.DashCool = h.PotionCool = 0f;
+            Array.Clear(h.SkillCool);
+            h.AttackAnim = h.AbilityAnim = h.Flash = 0f;
+            h.IFrames = 1.5f;          // a breath before anything can bite again
+        }
+        Phase = "playing";
+        ClearedFor = 0f;
+        FallenFor = 0f;
+        Active = 0;
+
+        if (Stage == 2) LeaveCave();
+        else { PlaceParty(Spawn); Camera = Spawn; }
+    }
+
     // Walking into the mouth once the chamber is quiet carries the party down.
     void Descend()
     {

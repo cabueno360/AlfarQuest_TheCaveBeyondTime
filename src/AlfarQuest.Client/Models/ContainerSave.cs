@@ -27,9 +27,15 @@ public sealed record ContainerSave(
             [.. stack.Items]);
 
     /// <summary>Whether this container has been closed long enough to refill.
-    /// Kinds that never come back answer false however long it has been.</summary>
+    /// Kinds that never come back answer false however long it has been — and so
+    /// does one still holding part of its roll: the in-session rule
+    /// (Interactable.DueToRefill) only refills what was emptied, and this answer
+    /// must agree with it, or a remainder left in a respawning barrel across a
+    /// long gap would be quietly re-rolled instead of kept.</summary>
     public bool HasRespawned(ContainerKind kind, DateTime now) =>
-        kind.RespawnHours is { } hours && (now - OpenedAt).TotalHours >= hours;
+        kind.RespawnHours is { } hours
+        && Coin == 0 && Materials.Count == 0 && Items.Count == 0
+        && (now - OpenedAt).TotalHours >= hours;
 }
 
 /// <param name="Id">A material id. A named record rather than a tuple because it

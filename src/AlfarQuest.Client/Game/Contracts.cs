@@ -57,7 +57,7 @@ public class RHud
 {
     public string phase = ""; public int enemies, level, stage, dropsTried, dropsDelivered;
     public string objective = "", talkName = "", talkRole = "", talkLine = "", promptName = "";
-    public bool atCraftsman, outdoor; public float shake, clearedFor;
+    public bool atCraftsman, outdoor; public float shake, clearedFor, fallenFor;
     public float timeOfDay;    // world clock, 0–24 hours — drives day/night and the clock UI
     public string message = "", region = ""; public List<RHero> party = new();
 

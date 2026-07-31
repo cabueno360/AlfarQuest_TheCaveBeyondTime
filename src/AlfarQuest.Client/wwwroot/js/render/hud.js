@@ -147,7 +147,7 @@ export function drawHud(hud, dt = 0.016) {
         }
     });
 
-    drawExperience(hud, bx, by - hud.party.length * 44 - 12);
+    drawExperience(hud, bx, by - hud.party.length * ROW - 12);
 
     // Enemies remaining — top LEFT. The top-right corner belongs to the DOM
     // "Abandon Delve" button (.aq-quit); this used to be drawn underneath it.
@@ -236,10 +236,15 @@ export function drawHud(hud, dt = 0.016) {
 
         ctx.textAlign = "left"; ctx.textBaseline = "top";
         ctx.fillStyle = "#f0d99a"; ctx.font = "16px Cinzel, serif";
-        ctx.fillText(t(hud.talkName), x + 18, y + 14);
-        ctx.fillStyle = "var(--aq-muted)"; ctx.fillStyle = "#9a95b6";
+        const talkName = t(hud.talkName);
+        ctx.fillText(talkName, x + 18, y + 14);
+        // Measured while the name's own font is still set — measuring 16px Cinzel
+        // with the role's 12px italic ruler ran a long name into its role. The
+        // old fixed 60px gap was padding for that under-measurement.
+        const nameW = ctx.measureText(talkName).width;
+        ctx.fillStyle = "#9a95b6";
         ctx.font = "italic 12px 'EB Garamond', serif";
-        ctx.fillText(t(hud.talkRole), x + 18 + ctx.measureText(t(hud.talkName)).width + 60, y + 18);
+        ctx.fillText(t(hud.talkRole), x + 18 + nameW + 14, y + 18);
 
         ctx.fillStyle = "#e8e6f2"; ctx.font = "15px 'EB Garamond', serif";
         ctx.textAlign = "center";
@@ -271,6 +276,21 @@ export function drawHud(hud, dt = 0.016) {
             wrapText(t(hud.message), W / 2, H / 2 + 14, Math.min(640, W - 80), 22);
             ctx.restore();
         }
+    }
+
+    // Fallen banner — fades in and holds while the engine counts down to the
+    // revival. The same shape as the cleared banner, in the wound's colours; the
+    // engine ends the phase itself, so unlike "cleared" it never needs to fade out.
+    if (hud.phase === "fallen" && hud.message) {
+        const alpha = Math.min(1, (hud.fallenFor || 0) / 0.7);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "rgba(16,3,8,0.62)"; ctx.fillRect(0, H / 2 - 60, W, 120);
+        ctx.fillStyle = "#d98a8a"; ctx.font = "26px Cinzel, serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(t("The party has fallen"), W / 2, H / 2 - 20);
+        ctx.fillStyle = "#cfd6ff"; ctx.font = "italic 16px 'EB Garamond', serif";
+        wrapText(t(hud.message), W / 2, H / 2 + 14, Math.min(640, W - 80), 22);
+        ctx.restore();
     }
 }
 

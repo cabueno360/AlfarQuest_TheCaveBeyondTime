@@ -170,6 +170,7 @@ public partial class World
             region = RegionName,
             shake = Shake,
             clearedFor = ClearedFor,
+            fallenFor = FallenFor,
             // The main quest's current step, read from the persisted flag set. Shown
             // on the surface AND below ground now that the Pact runs into the Cave —
             // the HUD keeps the husk count as the cave's headline and hangs the
@@ -200,6 +201,9 @@ public partial class World
             talkLine = Talking?.CurrentLine ?? "",
             message = Phase == "cleared"
                 ? "The husks are still. The tunnel above stands open — walk into it to descend."
+                : Phase == "fallen"
+                ? (Stage == 2 ? "The dark claims the delve. You come to at the mouth of the cave."
+                              : "You come to where the road began.")
                 : "",
             heroLevel = HeroProgressNow.Level,
             xp = HeroProgressNow.Xp,

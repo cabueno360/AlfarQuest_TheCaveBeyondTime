@@ -59,8 +59,10 @@ public partial class World
 
     public List<Crystal> Crystals = new();
 
-    public string Phase = "playing";   // playing | cleared
+    public string Phase = "playing";   // playing | cleared | fallen
     public float ClearedFor;           // seconds since the chamber fell silent
+    public float FallenFor;            // seconds since the last hero fell
+    const float FallenHold = 4.2f;     // how long the fall holds before the party is stood back up
     public float TorchTime;
 
     public float Shake;
@@ -134,6 +136,33 @@ public partial class World
             HitStop = Math.Max(0, HitStop - dt);
             UpdateParticles(dt);
             UpdateFloaters(dt);
+            return;
+        }
+
+        // --- defeat ---
+        // A party with no one left standing used to be a soft-lock: the active
+        // slot stayed on a corpse, dead heroes are skipped by every loop, and
+        // nothing in the world could revive one. Now the fall is a beat — the
+        // world holds while the banner reads — and then the party is stood back
+        // up: a delve lost to the cave ends outside its mouth; on the surface
+        // they come to at the region's spawn.
+        if (Phase == "fallen")
+        {
+            FallenFor += dt;
+            UpdateParticles(dt);
+            UpdateFloaters(dt);
+            if (FallenFor >= FallenHold) Revive();
+            return;
+        }
+        if (Party.Count > 0 && !Party.Any(h => h.Alive))
+        {
+            // The last death is tallied here: the hero loop below does not run
+            // this frame, and the count must not depend on it.
+            foreach (var h in Party)
+                if (!h.DeathCounted) { h.DeathCounted = true; StatBridge.Record(h.Def.Key, HeroStats.Kind.Deaths); }
+            Phase = "fallen";
+            FallenFor = 0f;
+            Shake = 0.9f;
             return;
         }
 
