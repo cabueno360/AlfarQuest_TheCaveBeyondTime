@@ -144,6 +144,11 @@ public partial class World
             def.Build(this);                // fills floor, furniture, doors; sets Spawn
         }
 
+        // The save says what this player has already taken from this room. Only
+        // the overworld build did this, so stepping out and back in rebuilt every
+        // interior chest full — a loot and XP farm the width of a doorway.
+        ApplyClaims();
+
         var at = arriveAt ?? Spawn;
         PlaceParty(at);
         Camera = at;

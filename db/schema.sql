@@ -46,6 +46,9 @@ CREATE TABLE IF NOT EXISTS SaveHeroes (
 -- The three canonical delvers from "Story for Music".
 INSERT INTO Heroes (`Key`, Name, Title, HeroClass, Description, BaseHp, UnlockedByDefault) VALUES
  ('mage',   'The Fallen Mage',   'Bearer of the Caged Fire',       'Mage',   'An exile of Kae Ychel with a greater demon bound inside his heart. Hurls discs of light — and, when pressed, unleashes the hellfire he can barely contain.', 90,  1),
- ('cleric', 'The Grieving Cleric','Whose Faith Fractured',          'Cleric', 'A priest who traded his own descent into madness for a phial of panacea. Wades in with blessed plate and gilded mace, and can loose a nova of holy light.', 140, 1),
+ ('cleric', 'The Grieving Cleric','Whose Faith Fractured',          'Cleric', 'A priest who traded his own descent into madness for a phial of panacea. Wades in with blessed plate and gilded mace, and can loose a nova of holy light.', 140, 0),
  ('thief',  'The Hollow Thief',  'Whose Crew the Crystal Took',     'Thief',  'A Seoshe gambler with a shard of the stolen crystal fused into his arm. Fires a crossbow from the dark and dashes through danger with reckless luck.', 100, 1)
-ON DUPLICATE KEY UPDATE Name = VALUES(Name);
+-- UnlockedByDefault is part of the upsert so re-running this script heals a
+-- database seeded before the Cleric was locked (he joins at the Cave, not at
+-- the select screen — see Game/Lore.cs).
+ON DUPLICATE KEY UPDATE Name = VALUES(Name), UnlockedByDefault = VALUES(UnlockedByDefault);

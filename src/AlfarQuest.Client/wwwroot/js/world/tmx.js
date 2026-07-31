@@ -9,12 +9,17 @@
 //  and layer data in base64 + zlib (Tiled's default) or CSV.
 // =====================================================================
 
-/// Decodes one layer's tile ids. `zlib` is what Tiled writes; the browser can
+/// Decodes one layer's tile words. `zlib` is what Tiled writes; the browser can
 /// inflate it natively, so there is no library here.
+///
+/// The words keep Tiled's flip flags in their top bits — a tile the author
+/// mirrored must draw mirrored, so the bits are split from the gid where the
+/// tile is drawn, not thrown away here. (They used to be masked off, which made
+/// every flipped cliff edge and roof piece silently face the wrong way.)
 async function decodeLayer(dataEl, count) {
     const encoding = dataEl.getAttribute("encoding");
     if (encoding === "csv")
-        return Int32Array.from(dataEl.textContent.split(",").slice(0, count), s => parseInt(s, 10) & 0x1fffffff);
+        return Uint32Array.from(dataEl.textContent.split(",").slice(0, count), s => parseInt(s, 10) >>> 0);
     if (encoding !== "base64") throw new Error(`tmx: unsupported encoding ${encoding}`);
 
     const bin = atob(dataEl.textContent.trim());
@@ -32,10 +37,13 @@ async function decodeLayer(dataEl, count) {
     // are 102,400 tiles each and the per-call overhead dominated the load.
     const n = Math.min(count, bytes.byteLength >> 2);
     const words = new Uint32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + n * 4));
-    const ids = new Int32Array(count);
-    for (let i = 0; i < n; i++) ids[i] = words[i] & 0x1fffffff;   // drop the flip bits
+    const ids = new Uint32Array(count);
+    ids.set(words.subarray(0, n));
     return ids;
 }
+
+// Tiled packs these into each tile word's top bits (TMX format, "Tile flipping").
+const FLIP_H = 0x80000000, FLIP_V = 0x40000000, FLIP_D = 0x20000000, GID_MASK = 0x0fffffff;
 
 const loadImage = (src) => new Promise((res, rej) => {
     const im = new Image();
@@ -127,16 +135,31 @@ export function drawTmxLayers(g, tmx, skip = [], only = null) {
         for (let y = 0; y < height; y++) {
             const row = y * width;
             for (let x = 0; x < width; x++) {
-                const gid = d[row + x];
-                if (!gid) continue;
+                const word = d[row + x];
+                if (!word) continue;
+                const gid = word & GID_MASK;
                 const ts = setFor(gid);
                 if (!ts) continue;
                 const i = gid - ts.firstgid;
                 const sx = (i % ts.columns) * ts.tw, sy = ((i / ts.columns) | 0) * ts.th;
                 // A tile taller than the grid (a whole tree in one tile) hangs up
                 // and to the left of its cell, the way Tiled draws it.
-                g.drawImage(ts.image, sx, sy, ts.tw, ts.th,
-                            x * tileW, y * tileH - (ts.th - tileH), ts.tw, ts.th);
+                const dx = x * tileW, dy = y * tileH - (ts.th - tileH);
+                if (!(word & (FLIP_H | FLIP_V | FLIP_D))) {
+                    g.drawImage(ts.image, sx, sy, ts.tw, ts.th, dx, dy, ts.tw, ts.th);
+                    continue;
+                }
+                // A flipped tile, drawn mirrored about its own centre. Tiled's
+                // order is: diagonal (axis swap) first, then horizontal, then
+                // vertical — canvas transforms compose so the last call applies
+                // first, hence V, H, D here.
+                g.save();
+                g.translate(dx + ts.tw / 2, dy + ts.th / 2);
+                if (word & FLIP_V) g.scale(1, -1);
+                if (word & FLIP_H) g.scale(-1, 1);
+                if (word & FLIP_D) g.transform(0, 1, 1, 0, 0, 0);
+                g.drawImage(ts.image, sx, sy, ts.tw, ts.th, -ts.tw / 2, -ts.th / 2, ts.tw, ts.th);
+                g.restore();
             }
         }
     }

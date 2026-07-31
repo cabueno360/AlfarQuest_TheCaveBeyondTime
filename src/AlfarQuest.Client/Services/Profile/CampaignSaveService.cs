@@ -1,3 +1,4 @@
+using AlfarQuest.Client.Game;
 using AlfarQuest.Client.Models;
 using AlfarQuest.Client.Services.Character;
 using AlfarQuest.Shared;
@@ -50,7 +51,20 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
 
         foreach (var hero in save.Party)
         {
-            if (party.Find(hero.HeroKey) is not { } c) continue;   // a hero not in this party
+            // A saved hero missing from the roster is recruited, not skipped. The
+            // roster comes from GameSession.PartyKeys, which is a static default
+            // after a refresh or a deep link straight to /play — skipping here
+            // silently dropped the recruited Cleric, and the next auto-save wrote
+            // the two-hero party over the real one. PartyKeys is kept in step so
+            // the simulation (built after this load) fields him too.
+            if (party.Find(hero.HeroKey) is not { } c)
+            {
+                if (Lore.Heroes.All(h => h.Key != hero.HeroKey)) continue;   // a retired key costs that hero, not the save
+                party.Recruit(hero.HeroKey);
+                c = party.Find(hero.HeroKey)!;
+                if (!GameSession.PartyKeys.Contains(hero.HeroKey))
+                    GameSession.PartyKeys = [.. GameSession.PartyKeys, hero.HeroKey];
+            }
 
             c.RestoreProgress(
                 hero.Level, hero.Xp, hero.AttributePoints, hero.SkillPoints,

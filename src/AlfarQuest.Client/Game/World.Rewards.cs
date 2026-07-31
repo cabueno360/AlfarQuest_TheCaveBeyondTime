@@ -208,11 +208,12 @@ public partial class World
         Record(thing);
     }
 
-    /// <summary>Writes a container's state down, for Stage 1 only — the cave is
-    /// regenerated on every descent, so its containers are meant to come back.</summary>
+    /// <summary>Writes a container's state down — everywhere but the cave, which
+    /// is regenerated on every descent, so its containers are meant to come back.
+    /// Interiors count: a room's chest is as fixed a place as the field outside.</summary>
     void Record(Interactable thing)
     {
-        if (Stage != 1 || thing.Contents is null || thing.OpenedAt is not { } at) return;
+        if (Stage == 2 || thing.Contents is null || thing.OpenedAt is not { } at) return;
         RewardBridge.SaveContainer(ContainerSave.From(thing.Name, at, thing.Contents));
     }
 
@@ -228,15 +229,15 @@ public partial class World
         _ => kind.Tier >= Rarity.Rare ? "chest_rare" : "chest_open",
     };
 
-    /// <summary>Records a one-shot reward as taken, for Stage 1 only.
+    /// <summary>Records a one-shot reward as taken — everywhere but the cave.
     ///
-    /// The overworld is a fixed place: a chest opened there stays open across
-    /// sessions. The cave is regenerated on every descent, so persisting its
-    /// claims would silently empty a brand-new cave — and its names repeat, which
-    /// would make the two collide.</summary>
+    /// The overworld and the buildings on it are fixed places: a chest opened
+    /// there stays open across sessions. The cave is regenerated on every
+    /// descent, so persisting its claims would silently empty a brand-new cave —
+    /// and its names repeat, which would make the two collide.</summary>
     void Claim(string key)
     {
-        if (Stage == 1) RewardBridge.Claim(key);
+        if (Stage != 2) RewardBridge.Claim(key);
     }
 
     /// <summary>Marks everything this player has already taken, before the world

@@ -120,7 +120,7 @@ public sealed class TmxMap
             {
                 if (i >= count) break;
                 _ = uint.TryParse(part.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var v);
-                ids[i++] = (int)(v & 0x1FFFFFFF);
+                ids[i++] = (int)(v & 0x0FFFFFFF);   // the top FOUR bits are Tiled's flip flags
             }
             return ids;
         }
@@ -139,7 +139,7 @@ public sealed class TmxMap
         };
 
         for (int i = 0; i < count && (i + 1) * 4 <= raw.Length; i++)
-            ids[i] = (int)(BitConverter.ToUInt32(raw, i * 4) & 0x1FFFFFFF);
+            ids[i] = (int)(BitConverter.ToUInt32(raw, i * 4) & 0x0FFFFFFF);   // top four bits are flip flags
         return ids;
     }
 
