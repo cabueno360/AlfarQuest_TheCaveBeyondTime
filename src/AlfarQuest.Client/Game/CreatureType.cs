@@ -282,9 +282,12 @@ public static class CreatureCatalog
 
         // Depth 1, the Crystal Cistern — the teaching boss. The kit the old
         // Guardian always had: volley, summon, nova, and a late enrage.
-        new() { Id = "cistern_warden", Kind = "bossCistern", Name = "Warden of the Cistern",
+        // Kind "husk": the boss wears the looming party-sheet husk, scaled — the
+        // generated bossCistern art read as a rank-and-file monster, not a boss,
+        // and was demoted (the frames stay packed in the atlas for that use).
+        new() { Id = "cistern_warden", Kind = "husk", Name = "Warden of the Cistern",
                 Biome = Biome.Cave,
-                MaxHp = 640, Damage = 15, Speed = 40, Radius = 26, Scale = 1.55f,
+                MaxHp = 640, Damage = 15, Speed = 40, Radius = 26, Scale = 1.9f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Crystal,
@@ -295,9 +298,9 @@ public static class CreatureCatalog
 
         // Depth 2, the Weeping Gallery — water and cold. Punishes standing still:
         // the rain lands where you ARE, and the frost leaves you dragging.
-        new() { Id = "weeping_warden", Kind = "bossWeeping", Name = "The Weeping Warden",
+        new() { Id = "weeping_warden", Kind = "husk", Name = "The Weeping Warden",
                 Biome = Biome.Cave,
-                MaxHp = 1050, Damage = 19, Speed = 44, Radius = 26, Scale = 1.7f,
+                MaxHp = 1050, Damage = 19, Speed = 44, Radius = 26, Scale = 2.1f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Water,
