@@ -134,8 +134,24 @@ public partial class World
         }
     }
 
+    /// <summary>The depth's rank-and-file husk: the base species grown harder the
+    /// deeper the delve, so the road to each keeper asks for the same levels the
+    /// keeper does — the difficulty curve, not just the boss at the end of it.</summary>
+    CreatureType CaveHuskDef()
+    {
+        var def = CreatureCatalog.Of("husk");
+        if (Level <= 1) return def;
+        return def with
+        {
+            MaxHp = def.MaxHp * (1f + (Level - 1) * 0.45f),
+            Damage = def.Damage + (Level - 1) * 2,
+            Xp = def.Xp + (Level - 1) * 5,
+        };
+    }
+
     void SpawnHusks(int n)
     {
+        var def = CaveHuskDef();
         for (int i = 0; i < n; i++)
         {
             Vec p = Spawn;
@@ -148,27 +164,43 @@ public partial class World
                 if ((ResolveCrystalCollision(c) - c).Len() > 0.01f) continue;   // nor inside a pillar
                 p = c; break;
             }
-            Husks.Add(new Husk(p));
+            Husks.Add(new Husk(p, def));
         }
     }
 
-    /// <summary>The Guardian of the Crystal Heart, set in the boss chamber it holds —
-    /// the fight that gates the descent, since the level only quiets once every husk
-    /// (this one included) is down. Scaled up with depth, so the Guardian met deeper
-    /// is the harder Guardian.</summary>
+    /// <summary>Which keeper holds each named depth. Past them the true Guardian
+    /// returns, grown worse with every level below the last named one.</summary>
+    static string BossFor(int level) => level switch
+    {
+        1 => "cistern_warden",
+        2 => "weeping_warden",
+        3 => "vault_keeper",
+        4 => "mirrored_one",
+        _ => "guardian",
+    };
+
+    /// <summary>The depth's keeper, set in the boss chamber it holds — the fight
+    /// that gates the descent, since the level only quiets once every husk (this
+    /// one included) is down. One boss per named depth, each already tuned to its
+    /// depth's recommended level; only past the named depths does raw scaling
+    /// take over, so the Guardian met deeper is the harder Guardian.</summary>
     void SpawnBoss()
     {
         var boss = Reg("boss");
         var at = TileCentre(boss.Cx, boss.Cy);
         if (Blocked(at, 26f)) at = NearestOpen(at);
 
-        var def = CreatureCatalog.Of("guardian");
-        var scaled = def with
+        var def = CreatureCatalog.Of(BossFor(Level));
+        if (Level > RegionNames.Length)
         {
-            MaxHp = def.MaxHp * (1f + (Level - 1) * 0.35f),
-            Damage = def.Damage + (Level - 1) * 3,
-            Xp = def.Xp + (Level - 1) * 60,
-        };
-        Husks.Add(new Husk(at, scaled) { State = AiState.Chase });
+            int past = Level - RegionNames.Length;
+            def = def with
+            {
+                MaxHp = def.MaxHp * (1f + past * 0.3f),
+                Damage = def.Damage + past * 4,
+                Xp = def.Xp + past * 80,
+            };
+        }
+        Husks.Add(new Husk(at, def) { State = AiState.Chase });
     }
 }

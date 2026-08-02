@@ -159,9 +159,44 @@ public partial class World
         else { PlaceParty(Spawn); Camera = Spawn; }
     }
 
+    /// <summary>The level each named depth is tuned to — its keeper's stats and
+    /// its husks' assume a party of about this strength. Past the named depths
+    /// the ask keeps climbing.</summary>
+    public static int RecommendedLevel(int depth) => depth switch
+    {
+        <= 1 => 1, 2 => 3, 3 => 5, 4 => 8, 5 => 11,
+        _ => 11 + (depth - 5) * 2,
+    };
+
+    /// <summary>The party's standing: the average level of its members' sheets.
+    /// Zero when no sheet side is attached (a probe, a bare engine test), which
+    /// the descent gate reads as "do not gate".</summary>
+    int PartyLevel()
+    {
+        if (CharacterStats.Progress is null) return 0;
+        var sum = 0; var n = 0;
+        foreach (var h in Party) { sum += CharacterStats.ProgressOf(h.Def.Key).Level; n++; }
+        return n == 0 ? 0 : (int)MathF.Round(sum / (float)n);
+    }
+
     // Walking into the mouth once the chamber is quiet carries the party down.
     void Descend()
     {
+        // The deeper dark asks for levels. Each depth is tuned to a number
+        // (RecommendedLevel), and a party under it is turned back at the mouth
+        // with that number said plainly — better a refusal at the door than a
+        // keeper it cannot yet touch. An engine with no sheets attached reads
+        // as level 0 and is never gated, so probes still walk everywhere.
+        int have = PartyLevel();
+        int asks = RecommendedLevel(Level + 1);
+        if (have > 0 && have < asks)
+        {
+            Floaters.Add(new FloatText(Party[Active].Pos + new Vec(0, -34),
+                "The deeper dark asks for level {0}", "#d98a8a", asks.ToString()));
+            ClearedFor = 0.2f;   // re-arms the grace, so the refusal does not repeat every frame
+            return;
+        }
+
         Level++;
 
         // The delve's goal, in quest terms: the deepest NAMED depth is the Cave

@@ -50,6 +50,23 @@ public enum MonsterAbility
     ShardNova,
     /// <summary>Tears fresh husks out of the walls to swarm the party.</summary>
     SummonHusks,
+
+    // --- the deeper keepers' tricks: each depth's boss fights differently ---
+    /// <summary>Three slow shards of ice in a fan; whatever they touch is left
+    /// dragging. The Weeping Warden's answer to being kited.</summary>
+    FrostVolley,
+    /// <summary>A cold rain called down ON EACH HERO — a telegraphed ring under
+    /// your own feet, so the answer is to keep moving, not to keep away.</summary>
+    WeepingRain,
+    /// <summary>Two shockwave rings, inner then outer, so backing off once is not
+    /// enough — the Vault Keeper's quake reaches further than it looks.</summary>
+    QuakeRings,
+    /// <summary>Splits off shimmering copies of itself, a fraction as strong —
+    /// pressure and confusion at once. The Mirrored One's whole argument.</summary>
+    MirrorSplit,
+    /// <summary>Thickens time around the whole party — every hero slowed at once.
+    /// The true Guardian's power, in the one place time runs wrong.</summary>
+    TimeSlow,
 }
 
 /// <summary>What a creature is. Static data shared by every instance, so a new
@@ -120,6 +137,12 @@ public sealed record CreatureType
     /// cooldowns shorten. Zero = it never does.</summary>
     public float EnrageBelow { get; init; } = 0f;
 
+    /// <summary>Below this fraction of its health a boss TURNS: <see cref="Kit2"/>
+    /// replaces <see cref="Kit"/>, so the second half of the fight is a different
+    /// fight. Zero = one kit all the way down.</summary>
+    public float PhaseBelow { get; init; } = 0f;
+    public IReadOnlyList<MonsterAbility> Kit2 { get; init; } = [];
+
     /// <summary>What it is made of. Decides what flies off when it is struck —
     /// a blade landing on crystal should not look like the same blade landing on
     /// a body, and the effect id is derived from this rather than switched on the
@@ -158,6 +181,11 @@ public static class CreatureCatalog
     static readonly IReadOnlyDictionary<DamageType, float> Stone = new Dictionary<DamageType, float>
     {
         [DamageType.Slashing] = 0.35f, [DamageType.Piercing] = 0.25f, [DamageType.Blunt] = -0.35f,
+    };
+    // Water shrugs at ice and closes around a blade, but fire drinks it away.
+    static readonly IReadOnlyDictionary<DamageType, float> Water = new Dictionary<DamageType, float>
+    {
+        [DamageType.Ice] = 0.5f, [DamageType.Slashing] = 0.15f, [DamageType.Fire] = -0.35f,
     };
 
     public static readonly IReadOnlyList<CreatureType> All =
@@ -246,20 +274,85 @@ public static class CreatureCatalog
                 Material = "crystal", Resist = Crystal,
                 Loot = [("Small Crystal", 0.4f)] },
 
-        // --- the Crystal Heart's keeper: the fight the deepest chamber is built
-        // around. A husk grown vast around the Heart's shard, holding the descent.
-        // Its kit cycles volley → summon → nova, and below a third of its health it
-        // enrages. Scaled up per depth where it is spawned (World.Cave boss room).
-        new() { Id = "guardian", Kind = "husk", Name = "Guardian of the Crystal Heart",
+        // --- the five keepers of the descent: one boss per named depth, each with
+        // its own kit and a second kit it turns to below PhaseBelow, so the fight
+        // a room is built around CHANGES as the party goes deeper — deeper is
+        // different, not merely longer. Stats are tuned to each depth's
+        // recommended level (World.RecommendedLevel); SpawnBoss picks by depth.
+
+        // Depth 1, the Crystal Cistern — the teaching boss. The kit the old
+        // Guardian always had: volley, summon, nova, and a late enrage.
+        new() { Id = "cistern_warden", Kind = "husk", Name = "Warden of the Cistern",
                 Biome = Biome.Cave,
-                MaxHp = 720, Damage = 16, Speed = 40, Radius = 26, Scale = 1.9f,
+                MaxHp = 640, Damage = 15, Speed = 40, Radius = 26, Scale = 1.9f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Crystal,
                 Boss = true,
                 Kit = [MonsterAbility.CrystalVolley, MonsterAbility.SummonHusks, MonsterAbility.ShardNova],
-                EnrageBelow = 0.3f, AbilityRangeTiles = 9f, AbilityCooldown = 2.6f,
+                EnrageBelow = 0.3f, AbilityRangeTiles = 9f, AbilityCooldown = 2.8f,
                 Xp = 240, Loot = [("Small Crystal", 1f), ("Coins", 0.9f)] },
+
+        // Depth 2, the Weeping Gallery — water and cold. Punishes standing still:
+        // the rain lands where you ARE, and the frost leaves you dragging.
+        new() { Id = "weeping_warden", Kind = "mobSlime", Name = "The Weeping Warden",
+                Biome = Biome.Cave,
+                MaxHp = 1050, Damage = 19, Speed = 44, Radius = 26, Scale = 2.1f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Magical = true, Material = "crystal", Resist = Water,
+                Boss = true,
+                Kit  = [MonsterAbility.FrostVolley, MonsterAbility.WeepingRain, MonsterAbility.SummonHusks],
+                PhaseBelow = 0.45f,
+                Kit2 = [MonsterAbility.FrostVolley, MonsterAbility.WeepingRain, MonsterAbility.ShardNova],
+                EnrageBelow = 0.25f, AbilityRangeTiles = 9f, AbilityCooldown = 2.6f,
+                Xp = 360, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+
+        // Depth 3, the Sunken Vault — armour and earth. Slow, physical and heavy;
+        // its quake reaches further than it looks, and blades barely mark it.
+        new() { Id = "vault_keeper", Kind = "mobKnight", Name = "The Vault Keeper",
+                Biome = Biome.Cave,
+                MaxHp = 1500, Damage = 24, Speed = 42, Radius = 27, Scale = 2.2f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Material = "stone", Resist = Stone,
+                Boss = true,
+                Kit  = [MonsterAbility.QuakeRings, MonsterAbility.Smash, MonsterAbility.SummonHusks],
+                PhaseBelow = 0.5f,
+                Kit2 = [MonsterAbility.QuakeRings, MonsterAbility.CrystalVolley, MonsterAbility.Smash],
+                EnrageBelow = 0.25f, AbilityRangeTiles = 8f, AbilityCooldown = 3.0f,
+                Xp = 500, Loot = [("Stone", 1f), ("Small Crystal", 1f), ("Coins", 1f)] },
+
+        // Depth 4, the Mirror Halls — the fight where you cannot trust your eyes.
+        // It splits into shimmering copies; kill the one that bleeds crystal.
+        new() { Id = "mirrored_one", Kind = "mobMage", Name = "The Mirrored One",
+                Biome = Biome.Cave,
+                MaxHp = 1850, Damage = 26, Speed = 48, Radius = 25, Scale = 2.0f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Magical = true, Material = "crystal", Resist = Crystal, Evasion = 0.1f,
+                Boss = true,
+                Kit  = [MonsterAbility.CrystalVolley, MonsterAbility.MirrorSplit, MonsterAbility.ShardNova],
+                PhaseBelow = 0.5f,
+                Kit2 = [MonsterAbility.MirrorSplit, MonsterAbility.FrostVolley, MonsterAbility.ShardNova],
+                EnrageBelow = 0.3f, AbilityRangeTiles = 10f, AbilityCooldown = 2.4f,
+                Xp = 650, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+
+        // Depth 5, the Cave Beyond Time — the true Guardian of the Crystal Heart,
+        // in the one place time runs wrong. It thickens time around the whole
+        // party, and below half health it shatters and reforms into a second kit.
+        new() { Id = "guardian", Kind = "bossGiant", Name = "Guardian of the Crystal Heart",
+                Biome = Biome.Cave,
+                MaxHp = 2700, Damage = 30, Speed = 44, Radius = 30, Scale = 1.5f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Magical = true, Material = "crystal", Resist = Crystal,
+                Boss = true,
+                Kit  = [MonsterAbility.CrystalVolley, MonsterAbility.SummonHusks, MonsterAbility.TimeSlow, MonsterAbility.ShardNova],
+                PhaseBelow = 0.5f,
+                Kit2 = [MonsterAbility.FrostVolley, MonsterAbility.MirrorSplit, MonsterAbility.TimeSlow, MonsterAbility.ShardNova],
+                EnrageBelow = 0.3f, AbilityRangeTiles = 10f, AbilityCooldown = 2.3f,
+                Xp = 900, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
     ];
 
     public static CreatureType Of(string id) => All.First(c => c.Id == id);

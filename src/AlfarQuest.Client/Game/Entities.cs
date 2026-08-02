@@ -146,8 +146,26 @@ public class Hero
     public float BlockChance => CharacterStats.For(Def.Key).BlockChance;
     public float HealthRegen => CharacterStats.For(Def.Key).HealthRegen;
 
-    /// <summary>Movement speed, including attribute bonuses.</summary>
-    public float Speed => Def.Speed + CharacterStats.For(Def.Key).BonusSpeed;
+    /// <summary>How much a slow is dragging on the hero, 0–1 — the strongest one
+    /// wins. The Guardian's thickened time and the Weeping Warden's cold rain
+    /// pull through here. Capped below a full stop: a hero is slowed, never
+    /// rooted, because losing the ability to act at all reads as a broken game.</summary>
+    public float SlowDrag
+    {
+        get
+        {
+            float s = 0;
+            foreach (var e in Effects)
+                if (e.Behaviour == Models.StatusBehaviour.SlowMovement && e.Remaining > 0)
+                    s = MathF.Max(s, e.Magnitude);
+            return MathF.Min(0.6f, s);
+        }
+    }
+
+    /// <summary>Movement speed, including attribute bonuses — and any slow the
+    /// world has laid on them. The dash deliberately ignores the drag (it reads
+    /// off Def.Speed): a burst of will through thickened time.</summary>
+    public float Speed => (Def.Speed + CharacterStats.For(Def.Key).BonusSpeed) * (1f - SlowDrag);
 
     /// <summary>Seconds between attacks, floored so no build turns attacking
     /// into a continuous beam.</summary>

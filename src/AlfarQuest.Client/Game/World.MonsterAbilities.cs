@@ -29,9 +29,13 @@ public partial class World
     /// bite on a frame the creature cast instead.</summary>
     bool MonsterAct(Husk k, Hero target)
     {
-        // A boss rotates through a KIT; everything else has its one trick.
-        var ability = k.Def.Boss && k.Def.Kit.Count > 0
-            ? k.Def.Kit[k.KitIndex % k.Def.Kit.Count]
+        // A boss rotates through a KIT — and below its phase line, through its
+        // SECOND kit, so the back half of the fight is a different fight.
+        // Everything else has its one trick.
+        var kit = k.Def.PhaseBelow > 0 && k.Def.Kit2.Count > 0 && k.Hp <= k.MaxHp * k.Def.PhaseBelow
+            ? k.Def.Kit2 : k.Def.Kit;
+        var ability = k.Def.Boss && kit.Count > 0
+            ? kit[k.KitIndex % kit.Count]
             : k.Def.Ability;
         if (ability == MonsterAbility.None || k.AbilityCool > 0) return false;
 
@@ -79,7 +83,7 @@ public partial class World
                 Smash(k);
                 break;
 
-            // --- the Guardian's kit ---
+            // --- the keepers' kits ---
             case MonsterAbility.CrystalVolley:
                 CrystalVolley(k, dir);
                 break;
@@ -89,8 +93,103 @@ public partial class World
             case MonsterAbility.SummonHusks:
                 SummonHusks(k, enraged ? 3 : 2);
                 break;
+            case MonsterAbility.FrostVolley:
+                FrostVolley(k, dir);
+                break;
+            case MonsterAbility.WeepingRain:
+                WeepingRain(k, enraged);
+                break;
+            case MonsterAbility.QuakeRings:
+                QuakeRings(k, enraged);
+                break;
+            case MonsterAbility.MirrorSplit:
+                MirrorSplit(k);
+                break;
+            case MonsterAbility.TimeSlow:
+                TimeSlow(k);
+                break;
         }
         return true;
+    }
+
+    /// <summary>Three slow shards of ice in a fan, each leaving what it touches
+    /// dragging — the Weeping Warden's answer to a party that kites.</summary>
+    void FrostVolley(Husk k, Vec dir)
+    {
+        float mid = MathF.Atan2(dir.Y, dir.X);
+        for (int i = -1; i <= 1; i++)
+        {
+            float a = mid + i * 0.22f;
+            Bolt(k, new Vec(MathF.Cos(a), MathF.Sin(a)), 300f, "#bfe9ff",
+                 magical: true, onHit: StatusEffectKind.Slow);
+        }
+        Shake = MathF.Max(Shake, 0.25f);
+    }
+
+    /// <summary>A cold rain called down on each hero's OWN position — a telegraphed
+    /// ring under your feet, so the answer is to keep moving, not to keep away.</summary>
+    void WeepingRain(Husk k, bool enraged)
+    {
+        Play("frost", k.Pos);
+        foreach (var h in Party)
+        {
+            if (!h.Alive) continue;
+            ScheduleAoe(h.Pos, TILE * 1.7f, k.Def.Damage - 3, magical: true, push: 10f,
+                        colour: "#bfe9ff", windup: enraged ? 0.7f : 0.95f,
+                        onHit: StatusEffectKind.Slow);
+        }
+    }
+
+    /// <summary>Two shockwave rings, inner then outer, so one step back is not
+    /// enough — the inner ring leaves a wound that keeps bleeding.</summary>
+    void QuakeRings(Husk k, bool enraged)
+    {
+        Play("hit_stone", k.Pos);
+        float haste = enraged ? 0.8f : 1f;
+        ScheduleAoe(k.Pos, TILE * 2.0f, k.Def.Damage, magical: false, push: 30f,
+                    colour: "#c9a06a", windup: 0.55f * haste, onHit: StatusEffectKind.Bleeding);
+        ScheduleAoe(k.Pos, TILE * 3.6f, k.Def.Damage - 5, magical: false, push: 36f,
+                    colour: "#c9a06a", windup: 1.05f * haste);
+        Shake = MathF.Max(Shake, 0.4f);
+    }
+
+    /// <summary>Splits off two shimmering copies of the boss, a fraction as strong
+    /// and worth almost nothing — pressure and confusion at once. Capped, so a
+    /// long fight cannot fill the room with mirrors.</summary>
+    void MirrorSplit(Husk k)
+    {
+        if (Husks.Count(h => h.Def.Id.EndsWith("_mirror")) >= 4) return;
+        Play("hit_crystal", k.Pos);
+        Burst(k.Pos, "#c98fff", 20);
+        var copy = k.Def with
+        {
+            Id = k.Def.Id + "_mirror", Boss = false, MiniBoss = false,
+            MaxHp = k.MaxHp * 0.12f, Damage = Math.Max(6, k.Def.Damage - 14),
+            Kit = [], Kit2 = [], PhaseBelow = 0f, EnrageBelow = 0f,
+            Ability = MonsterAbility.MagicMissile, AbilityCooldown = 3.2f, AbilityRangeTiles = 7f,
+            Xp = 35, Loot = [],
+        };
+        for (int i = 0; i < 2; i++)
+        {
+            float a = (float)_rng.NextDouble() * MathF.Tau;
+            var p = k.Pos + new Vec(MathF.Cos(a), MathF.Sin(a)) * (TILE * 1.8f);
+            if (Blocked(p, 18f)) p = NearestOpen(p);
+            _summoned.Add(new Husk(p, copy) { State = AiState.Chase });
+            HusksSummoned++;
+        }
+    }
+
+    /// <summary>Thickens time around the whole party — every hero slowed at once,
+    /// no ring to step out of. The true Guardian's power, in the one place time
+    /// runs wrong; the counter is to spend the thickened seconds well.</summary>
+    void TimeSlow(Husk k)
+    {
+        Play("frost", k.Pos);
+        Burst(k.Pos, "#9fe4ff", 30);
+        foreach (var h in Party)
+            if (h.Alive) ApplyEffect(h, StatusEffectKind.Slow, 3.5f, 0.45f, null);
+        Floaters.Add(new FloatText(k.Pos + new Vec(0, -k.R - 12), "TIME THICKENS", "#9fe4ff"));
+        Shake = MathF.Max(Shake, 0.3f);
     }
 
     /// <summary>A fanned spray of five crystal shards, so backing straight off does
@@ -131,8 +230,9 @@ public partial class World
             var p = k.Pos + new Vec(MathF.Cos(a), MathF.Sin(a)) * (TILE * 2.2f);
             if (Blocked(p, 18f)) p = NearestOpen(p);
             // Deferred: Husks is being iterated right now (this fired from inside the
-            // husk loop). FlushSummons folds these in once the loop is done.
-            _summoned.Add(new Husk(p) { State = AiState.Chase });
+            // husk loop). FlushSummons folds these in once the loop is done. Summoned
+            // at the DEPTH'S strength, so a deep keeper's reinforcements keep up.
+            _summoned.Add(new Husk(p, Stage == 2 ? CaveHuskDef() : CreatureCatalog.Of("husk")) { State = AiState.Chase });
             HusksSummoned++;   // cumulative — the summoned husk may be cut down before a snapshot sees it
         }
     }
@@ -180,18 +280,22 @@ public partial class World
         public int Damage;
         public bool Magical;
         public string Colour = "#ffffff";
+        /// <summary>An effect the blast leaves on whoever it catches — the cold
+        /// rain's drag, the quake's bleeding. Null for a clean hit.</summary>
+        public StatusEffectKind? OnHit;
     }
 
     /// <summary>The area bursts currently charging. Short-lived; cleared with the
     /// slashes on any stage change.</summary>
     public readonly List<TelegraphedAoe> Aoe = new();
 
-    void ScheduleAoe(Vec pos, float radius, int damage, bool magical, float push, string colour, float windup)
+    void ScheduleAoe(Vec pos, float radius, int damage, bool magical, float push, string colour, float windup,
+                     StatusEffectKind? onHit = null)
     {
         Aoe.Add(new TelegraphedAoe
         {
             Pos = pos, Radius = radius, Timer = windup, Total = windup,
-            Damage = damage, Magical = magical, Push = push, Colour = colour,
+            Damage = damage, Magical = magical, Push = push, Colour = colour, OnHit = onHit,
         });
     }
 
@@ -216,7 +320,7 @@ public partial class World
                 if (!h.Alive || h.IFrames > 0) continue;
                 var to = h.Pos - a.Pos;
                 if (to.Len() > a.Radius) continue;
-                HurtHero(h, a.Damage, to.Norm(), a.Magical);
+                HurtHero(h, a.Damage, to.Norm(), a.Magical, a.OnHit);
                 h.Pos = MoveBlocked(h.Pos, to.Norm() * a.Push, 14f);
             }
             Aoe.RemoveAt(i);
@@ -279,10 +383,15 @@ public partial class World
         Floaters.Add(new FloatText(h.Pos + new Vec(0, -22), $"-{taken:0}", "#e2687a"));
         Shake = MathF.Max(Shake, 0.35f);
 
-        // Whatever the blow carried — venom from a spider's spit. Four points a
-        // second for four seconds, credited to no hero since the world dealt it.
+        // Whatever the blow carried — venom, cold, a wound that keeps bleeding.
+        // Strength by what the effect IS: a gnawing effect ticks four a second;
+        // a slow is a fraction of the stride, not a number of points. Credited
+        // to no hero, since the world dealt it.
         if (onHit is { } eff)
-            ApplyEffect(h, eff, 4f, 4f, null);
+        {
+            var slows = StatusEffectInfo.Of(eff).Behaviour == StatusBehaviour.SlowMovement;
+            ApplyEffect(h, eff, 4f, slows ? 0.4f : 4f, null);
+        }
     }
 
     /// <summary>A direction nudged off-true by up to <paramref name="amount"/>
