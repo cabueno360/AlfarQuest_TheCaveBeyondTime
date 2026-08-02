@@ -353,6 +353,7 @@ public partial class World
         Camera = new Vec(ClampCamera(Camera.X, ChamberW, ViewW), ClampCamera(Camera.Y, ChamberH, ViewH));
 
         UpdateNpcs();
+        UpdateSpeech(dt);
         UpdateSeams();
         UpdatePortals();
         UpdateExaminables();

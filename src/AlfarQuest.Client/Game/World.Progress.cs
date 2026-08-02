@@ -73,6 +73,21 @@ public partial class World
         if (!GameSession.PartyKeys.Contains("cleric"))
             GameSession.PartyKeys = [.. GameSession.PartyKeys, "cleric"];
         Party.Add(new Hero(Lore.ByKey("cleric"), Party[Active].Pos + new Vec(40f, 0)));
+
+        // He has a voice now. The lines queue behind the cutscene (the game is
+        // held while it plays) and show as the cave is first revealed — his
+        // joining, and, if Mirka's father sent word, its delivery: the moment
+        // "Word for the Cleric" was always about but never staged. The quest
+        // still completes on the same cave_entered flag it always did.
+        Say("The Grieving Cleric",
+            "So the light was yours. I came down in Cerno's stead — the bargain is mine to finish. Keep close; the dark here is not empty.", 6.5f);
+        if (RewardBridge.Claimed().Contains("sq_word_started"))
+        {
+            Say(Party[Active].Def.Name,
+                "Word from the vale, Cleric: Mirka still breathes. Her father sends it — help enough, he said, for an old man.", 6.5f);
+            Say("The Grieving Cleric",
+                "She breathes… then the year was not the last of it. Whatever waits below, there is a door worth climbing back to. That word is worth more than the phial.", 7.5f);
+        }
     }
 
     /// <summary>The way back UP: leaves the delve and stands the party at the mouth

@@ -272,6 +272,27 @@ export function drawHud(hud, dt = 0.016) {
         ctx.fillText(t("[E] continue"), x + boxW - 16, y + boxH - 18);
     }
 
+    // --- a party member speaking ---
+    // The Cleric joining, word of Mirka delivered. The villager's balloon shape,
+    // but nothing is held and nothing is pressed: the engine times each line and
+    // the game plays on underneath — so no "[E] continue" hint here.
+    if (!hud.talkLine && hud.speechLine) {
+        const boxW = Math.min(620, W - 80), boxH = 84;
+        const x = W / 2 - boxW / 2, y = H - 168;
+        ctx.fillStyle = "rgba(10,8,24,0.92)";
+        ctx.fillRect(x, y, boxW, boxH);
+        ctx.strokeStyle = "rgba(143,208,166,0.55)"; ctx.lineWidth = 1.5;   // the party's green, not the villager gold
+        ctx.strokeRect(x, y, boxW, boxH);
+
+        ctx.textAlign = "left"; ctx.textBaseline = "top";
+        ctx.fillStyle = "#a8f0de"; ctx.font = "16px Cinzel, serif";
+        ctx.fillText(t(hud.speechName), x + 18, y + 12);
+
+        ctx.fillStyle = "#e8e6f2"; ctx.font = "15px 'EB Garamond', serif";
+        ctx.textAlign = "center";
+        wrapText(t(hud.speechLine), W / 2, y + 42, boxW - 44, 20);
+    }
+
     // Cleared banner — holds, then fades out. It used to sit across the middle
     // of the screen forever, because the phase is one-way and nothing dismissed
     // it: the reward for clearing the chamber was a permanent obstruction. The

@@ -44,6 +44,44 @@ public partial class World
     /// put at the counter, the bedside, or wherever it is reading.</summary>
     public bool Busy => IsTalking || IsTrading || IsReading || InDialogue;
 
+    // -----------------------------------------------------------------
+    //  A party member speaking — the Cleric joining at the mouth, word of
+    //  Mirka delivered. The same balloon a villager talks in, but nothing
+    //  is held and nothing is pressed: lines queue, each shows for its few
+    //  seconds, and the game plays on underneath. A story beat, not a menu.
+    // -----------------------------------------------------------------
+    readonly Queue<(string Name, string Line, float Hold)> _speechQueue = new();
+    (string Name, string Line)? _speechNow;
+    float _speechFor;
+
+    /// <summary>Queues one spoken line. Names and lines are English — the
+    /// display side translates them, like every other string.</summary>
+    public void Say(string name, string line, float hold = 5.5f) =>
+        _speechQueue.Enqueue((name, line, hold));
+
+    /// <summary>What the balloon should show right now, or null. Suppressed while
+    /// an NPC window is up, so two balloons never fight over the same pixels.</summary>
+    public (string Name, string Line)? SpeechNow => Busy ? null : _speechNow;
+
+    void UpdateSpeech(float dt)
+    {
+        // Held while a window is open: a line must not tick away unseen behind
+        // a shop or a conversation the player is reading.
+        if (Busy) return;
+        if (_speechNow is not null)
+        {
+            _speechFor -= dt;
+            if (_speechFor > 0) return;
+            _speechNow = null;
+        }
+        if (_speechQueue.Count > 0)
+        {
+            var (name, line, hold) = _speechQueue.Dequeue();
+            _speechNow = (name, line);
+            _speechFor = hold;
+        }
+    }
+
     /// <summary>Closes the shop from the engine's side, releasing the held hero.
     /// Wired to <see cref="MerchantBridge.OnClose"/> so the window closing in the
     /// browser and the hero being freed are the same event.</summary>

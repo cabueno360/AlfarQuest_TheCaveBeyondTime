@@ -199,6 +199,8 @@ public partial class World
             talkName = Talking?.Def.Name ?? "",
             talkRole = Talking?.Def.Role ?? "",
             talkLine = Talking?.CurrentLine ?? "",
+            speechName = SpeechNow?.Name ?? "",
+            speechLine = SpeechNow?.Line ?? "",
             message = Phase == "cleared"
                 ? "The husks are still. The tunnel above stands open — walk into it to descend."
                 : Phase == "fallen"
