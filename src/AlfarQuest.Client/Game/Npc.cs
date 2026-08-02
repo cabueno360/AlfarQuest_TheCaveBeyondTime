@@ -35,6 +35,12 @@ public sealed record NpcDefinition
     /// the upright figure is suppressed, since the engine has no lying pose.</summary>
     public bool Bedridden { get; init; }
 
+    /// <summary>When this story flag is set, <see cref="LinesAfter"/> REPLACES
+    /// <see cref="Lines"/> — how a villager's words change with the tale (Mirka,
+    /// asleep before the Panacea and awake after). Empty = the lines never change.</summary>
+    public string LinesWhen { get; init; } = "";
+    public IReadOnlyList<string> LinesAfter { get; init; } = [];
+
     public NpcServices Services { get; init; } = NpcServices.None;
 }
 
@@ -96,5 +102,16 @@ public sealed class Npc(NpcDefinition def, Vec pos)
     /// repeating the same sentence.</summary>
     public int LineIndex { get; set; }
 
-    public string CurrentLine => Def.Lines.Count == 0 ? "" : Def.Lines[LineIndex % Def.Lines.Count];
+    public string CurrentLine
+    {
+        get
+        {
+            // The flag decides which set they speak from — checked at read time,
+            // so the change lands the moment the story does, no rebuild needed.
+            var lines = Def.LinesWhen.Length > 0 && Def.LinesAfter.Count > 0
+                        && RewardBridge.Claimed().Contains(Def.LinesWhen)
+                ? Def.LinesAfter : Def.Lines;
+            return lines.Count == 0 ? "" : lines[LineIndex % lines.Count];
+        }
+    }
 }

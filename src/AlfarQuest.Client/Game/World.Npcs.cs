@@ -158,6 +158,10 @@ public partial class World
 
         if (NpcInReach is null) return;
 
+        // The story's one hand-off outranks anything else this NPC might do:
+        // the Panacea, delivered at Mirka's bedside at last.
+        if (TryWakeMirka(NpcInReach)) { FaceHero(NpcInReach); return; }
+
         // A shopkeeper opens their shop instead of a line of talk — but only if a
         // window is listening for it. In a headless run nothing answers the offer,
         // and they fall back to talking like any other villager, so the world still

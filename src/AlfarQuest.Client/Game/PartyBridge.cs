@@ -22,4 +22,13 @@ public static class PartyBridge
         OnRecruit?.Invoke(key);
         Recruited++;
     }
+
+    /// <summary>Engine → sheets: whether anyone in the party carries this item id.
+    /// The packs live on the sheet side; the engine only ever asks.</summary>
+    public static Func<string, bool>? HasItem;
+
+    /// <summary>Engine → sheets: remove one of this item id from whoever carries
+    /// it. True when one was found and taken — how a story hand-off (the Panacea
+    /// at Mirka's bedside) actually spends the thing it hands over.</summary>
+    public static Func<string, bool>? TakeItem;
 }

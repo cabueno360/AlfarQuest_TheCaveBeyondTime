@@ -258,7 +258,13 @@ public static class NpcCatalog
                 Bedridden = true,   // drawn lying in the bed prop, not standing beside it
                 Lines = ["(She sleeps, her breath shallow. The wasting has drawn the gold from her hair and the warmth from her hands.)",
                          "(On the nightstand: a wedding band grown too loose for her fingers, and the Cleric's journal, left open.)",
-                         "(For a heartbeat her eyes flutter — then she is gone again, somewhere the panacea cannot follow.)"] },
+                         "(For a heartbeat her eyes flutter — then she is gone again, somewhere the panacea cannot follow.)"],
+                // After the Panacea is set to her lips (World.TryWakeMirka), she is
+                // awake — and the room stops being a sickroom.
+                LinesWhen = "mirka_woken",
+                LinesAfter = ["(The colour has come back to her. She sits up against the pillows, watching the window as though it were new.)",
+                              "He sits with me at dawn now, instead of praying at my door.",
+                              "You carried the deep water up in your own hands. Neither of us will forget it."] },
         // A fisher on the coast road, come up from Seoshe's Low Docks.
         new() { Id = "coastfisher", Kind = "npcFisherman", Name = "Old Nets", Role = "Fisher of the Coast Road",
                 Lines = ["Followed the river up from Seoshe. The catch there's gone strange since the crystal trade started.",

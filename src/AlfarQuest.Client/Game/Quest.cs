@@ -146,9 +146,27 @@ public static class QuestCatalog
         StartFlag: "sq_cerno_started")
     { Reward = new(Xp: 300, Gold: 120, Items: ["kaladash_signet"]) };
 
+    /// <summary>The epilogue. The Pact pays out a phial whose flavour has promised
+    /// all along that a single drop would wake Mirka — this carries it back up.
+    /// Its start flag is <c>cave_deep</c> itself, so the journal turns toward home
+    /// the moment the deepest depth is reached, without anyone having to say so;
+    /// <c>mirka_woken</c> is set by World.TryWakeMirka at her bedside.</summary>
+    public static readonly QuestDef PanaceaHome = new(
+        Id: "panacea_home",
+        Title: "The Way Back Up",
+        Kind: QuestKind.Side,
+        Summary: "The Cave gave up its panacea at the last. Carry it back up out of the " +
+                 "dark, to the house on the hill where Mirka sleeps — and wake her.",
+        Steps: new QuestStep[]
+        {
+            new("Bring the Panacea to Mirka's bedside", "mirka_woken"),
+        },
+        StartFlag: "cave_deep")
+    { Reward = new(Xp: 500) };
+
     public static readonly IReadOnlyList<QuestDef> All = new[]
     {
-        DelversPact, WordForTheCleric, SeekCerno,
+        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome,
     };
 
     public static QuestDef? Find(string id) => All.FirstOrDefault(q => q.Id == id);
@@ -159,11 +177,13 @@ public static class QuestCatalog
            .OrderBy(q => q.Kind == QuestKind.Main ? 0 : 1)
            .ToList();
 
-    /// <summary>The line the HUD shows: the current step of the main quest, or empty
-    /// once its Stage-1 road is done (in the Cave the HUD shows the husk count
-    /// instead).</summary>
+    /// <summary>The line the HUD shows: the current step of the main quest — and
+    /// once the Pact is done, the epilogue's, so the road home is on screen the
+    /// same way the road down was. Empty only when the whole tale is told.</summary>
     public static string HudObjective(IReadOnlyCollection<string> flags) =>
-        DelversPact.Current(flags)?.Objective ?? "";
+        DelversPact.Current(flags)?.Objective
+        ?? (PanaceaHome.Status(flags) == QuestStatus.Active ? PanaceaHome.Current(flags)?.Objective : null)
+        ?? "";
 
     /// <summary>The quests that this one newly-set flag just carried over the finish
     /// line — complete now, and not complete an instant ago without it. The claim

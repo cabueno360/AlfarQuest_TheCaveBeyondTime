@@ -161,6 +161,20 @@ public sealed class PartyState
         // exactly like a hero chosen at the start.
         PartyBridge.OnRecruit = Recruit;
 
+        // The engine asking after (and spending) a carried story item — the
+        // Panacea at Mirka's bedside. Packs first, then the shared stash.
+        PartyBridge.HasItem = id =>
+            Members.Any(m => m.Bag.Items.Any(i => i.Id == id)) || Stash.Items.Any(i => i.Id == id);
+        PartyBridge.TakeItem = id =>
+        {
+            foreach (var m in Members)
+                if (m.Bag.Items.FirstOrDefault(i => i.Id == id) is { } it && m.Bag.Remove(it))
+                { Changed?.Invoke(); return true; }
+            if (Stash.Items.FirstOrDefault(i => i.Id == id) is { } st && Stash.Remove(st))
+            { Changed?.Invoke(); return true; }
+            return false;
+        };
+
         RewardBridge.ContainerStates = () => Containers;
         RewardBridge.OnContainerSaved = state =>
         {

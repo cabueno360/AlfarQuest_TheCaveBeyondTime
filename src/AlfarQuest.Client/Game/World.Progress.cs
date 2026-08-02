@@ -90,6 +90,28 @@ public partial class World
         }
     }
 
+    /// <summary>The epilogue: the Panacea set to Mirka's lips. Fires from Interact
+    /// when the player uses [E] on her with the deepest depth reached and the
+    /// phial actually in a pack — and SPENDS the phial, which is the point of it.
+    /// The scene plays in the party's own speech balloons; the flag completes
+    /// "The Way Back Up" through the same claim door every quest uses.</summary>
+    bool TryWakeMirka(Npc npc)
+    {
+        if (npc.Def.Id != "mirka") return false;
+        var claimed = RewardBridge.Claimed();
+        if (claimed.Contains("mirka_woken") || !claimed.Contains("cave_deep")) return false;
+        if (PartyBridge.TakeItem?.Invoke("phial_panacea") != true) return false;
+
+        Burst(npc.Pos, "#f0d99a", 26);
+        Play("chest_rare", npc.Pos);
+        Say("Mirka", "(The phial touches her lips. Colour comes back the way dawn comes — slowly, then all at once.)", 6.5f);
+        Say("Mirka", "…I know your faces. He wrote of you in the margins of his journal. Is he— is my husband here?", 6.5f);
+        if (Party.Any(h => h.Def.Key == "cleric"))
+            Say("The Grieving Cleric", "I am here, Mirka. The bargain is paid, and the dark is behind me. I am home.", 7.5f);
+        RewardBridge.Claim("mirka_woken");
+        return true;
+    }
+
     /// <summary>The way back UP: leaves the delve and stands the party at the mouth
     /// of the cave on the region they came in from. Until now the only way out was
     /// Abandon Delve, which quit to the roster — this walks you home instead. Run by
