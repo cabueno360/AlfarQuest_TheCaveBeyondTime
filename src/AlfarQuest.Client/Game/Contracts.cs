@@ -40,6 +40,7 @@ public class REnt
 {
     public string t = ""; public float x, y, r, f, life, flash, iframe, hp, mhp, atk, abl, s = 1, dprog;
     public string? c, a, name; public bool hero, active, dead, dying;
+    public bool enr;   // a boss below its enrage line — the renderer holds its rage pose
 
     /// <summary>Particles only: the fraction of life left, and whether to draw
     /// with lighter compositing. Sent rather than derived, because the client has

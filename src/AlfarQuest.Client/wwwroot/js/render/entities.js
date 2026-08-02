@@ -232,12 +232,15 @@ function drawNpc(e) {
     }
 }
 
-// A wildlife creature, drawn from the character atlas by species.
+// A wildlife creature or a keeper, drawn from the character atlas by species.
 function drawCreature(e) {
     const a = ATLAS.chars;
     const frames = getCharFrames();
     if (!a.ready || !frames) return;
-    const list = frames[e.name];
+    // Enraged and with its own rage art (the keepers) — hold that pose; the
+    // shift in silhouette is the tell the health bar's colour change never was.
+    const rage = e.enr ? frames[e.name + "Rage"] : null;
+    const list = rage && rage.length ? rage : frames[e.name];
     if (!list || !list.length) return;
 
     // Cycle the species' frames by distance travelled, like the heroes.
@@ -245,6 +248,10 @@ function drawCreature(e) {
     const s = (e.s || 1) * 1.1 * CHAR_SCALE;
     const dw = f.w * s, dh = f.h * s * CHAR_SQUASH;
     const foot = e.y + (e.r || 15) * 0.9;
+
+    ctx.save();
+    // Dying: no reel of its own, so the body fades as the death timer runs out.
+    if (e.dying) ctx.globalAlpha = Math.max(0, 1 - (e.dprog ?? 0));
 
     groundShadow(e.x, foot - 2, dw * 0.42, dw * 0.15);
     drawFramed(a, f, e.x, foot, dw, dh, false);
@@ -257,8 +264,9 @@ function drawCreature(e) {
         ctx.fillRect(e.x - dw / 2, foot - dh, dw, dh);
     }
     ctx.restore();
+    ctx.restore();
 
-    if (e.hp < e.mhp) {
+    if (!e.dying && e.hp < e.mhp) {
         const w = Math.max(24, dw * 0.7);
         ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(e.x - w / 2, foot - dh - 8, w, 4);
         ctx.fillStyle = "#c85a8a"; ctx.fillRect(e.x - w / 2, foot - dh - 8, w * (e.hp / e.mhp), 4);
@@ -279,6 +287,16 @@ export function drawDecal(e) {
 }
 
 function drawHusk(e) {
+    // A species with its own frames in the character atlas draws as itself —
+    // the outdoor wildlife and the depth keepers. The party-sheet zombie below
+    // is the cave husk's own art, and the fallback for any kind the atlas does
+    // not know. (drawCreature existed for exactly this and was never called, so
+    // every bat, slime and boss wore the same zombie.)
+    if (e.name && e.name !== "husk") {
+        const frames = getCharFrames();
+        if (frames && frames[e.name] && frames[e.name].length) { drawCreature(e); return; }
+    }
+
     const { x, y, r } = e;
     const a = ATLAS.party;
     if (!a.ready) return;

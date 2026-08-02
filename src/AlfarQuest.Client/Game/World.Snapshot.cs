@@ -93,7 +93,7 @@ public partial class World
         foreach (var k in Husks)
             ents.Add(new REnt { t = "husk", x = k.Pos.X, y = k.Pos.Y, r = k.R, hp = k.Hp, mhp = k.MaxHp,
                                 flash = k.Flash, name = k.Def.Kind, s = k.Def.Scale,
-                                dying = k.Dying,
+                                dying = k.Dying, enr = k.Enraged,
                                 dprog = k.Dying ? Math.Clamp(1f - k.DeathT / (k.Def.Boss ? 0.9f : 0.55f), 0f, 1f) : 0f });
 
         foreach (var s in Shots)
