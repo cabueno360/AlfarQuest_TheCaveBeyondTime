@@ -19,7 +19,7 @@
 
     <NowPlaying Track="The Ballad of the Wandering" Muted="Muted" OnToggle="ToggleMute" />
 
-    <MenuBar OnClock="ToggleClock" OnCharacter="OpenCharacterSheet" OnQuit="Quit" />
+    <MenuBar OnClock="ToggleClock" OnCharacter="OpenCharacterSheet" OnQuit="OpenQuit" />
 
     <WorldClock Visible="_clockOpen" OnClose="CloseClock" />
 
@@ -78,6 +78,24 @@
                     }
                 </div>
             }
+        </div>
+    }
+
+    @* Save-and-leave: the quit button opens this instead of leaving outright, so
+       the delve is named (or renamed) at the very moment it is written. *@
+    @if (QuitOpen)
+    {
+        <div class="aq-quitveil" @onclick="CancelQuit">
+            <div class="aq-quitbox" @onclick:stopPropagation="true">
+                <h3>@L["Save and leave?"]</h3>
+                <p>@L["The delve is saved exactly where you stand."]</p>
+                <input @bind="_quitName" @bind:event="oninput" maxlength="40"
+                       placeholder="@L["Name this delve"]" />
+                <div class="aq-quitrow">
+                    <button type="button" class="aq-btn" @onclick="ConfirmQuit">@L["Save and leave"]</button>
+                    <button type="button" class="aq-btn aq-quit-ghost" @onclick="CancelQuit">@L["Keep playing"]</button>
+                </div>
+            </div>
         </div>
     }
 

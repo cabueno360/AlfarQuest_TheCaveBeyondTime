@@ -40,6 +40,13 @@ public sealed partial class Play : IAsyncDisposable
     private const string LevelUpHold = "level-up";
     private const string CutsceneHold = "cutscene";
     private const string JournalHold = "quest-journal";
+    private const string QuitHold = "quit-dialog";
+
+    /// <summary>Whether the save-and-leave dialog is up — the quit button opens
+    /// it instead of leaving outright, so the delve can be named (or renamed) at
+    /// the moment it is written. The world pauses under it like any window.</summary>
+    private bool QuitOpen;
+    private string _quitName = "";
 
     /// <summary>Whether the quest journal (J) is open. Freezes the game like the
     /// character sheet while it shows.</summary>
@@ -322,12 +329,39 @@ public sealed partial class Play : IAsyncDisposable
         if (CurrentLevelUp is not null) Clock.Hold(LevelUpHold); else Clock.Release(LevelUpHold);
         if (_cutscene is not null) Clock.Hold(CutsceneHold); else Clock.Release(CutsceneHold);
         if (JournalOpen) Clock.Hold(JournalHold); else Clock.Release(JournalHold);
+        if (QuitOpen) Clock.Hold(QuitHold); else Clock.Release(QuitHold);
         if (_module is not null) await _module.InvokeVoidAsync("setPaused", Clock.IsPaused);
     }
 
     private async Task ToggleMute()
     {
         if (_module is not null) Muted = await _module.InvokeAsync<bool>("toggleMute");
+    }
+
+    /// <summary>Opens the save-and-leave dialog, prefilled with the delve's
+    /// current name.</summary>
+    private async Task OpenQuit()
+    {
+        _quitName = GameSession.SaveName;
+        QuitOpen = true;
+        await ApplyPause();
+        StateHasChanged();
+    }
+
+    private async Task CancelQuit()
+    {
+        QuitOpen = false;
+        await ApplyPause();
+        StateHasChanged();
+    }
+
+    /// <summary>Names the delve and leaves — the save written on the way out
+    /// carries whatever was typed here.</summary>
+    private async Task ConfirmQuit()
+    {
+        if (!string.IsNullOrWhiteSpace(_quitName)) GameSession.SaveName = _quitName.Trim();
+        QuitOpen = false;
+        await Quit();
     }
 
     private async Task Quit()
@@ -363,6 +397,7 @@ public sealed partial class Play : IAsyncDisposable
         Clock.Release(LevelUpHold);
         Clock.Release(CutsceneHold);
         Clock.Release(JournalHold);
+        Clock.Release(QuitHold);
         await StopAsync();
         // Covers leaving by any other route — the top bar, the back button.
         // Both calls are idempotent, so Quit having already run is harmless.
