@@ -287,16 +287,10 @@ export function drawDecal(e) {
 }
 
 function drawHusk(e) {
-    // A species with its own frames in the character atlas draws as itself —
-    // the outdoor wildlife and the depth keepers. The party-sheet zombie below
-    // is the cave husk's own art, and the fallback for any kind the atlas does
-    // not know. (drawCreature existed for exactly this and was never called, so
-    // every bat, slime and boss wore the same zombie.)
-    if (e.name && e.name !== "husk") {
-        const frames = getCharFrames();
-        if (frames && frames[e.name] && frames[e.name].length) { drawCreature(e); return; }
-    }
-
+    // Every creature wears the party-sheet husk — tried dispatching each species
+    // to its own atlas art (drawCreature below) and REVERTED by taste: the packed
+    // creature frames read worse in the world than the one well-drawn husk. To
+    // give a specific kind its own art later, dispatch it here by name.
     const { x, y, r } = e;
     const a = ATLAS.party;
     if (!a.ready) return;
