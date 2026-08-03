@@ -56,4 +56,16 @@ public class GameApiClient
         try { return await _http.GetFromJsonAsync<SaveGameDto>($"api/saves/{id}"); }
         catch { return null; }
     }
+
+    /// <summary>Removes one of the caller's saves — the slot picker's delete.
+    /// False on any failure; the picker simply keeps showing the slot.</summary>
+    public async Task<bool> DeleteSaveAsync(int id)
+    {
+        try
+        {
+            var resp = await _http.DeleteAsync($"api/saves/{id}");
+            return resp.IsSuccessStatusCode;
+        }
+        catch { return false; }
+    }
 }

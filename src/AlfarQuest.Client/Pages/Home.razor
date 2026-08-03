@@ -27,15 +27,38 @@
         }
         else
         {
-            @if (HasSave)
+            @* The slot picker: every delve this player keeps, each with its own
+               name, place and hour — plus New Game. The roster below shows the
+               party of whichever slot is chosen. *@
+            @if (_saves is { Count: > 0 })
             {
-                @* The save at a glance — where the party stands, and when. Per-hero
-                   level and gear ride on the cards below. *@
-                <dl class="aq-save-strip">
-                    <div><dt>@L["Location"]</dt><dd>@L[Location]</dd></div>
-                    <div><dt>@L["Last played"]</dt><dd>@LastPlayed</dd></div>
-                    <div><dt>@L["Party time"]</dt><dd>@PartyPlayTime</dd></div>
-                </dl>
+                <div class="aq-slots" role="listbox" aria-label="@L["Your delves"]">
+                    @foreach (var s in _saves)
+                    {
+                        <div class="aq-slot @(SelectedSave?.Id == s.Id && !_newGame ? "sel" : "")"
+                             role="option" tabindex="0" @key="s.Id"
+                             @onclick="() => SelectSave(s)">
+                            <span class="aq-slot-name">@SlotName(s)</span>
+                            <span class="aq-slot-meta">@Prettify(s.Region) · @Ago(s.UpdatedAt)</span>
+                            <span class="aq-slot-del @(_confirmDelete == s.Id ? "arm" : "")"
+                                  title="@L["Delete this delve"]"
+                                  @onclick:stopPropagation="true" @onclick="() => DeleteSave(s)">
+                                @(_confirmDelete == s.Id ? L["Sure?"] : "✕")
+                            </span>
+                        </div>
+                    }
+                    <div class="aq-slot aq-slot-new @(_newGame ? "sel" : "")" role="option" tabindex="0"
+                         @onclick="OpenNewGame">
+                        <span class="aq-slot-name">＋ @L["New Game"]</span>
+                        <span class="aq-slot-meta">@L["A fresh descent, from the gate of Ashwold."]</span>
+                    </div>
+                </div>
+            }
+
+            @if (_newGame)
+            {
+                <input class="aq-slot-nameinput" @bind="_newName" @bind:event="oninput"
+                       maxlength="40" placeholder="@L["Name this delve"]" />
             }
 
             <div class="aq-heroes">
@@ -50,7 +73,7 @@
             </div>
 
             <button class="aq-btn aq-begin" @onclick="Begin">
-                @L[HasSave ? "Continue the Descent" : "Begin the Descent"]
+                @L[_newGame || SelectedSave is null ? "Begin the Descent" : "Continue the Descent"]
             </button>
 
             <button type="button" class="aq-mute" title="@L["Mute / unmute the intro"]"

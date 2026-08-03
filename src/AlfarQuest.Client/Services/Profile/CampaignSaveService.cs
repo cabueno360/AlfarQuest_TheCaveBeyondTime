@@ -9,9 +9,8 @@ namespace AlfarQuest.Client.Services.Profile;
 ///
 /// Progression is the thing a player would most resent losing, so this is
 /// deliberately dull: it writes on every exit, reads once on entry, and does
-/// nothing clever in between. There is one save per account — a save-slot
-/// picker is a feature, and inventing one nobody asked for would be a worse
-/// answer than a single slot that always works.</summary>
+/// nothing clever in between. WHICH save is played is the select screen's
+/// decision, handed over in GameSession.SaveId — zero meaning a new game.</summary>
 public sealed class CampaignSaveService(GameApiClient api, PartyState party)
 {
     /// <summary>The save being written to, once known. Null means "not loaded
@@ -21,17 +20,28 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
     private int? _saveId;
     private bool _loaded;
 
-    /// <summary>Reads the newest save and applies it to the party. Safe to call
-    /// when there is none — a new player simply keeps their starting sheet.</summary>
+    /// <summary>Reads the slot the select screen chose (GameSession.SaveId) and
+    /// applies it to the party. A zero id is a NEW game: nothing is read, and the
+    /// first exit creates a fresh save. Safe when the slot has since vanished —
+    /// the player simply keeps their starting sheet.</summary>
     public async Task LoadAsync()
     {
-        var saves = await api.MySavesAsync();
         _loaded = true;
+        _saveId = null;
+        if (GameSession.SaveId <= 0) return;    // a fresh delve: nothing to read
 
-        if (saves.Count == 0) return;
-
-        var save = saves[0];                   // the API returns newest first
+        var saves = await api.MySavesAsync();
+        var save = saves.FirstOrDefault(s => s.Id == GameSession.SaveId)
+                   ?? saves.FirstOrDefault();   // a stale id falls back to the newest
+        if (save is null) return;
         _saveId = save.Id;
+
+        // Where to stand back up. The World constructor reads this hand-off when
+        // the engine builds — region plus the very spot inside it.
+        GameSession.ResumeRegion = string.IsNullOrWhiteSpace(save.Region) ? null : save.Region;
+        GameSession.ResumeX = save.PosX;
+        GameSession.ResumeY = save.PosY;
+        if (string.IsNullOrWhiteSpace(GameSession.SaveName)) GameSession.SaveName = save.PlayerName;
 
         // Before the heroes: the world is built from this, and a chest that came
         // back because the claims arrived late is exactly the bug this prevents.
@@ -90,19 +100,23 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         party.Notify();
     }
 
-    /// <summary>Writes the party's progression. Silent on failure: this runs as
-    /// the player leaves, and an error box on the way out helps nobody — the
-    /// next exit will try again.</summary>
-    public async Task SaveAsync(string region)
+    /// <summary>Writes the party's progression — including WHERE they stood, read
+    /// straight from the running engine, so continuing resumes the walk. Silent
+    /// on failure: this runs as the player leaves, and an error box on the way
+    /// out helps nobody — the next exit will try again.</summary>
+    public async Task SaveAsync()
     {
         if (!_loaded || party.Members.Count == 0) return;
 
+        var (region, x, y) = Game.GameEngine.ResumePoint ?? (Game.World.StartRegion, 0f, 0f);
         var save = await api.SaveAsync(new SaveGameDto
         {
             Id = _saveId ?? 0,
-            PlayerName = party.Selected?.Name ?? "",
+            PlayerName = GameSession.SaveName is { Length: > 0 } name ? name : (party.Selected?.Name ?? ""),
             ActiveHeroKey = party.Selected?.Key ?? "mage",
             Region = region,
+            PosX = x,
+            PosY = y,
             Party = [.. party.Members.Select(ToDto)],
             ClaimedRewards = [.. party.ClaimedRewards],
             Containers = [.. party.Containers.Values.Select(ToDto)],
@@ -110,8 +124,8 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         });
 
         // Remember the id the server assigned, so the next exit updates this save
-        // instead of creating another.
-        if (save is not null) _saveId = save.Id;
+        // instead of creating another — and so the slot picker highlights it.
+        if (save is not null) { _saveId = save.Id; GameSession.SaveId = save.Id; }
     }
 
     /// <summary>Replaces what the party is carrying.

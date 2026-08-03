@@ -27,12 +27,20 @@ public sealed partial class Home : IAsyncDisposable
     private bool Muted;
     private IJSObjectReference? _music;
 
-    /// <summary>The newest save, if any, so the roster can show each hero at the
-    /// level and gear the player left them — the selection screen the brief asks
-    /// for, where progression is visible before the descent.</summary>
-    private SaveGameDto? _save;
-    private IReadOnlyDictionary<string, SaveHeroDto> _progress =
-        new Dictionary<string, SaveHeroDto>();
+    /// <summary>Every save this player owns — the slot picker. The roster below
+    /// shows each hero at the level and gear of the SELECTED slot.</summary>
+    private List<SaveGameDto>? _saves;
+    private SaveGameDto? SelectedSave;
+
+    /// <summary>Whether the New Game panel is open — a fresh roster and a name
+    /// box instead of a slot's party.</summary>
+    private bool _newGame;
+    private string _newName = "";
+
+    /// <summary>The save id whose delete button was pressed once — the second
+    /// press deletes. Selecting anything else resets it, so a stray click never
+    /// costs a campaign.</summary>
+    private int _confirmDelete;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,43 +50,76 @@ public sealed partial class Home : IAsyncDisposable
         // recruits. A failure here must never keep the player off the title screen.
         try
         {
-            var saves = await Api.MySavesAsync();
-            _save = saves.Count > 0 ? saves[0] : null;
-            _progress = _save?.Party.ToDictionary(h => h.HeroKey) ?? _progress;
+            _saves = [.. await Api.MySavesAsync()];
+            SelectedSave = _saves.FirstOrDefault();
+            _newGame = _saves.Count == 0;
+            if (SelectedSave is not null && IsUnlocked(SelectedSave.ActiveHeroKey))
+                Lead = SelectedSave.ActiveHeroKey;
         }
-        catch { /* no save, or the server is briefly unreachable */ }
+        catch { _saves = []; _newGame = true; }
     }
 
-    private SaveHeroDto? ProgressFor(string key) => _progress.GetValueOrDefault(key);
+    private SaveHeroDto? ProgressFor(string key) =>
+        _newGame ? null : SelectedSave?.Party.FirstOrDefault(h => h.HeroKey == key);
 
     /// <summary>Whether a hero can be chosen yet. Unlocked from the start (the Mage
-    /// and the Thief), or already recruited in the save (the Cleric, once he has
-    /// joined at the Cave — he is then in the save's party). The Cleric stays
-    /// locked until that first descent.</summary>
+    /// and the Thief), or already recruited in the SELECTED save (the Cleric, once
+    /// he has joined at the Cave). A new game starts with only the defaults.</summary>
     private bool IsUnlocked(string key) =>
         (Heroes?.FirstOrDefault(h => h.Key == key)?.UnlockedByDefault ?? false)
-        || _progress.ContainsKey(key);
+        || (!_newGame && SelectedSave?.Party.Any(h => h.HeroKey == key) == true);
 
-    /// <summary>Where the party stands and when it last did — the save-level lines
-    /// the selection screen shows above the roster. Null when there is no save to
-    /// summarise, so the markup can leave the strip out for a new player.</summary>
-    private bool HasSave => _save is not null;
-    private string Location => Prettify(_save?.Region);
-    private string LastPlayed => _save is null ? "—" : Ago(_save.UpdatedAt);
-    private string PartyPlayTime => _save is null ? "—" : Duration(_save.PlaytimeSeconds);
+    private void SelectSave(SaveGameDto s)
+    {
+        SelectedSave = s;
+        _newGame = false;
+        _confirmDelete = 0;
+        Lead = s.Party.Any(h => h.HeroKey == s.ActiveHeroKey) || s.ActiveHeroKey is "mage" or "thief"
+            ? s.ActiveHeroKey : "mage";
+    }
 
-    private static string Prettify(string? region) => string.IsNullOrWhiteSpace(region)
-        ? "The approach"
-        : string.Join(' ', region.Replace('_', ' ').Split(' ',
-            StringSplitOptions.RemoveEmptyEntries).Select(w => char.ToUpper(w[0]) + w[1..]));
+    private void OpenNewGame()
+    {
+        _newGame = true;
+        SelectedSave = null;
+        _confirmDelete = 0;
+        _newName = "";
+        Lead = "mage";
+    }
 
-    private static string Ago(DateTime whenUtc)
+    /// <summary>Deletes a slot — on the SECOND press. The first arms it and turns
+    /// the ✕ into a question, so one slip never costs a campaign.</summary>
+    private async Task DeleteSave(SaveGameDto s)
+    {
+        if (_confirmDelete != s.Id) { _confirmDelete = s.Id; return; }
+        _confirmDelete = 0;
+        if (!await Api.DeleteSaveAsync(s.Id)) return;
+        _saves?.Remove(s);
+        if (SelectedSave?.Id == s.Id) SelectedSave = _saves?.FirstOrDefault();
+        if (SelectedSave is null) _newGame = true;
+    }
+
+    private string SlotName(SaveGameDto s) =>
+        string.IsNullOrWhiteSpace(s.PlayerName) ? L["Unnamed delve"] : s.PlayerName;
+
+    private string Prettify(string? region)
+    {
+        if (string.IsNullOrWhiteSpace(region)) return L["The approach"];
+        // Region ids read as "r2_whispering_wood"; the slot shows "Whispering Wood".
+        var trimmed = System.Text.RegularExpressions.Regex.Replace(region, @"^r\d+_", "");
+        var name = string.Join(' ', trimmed.Replace('_', ' ')
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(w => char.ToUpper(w[0]) + w[1..]));
+        return L[name];
+    }
+
+    private string Ago(DateTime whenUtc)
     {
         var d = DateTime.UtcNow - whenUtc;
-        if (d.TotalMinutes < 1) return "just now";
-        if (d.TotalHours < 1) return $"{(int)d.TotalMinutes} min ago";
-        if (d.TotalDays < 1) return $"{(int)d.TotalHours} h ago";
-        return $"{(int)d.TotalDays} d ago";
+        if (d.TotalMinutes < 1) return L["just now"];
+        if (d.TotalHours < 1) return L.Format("{0} min ago", (int)d.TotalMinutes);
+        if (d.TotalDays < 1) return L.Format("{0} h ago", (int)d.TotalHours);
+        return L.Format("{0} d ago", (int)d.TotalDays);
     }
 
     private static string Duration(long seconds)
@@ -120,6 +161,23 @@ public sealed partial class Home : IAsyncDisposable
         var roster = PartyOrder.Where(IsUnlocked).ToList();
         var lead = roster.Contains(Lead) ? Lead : roster[0];
         GameSession.PartyKeys = [lead, .. roster.Where(k => k != lead)];
+
+        // Which slot this session plays. Cleared resume hand-off either way — the
+        // campaign loader sets it again from the save it actually reads.
+        GameSession.ResumeRegion = null;
+        GameSession.ResumeX = GameSession.ResumeY = 0;
+        if (_newGame || SelectedSave is null)
+        {
+            GameSession.SaveId = 0;
+            GameSession.SaveName = string.IsNullOrWhiteSpace(_newName)
+                ? L.Format("Delve of {0}", DateTime.Now.ToString("dd/MM HH:mm"))
+                : _newName.Trim();
+        }
+        else
+        {
+            GameSession.SaveId = SelectedSave.Id;
+            GameSession.SaveName = SelectedSave.PlayerName;
+        }
         Nav.NavigateTo("/play");
     }
 

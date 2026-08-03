@@ -9,6 +9,20 @@ public static class GameSession
     public static string[] PartyKeys { get; set; } = { "mage", "thief" };
     public static string PlayerName { get; set; } = "Wanderer";
 
+    /// <summary>Which save slot this session plays. Zero means a NEW game: the
+    /// campaign loader reads nothing and the first exit creates a fresh save.</summary>
+    public static int SaveId { get; set; }
+
+    /// <summary>The playthrough's name — chosen at New Game, shown on the slot.</summary>
+    public static string SaveName { get; set; } = "";
+
+    /// <summary>Where a continued save stands the party back up. Set by the
+    /// campaign loader from the save, read ONCE by the World constructor and
+    /// cleared, so a later fresh run starts at the gate as ever.</summary>
+    public static string? ResumeRegion { get; set; }
+    public static float ResumeX { get; set; }
+    public static float ResumeY { get; set; }
+
     /// <summary>The world clock, in hours 0–24. Advances only while the game runs —
     /// the update loop moves it, so it never ticks in a menu. Starts mid-morning.</summary>
     public static float TimeOfDay { get; set; } = 8f;

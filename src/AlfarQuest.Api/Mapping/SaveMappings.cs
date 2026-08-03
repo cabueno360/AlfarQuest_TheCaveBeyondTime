@@ -13,6 +13,8 @@ public static class SaveMappings
         PlayerName = s.PlayerName,
         ActiveHeroKey = s.ActiveHeroKey,
         Region = s.Region,
+        PosX = s.PosX,
+        PosY = s.PosY,
         PlaytimeSeconds = s.PlaytimeSeconds,
         UpdatedAt = s.UpdatedAt,
         Party = [.. s.Party.Select(ToDto)],

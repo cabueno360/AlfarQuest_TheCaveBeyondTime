@@ -23,6 +23,10 @@ public static class GameEngine
         _world = new World(keys, (float)viewW, (float)viewH);
     }
 
+    /// <summary>Where the running world would resume from — read by the campaign
+    /// save on the way out. Null before Init, which the saver falls back from.</summary>
+    public static (string Region, float X, float Y)? ResumePoint => _world?.ResumePoint();
+
     // Fetched by game.js whenever RenderState.rev changes — see WorldSnapshot.
     [JSInvokable]
     public static string Snapshot()

@@ -22,9 +22,15 @@ public record HeroDto
 public record SaveGameDto
 {
     public int Id { get; init; }
+    /// <summary>The playthrough's NAME — what the save-slot picker shows. Chosen
+    /// by the player when a new game starts.</summary>
     public string PlayerName { get; init; } = "";
     public string ActiveHeroKey { get; init; } = "mage";
     public string Region { get; init; } = "cave_beyond_time";
+    /// <summary>Where the party stood when the save was written, inside
+    /// <see cref="Region"/> — so continuing resumes the walk, not just the game.</summary>
+    public float PosX { get; init; }
+    public float PosY { get; init; }
     public long PlaytimeSeconds { get; init; }
     public IReadOnlyList<SaveHeroDto> Party { get; init; } = [];
 

@@ -159,6 +159,22 @@ public partial class World
         else { PlaceParty(Spawn); Camera = Spawn; }
     }
 
+    /// <summary>Where a save should stand the party back up: the region, and the
+    /// spot in it. Indoors that is the doorstep the building was entered from;
+    /// below ground it is the front of the cave mouth — the WALK is resumed, not
+    /// the room, because interiors and the delve rebuild themselves.</summary>
+    public (string Region, float X, float Y) ResumePoint()
+    {
+        var region = CurrentRegion ?? StartRegion;
+        var at = Stage switch
+        {
+            3 => _interiorReturn,
+            2 => CaveMouth + new Vec(0, TILE * 2.6f),
+            _ => Party.Count > 0 ? Party[Active].Pos : Spawn,
+        };
+        return (region, at.X, at.Y);
+    }
+
     /// <summary>The level each named depth is tuned to — its keeper's stats and
     /// its husks' assume a party of about this strength. Past the named depths
     /// the ask keeps climbing.</summary>

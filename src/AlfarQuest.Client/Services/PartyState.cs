@@ -239,6 +239,25 @@ public sealed class PartyState
         Changed?.Invoke();
     }
 
+    /// <summary>Forgets everything — sheets, claims, containers, belongings. The
+    /// play screen calls this on the way in, BEFORE Load and the campaign read,
+    /// so no progress from a previous slot ever bleeds into the one being played:
+    /// without it, a hero cached from save A kept their old levels when save B
+    /// (or a brand-new game) recruited them.</summary>
+    public void StartFresh()
+    {
+        _byKey.Clear();
+        Members = [];
+        Selected = null;
+        ClaimedRewards.Clear();
+        Containers.Clear();
+        Pouch.Clear();
+        Stash.Clear();
+        SharedPurse.Clear();
+        PendingLevelUps.Clear();
+        Changed?.Invoke();
+    }
+
     /// <summary>Adds a hero to the party mid-campaign — the Cleric joining at the
     /// Cave — with a full sheet, starting gear and a purse, exactly like a hero
     /// chosen at the start. Idempotent: a hero already in the party is left as they

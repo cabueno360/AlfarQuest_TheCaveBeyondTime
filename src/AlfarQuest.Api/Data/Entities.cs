@@ -23,6 +23,9 @@ public class PlayerSave
     public string PlayerName { get; set; } = "";
     public string ActiveHeroKey { get; set; } = "mage";
     public string Region { get; set; } = "cave_beyond_time";
+    // Where in the region the party stood — the resume point.
+    public float PosX { get; set; }
+    public float PosY { get; set; }
     public long PlaytimeSeconds { get; set; }
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<SaveHero> Party { get; set; } = new();

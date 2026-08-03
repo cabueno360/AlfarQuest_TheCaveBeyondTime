@@ -95,16 +95,30 @@ public partial class World
     public World(string[] heroKeys, float viewW, float viewH)
     {
         ViewW = viewW; ViewH = viewH;
-        // Open in the village. If the regions did not register — a map failed to
-        // fetch — fall back to the old generated approach, so there is always a
-        // world to stand in. See Overworld.Regions and docs/mapping-standard.md.
-        if (!LoadRegion(StartRegion))
+
+        // A continued save stands the party where it left off — region and spot,
+        // handed over by the campaign loader. One-shot: cleared once read, so a
+        // later fresh run starts at the gate as ever. A region the maps no
+        // longer know (or an old save whose Region was display text) falls back
+        // to the village, and a spot that lands in rock is nudged clear.
+        var resumeRegion = GameSession.ResumeRegion;
+        var resumeAt = new Vec(GameSession.ResumeX, GameSession.ResumeY);
+        GameSession.ResumeRegion = null;
+        GameSession.ResumeX = GameSession.ResumeY = 0;
+
+        bool resumed = resumeRegion is not null && LoadRegion(resumeRegion);
+        if (!resumed && !LoadRegion(StartRegion))
             BuildOverworld();
+
+        var start = Spawn;
+        if (resumed && (resumeAt.X != 0 || resumeAt.Y != 0))
+            start = Blocked(resumeAt, 14f) ? NearestOpen(resumeAt) : resumeAt;
+
         int slot = 0;
         foreach (var key in heroKeys.Take(3))
-            Party.Add(new Hero(Lore.ByKey(key), Spawn + new Vec((slot++ - 1) * 40f, 0)));
+            Party.Add(new Hero(Lore.ByKey(key), start + new Vec((slot++ - 1) * 40f, 0)));
         Active = 0;
-        Camera = Spawn;
+        Camera = start;
 
         // The two seams the shop needs from the engine: a sound queue for its coin,
         // and a way to release the held hero when its window closes. Set here rather

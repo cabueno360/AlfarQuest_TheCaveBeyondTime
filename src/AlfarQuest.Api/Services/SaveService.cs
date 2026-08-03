@@ -52,6 +52,8 @@ public sealed class SaveService(GameDbContext db)
         save.PlayerName = dto.PlayerName;
         save.ActiveHeroKey = dto.ActiveHeroKey;
         save.Region = dto.Region;
+        save.PosX = dto.PosX;
+        save.PosY = dto.PosY;
         save.PlaytimeSeconds = dto.PlaytimeSeconds;
         save.UpdatedAt = DateTime.UtcNow;
         // The party is replaced wholesale rather than diffed: a save is a
@@ -119,6 +121,19 @@ public sealed class SaveService(GameDbContext db)
         save.Belongings.Clear();
         save.Containers.Clear();
         return save;
+    }
+
+    /// <summary>Removes a save and everything hanging off it. True when it was
+    /// the caller's and is gone; false for unknown ids and other people's — the
+    /// controller turns both into the same 404.</summary>
+    public async Task<bool> DeleteAsync(int id, Guid owner, CancellationToken ct = default)
+    {
+        // LoadForUpdate already strips the children in FK-safe order.
+        var save = await LoadForUpdateAsync(id, owner, ct);
+        if (save is null) return false;
+        db.Saves.Remove(save);
+        await db.SaveChangesAsync(ct);
+        return true;
     }
 
     private PlayerSave NewSave(Guid owner)

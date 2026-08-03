@@ -115,6 +115,30 @@
 .aq-save-strip dt { font-size: .68rem; letter-spacing: .1rem; text-transform: uppercase; color: var(--aq-muted); }
 .aq-save-strip dd { margin: 0; font-family: 'Cinzel', serif; font-size: .92rem; color: var(--aq-gold-soft); }
 
+/* The slot picker: one card per delve, plus New Game. */
+.aq-slots { display: flex; justify-content: center; gap: .7rem; flex-wrap: wrap; margin: 0 0 1.1rem; }
+.aq-slot { position: relative; display: flex; flex-direction: column; gap: .18rem;
+    min-width: 200px; max-width: 260px; padding: .6rem 2.1rem .6rem .9rem; cursor: pointer;
+    background: rgba(12, 10, 26, .55); border: 1px solid rgba(185, 199, 255, .16);
+    border-radius: 12px; text-align: left; transition: border-color .15s ease, background .15s ease; }
+.aq-slot:hover { border-color: rgba(216, 180, 90, .45); }
+.aq-slot.sel { border-color: var(--aq-gold-soft, #d8b45a); background: rgba(216, 180, 90, .1);
+    box-shadow: 0 0 14px rgba(216, 180, 90, .18); }
+.aq-slot-name { font-family: 'Cinzel', serif; font-size: .92rem; color: var(--aq-gold-soft);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aq-slot-meta { font-size: .74rem; color: var(--aq-muted); }
+.aq-slot-del { position: absolute; top: .45rem; right: .5rem; font-size: .72rem; line-height: 1;
+    padding: .18rem .32rem; border-radius: 6px; color: var(--aq-muted); }
+.aq-slot-del:hover { color: #e2687a; background: rgba(226, 104, 122, .12); }
+.aq-slot-del.arm { color: #e2687a; font-style: italic; }
+.aq-slot-new .aq-slot-name { color: #a8f0de; }
+.aq-slot-nameinput { display: block; margin: 0 auto 1.2rem; width: min(340px, 90%);
+    padding: .55rem .9rem; font-family: 'Cinzel', serif; font-size: .95rem; text-align: center;
+    color: var(--aq-gold-soft); background: rgba(12, 10, 26, .65);
+    border: 1px solid rgba(216, 180, 90, .4); border-radius: 10px; outline: none; }
+.aq-slot-nameinput:focus { border-color: var(--aq-gold-soft, #d8b45a);
+    box-shadow: 0 0 12px rgba(216, 180, 90, .25); }
+
 /* Per-hero saved progression on the card: a level pip on the portrait, an XP bar
    and a row of worn-gear icons. */
 .aq-hero-level { position: absolute; top: .5rem; right: .5rem; z-index: 2;

@@ -112,6 +112,10 @@ public sealed partial class Play : IAsyncDisposable
 
         // Nothing above this line touches game state. Reaching here at all means
         // the route guard let the page render, which means there is a session.
+        // Fresh sheets first: without this, a hero cached from the PREVIOUS slot
+        // kept their old levels when this one recruited them — the campaign load
+        // below rebuilds everything the chosen save actually holds.
+        Party.StartFresh();
         Party.Load(GameSession.PartyKeys);
         // Before the world is built: the engine offers an opened container to
         // whoever is listening, and nothing listening means the contents go
@@ -337,17 +341,11 @@ public sealed partial class Play : IAsyncDisposable
 
     /// <summary>Writes what the session earned. Called on the way out by either
     /// route, and safe twice — the tracker will not double-count and the save is
-    /// an upsert.</summary>
+    /// an upsert. Where the party stood comes straight from the engine now.</summary>
     private async Task PersistAsync()
     {
-        await Campaign.SaveAsync(_module is null ? "the approach" : await CurrentRegion());
+        await Campaign.SaveAsync();
         await PlayTime.ReportAsync();
-    }
-
-    private async Task<string> CurrentRegion()
-    {
-        try { return await _module!.InvokeAsync<string>("currentRegion"); }
-        catch { return "the approach"; }
     }
 
     private async Task StopAsync()

@@ -36,4 +36,13 @@ public sealed class SavesController(SaveService saves, ICurrentUser caller) : Co
         if (caller.AccountId is not { } owner) return Unauthorized();
         return await saves.UpsertAsync(dto, owner, ct) is { } save ? Ok(save) : NotFound();
     }
+
+    /// <summary>Removes one of the caller's saves — the slot picker's delete.
+    /// Someone else's id 404s exactly like a missing one.</summary>
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    {
+        if (caller.AccountId is not { } owner) return Unauthorized();
+        return await saves.DeleteAsync(id, owner, ct) ? NoContent() : NotFound();
+    }
 }

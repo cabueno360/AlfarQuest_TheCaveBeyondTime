@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS Saves (
   PlayerName        VARCHAR(80)   NOT NULL,
   ActiveHeroKey     VARCHAR(40)   NOT NULL DEFAULT 'mage',
   Region            VARCHAR(60)   NOT NULL DEFAULT 'cave_beyond_time',
+  PosX              FLOAT         NOT NULL DEFAULT 0,
+  PosY              FLOAT         NOT NULL DEFAULT 0,
   PlaytimeSeconds   BIGINT        NOT NULL DEFAULT 0,
   UpdatedAt         DATETIME(6)   NOT NULL,
   PRIMARY KEY (Id)
