@@ -16,7 +16,7 @@
  </layer>
  <layer id="202" name="GroundDetails" width="88" height="56">
   <data encoding="base64" compression="zlib">
-   eJzt11lOg0AAxvFJmrQ2Pru9ut1A3PUgLrUuB3GNGm/ju2dqqwfwQ0JEGHDCmpb/L/nSdB5g+DodwBgAAAAAAAAAAAAAAADUYdQ1ZqxMus2cf6tnjKdsKzvKrrLXq3cOVXWwoOtYVJaUZWWl5uvyneicp8qZcq4MlIsa51FlB/s61oFyqBwpxw30e6tz3in3yoPyqDzVOI8qOxjqWJfKlXKt3DTQb9Oq7uBZx3tRXlvYbYgOAACYTh9zTc9gtvn90nGS17GPDzrJ7/GxKPq1s/UbdhlPlpG6HSsT5VP5ousf8X7jXbp061vtG7OmrCsbyma/3HlOKy+jS9dukS7eb/hJt+VI2x/K7JbfKZB2X/vvXheOvVnuafwPfhVdu7b9O/rZZmXvC9Fjtb3fMnrNeu6g32LrN2t/Zv/9q2i/LuNtVla/7L9JedaayzMc/Qay+rV159ot/Qbyvle49A43ed7vUNww0un7fHPzmEV+t9GgOq5r9xsTLlwD
+   eJzt10lOwzAYhmFLlVoq1kxbpiN0w3QUVIa7AOI27DlTWzgAX4gijOMYK3GIUr+P9CtqFlb0NnUaYwAAAAAAAAAAAAAAAPAfVlNj1prNdOgrGU5fDfZmxuxrDjSHmqNZ2vXHoM8GF1rrUnOludbcZNi3zwZLrXWnudc8aB4z7Nt3gyet96x5ybBthQYAAIzT+87QV7Ddir40rltM/OdvJ/XP7jkbff18fauW7oSs1Hat2Wg+NJ+0/ub2dVvGtC0cz4050ZxqzjTn87TXOVaLQMvYtmjm9q2OtE2jaX9I2ZbvqdT0XPvrWVede/U80/gd/Oh67/r2b/uYs9T7gr1W7n1TdA3976Bvt/s3tD+z//7WtW/M+Zyl6sv+W9fmXov5D0ffUqivr11sW/qW2r5XxHRHnDbvd+huaTV92x3uOrZR0dYe9Cf23v0CtCNU8g==
   </data>
  </layer>
  <layer id="203" name="Walls" width="88" height="56">
@@ -26,17 +26,17 @@
  </layer>
  <layer id="204" name="Buildings" width="88" height="56">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer id="205" name="Objects" width="88" height="56">
   <data encoding="base64" compression="zlib">
-   eJzt0sEJACAMBMGAhdp/F8G/T8OBzMD9w5IqAAAAAAAAAAAAAAAAAADI2St9wX9O09t4Q8tZ/nWevgAAQFoD+oUENw==
+   eJzt2klKA0EYhuEfRKheaHIGJxyyUG/gNRxBcwNzDMetutWtegGNulV3Go/htHOIX+hFQ+OiJV0UXb4PfHQ3BFK8NFnFDACqaceZ7Wp72r42rc1oDRf6ZHFoq+OVdq3daMvairZKXwDSGjKb1O/BlEvv88/oz4kaLqrlkkvv88/oz5Mabqnltkvv888AAAAAAAAAAAAAAAD4Hy6c2aXLrijXs5q+uOz6qr1p77QuxUhiNppk1zFtXJtIQp+suhb4/5hXmwX7HtTMDrWjmt/zxOa4YN9bdb3T7un7J52Cfb/VtdtrW/d6nOgkw8U+N6uuc9o8fb1YV9cNrRm479pA2O+PUa/pb0M5aOkX76t/9AUAoFq+Bq39qX1ooc8So466PmoP9PXiXF3PtFP6IucHdUE9cQ==
   </data>
  </layer>
  <layer id="206" name="Furniture" width="88" height="56">
   <data encoding="base64" compression="zlib">
-   eJztmU0yBDEYhlOlx6rNBjtLLGassMHOhsICF8Al/B1B4QgOgcPgADiBpfHaqZGeSmfydk+S96n6Fv1TSb4nqc5PGyOEEHFwWxhzh7gv2m5JmjzC6xPiWX4pvMDrK+ItU78F8u4Qc/9G2YPf8jvtteerxb7toe6+R/2uHhbhdQmx7OjXtz2jWHCsm8EhcjnyyMfVwx5y20ccOObo255J5Ry5XHjkw/Lg255JYac0Zrccv5zYPbC4gtvrAH7H5R1984H4VB9RKPE9nkF0W5x7UmYVXtcQ6/IrhBBCRIPOZbnoXJZL7ueybOqey4bkMoM+rXsuG5KHDPzWPZcVcTGLMTyHmM9gLLNZsTjcwL1NxJblme19Uc2xxdcJ7p0izizPbO8LERsh/qvfTP2//hs5ULUeDvFffdjnsNscXFeth7fJfnPzzKDu90Cem0GOhRC2OS4nesS93Kj1hAiD/DZLSn4H083WVzU+XfYgKXlnof0blyp3chsG+eOh8clDbjnIa3g0V3GRWx7aF/CR12aQYyGESIsf8yVffg==
+   eJzt2bFNw0AYhuGT4mQBoKMECjYANgB2wKyDgEGgAwZJOmAQSsJHgyDg4LP92dHv95H+AilKTq+Ss82ltHkeipQeNU/F0CvxuJumdD9t/5qm7/esri+a14y+OesZ2lzrXPyz1jqvafp+7+q6/Gyb0StnPWO3p077mgN6WZyq65nmPEhf7Vulflvl0OuISteGck7fL29B71s2xW6QfQkAACfuf724/wUAjNV1kdKN5pb/fVhEPxMbWpMzMdTX5EwM9XEm5hXtTAw/bWlv2tbssP9bHKnrseaEvhYX6lpqLukLVLqa/P77+6Cd1Z6rbWndzrq+dG4vdz+gcz9oDOCva9yYHBqf79bdT6Ab9O1XpL7LWb+fV/X9rPMMEqm7C89vXlXtaNsN+vnw/fShrQddu8e1you2PjwX+NG1HzQGgFg+AEpxZfI=
   </data>
  </layer>
  <layer id="207" name="AbovePlayer" width="88" height="56">
@@ -59,7 +59,7 @@
  </objectgroup>
  <objectgroup id="210" name="NPCSpawn"/>
  <objectgroup id="211" name="Warp">
-  <object id="2" name="outside" x="344" y="408">
+  <object id="2" name="outside" x="344" y="424">
    <properties>
     <property name="DestinationMap" value="__overworld__"/>
     <property name="DestinationSpawn" value="0.0,0.0"/>
@@ -223,17 +223,6 @@
   </object>
  </objectgroup>
  <objectgroup id="213" name="Props">
-  <object id="18" name="caveEntrance" x="344" y="408">
-   <properties>
-    <property name="Flip" value="true"/>
-    <property name="Kind" value="caveEntrance"/>
-    <property name="Radius" value="0"/>
-    <property name="Scale" value="0.8"/>
-    <property name="Solid" value="false"/>
-    <property name="Variant" value="12"/>
-   </properties>
-   <point/>
-  </object>
   <object id="19" name="h_candelabra" x="312" y="398.4">
    <properties>
     <property name="Flip" value="false"/>
