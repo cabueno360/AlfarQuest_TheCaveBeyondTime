@@ -55,12 +55,6 @@
    </properties>
    <point/>
   </object>
-  <object id="3" name="mirkafather" x="168.00" y="72.00">
-   <properties>
-    <property name="NpcId" value="mirkafather"/>
-   </properties>
-   <point/>
-  </object>
  </objectgroup>
  <objectgroup id="211" name="Warp">
   <object id="4" name="downstairs" x="344.00" y="216.00">

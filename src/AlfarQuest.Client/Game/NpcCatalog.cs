@@ -109,10 +109,14 @@ public static class NpcCatalog
                         "It is not the rock that took them. It is what the rock opened onto: the cave below the cave, that the priest went down to find."),
                     new("What is this 'cave below the cave'?",
                         "The Cave Beyond Time, the old songs call it. I took it for a song until Cerno came back from it with his mind half gone and a phial of the water that stayed the Wasting a month.",
-                        "The Cleric went down after him, in Cerno's stead, to buy more of it for his wife. Find him, if you go — and mind you come back up, which is more than most manage.")
+                        "The Cleric went down after him, in Cerno's stead — that descent was the phial's price. Find him, if you go, and mind you come back up, which is more than most manage.")
                         { SetsFlag = "quest_cave_learned" },
+                    new("Who is Cerno?",
+                        "Cerno of Kaladash — the one man to walk back out of that cave, though he left half his wits below to do it.",
+                        "He keeps a fire at the forecourt of the mouth and will not come down among us. Hear him before you go in; his madness knows more than our sense does.")
+                        { OffersQuest = "seek_cerno", ShowWhen = "quest_cave_learned" },
                     new("Where should we make for?",
-                        "North, past the graves, to the old mine. The road still remembers the way even if the men who walked it do not.",
+                        "North through the Whispering Wood, then east at the vale to the old workings. The road still remembers the way even if the men who walked it do not.",
                         "Take light, and take more of it than you think you need.")
                         { ShowWhen = "quest_cave_learned" },
                 ],
@@ -149,11 +153,14 @@ public static class NpcCatalog
         new() { Id = "girl", Kind = "npcGirl", Name = "Wren", Role = "Village Child",
                 Lines = ["There's a hollow behind the bushes. Don't tell.",
                          "I found a blue rock. It was warm."] },
+        // No Quest flag: he gives no quest, and a service flag with nothing
+        // behind it is a prompt that lies.
         new() { Id = "guard", Kind = "npcGuard", Name = "Serjeant Vosk", Role = "Guard",
-                Services = NpcServices.Quest,
                 Lines = ["Past the graves you're on your own. That's the rule.",
                          "Sign's there for a reason. Read it twice."] },
-        new() { Id = "farmwife", Kind = "npcFarmwife", Name = "Ilsa", Role = "Farmer",
+        // "Hedda", not a second Ilsa — the forester in the Wood already carries
+        // that name, and two Ilsas a region apart read as a copy-paste, not kin.
+        new() { Id = "farmwife", Kind = "npcFarmwife", Name = "Hedda", Role = "Farmer",
                 Lines = ["Crops came up grey this year. Draw your own conclusion.",
                          "You'll want a full stomach before that dark."] },
         new() { Id = "trader", Kind = "npcMerchant", Name = "Sella of the Road", Role = "Traveling Merchant",
@@ -185,12 +192,12 @@ public static class NpcCatalog
                         "I did. His wife was dying and the panacea was the only thing that stayed it, so I struck the bargain: his descent for the phial. He took it without flinching.",
                         "Find him below, if you can. Tell him the old man in the vale keeps the hearth lit."),
                     new("Where do the other roads lead?",
-                        "Three run from the crossing: east to Kae Ychel and its Academy, west to Seoshe on the coast, north to the Vale. Every one of them safer than this one."),
+                        "Two run from this pit: west into the Vale and its chapel, south to the sun-road that goes on to Kae Ychel. Either is kinder than the climb behind me."),
                 ],
                 Lines = ["This cave of myth is real. I drew the panacea from its very halls, and left the rest of my mind behind.",
                          "I turned back too soon. What waits below, no man was meant to carry back out.",
                          "You mean to descend? Then hear me plainly — you will descend into madness.",
-                         "There are three roads from the crossing: east to Kae Ychel and its Academy, west to Seoshe on the coast, north to the Vale. All of them safer than this one."] },
+                         "Two roads run from this pit: west into the Vale, south to the sun-road for Kae Ychel. Either is kinder than the climb behind me."] },
         // Mirka's father — sent his son-in-law, the Cleric, into the dark to save
         // his dying daughter; keeps her house on the hill while the priest is gone.
         // The concept art's "ideas of conversation", made literal: he answers a menu
@@ -219,15 +226,15 @@ public static class NpcCatalog
                         "He kept it at her bedside, in his own careful hand. Every remedy he tried, every prayer, every bargain.",
                         "Read it, if you have the stomach. It is a year of a man's hope running out, written down."),
                     new("What lies beyond the forest?",
-                        "Three roads run from the crossing: east to the Academy at Kae Ychel, west to Seoshe on the coast, north deeper into the Vale.",
-                        "And below the graves, the old mine — and past that, the cave. Every one of them safer than the last."),
+                        "South lies Ashwold: its west gate opens on Seoshe, and its east road runs out for Kae Ychel.",
+                        "And east of here, past the graves, the old workings of Deepdelve — and past them, the cave. Every one of them safer than the last."),
                     new("Have you heard of the Cave Beyond Time?",
                         "I did not believe in it either, till Cerno set a phial of its water into my hand.",
                         "They say time runs strange down there, and that men who go in come back changed — if they come back at all. My son-in-law has not.")
                         { SetsFlag = "quest_cave_learned" },
                     // Only once they know to look for it — the road to the mine.
                     new("Then where does the old mine lie?",
-                        "North and east, past the graves on the high road. The old workings first, and past them the mouth of the cave itself.",
+                        "East, past the graves on the high road. The old workings first, and past them the mouth of the cave itself.",
                         "Follow the ford up out of the vale and keep to the road. You will not mistake the dark of it.")
                         { ShowWhen = "quest_cave_learned" },
                     new("Who is Cerno?",
@@ -247,7 +254,7 @@ public static class NpcCatalog
                          "The wasting is no fever you sweat out. It draws the colour from a body, the strength, the waking hours — until only breath is left. It took her by inches.",
                          "If you are truly going down into that cave — find the cleric in the gilded plate, and tell him she still breathes. That is help enough.",
                          "He kept a journal at her bedside, in his own hand. Every remedy, every prayer. Read it, if you've the stomach — it is a year of a man's hope running out.",
-                         "Beyond the treeline, three roads run from the crossing: east to the Academy at Kae Ychel, west to Seoshe on the coast, north deeper into the Vale. And below the graves, the old mine.",
+                         "South of the treeline lies Ashwold — Seoshe through its west gate, the Kae Ychel road out its east. And east of here the old workings, and past them the cave.",
                          "The Cave Beyond Time — I did not believe in it either, till Cerno set a phial of its water in my hand. They say time runs strange down there, and men come back changed.",
                          "Cerno of Kaladash — a warrior, grim and honest. He brought the panacea up out of the dark and left half his mind behind to do it. It was he who led my son-in-law down.",
                          "The panacea: six drops, drawn from the Cave. It slowed the wasting one month, no more. Cerno's price for those drops was the cleric's own descent into madness.",

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="331" nextobjectid="703">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="332" nextobjectid="704">
  <properties>
   <property name="DisplayName" value="Ashwold"/>
   <property name="EastMap" value="r4_kae_ychel_road"/>
@@ -117,18 +117,6 @@
    </properties>
    <point/>
   </object>
-  <object id="3" name="seoshe_guard" x="88" y="472">
-   <properties>
-    <property name="NpcId" value="seoshe_guard"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="4" name="seoshe_guard" x="88" y="520">
-   <properties>
-    <property name="NpcId" value="seoshe_guard"/>
-   </properties>
-   <point/>
-  </object>
   <object id="5" name="smith" x="424" y="456">
    <properties>
     <property name="NpcId" value="smith"/>
@@ -195,9 +183,9 @@
    </properties>
    <point/>
   </object>
-  <object id="16" name="scholar" x="664" y="296">
+  <object id="703" name="coastfisher" x="632" y="312">
    <properties>
-    <property name="NpcId" value="scholar"/>
+    <property name="NpcId" value="coastfisher"/>
    </properties>
    <point/>
   </object>

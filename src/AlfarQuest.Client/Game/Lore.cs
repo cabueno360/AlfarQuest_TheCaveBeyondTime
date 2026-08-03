@@ -35,9 +35,10 @@ public static class Lore
             Description: "A priest who traded his own descent into madness for a phial of panacea. Wades in with blessed plate and gilded mace, and can loose a nova of holy light.",
             BaseHp: 140, Speed: 104f, Attack: AttackKind.Melee, Range: 74f, Damage: 26,
             AttackCooldown: 0.55f, ColorPrimary: "#e9e7f0", ColorAccent: "#c1442e",
-            // Not from the start: the Cleric is still in his northern village at his
-            // wife's bedside. He joins the party at the mouth of the Cave (in Cerno's
-            // stead), so he is locked on the select screen until that first descent.
+            // Not from the start: the Cleric went down months ago, in Cerno's stead —
+            // his house stands shut and his armour stand empty (see the Cleric's
+            // house). The party meets him at the mouth of the Cave on their own first
+            // descent, so he is locked on the select screen until then.
             SwatchCss: "linear-gradient(90deg,#e9e7f0,#c1442e)", UnlockedByDefault: false),
 
         new(

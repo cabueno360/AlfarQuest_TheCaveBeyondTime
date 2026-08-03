@@ -6,7 +6,7 @@
      appear here as NPCSpawn objects. Each prop says whether this map drew it. -->
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
      width="88" height="48" tilewidth="16" tileheight="16" infinite="0"
-     nextlayerid="221" nextobjectid="60">
+     nextlayerid="221" nextobjectid="61">
  <properties>
   <property name="Interior" value="mage_school"/>
   <property name="DisplayName" value="The Academy Outpost"/>
@@ -72,6 +72,12 @@
   <object id="2" name="grandmaster" x="312.00" y="104.00">
    <properties>
     <property name="NpcId" value="grandmaster"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="60" name="apprentice_fire" x="248.00" y="152.00">
+   <properties>
+    <property name="NpcId" value="apprentice_fire"/>
    </properties>
    <point/>
   </object>

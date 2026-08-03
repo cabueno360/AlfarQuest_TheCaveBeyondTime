@@ -96,6 +96,19 @@ public static class MerchantCatalog
                 new("crystal_mana", 1), new("ring_copper", 1),
             ],
         },
+        // Yeska, the stranded delver at the pit head — she sells exactly what her
+        // balloon has promised all along: rope-and-lamp essentials the last crew
+        // will not be needing. Without this entry her Shop flag was a lie.
+        new()
+        {
+            NpcId = "stranded_delver", Greeting = "I sell what the last lot did not need. They will not be needing it.",
+            Buys = [ItemClass.Consumable, ItemClass.Material],
+            Stock =
+            [
+                new("torch", 6), new("ration_trail", 4), new("potion_health", 3),
+                new("potion_antidote", 2), new("potion_mana", 2),
+            ],
+        },
         // The Keeper — a rare scholar-merchant with what the others cannot get.
         new()
         {
