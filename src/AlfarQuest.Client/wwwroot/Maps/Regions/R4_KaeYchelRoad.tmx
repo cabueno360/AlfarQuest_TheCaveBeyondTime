@@ -25,6 +25,7 @@
  <tileset firstgid="7552" source="../Tilesets/TreePineLow.tsx"/>
  <tileset firstgid="7600" source="../Tilesets/TreeTall.tsx"/>
  <tileset firstgid="7816" source="../Tilesets/Ours/OurBuildings.tsx"/>
+ <tileset firstgid="60000" source="../Tilesets/AtlasProps.tsx"/>
  <layer id="601" name="Ground" width="144" height="112">
   <data encoding="base64" compression="zlib">
    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
@@ -273,7 +274,7 @@
   </object>
  </objectgroup>
  <objectgroup id="625" name="Props">
-  <object id="9" name="signpost" x="72" y="488">
+  <object id="9" name="signpost" gid="2147543768" x="65.25" y="488" width="13.5" height="21.38">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="signpost"/>
@@ -283,9 +284,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="10" name="rock" x="104" y="552">
+  <object id="10" name="rock" gid="2147543750" x="96.78" y="552" width="14.45" height="17.85">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="rock"/>
@@ -295,9 +295,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="11" name="well" x="344" y="424">
+  <object id="11" name="well" gid="2147543708" x="332.95" y="424" width="22.1" height="20.4">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="well"/>
@@ -307,9 +306,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="33"/>
    </properties>
-   <point/>
   </object>
-  <object id="12" name="cherry" x="344" y="424">
+  <object id="12" name="cherry" gid="2147543714" x="328.77" y="424" width="30.45" height="38.85">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="cherry"/>
@@ -319,9 +317,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="33"/>
    </properties>
-   <point/>
   </object>
-  <object id="13" name="cherry" x="296" y="424">
+  <object id="13" name="cherry" gid="2147543714" x="280.77" y="424" width="30.45" height="38.85">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="cherry"/>
@@ -331,9 +328,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="14" name="cherry" x="424" y="312">
+  <object id="14" name="cherry" gid="60066" x="409.5" y="312" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -343,9 +339,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="51"/>
    </properties>
-   <point/>
   </object>
-  <object id="15" name="wagon" x="440" y="456">
+  <object id="15" name="wagon" gid="60151" x="425.6" y="456" width="28.8" height="24.75">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="wagon"/>
@@ -355,9 +350,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="36"/>
    </properties>
-   <point/>
   </object>
-  <object id="16" name="wagon" x="488" y="456">
+  <object id="16" name="wagon" gid="60152" x="467.6" y="456" width="40.8" height="22.1">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="wagon"/>
@@ -367,9 +361,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="17" name="tent" x="472" y="440">
+  <object id="17" name="tent" gid="60030" x="445.23" y="440" width="53.55" height="50.15">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="tent"/>
@@ -379,9 +372,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="18" name="tent" x="408" y="472">
+  <object id="18" name="tent" gid="2147543678" x="382.8" y="472" width="50.4" height="47.2">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="tent"/>
@@ -391,9 +383,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="19" name="campfire" x="488" y="456">
+  <object id="19" name="campfire" gid="60118" x="474.27" y="456" width="27.45" height="26.55">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="campfire"/>
@@ -403,9 +394,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="20" name="barrel" x="424" y="440">
+  <object id="20" name="barrel" gid="2147543790" x="419.77" y="440" width="8.45" height="15.28">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="barrel"/>
@@ -415,9 +405,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="21" name="crate" x="504" y="504">
+  <object id="21" name="crate" gid="2147543830" x="498.8" y="504" width="10.4" height="10.72">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crate"/>
@@ -427,9 +416,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="22" name="stall" x="456" y="424">
+  <object id="22" name="stall" gid="2147543716" x="447.77" y="424" width="16.45" height="21.7">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="stall"/>
@@ -439,9 +427,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="43"/>
    </properties>
-   <point/>
   </object>
-  <object id="23" name="crate" x="392" y="488">
+  <object id="23" name="crate" gid="2147543826" x="386.75" y="488" width="10.5" height="13.5">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crate"/>
@@ -451,7 +438,6 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="37"/>
    </properties>
-   <point/>
   </object>
   <object id="24" name="h_bucket" x="344" y="440">
    <properties>
@@ -465,7 +451,7 @@
    </properties>
    <point/>
   </object>
-  <object id="25" name="log" x="376" y="456">
+  <object id="25" name="log" gid="60189" x="365.6" y="456" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -475,9 +461,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="26" name="banner" x="552" y="472">
+  <object id="26" name="banner" gid="60074" x="543.95" y="472" width="16.1" height="23.1">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="banner"/>
@@ -487,9 +472,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="27" name="banner" x="440" y="408">
+  <object id="27" name="banner" gid="2147543722" x="431.95" y="408" width="16.1" height="23.1">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="banner"/>
@@ -499,9 +483,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="49"/>
    </properties>
-   <point/>
   </object>
-  <object id="28" name="support" x="792" y="344">
+  <object id="28" name="support" gid="60070" x="778.27" y="344" width="27.45" height="32.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="support"/>
@@ -511,9 +494,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="29" name="support" x="920" y="312">
+  <object id="29" name="support" gid="2147543718" x="906.27" y="312" width="27.45" height="32.4">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="support"/>
@@ -523,9 +505,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="30" name="support" x="808" y="392">
+  <object id="30" name="support" gid="2147543718" x="794.27" y="392" width="27.45" height="32.4">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="support"/>
@@ -535,9 +516,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="18"/>
    </properties>
-   <point/>
   </object>
-  <object id="31" name="support" x="936" y="392">
+  <object id="31" name="support" gid="60070" x="922.27" y="392" width="27.45" height="32.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="support"/>
@@ -547,9 +527,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="32" name="statue" x="840" y="312">
+  <object id="32" name="statue" gid="2147543700" x="833.25" y="312" width="13.5" height="29.7">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="statue"/>
@@ -559,9 +538,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="22"/>
    </properties>
-   <point/>
   </object>
-  <object id="33" name="statue" x="904" y="312">
+  <object id="33" name="statue" gid="60052" x="897.25" y="312" width="13.5" height="29.7">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="statue"/>
@@ -571,9 +549,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="49"/>
    </properties>
-   <point/>
   </object>
-  <object id="34" name="crystal" x="872" y="408">
+  <object id="34" name="crystal" gid="60169" x="863.92" y="408" width="16.15" height="17">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -583,9 +560,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="14"/>
    </properties>
-   <point/>
   </object>
-  <object id="35" name="crystal" x="824" y="360">
+  <object id="35" name="crystal" gid="60169" x="816.4" y="360" width="15.2" height="16">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -595,9 +571,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="25"/>
    </properties>
-   <point/>
   </object>
-  <object id="36" name="crystal" x="904" y="376">
+  <object id="36" name="crystal" gid="60174" x="899.6" y="376" width="8.8" height="10.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -607,9 +582,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="30"/>
    </properties>
-   <point/>
   </object>
-  <object id="37" name="banner" x="776" y="296">
+  <object id="37" name="banner" gid="60074" x="767.38" y="296" width="17.25" height="24.75">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="banner"/>
@@ -619,9 +593,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="38" name="banner" x="952" y="312">
+  <object id="38" name="banner" gid="60074" x="943.38" y="312" width="17.25" height="24.75">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="banner"/>
@@ -631,9 +604,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="11"/>
    </properties>
-   <point/>
   </object>
-  <object id="39" name="lantern" x="856" y="424">
+  <object id="39" name="lantern" gid="2147543839" x="852.67" y="424" width="6.65" height="11.9">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="lantern"/>
@@ -643,9 +615,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="48"/>
    </properties>
-   <point/>
   </object>
-  <object id="40" name="lantern" x="888" y="424">
+  <object id="40" name="lantern" gid="60192" x="884.85" y="424" width="6.3" height="11.9">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="lantern"/>
@@ -655,9 +626,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="17"/>
    </properties>
-   <point/>
   </object>
-  <object id="41" name="cherry" x="968" y="376">
+  <object id="41" name="cherry" gid="60066" x="953.5" y="376" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -667,9 +637,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="42" name="cherry" x="760" y="360">
+  <object id="42" name="cherry" gid="60066" x="745.5" y="360" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -679,9 +648,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="43" name="ruin" x="168" y="776">
+  <object id="43" name="ruin" gid="60042" x="145.5" y="776" width="45" height="38.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="ruin"/>
@@ -691,9 +659,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="52"/>
    </properties>
-   <point/>
   </object>
-  <object id="44" name="ruin" x="216" y="792">
+  <object id="44" name="ruin" gid="2147543688" x="201.5" y="792" width="29" height="40">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="ruin"/>
@@ -703,9 +670,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="8"/>
    </properties>
-   <point/>
   </object>
-  <object id="45" name="ruin" x="264" y="808">
+  <object id="45" name="ruin" gid="60045" x="248.75" y="808" width="30.5" height="31">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="ruin"/>
@@ -715,9 +681,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="46" name="ruin" x="152" y="824">
+  <object id="46" name="ruin" gid="60040" x="137.5" y="824" width="29" height="40">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="ruin"/>
@@ -727,9 +692,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="47" name="ruin" x="200" y="808">
+  <object id="47" name="ruin" gid="2147543690" x="177.5" y="808" width="45" height="38.5">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="ruin"/>
@@ -739,9 +703,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="24"/>
    </properties>
-   <point/>
   </object>
-  <object id="48" name="ruin" x="152" y="824">
+  <object id="48" name="ruin" gid="60040" x="137.5" y="824" width="29" height="40">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="ruin"/>
@@ -751,9 +714,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="49" name="statue" x="200" y="808">
+  <object id="49" name="statue" gid="2147543702" x="191.28" y="808" width="17.43" height="24.22">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="statue"/>
@@ -763,9 +725,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="24"/>
    </properties>
-   <point/>
   </object>
-  <object id="50" name="support" x="248" y="776">
+  <object id="50" name="support" gid="2147543718" x="235.03" y="776" width="25.93" height="30.6">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="support"/>
@@ -775,9 +736,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="51" name="support" x="136" y="792">
+  <object id="51" name="support" gid="2147543719" x="120.91" y="792" width="30.18" height="29.32">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="support"/>
@@ -787,9 +747,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="58"/>
    </properties>
-   <point/>
   </object>
-  <object id="52" name="gravestone" x="168" y="776">
+  <object id="52" name="gravestone" gid="60157" x="163.88" y="776" width="8.25" height="13.13">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="gravestone"/>
@@ -799,9 +758,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="52"/>
    </properties>
-   <point/>
   </object>
-  <object id="53" name="gravestone" x="280" y="824">
+  <object id="53" name="gravestone" gid="2147543802" x="271.19" y="824" width="17.63" height="19.88">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="gravestone"/>
@@ -811,9 +769,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="43"/>
    </properties>
-   <point/>
   </object>
-  <object id="54" name="rock" x="104" y="824">
+  <object id="54" name="rock" gid="60096" x="97.7" y="824" width="12.6" height="27.9">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -823,9 +780,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="19"/>
    </properties>
-   <point/>
   </object>
-  <object id="55" name="rock" x="296" y="792">
+  <object id="55" name="rock" gid="2147543756" x="288.57" y="792" width="14.85" height="13.05">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="rock"/>
@@ -835,9 +791,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="31"/>
    </properties>
-   <point/>
   </object>
-  <object id="56" name="rock" x="216" y="760">
+  <object id="56" name="rock" gid="2147543753" x="208.35" y="760" width="15.3" height="15.75">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="rock"/>
@@ -847,9 +802,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="57" name="rock" x="136" y="824">
+  <object id="57" name="rock" gid="60101" x="129.7" y="824" width="12.6" height="19.35">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -859,9 +813,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="58" name="wagon" x="712" y="648">
+  <object id="58" name="wagon" gid="2147543800" x="691.6" y="648" width="40.8" height="22.1">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="wagon"/>
@@ -871,9 +824,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="59" name="crate" x="728" y="664">
+  <object id="59" name="crate" gid="2147543832" x="723.05" y="664" width="9.9" height="8.7">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crate"/>
@@ -883,9 +835,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="16"/>
    </properties>
-   <point/>
   </object>
-  <object id="60" name="log" x="696" y="664">
+  <object id="60" name="log" gid="2147543836" x="687.6" y="664" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="log"/>
@@ -895,9 +846,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="50"/>
    </properties>
-   <point/>
   </object>
-  <object id="61" name="ruin" x="1032" y="648">
+  <object id="61" name="ruin" gid="2147543688" x="1018.95" y="648" width="26.1" height="36">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="ruin"/>
@@ -907,9 +857,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="36"/>
    </properties>
-   <point/>
   </object>
-  <object id="62" name="rock" x="648" y="232">
+  <object id="62" name="rock" gid="2147543760" x="642.6" y="232" width="10.8" height="10.8">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="rock"/>
@@ -919,9 +868,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="53"/>
    </properties>
-   <point/>
   </object>
-  <object id="63" name="rock" x="1000" y="712">
+  <object id="63" name="rock" gid="2147543748" x="986.95" y="712" width="26.1" height="19.35">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="rock"/>
@@ -931,9 +879,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="64" name="orePile" x="904" y="616">
+  <object id="64" name="orePile" gid="60196" x="899.2" y="616" width="9.6" height="10.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="orePile"/>
@@ -943,9 +890,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="56"/>
    </properties>
-   <point/>
   </object>
-  <object id="65" name="signpost" x="616" y="136">
+  <object id="65" name="signpost" gid="2147543768" x="609.7" y="136" width="12.6" height="19.95">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="signpost"/>
@@ -955,9 +901,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="66" name="rock" x="584" y="200">
+  <object id="66" name="rock" gid="60098" x="571.03" y="200" width="25.93" height="22.52">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -967,9 +912,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="67" name="signpost" x="1096" y="488">
+  <object id="67" name="signpost" gid="2147543769" x="1092" y="488" width="8" height="16.8">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="signpost"/>
@@ -979,9 +923,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="11"/>
    </properties>
-   <point/>
   </object>
-  <object id="68" name="support" x="1064" y="472">
+  <object id="68" name="support" gid="2147543720" x="1054.8" y="472" width="18.4" height="21.6">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="support"/>
@@ -991,9 +934,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="2"/>
    </properties>
-   <point/>
   </object>
-  <object id="69" name="support" x="1064" y="536">
+  <object id="69" name="support" gid="60071" x="1049.8" y="536" width="28.4" height="27.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="support"/>
@@ -1003,9 +945,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="13"/>
    </properties>
-   <point/>
   </object>
-  <object id="70" name="banner" x="1080" y="456">
+  <object id="70" name="banner" gid="2147543722" x="1071.38" y="456" width="17.25" height="24.75">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="banner"/>
@@ -1015,9 +956,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="71" name="banner" x="1080" y="552">
+  <object id="71" name="banner" gid="60074" x="1071.38" y="552" width="17.25" height="24.75">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="banner"/>
@@ -1027,9 +967,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="72" name="pine" x="232" y="392">
+  <object id="72" name="pine" gid="60029" x="221.5" y="392" width="21" height="36">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1039,9 +978,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="73" name="broadleaf" x="232" y="424">
+  <object id="73" name="broadleaf" gid="60038" x="221.25" y="424" width="21.5" height="20">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1051,9 +989,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="74" name="broadleaf" x="248" y="392">
+  <object id="74" name="broadleaf" gid="60038" x="237.25" y="392" width="21.5" height="20">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1063,9 +1000,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="75" name="deadTree" x="264" y="456">
+  <object id="75" name="deadTree" gid="60047" x="252.75" y="456" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1075,9 +1011,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="76" name="cherry" x="296" y="216">
+  <object id="76" name="cherry" gid="60066" x="281.5" y="216" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -1087,9 +1022,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="77" name="broadleaf" x="328" y="264">
+  <object id="77" name="broadleaf" gid="60037" x="316" y="264" width="24" height="24.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1099,9 +1033,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="78" name="cherry" x="344" y="232">
+  <object id="78" name="cherry" gid="60066" x="329.5" y="232" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -1111,9 +1044,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="0"/>
    </properties>
-   <point/>
   </object>
-  <object id="79" name="broadleaf" x="360" y="216">
+  <object id="79" name="broadleaf" gid="60032" x="338" y="216" width="44" height="56">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1123,9 +1055,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="80" name="deadTree" x="360" y="248">
+  <object id="80" name="deadTree" gid="60047" x="348.75" y="248" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1135,9 +1066,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="5"/>
    </properties>
-   <point/>
   </object>
-  <object id="81" name="cherry" x="408" y="232">
+  <object id="81" name="cherry" gid="60066" x="393.5" y="232" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -1147,9 +1077,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="82" name="deadTree" x="408" y="248">
+  <object id="82" name="deadTree" gid="60046" x="394" y="248" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1159,9 +1088,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="18"/>
    </properties>
-   <point/>
   </object>
-  <object id="83" name="cherry" x="424" y="280">
+  <object id="83" name="cherry" gid="60066" x="409.5" y="280" width="29" height="37">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="cherry"/>
@@ -1171,9 +1099,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="47"/>
    </properties>
-   <point/>
   </object>
-  <object id="84" name="pine" x="472" y="248">
+  <object id="84" name="pine" gid="60029" x="461.5" y="248" width="21" height="36">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1183,9 +1110,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="85" name="deadTree" x="552" y="264">
+  <object id="85" name="deadTree" gid="60047" x="540.75" y="264" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1195,9 +1121,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="59"/>
    </properties>
-   <point/>
   </object>
-  <object id="86" name="deadTree" x="568" y="280">
+  <object id="86" name="deadTree" gid="60047" x="556.75" y="280" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1207,9 +1132,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="87" name="deadTree" x="584" y="328">
+  <object id="87" name="deadTree" gid="60047" x="572.75" y="328" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1219,9 +1143,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="88" name="deadTree" x="632" y="200">
+  <object id="88" name="deadTree" gid="60047" x="620.75" y="200" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1231,9 +1154,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="53"/>
    </properties>
-   <point/>
   </object>
-  <object id="89" name="deadTree" x="712" y="248">
+  <object id="89" name="deadTree" gid="60047" x="700.75" y="248" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1243,9 +1165,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="51"/>
    </properties>
-   <point/>
   </object>
-  <object id="90" name="deadTree" x="728" y="232">
+  <object id="90" name="deadTree" gid="60046" x="714" y="232" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1255,9 +1176,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="91" name="deadTree" x="744" y="200">
+  <object id="91" name="deadTree" gid="60047" x="732.75" y="200" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1267,9 +1187,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="31"/>
    </properties>
-   <point/>
   </object>
-  <object id="92" name="deadTree" x="760" y="152">
+  <object id="92" name="deadTree" gid="60046" x="746" y="152" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1279,9 +1198,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="93" name="deadTree" x="760" y="168">
+  <object id="93" name="deadTree" gid="60047" x="748.75" y="168" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1291,9 +1209,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="23"/>
    </properties>
-   <point/>
   </object>
-  <object id="94" name="deadTree" x="760" y="216">
+  <object id="94" name="deadTree" gid="60047" x="748.75" y="216" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1303,9 +1220,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="59"/>
    </properties>
-   <point/>
   </object>
-  <object id="95" name="deadTree" x="776" y="152">
+  <object id="95" name="deadTree" gid="60046" x="762" y="152" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1315,9 +1231,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="54"/>
    </properties>
-   <point/>
   </object>
-  <object id="96" name="pine" x="776" y="200">
+  <object id="96" name="pine" gid="60025" x="756.5" y="200" width="39" height="62.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1327,9 +1242,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="97" name="deadTree" x="776" y="248">
+  <object id="97" name="deadTree" gid="60046" x="762" y="248" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1339,9 +1253,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="48"/>
    </properties>
-   <point/>
   </object>
-  <object id="98" name="deadTree" x="792" y="232">
+  <object id="98" name="deadTree" gid="60047" x="780.75" y="232" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1351,9 +1264,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="5"/>
    </properties>
-   <point/>
   </object>
-  <object id="99" name="pine" x="824" y="184">
+  <object id="99" name="pine" gid="60028" x="809.25" y="184" width="29.5" height="49.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1363,9 +1275,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="3"/>
    </properties>
-   <point/>
   </object>
-  <object id="100" name="deadTree" x="840" y="104">
+  <object id="100" name="deadTree" gid="60046" x="826" y="104" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1375,9 +1286,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="14"/>
    </properties>
-   <point/>
   </object>
-  <object id="101" name="broadleaf" x="840" y="168">
+  <object id="101" name="broadleaf" gid="60032" x="818" y="168" width="44" height="56">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1387,9 +1297,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="1"/>
    </properties>
-   <point/>
   </object>
-  <object id="102" name="pine" x="648" y="824">
+  <object id="102" name="pine" gid="60026" x="629.5" y="824" width="37" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1399,9 +1308,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="103" name="broadleaf" x="664" y="584">
+  <object id="103" name="broadleaf" gid="60037" x="652" y="584" width="24" height="24.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1411,9 +1319,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="14"/>
    </properties>
-   <point/>
   </object>
-  <object id="104" name="deadTree" x="664" y="616">
+  <object id="104" name="deadTree" gid="60047" x="652.75" y="616" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1423,9 +1330,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="31"/>
    </properties>
-   <point/>
   </object>
-  <object id="105" name="deadTree" x="680" y="680">
+  <object id="105" name="deadTree" gid="60046" x="666" y="680" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1435,9 +1341,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="22"/>
    </properties>
-   <point/>
   </object>
-  <object id="106" name="deadTree" x="696" y="648">
+  <object id="106" name="deadTree" gid="60046" x="682" y="648" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1447,9 +1352,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="0"/>
    </properties>
-   <point/>
   </object>
-  <object id="107" name="broadleaf" x="712" y="664">
+  <object id="107" name="broadleaf" gid="60032" x="690" y="664" width="44" height="56">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1459,9 +1363,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="108" name="deadTree" x="712" y="744">
+  <object id="108" name="deadTree" gid="60047" x="700.75" y="744" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1471,9 +1374,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="109" name="pine" x="728" y="760">
+  <object id="109" name="pine" gid="60025" x="708.5" y="760" width="39" height="62.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1483,9 +1385,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="110" name="deadTree" x="728" y="808">
+  <object id="110" name="deadTree" gid="60046" x="714" y="808" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1495,9 +1396,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="18"/>
    </properties>
-   <point/>
   </object>
-  <object id="111" name="pine" x="744" y="648">
+  <object id="111" name="pine" gid="60028" x="729.25" y="648" width="29.5" height="49.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1507,9 +1407,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="53"/>
    </properties>
-   <point/>
   </object>
-  <object id="112" name="broadleaf" x="760" y="696">
+  <object id="112" name="broadleaf" gid="60035" x="742" y="696" width="36" height="45.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1519,9 +1418,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="113" name="deadTree" x="760" y="776">
+  <object id="113" name="deadTree" gid="60047" x="748.75" y="776" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1531,9 +1429,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="114" name="deadTree" x="776" y="584">
+  <object id="114" name="deadTree" gid="60046" x="762" y="584" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1543,9 +1440,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="40"/>
    </properties>
-   <point/>
   </object>
-  <object id="115" name="broadleaf" x="776" y="744">
+  <object id="115" name="broadleaf" gid="60037" x="764" y="744" width="24" height="24.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1555,9 +1451,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="62"/>
    </properties>
-   <point/>
   </object>
-  <object id="116" name="broadleaf" x="808" y="632">
+  <object id="116" name="broadleaf" gid="60037" x="796" y="632" width="24" height="24.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1567,9 +1462,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="117" name="pine" x="808" y="648">
+  <object id="117" name="pine" gid="60025" x="788.5" y="648" width="39" height="62.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1579,9 +1473,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="118" name="pine" x="808" y="776">
+  <object id="118" name="pine" gid="60029" x="797.5" y="776" width="21" height="36">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1591,9 +1484,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="119" name="deadTree" x="808" y="840">
+  <object id="119" name="deadTree" gid="60046" x="794" y="840" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1603,9 +1495,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="120" name="deadTree" x="824" y="632">
+  <object id="120" name="deadTree" gid="60046" x="810" y="632" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1615,9 +1506,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="50"/>
    </properties>
-   <point/>
   </object>
-  <object id="121" name="pine" x="840" y="728">
+  <object id="121" name="pine" gid="60029" x="829.5" y="728" width="21" height="36">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1627,9 +1517,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="54"/>
    </properties>
-   <point/>
   </object>
-  <object id="122" name="deadTree" x="840" y="744">
+  <object id="122" name="deadTree" gid="60046" x="826" y="744" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1639,9 +1528,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="48"/>
    </properties>
-   <point/>
   </object>
-  <object id="123" name="deadTree" x="840" y="840">
+  <object id="123" name="deadTree" gid="60046" x="826" y="840" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1651,9 +1539,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="56"/>
    </properties>
-   <point/>
   </object>
-  <object id="124" name="deadTree" x="856" y="760">
+  <object id="124" name="deadTree" gid="60046" x="842" y="760" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1663,9 +1550,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="125" name="pine" x="856" y="792">
+  <object id="125" name="pine" gid="60027" x="838" y="792" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1675,9 +1561,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="42"/>
    </properties>
-   <point/>
   </object>
-  <object id="126" name="deadTree" x="872" y="808">
+  <object id="126" name="deadTree" gid="60046" x="858" y="808" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1687,9 +1572,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="127" name="broadleaf" x="888" y="696">
+  <object id="127" name="broadleaf" gid="60031" x="874.5" y="696" width="27" height="57.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1699,9 +1583,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="16"/>
    </properties>
-   <point/>
   </object>
-  <object id="128" name="deadTree" x="888" y="808">
+  <object id="128" name="deadTree" gid="60046" x="874" y="808" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1711,9 +1594,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="129" name="deadTree" x="920" y="728">
+  <object id="129" name="deadTree" gid="60047" x="908.75" y="728" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1723,9 +1605,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="130" name="pine" x="936" y="696">
+  <object id="130" name="pine" gid="60025" x="916.5" y="696" width="39" height="62.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1735,9 +1616,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="131" name="deadTree" x="936" y="712">
+  <object id="131" name="deadTree" gid="60047" x="924.75" y="712" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1747,9 +1627,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="132" name="broadleaf" x="952" y="616">
+  <object id="132" name="broadleaf" gid="60035" x="934" y="616" width="36" height="45.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1759,9 +1638,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="133" name="pine" x="952" y="696">
+  <object id="133" name="pine" gid="60027" x="934" y="696" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1771,9 +1649,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="134" name="deadTree" x="968" y="792">
+  <object id="134" name="deadTree" gid="60046" x="954" y="792" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1783,9 +1660,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="135" name="pine" x="984" y="616">
+  <object id="135" name="pine" gid="60026" x="965.5" y="616" width="37" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1795,9 +1671,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="36"/>
    </properties>
-   <point/>
   </object>
-  <object id="136" name="deadTree" x="776" y="744">
+  <object id="136" name="deadTree" gid="60046" x="762" y="744" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1807,9 +1682,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="62"/>
    </properties>
-   <point/>
   </object>
-  <object id="137" name="pine" x="808" y="776">
+  <object id="137" name="pine" gid="60029" x="797.5" y="776" width="21" height="36">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1819,9 +1693,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="138" name="deadTree" x="808" y="840">
+  <object id="138" name="deadTree" gid="60046" x="794" y="840" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1831,9 +1704,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="139" name="deadTree" x="824" y="856">
+  <object id="139" name="deadTree" gid="60047" x="812.75" y="856" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1843,9 +1715,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="31"/>
    </properties>
-   <point/>
   </object>
-  <object id="140" name="deadTree" x="840" y="744">
+  <object id="140" name="deadTree" gid="60046" x="826" y="744" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1855,9 +1726,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="48"/>
    </properties>
-   <point/>
   </object>
-  <object id="141" name="deadTree" x="840" y="840">
+  <object id="141" name="deadTree" gid="60046" x="826" y="840" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1867,9 +1737,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="56"/>
    </properties>
-   <point/>
   </object>
-  <object id="142" name="deadTree" x="856" y="760">
+  <object id="142" name="deadTree" gid="60046" x="842" y="760" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1879,9 +1748,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="143" name="pine" x="856" y="792">
+  <object id="143" name="pine" gid="60027" x="838" y="792" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1891,9 +1759,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="42"/>
    </properties>
-   <point/>
   </object>
-  <object id="144" name="broadleaf" x="856" y="840">
+  <object id="144" name="broadleaf" gid="60035" x="838" y="840" width="36" height="45.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -1903,9 +1770,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="20"/>
    </properties>
-   <point/>
   </object>
-  <object id="145" name="deadTree" x="872" y="808">
+  <object id="145" name="deadTree" gid="60046" x="858" y="808" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1915,9 +1781,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="146" name="deadTree" x="888" y="808">
+  <object id="146" name="deadTree" gid="60046" x="874" y="808" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1927,9 +1792,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="147" name="pine" x="888" y="872">
+  <object id="147" name="pine" gid="60027" x="870" y="872" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -1939,9 +1803,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="47"/>
    </properties>
-   <point/>
   </object>
-  <object id="148" name="deadTree" x="968" y="792">
+  <object id="148" name="deadTree" gid="60046" x="954" y="792" width="28" height="41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -1951,9 +1814,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="149" name="bush" x="200" y="280">
+  <object id="149" name="bush" gid="60076" x="187.8" y="280" width="24.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -1963,9 +1825,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="150" name="log" x="200" y="472">
+  <object id="150" name="log" gid="60187" x="189.2" y="472" width="21.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -1975,9 +1836,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="151" name="log" x="216" y="184">
+  <object id="151" name="log" gid="60189" x="205.6" y="184" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -1987,9 +1847,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="152" name="log" x="216" y="328">
+  <object id="152" name="log" gid="60186" x="206.6" y="328" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -1999,9 +1858,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="16"/>
    </properties>
-   <point/>
   </object>
-  <object id="153" name="bush" x="216" y="392">
+  <object id="153" name="bush" gid="60076" x="203.8" y="392" width="24.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2011,9 +1869,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="154" name="log" x="232" y="488">
+  <object id="154" name="log" gid="60186" x="222.6" y="488" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2023,9 +1880,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="28"/>
    </properties>
-   <point/>
   </object>
-  <object id="155" name="bush" x="248" y="360">
+  <object id="155" name="bush" gid="60079" x="237.8" y="360" width="20.4" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2035,9 +1891,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="24"/>
    </properties>
-   <point/>
   </object>
-  <object id="156" name="bush" x="248" y="488">
+  <object id="156" name="bush" gid="60078" x="239.4" y="488" width="17.2" height="18.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2047,9 +1902,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="157" name="flowers" x="264" y="344">
+  <object id="157" name="flowers" gid="60124" x="252.6" y="344" width="22.8" height="19.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="flowers"/>
@@ -2059,9 +1913,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
-  <object id="158" name="flowers" x="264" y="376">
+  <object id="158" name="flowers" gid="60136" x="258" y="376" width="12" height="11.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="flowers"/>
@@ -2071,9 +1924,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="159" name="rock" x="264" y="424">
+  <object id="159" name="rock" gid="60103" x="255.6" y="424" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2083,9 +1935,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="160" name="rock" x="296" y="488">
+  <object id="160" name="rock" gid="60104" x="289.2" y="488" width="13.6" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2095,9 +1946,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="161" name="bush" x="312" y="184">
+  <object id="161" name="bush" gid="60090" x="304.4" y="184" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2107,9 +1957,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="162" name="bush" x="312" y="280">
+  <object id="162" name="bush" gid="60092" x="305.2" y="280" width="13.6" height="13.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2119,9 +1968,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="17"/>
    </properties>
-   <point/>
   </object>
-  <object id="163" name="log" x="328" y="168">
+  <object id="163" name="log" gid="60187" x="317.2" y="168" width="21.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2131,9 +1979,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="17"/>
    </properties>
-   <point/>
   </object>
-  <object id="164" name="flowers" x="344" y="184">
+  <object id="164" name="flowers" gid="60133" x="337.2" y="184" width="13.6" height="12.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="flowers"/>
@@ -2143,9 +1990,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="165" name="log" x="344" y="248">
+  <object id="165" name="log" gid="60189" x="333.6" y="248" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2155,9 +2001,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="166" name="flowers" x="360" y="184">
+  <object id="166" name="flowers" gid="60130" x="351.8" y="184" width="16.4" height="15.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="flowers"/>
@@ -2167,9 +2012,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="44"/>
    </properties>
-   <point/>
   </object>
-  <object id="167" name="bush" x="376" y="168">
+  <object id="167" name="bush" gid="60085" x="366.4" y="168" width="19.2" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2179,9 +2023,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="50"/>
    </properties>
-   <point/>
   </object>
-  <object id="168" name="log" x="376" y="216">
+  <object id="168" name="log" gid="60188" x="367.6" y="216" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2191,9 +2034,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="58"/>
    </properties>
-   <point/>
   </object>
-  <object id="169" name="rock" x="408" y="184">
+  <object id="169" name="rock" gid="60103" x="399.6" y="184" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2203,9 +2045,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="170" name="rock" x="424" y="184">
+  <object id="170" name="rock" gid="60099" x="413.4" y="184" width="21.2" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2215,9 +2056,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="171" name="log" x="424" y="248">
+  <object id="171" name="log" gid="60186" x="414.6" y="248" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2227,9 +2067,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="0"/>
    </properties>
-   <point/>
   </object>
-  <object id="172" name="log" x="456" y="200">
+  <object id="172" name="log" gid="60187" x="445.2" y="200" width="21.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2239,9 +2078,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="13"/>
    </properties>
-   <point/>
   </object>
-  <object id="173" name="flowers" x="456" y="280">
+  <object id="173" name="flowers" gid="60136" x="450" y="280" width="12" height="11.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="flowers"/>
@@ -2251,9 +2089,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="174" name="bush" x="456" y="344">
+  <object id="174" name="bush" gid="60091" x="447.6" y="344" width="16.8" height="13.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2263,9 +2100,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="16"/>
    </properties>
-   <point/>
   </object>
-  <object id="175" name="rock" x="472" y="184">
+  <object id="175" name="rock" gid="60111" x="467.4" y="184" width="9.2" height="10">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2275,9 +2111,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="34"/>
    </properties>
-   <point/>
   </object>
-  <object id="176" name="log" x="472" y="296">
+  <object id="176" name="log" gid="60189" x="461.6" y="296" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2287,9 +2122,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="177" name="rock" x="568" y="312">
+  <object id="177" name="rock" gid="60099" x="557.4" y="312" width="21.2" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2299,9 +2133,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="178" name="rock" x="584" y="312">
+  <object id="178" name="rock" gid="60110" x="578.8" y="312" width="10.4" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2311,9 +2144,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="179" name="rock" x="600" y="200">
+  <object id="179" name="rock" gid="60110" x="594.8" y="200" width="10.4" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2323,9 +2155,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="51"/>
    </properties>
-   <point/>
   </object>
-  <object id="180" name="bush" x="616" y="168">
+  <object id="180" name="bush" gid="60088" x="610.2" y="168" width="11.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2335,9 +2166,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="53"/>
    </properties>
-   <point/>
   </object>
-  <object id="181" name="log" x="616" y="216">
+  <object id="181" name="log" gid="60186" x="606.6" y="216" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2347,9 +2177,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="24"/>
    </properties>
-   <point/>
   </object>
-  <object id="182" name="bush" x="648" y="232">
+  <object id="182" name="bush" gid="60084" x="641.6" y="232" width="12.8" height="15.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2359,9 +2188,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="183" name="rock" x="648" y="344">
+  <object id="183" name="rock" gid="60099" x="637.4" y="344" width="21.2" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2371,9 +2199,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="4"/>
    </properties>
-   <point/>
   </object>
-  <object id="184" name="bush" x="664" y="120">
+  <object id="184" name="bush" gid="60089" x="658" y="120" width="12" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2383,9 +2210,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="14"/>
    </properties>
-   <point/>
   </object>
-  <object id="185" name="rock" x="664" y="296">
+  <object id="185" name="rock" gid="60105" x="657.2" y="296" width="13.6" height="14">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2395,9 +2221,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="186" name="rock" x="680" y="152">
+  <object id="186" name="rock" gid="60099" x="669.4" y="152" width="21.2" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2407,9 +2232,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="40"/>
    </properties>
-   <point/>
   </object>
-  <object id="187" name="bush" x="696" y="136">
+  <object id="187" name="bush" gid="60078" x="687.4" y="136" width="17.2" height="18.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2419,9 +2243,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="23"/>
    </properties>
-   <point/>
   </object>
-  <object id="188" name="rock" x="696" y="344">
+  <object id="188" name="rock" gid="60097" x="684.8" y="344" width="22.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2431,9 +2254,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="2"/>
    </properties>
-   <point/>
   </object>
-  <object id="189" name="log" x="712" y="328">
+  <object id="189" name="log" gid="60186" x="702.6" y="328" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2443,9 +2265,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="52"/>
    </properties>
-   <point/>
   </object>
-  <object id="190" name="bush" x="760" y="184">
+  <object id="190" name="bush" gid="60075" x="748.2" y="184" width="23.6" height="26">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2455,9 +2276,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="20"/>
    </properties>
-   <point/>
   </object>
-  <object id="191" name="rock" x="776" y="360">
+  <object id="191" name="rock" gid="60101" x="770.4" y="360" width="11.2" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2467,9 +2287,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="24"/>
    </properties>
-   <point/>
   </object>
-  <object id="192" name="log" x="792" y="344">
+  <object id="192" name="log" gid="60189" x="781.6" y="344" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2479,9 +2298,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="23"/>
    </properties>
-   <point/>
   </object>
-  <object id="193" name="rock" x="808" y="120">
+  <object id="193" name="rock" gid="60109" x="802.6" y="120" width="10.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2491,9 +2309,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="194" name="log" x="840" y="120">
+  <object id="194" name="log" gid="60187" x="829.2" y="120" width="21.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2503,9 +2320,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="21"/>
    </properties>
-   <point/>
   </object>
-  <object id="195" name="rock" x="840" y="136">
+  <object id="195" name="rock" gid="60101" x="834.4" y="136" width="11.2" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2515,9 +2331,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="196" name="log" x="856" y="152">
+  <object id="196" name="log" gid="60189" x="845.6" y="152" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2527,9 +2342,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="3"/>
    </properties>
-   <point/>
   </object>
-  <object id="197" name="rock" x="872" y="152">
+  <object id="197" name="rock" gid="60097" x="860.8" y="152" width="22.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2539,9 +2353,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="20"/>
    </properties>
-   <point/>
   </object>
-  <object id="198" name="rock" x="616" y="584">
+  <object id="198" name="rock" gid="60106" x="610.8" y="584" width="10.4" height="12">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2551,9 +2364,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="11"/>
    </properties>
-   <point/>
   </object>
-  <object id="199" name="log" x="632" y="712">
+  <object id="199" name="log" gid="60186" x="622.6" y="712" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2563,9 +2375,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="200" name="bush" x="648" y="568">
+  <object id="200" name="bush" gid="60081" x="637.8" y="568" width="20.4" height="16.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2575,9 +2386,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="201" name="bush" x="648" y="632">
+  <object id="201" name="bush" gid="60084" x="641.6" y="632" width="12.8" height="15.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2587,9 +2397,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="29"/>
    </properties>
-   <point/>
   </object>
-  <object id="202" name="rock" x="648" y="648">
+  <object id="202" name="rock" gid="60096" x="642.4" y="648" width="11.2" height="24.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2599,9 +2408,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="37"/>
    </properties>
-   <point/>
   </object>
-  <object id="203" name="bush" x="648" y="744">
+  <object id="203" name="bush" gid="60075" x="636.2" y="744" width="23.6" height="26">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2611,9 +2419,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="0"/>
    </properties>
-   <point/>
   </object>
-  <object id="204" name="log" x="648" y="856">
+  <object id="204" name="log" gid="60187" x="637.2" y="856" width="21.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2623,9 +2430,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="17"/>
    </properties>
-   <point/>
   </object>
-  <object id="205" name="log" x="664" y="808">
+  <object id="205" name="log" gid="60188" x="655.6" y="808" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2635,9 +2441,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="206" name="rock" x="680" y="664">
+  <object id="206" name="rock" gid="60104" x="673.2" y="664" width="13.6" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2647,9 +2452,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="207" name="rock" x="680" y="696">
+  <object id="207" name="rock" gid="60108" x="673.4" y="696" width="13.2" height="11.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2659,9 +2463,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="31"/>
    </properties>
-   <point/>
   </object>
-  <object id="208" name="log" x="680" y="808">
+  <object id="208" name="log" gid="60186" x="670.6" y="808" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2671,9 +2474,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="28"/>
    </properties>
-   <point/>
   </object>
-  <object id="209" name="rock" x="696" y="568">
+  <object id="209" name="rock" gid="60098" x="683.8" y="568" width="24.4" height="21.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2683,9 +2485,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="21"/>
    </properties>
-   <point/>
   </object>
-  <object id="210" name="log" x="696" y="680">
+  <object id="210" name="log" gid="60188" x="687.6" y="680" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2695,9 +2496,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="211" name="rock" x="696" y="696">
+  <object id="211" name="rock" gid="60097" x="684.8" y="696" width="22.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2707,9 +2507,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
-  <object id="212" name="bush" x="696" y="792">
+  <object id="212" name="bush" gid="60075" x="684.2" y="792" width="23.6" height="26">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2719,9 +2518,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="213" name="rock" x="712" y="648">
+  <object id="213" name="rock" gid="60106" x="706.8" y="648" width="10.4" height="12">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2731,9 +2529,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="11"/>
    </properties>
-   <point/>
   </object>
-  <object id="214" name="bush" x="712" y="792">
+  <object id="214" name="bush" gid="60082" x="701.4" y="792" width="21.2" height="16">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2743,9 +2540,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="7"/>
    </properties>
-   <point/>
   </object>
-  <object id="215" name="rock" x="712" y="808">
+  <object id="215" name="rock" gid="60095" x="698.2" y="808" width="27.6" height="25.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2755,9 +2551,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="54"/>
    </properties>
-   <point/>
   </object>
-  <object id="216" name="rock" x="728" y="600">
+  <object id="216" name="rock" gid="60107" x="721.6" y="600" width="12.8" height="12">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2767,9 +2562,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="30"/>
    </properties>
-   <point/>
   </object>
-  <object id="217" name="log" x="728" y="680">
+  <object id="217" name="log" gid="60188" x="719.6" y="680" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2779,9 +2573,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="218" name="rock" x="728" y="776">
+  <object id="218" name="rock" gid="60103" x="719.6" y="776" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2791,9 +2584,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="62"/>
    </properties>
-   <point/>
   </object>
-  <object id="219" name="log" x="744" y="856">
+  <object id="219" name="log" gid="60189" x="733.6" y="856" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2803,9 +2595,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="3"/>
    </properties>
-   <point/>
   </object>
-  <object id="220" name="bush" x="760" y="664">
+  <object id="220" name="bush" gid="60079" x="749.8" y="664" width="20.4" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2815,9 +2606,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="44"/>
    </properties>
-   <point/>
   </object>
-  <object id="221" name="bush" x="776" y="632">
+  <object id="221" name="bush" gid="60076" x="763.8" y="632" width="24.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2827,9 +2617,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="1"/>
    </properties>
-   <point/>
   </object>
-  <object id="222" name="bush" x="792" y="616">
+  <object id="222" name="bush" gid="60087" x="786.4" y="616" width="11.2" height="14">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2839,9 +2628,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="32"/>
    </properties>
-   <point/>
   </object>
-  <object id="223" name="rock" x="792" y="792">
+  <object id="223" name="rock" gid="60106" x="786.8" y="792" width="10.4" height="12">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2851,9 +2639,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="47"/>
    </properties>
-   <point/>
   </object>
-  <object id="224" name="log" x="792" y="824">
+  <object id="224" name="log" gid="60189" x="781.6" y="824" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -2863,9 +2650,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="225" name="bush" x="792" y="840">
+  <object id="225" name="bush" gid="60076" x="779.8" y="840" width="24.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2875,9 +2661,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="41"/>
    </properties>
-   <point/>
   </object>
-  <object id="226" name="rock" x="808" y="696">
+  <object id="226" name="rock" gid="60102" x="801.2" y="696" width="13.6" height="16.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2887,9 +2672,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="25"/>
    </properties>
-   <point/>
   </object>
-  <object id="227" name="bush" x="824" y="568">
+  <object id="227" name="bush" gid="60090" x="816.4" y="568" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2899,9 +2683,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="228" name="rock" x="824" y="664">
+  <object id="228" name="rock" gid="60097" x="812.8" y="664" width="22.4" height="23.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2911,9 +2694,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
-  <object id="229" name="rock" x="824" y="728">
+  <object id="229" name="rock" gid="60101" x="818.4" y="728" width="11.2" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2923,9 +2705,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="230" name="bush" x="824" y="744">
+  <object id="230" name="bush" gid="60090" x="816.4" y="744" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2935,9 +2716,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="231" name="rock" x="824" y="808">
+  <object id="231" name="rock" gid="60100" x="812.4" y="808" width="23.2" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2947,9 +2727,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="5"/>
    </properties>
-   <point/>
   </object>
-  <object id="232" name="rock" x="840" y="552">
+  <object id="232" name="rock" gid="60105" x="833.2" y="552" width="13.6" height="14">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2959,9 +2738,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="28"/>
    </properties>
-   <point/>
   </object>
-  <object id="233" name="rock" x="840" y="584">
+  <object id="233" name="rock" gid="60110" x="834.8" y="584" width="10.4" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2971,9 +2749,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="51"/>
    </properties>
-   <point/>
   </object>
-  <object id="234" name="bush" x="840" y="632">
+  <object id="234" name="bush" gid="60093" x="833.8" y="632" width="12.4" height="12.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -2983,9 +2760,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="58"/>
    </properties>
-   <point/>
   </object>
-  <object id="235" name="rock" x="840" y="648">
+  <object id="235" name="rock" gid="60105" x="833.2" y="648" width="13.6" height="14">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -2995,9 +2771,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="10"/>
    </properties>
-   <point/>
   </object>
-  <object id="236" name="log" x="840" y="808">
+  <object id="236" name="log" gid="60189" x="829.6" y="808" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3007,9 +2782,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="237" name="rock" x="856" y="600">
+  <object id="237" name="rock" gid="60098" x="843.8" y="600" width="24.4" height="21.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3019,9 +2793,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="238" name="rock" x="856" y="744">
+  <object id="238" name="rock" gid="60096" x="850.4" y="744" width="11.2" height="24.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3031,9 +2804,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="19"/>
    </properties>
-   <point/>
   </object>
-  <object id="239" name="log" x="856" y="776">
+  <object id="239" name="log" gid="60188" x="847.6" y="776" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3043,9 +2815,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="18"/>
    </properties>
-   <point/>
   </object>
-  <object id="240" name="rock" x="856" y="856">
+  <object id="240" name="rock" gid="60103" x="847.6" y="856" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3055,9 +2826,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="241" name="bush" x="872" y="664">
+  <object id="241" name="bush" gid="60081" x="861.8" y="664" width="20.4" height="16.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3067,9 +2837,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="46"/>
    </properties>
-   <point/>
   </object>
-  <object id="242" name="log" x="872" y="680">
+  <object id="242" name="log" gid="60189" x="861.6" y="680" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3079,9 +2848,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="243" name="rock" x="872" y="792">
+  <object id="243" name="rock" gid="60098" x="859.8" y="792" width="24.4" height="21.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3091,9 +2859,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="244" name="rock" x="872" y="824">
+  <object id="244" name="rock" gid="60103" x="863.6" y="824" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3103,9 +2870,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="44"/>
    </properties>
-   <point/>
   </object>
-  <object id="245" name="rock" x="904" y="568">
+  <object id="245" name="rock" gid="60112" x="899.2" y="568" width="9.6" height="9.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3115,9 +2881,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="246" name="rock" x="904" y="584">
+  <object id="246" name="rock" gid="60108" x="897.4" y="584" width="13.2" height="11.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3127,9 +2892,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="13"/>
    </properties>
-   <point/>
   </object>
-  <object id="247" name="bush" x="904" y="712">
+  <object id="247" name="bush" gid="60080" x="897.6" y="712" width="12.8" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3139,9 +2903,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="45"/>
    </properties>
-   <point/>
   </object>
-  <object id="248" name="rock" x="904" y="776">
+  <object id="248" name="rock" gid="60098" x="891.8" y="776" width="24.4" height="21.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3151,9 +2914,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="249" name="rock" x="904" y="792">
+  <object id="249" name="rock" gid="60112" x="899.2" y="792" width="9.6" height="9.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3163,9 +2925,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="35"/>
    </properties>
-   <point/>
   </object>
-  <object id="250" name="bush" x="920" y="616">
+  <object id="250" name="bush" gid="60077" x="910.6" y="616" width="18.8" height="20.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3175,9 +2936,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="42"/>
    </properties>
-   <point/>
   </object>
-  <object id="251" name="log" x="936" y="584">
+  <object id="251" name="log" gid="60189" x="925.6" y="584" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3187,9 +2947,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="252" name="log" x="936" y="600">
+  <object id="252" name="log" gid="60186" x="926.6" y="600" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3199,9 +2958,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="253" name="log" x="952" y="632">
+  <object id="253" name="log" gid="60188" x="943.6" y="632" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3211,9 +2969,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="2"/>
    </properties>
-   <point/>
   </object>
-  <object id="254" name="rock" x="952" y="744">
+  <object id="254" name="rock" gid="60099" x="941.4" y="744" width="21.2" height="18">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3223,9 +2980,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="58"/>
    </properties>
-   <point/>
   </object>
-  <object id="255" name="log" x="952" y="856">
+  <object id="255" name="log" gid="60188" x="943.6" y="856" width="16.8" height="11.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3235,9 +2991,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
-  <object id="256" name="bush" x="968" y="552">
+  <object id="256" name="bush" gid="60088" x="962.2" y="552" width="11.6" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3247,9 +3002,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="53"/>
    </properties>
-   <point/>
   </object>
-  <object id="257" name="log" x="984" y="664">
+  <object id="257" name="log" gid="60186" x="974.6" y="664" width="18.8" height="15.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3259,9 +3013,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="258" name="log" x="984" y="696">
+  <object id="258" name="log" gid="60189" x="973.6" y="696" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3271,9 +3024,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="3"/>
    </properties>
-   <point/>
   </object>
-  <object id="259" name="bush" x="984" y="840">
+  <object id="259" name="bush" gid="60090" x="976.4" y="840" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3283,9 +3035,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="260" name="rock" x="1000" y="760">
+  <object id="260" name="rock" gid="60103" x="991.6" y="760" width="16.8" height="14.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3295,9 +3046,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="261" name="rock" x="1000" y="792">
+  <object id="261" name="rock" gid="60101" x="994.4" y="792" width="11.2" height="17.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="rock"/>
@@ -3307,9 +3057,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="6"/>
    </properties>
-   <point/>
   </object>
-  <object id="262" name="log" x="1016" y="648">
+  <object id="262" name="log" gid="60189" x="1005.6" y="648" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3319,9 +3068,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="263" name="bush" x="1016" y="696">
+  <object id="263" name="bush" gid="60082" x="1005.4" y="696" width="21.2" height="16">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3331,9 +3079,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
-  <object id="264" name="bush" x="1016" y="760">
+  <object id="264" name="bush" gid="60086" x="1009" y="760" width="14" height="14">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3343,9 +3090,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="11"/>
    </properties>
-   <point/>
   </object>
-  <object id="265" name="bush" x="1032" y="568">
+  <object id="265" name="bush" gid="60090" x="1024.4" y="568" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -3355,9 +3101,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="266" name="log" x="1032" y="616">
+  <object id="266" name="log" gid="60189" x="1021.6" y="616" width="20.8" height="10.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="log"/>
@@ -3367,7 +3112,6 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="27"/>
    </properties>
-   <point/>
   </object>
  </objectgroup>
  <objectgroup id="626" name="TreasureSpawn">

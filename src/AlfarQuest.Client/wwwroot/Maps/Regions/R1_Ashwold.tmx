@@ -27,6 +27,7 @@
  <tileset firstgid="7816" source="../Tilesets/Ours/OurBuildings.tsx"/>
  <tileset firstgid="8840" source="../Tilesets/Furniture.tsx"/>
  <tileset firstgid="11540" source="../Tilesets/Anvil_01-Sheet.tsx"/>
+ <tileset firstgid="60000" source="../Tilesets/AtlasProps.tsx"/>
  <layer id="330" name="UnderGround" width="144" height="112">
   <data encoding="base64" compression="zlib">
    eJzt1jsKgDAQQMHo/a8siIWgyybk0yjMQEiR9rGbUgAAAAAAAAAAAAAAAAC+a9/eN/S6mtEPPe5W4nm+Qya2kr3ph0zcUa0ZBDVaAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPi/IxwYoR1maYcZcWfphxGxGx0xIutFP/TQCSOyv45+6KEdVuiHFdphRW3+tHo6AfIaO54=

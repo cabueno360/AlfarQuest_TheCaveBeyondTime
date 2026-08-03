@@ -69,13 +69,23 @@ public sealed class TmxMap
             var name = (string?)group.Attribute("name") ?? "";
             var list = new List<TmxObject>();
             foreach (var o in group.Elements("object"))
+            {
+                float x = Flt(o, "x"), y = Flt(o, "y");
+                float w = Flt(o, "width"), h = Flt(o, "height");
+                // A TILE object (one with a gid — a prop shown as its own art in
+                // Tiled) anchors at its bottom-LEFT corner, where a point object
+                // IS its point. Normalising here to the bottom-CENTRE keeps the
+                // engine's contract one thing: an object's X/Y is where it
+                // stands, however it was authored.
+                if (o.Attribute("gid") is not null) x += w / 2f;
                 list.Add(new TmxObject
                 {
                     Name = (string?)o.Attribute("name") ?? "",
-                    X = Flt(o, "x"), Y = Flt(o, "y"),
-                    Width = Flt(o, "width"), Height = Flt(o, "height"),
+                    X = x, Y = y,
+                    Width = w, Height = h,
                     Properties = ReadProperties(o.Element("properties")),
                 });
+            }
             map.ObjectLayers[name] = list;
         }
         return map;

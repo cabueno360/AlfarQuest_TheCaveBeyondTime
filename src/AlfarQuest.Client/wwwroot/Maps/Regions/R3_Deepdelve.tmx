@@ -32,6 +32,7 @@
  <tileset firstgid="13062" source="../Tilesets/CaveWater.tsx"/>
  <tileset firstgid="13687" source="../Tilesets/CaveWalls.tsx"/>
  <tileset firstgid="14312" source="../Tilesets/CaveDungeon.tsx"/>
+ <tileset firstgid="60000" source="../Tilesets/AtlasProps.tsx"/>
  <layer id="501" name="Ground" width="144" height="112">
   <data encoding="base64" compression="zlib">
    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
@@ -256,7 +257,7 @@
   </object>
  </objectgroup>
  <objectgroup id="525" name="Props">
-  <object id="7" name="signpost" x="56" y="184">
+  <object id="7" name="signpost" gid="60121" x="52.25" y="184" width="7.5" height="15.75">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="signpost"/>
@@ -266,9 +267,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="25"/>
    </properties>
-   <point/>
   </object>
-  <object id="13" name="caveEntrance" x="664" y="408">
+  <object id="13" name="caveEntrance" gid="2147543767" x="639.25" y="408" width="49.5" height="49.5">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="caveMouth"/>
@@ -278,9 +278,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="49"/>
    </properties>
-   <point/>
   </object>
-  <object id="27" name="crystal" x="680" y="456">
+  <object id="27" name="crystal" gid="60171" x="673.6" y="456" width="12.8" height="14.4">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -290,9 +289,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="16"/>
    </properties>
-   <point/>
   </object>
-  <object id="35" name="waterfall" x="408" y="600">
+  <object id="35" name="waterfall" gid="60190" x="391.69" y="600" width="32.63" height="13.13">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="waterfall"/>
@@ -302,9 +300,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="40" name="statue" x="728" y="408">
+  <object id="40" name="statue" gid="60052" x="721.63" y="408" width="12.75" height="28.05">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="statue"/>
@@ -314,9 +311,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="22"/>
    </properties>
-   <point/>
   </object>
-  <object id="41" name="gravestone" x="712" y="344">
+  <object id="41" name="gravestone" gid="60158" x="708.06" y="344" width="7.88" height="10.88">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="gravestone"/>
@@ -326,9 +322,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="59"/>
    </properties>
-   <point/>
   </object>
-  <object id="42" name="gravestone" x="728" y="264">
+  <object id="42" name="gravestone" gid="60156" x="723.68" y="264" width="8.63" height="13.13">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="gravestone"/>
@@ -338,7 +333,6 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="33"/>
    </properties>
-   <point/>
   </object>
   <object id="43" name="h_flowers" x="696" y="312">
    <properties>
@@ -364,7 +358,7 @@
    </properties>
    <point/>
   </object>
-  <object id="47" name="caveEntrance" x="872" y="200">
+  <object id="47" name="caveEntrance" gid="2147543767" x="834.88" y="200" width="74.25" height="74.25">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="caveMouth"/>
@@ -374,9 +368,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="1"/>
    </properties>
-   <point/>
   </object>
-  <object id="56" name="gravestone" x="936" y="216">
+  <object id="56" name="gravestone" gid="2147543803" x="929.06" y="216" width="13.88" height="19.5">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="gravestone"/>
@@ -386,7 +379,6 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="44"/>
    </properties>
-   <point/>
   </object>
   <object id="57" name="h_flowers" x="888" y="248">
    <properties>
@@ -400,7 +392,7 @@
    </properties>
    <point/>
   </object>
-  <object id="65" name="crystal" x="344" y="424">
+  <object id="65" name="crystal" gid="2147543814" x="336.82" y="424" width="14.35" height="17.15">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -410,9 +402,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="33"/>
    </properties>
-   <point/>
   </object>
-  <object id="66" name="crystal" x="696" y="504">
+  <object id="66" name="crystal" gid="60172" x="691.27" y="504" width="9.45" height="9.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -422,9 +413,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="67" name="crystal" x="280" y="504">
+  <object id="67" name="crystal" gid="60174" x="276.15" y="504" width="7.7" height="9.1">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -434,9 +424,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="63"/>
    </properties>
-   <point/>
   </object>
-  <object id="98" name="crystal" x="776" y="440">
+  <object id="98" name="crystal" gid="60172" x="771.27" y="440" width="9.45" height="9.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -446,9 +435,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="17"/>
    </properties>
-   <point/>
   </object>
-  <object id="99" name="crystal" x="792" y="392">
+  <object id="99" name="crystal" gid="60171" x="785.87" y="392" width="12.27" height="13.81">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -458,9 +446,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="60"/>
    </properties>
-   <point/>
   </object>
-  <object id="100" name="crystal" x="760" y="488">
+  <object id="100" name="crystal" gid="60170" x="752.71" y="488" width="14.58" height="15.41">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -470,9 +457,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="26"/>
    </properties>
-   <point/>
   </object>
-  <object id="101" name="crystal" x="744" y="360">
+  <object id="101" name="crystal" gid="2147543820" x="738.38" y="360" width="11.25" height="11.66">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -482,9 +468,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="39"/>
    </properties>
-   <point/>
   </object>
-  <object id="102" name="crystal" x="712" y="488">
+  <object id="102" name="crystal" gid="2147543823" x="707.63" y="488" width="8.75" height="10.83">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -494,9 +479,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="20"/>
    </properties>
-   <point/>
   </object>
-  <object id="103" name="crystal" x="808" y="456">
+  <object id="103" name="crystal" gid="2147543819" x="802.4" y="456" width="11.2" height="12.6">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -506,9 +490,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="5"/>
    </properties>
-   <point/>
   </object>
-  <object id="104" name="crystal" x="632" y="520">
+  <object id="104" name="crystal" gid="2147543814" x="623.46" y="520" width="17.08" height="20.41">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -518,9 +501,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="105" name="crystal" x="680" y="552">
+  <object id="105" name="crystal" gid="2147543814" x="672.14" y="552" width="15.72" height="18.79">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -530,9 +512,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="106" name="crystal" x="264" y="408">
+  <object id="106" name="crystal" gid="2147543817" x="256.71" y="408" width="14.57" height="15.34">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -542,9 +523,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="25"/>
    </properties>
-   <point/>
   </object>
-  <object id="107" name="crystal" x="232" y="472">
+  <object id="107" name="crystal" gid="2147543818" x="224.71" y="472" width="14.58" height="15.41">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -554,9 +534,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="37"/>
    </properties>
-   <point/>
   </object>
-  <object id="108" name="crystal" x="840" y="392">
+  <object id="108" name="crystal" gid="2147543814" x="832.14" y="392" width="15.72" height="18.79">
    <properties>
     <property name="Flip" value="true"/>
     <property name="Kind" value="crystal"/>
@@ -566,9 +545,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="22"/>
    </properties>
-   <point/>
   </object>
-  <object id="109" name="crystal" x="856" y="408">
+  <object id="109" name="crystal" gid="60166" x="848.14" y="408" width="15.72" height="18.79">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="crystal"/>
@@ -578,9 +556,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="0"/>
    </properties>
-   <point/>
   </object>
-  <object id="143" name="pine" x="344" y="648">
+  <object id="143" name="pine" gid="60026" x="325.5" y="648" width="37" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -590,9 +567,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="51"/>
    </properties>
-   <point/>
   </object>
-  <object id="144" name="deadTree" x="344" y="680">
+  <object id="144" name="deadTree" gid="60047" x="332.75" y="680" width="22.5" height="30.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="deadTree"/>
@@ -602,9 +578,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="57"/>
    </properties>
-   <point/>
   </object>
-  <object id="145" name="broadleaf" x="376" y="648">
+  <object id="145" name="broadleaf" gid="60037" x="364" y="648" width="24" height="24.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -614,9 +589,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
-  <object id="146" name="pine" x="392" y="712">
+  <object id="146" name="pine" gid="60027" x="374" y="712" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -626,9 +600,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="62"/>
    </properties>
-   <point/>
   </object>
-  <object id="147" name="broadleaf" x="408" y="744">
+  <object id="147" name="broadleaf" gid="60035" x="390" y="744" width="36" height="45.5">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="broadleaf"/>
@@ -638,9 +611,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="12"/>
    </properties>
-   <point/>
   </object>
-  <object id="148" name="pine" x="424" y="632">
+  <object id="148" name="pine" gid="60027" x="406" y="632" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -650,9 +622,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="2"/>
    </properties>
-   <point/>
   </object>
-  <object id="149" name="pine" x="424" y="648">
+  <object id="149" name="pine" gid="60027" x="406" y="648" width="36" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -662,9 +633,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="2"/>
    </properties>
-   <point/>
   </object>
-  <object id="150" name="pine" x="424" y="664">
+  <object id="150" name="pine" gid="60026" x="405.5" y="664" width="37" height="60">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="pine"/>
@@ -674,9 +644,8 @@
     <property name="Solid" value="true"/>
     <property name="Variant" value="56"/>
    </properties>
-   <point/>
   </object>
-  <object id="154" name="bush" x="360" y="680">
+  <object id="154" name="bush" gid="60084" x="353.6" y="680" width="12.8" height="15.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -686,9 +655,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="9"/>
    </properties>
-   <point/>
   </object>
-  <object id="155" name="bush" x="376" y="680">
+  <object id="155" name="bush" gid="60090" x="368.4" y="680" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -698,9 +666,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="15"/>
    </properties>
-   <point/>
   </object>
-  <object id="166" name="bush" x="552" y="632">
+  <object id="166" name="bush" gid="60090" x="544.4" y="632" width="15.2" height="13.6">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -710,9 +677,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="55"/>
    </properties>
-   <point/>
   </object>
-  <object id="171" name="bush" x="600" y="648">
+  <object id="171" name="bush" gid="60092" x="593.2" y="648" width="13.6" height="13.2">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -722,9 +688,8 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="37"/>
    </properties>
-   <point/>
   </object>
-  <object id="172" name="bush" x="600" y="712">
+  <object id="172" name="bush" gid="60093" x="593.8" y="712" width="12.4" height="12.8">
    <properties>
     <property name="Flip" value="false"/>
     <property name="Kind" value="bush"/>
@@ -734,7 +699,6 @@
     <property name="Solid" value="false"/>
     <property name="Variant" value="38"/>
    </properties>
-   <point/>
   </object>
  </objectgroup>
  <objectgroup id="526" name="TreasureSpawn">
