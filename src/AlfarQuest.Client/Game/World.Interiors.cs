@@ -140,6 +140,7 @@ public partial class World
             return;
         }
 
+        var from = CurrentInterior;      // for the reciprocal-door arrival below
         CurrentInterior = id;
         Stage = 3;
         Rev++;
@@ -166,7 +167,16 @@ public partial class World
         // interior chest full — a loot and XP farm the width of a doorway.
         ApplyClaims();
 
-        var at = arriveAt ?? Spawn;
+        // Where to stand. An explicit arrival wins; otherwise a floor reached
+        // from another floor sets you down at ITS door back to where you came
+        // from — the foot of the stair you just took, not the front door the
+        // map's PlayerSpawn marks. Tiled warps never carry an Arrive, so
+        // without this every stair in the Cleric's house (and every door back
+        // into Seoshe's streets) dropped the party at the building's entrance.
+        var at = arriveAt
+            ?? (from is not null && Portals.FirstOrDefault(q => q.Target == from) is { } back
+                ? back.Pos + new Vec(0, TILE * 0.75f)
+                : Spawn);
         PlaceParty(at);
         Camera = at;
     }
