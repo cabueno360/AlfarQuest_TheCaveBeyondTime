@@ -97,7 +97,18 @@ public partial class World
         }
         else if (p.Target == Tiled.MapCatalog.Cave) EnterCave();   // the mouth — down into the delve
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
-        else EnterInterior(p.Target, p.Return);                    // a door from the world
+        else
+        {
+            // A door from the world. The doorstep to come back OUT to is the
+            // door's own DestinationSpawn when the map set one — and where the
+            // hero is STANDING when it did not. Every region door ships with
+            // "0.0,0.0" today, which used to be taken literally: leaving any
+            // building dropped the party at the map's top-left corner.
+            var back = p.Return.X != 0 || p.Return.Y != 0
+                ? p.Return
+                : Party.Count > 0 ? Party[Active].Pos : p.Pos;
+            EnterInterior(p.Target, back);
+        }
     }
 
     /// <summary>Enters a building from the overworld, remembering the doorstep to
@@ -174,6 +185,9 @@ public partial class World
         // ground disagreeing, with nothing to say so.
         if (region is null || !StandRegion(region))
             BuildOverworld();  // deterministic; also bumps Rev and clears entities
+        // A doorstep that was never set (a debug entry, an old save) must not
+        // strand the party at the map's corner — the region's spawn will do.
+        if (back.X == 0 && back.Y == 0) back = Spawn;
         PlaceParty(back);
         Camera = back;
     }
