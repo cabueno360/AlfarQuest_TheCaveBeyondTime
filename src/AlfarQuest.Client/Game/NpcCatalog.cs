@@ -280,6 +280,19 @@ public static class NpcCatalog
         // The Academy outpost on the east road, toward Kae Ychel.
         // The grandmaster, inside the hall — placed by the interior builder.
         new() { Id = "grandmaster", Kind = "npcMage", Name = "The Grandmaster", Role = "Academy of Kae Ychel",
+                Services = NpcServices.Quest,
+                Greeting = "An outpost sees few travellers who are not running from something. Ask, then — the Academy answers what it chooses to.",
+                Topics =
+                [
+                    new("What is this place?",
+                        "This is but an outpost. The Academy itself takes up a quarter of Kae Ychel — gardens, towers, libraries, the greatest school on the continent."),
+                    new("What are the midsummer tests?",
+                        "Each midsummer the finest hundred are tested before the Twin Sun King's avatar. Ten receive his boon. It is the making of a mage, or the breaking of one."),
+                    new("Whose name was struck from the memorial?",
+                        "We do not say his name. He bound a greater demon at the tests, it took half his year with it, and the Regent sealed the thing in his heart and cast him out. That is all the Academy owes the question.",
+                        "But stones keep what mouths will not. Read the memorial, if you must — and the courtyard wards the fire could not unmake. Then leave it be.")
+                        { OffersQuest = "struck_name" },
+                ],
                 Lines = ["This is but an outpost. The Academy itself takes up a quarter of Kae Ychel — gardens, towers, libraries, the greatest school on the continent.",
                          "Each midsummer the finest hundred are tested before the Twin Sun King's avatar. Ten receive his boon. It is the making of a mage, or the breaking of one.",
                          "We had an apprentice once who reached past his grasp. He bound a greater demon at the tests, and it took half his year with it. The Regent sealed the thing in his heart and cast him out. We do not say his name.",
@@ -299,6 +312,17 @@ public static class NpcCatalog
                          "You feel it too, out east? The air's wrong past the caravan. Like the light down in that mine, only... reaching."] },
         // ---- Seoshe, the crescent-coast city (placed inside its own map) ----
         new() { Id = "seoshe_guard", Kind = "npcGuard", Name = "A Harbour Watchman", Role = "Guard of Seoshe",
+                Services = NpcServices.Quest,
+                Greeting = "Welcome to Seoshe. Keep your purse close and your questions closer — though you look like the kind that asks them anyway.",
+                Topics =
+                [
+                    new("Who keeps the law down here?",
+                        "My captain drinks on the crews' coin, and the crews drink on his. That's the whole of the law down here."),
+                    new("What burned at the docks?",
+                        "A warehouse on the Low Docks, months back — a whole crew inside it. Silver-blue ash, Cayhall goods, and a boss who walked out and kept walking. No inquiry.",
+                        "We don't dig into it. But you're not the watch, are you. If you've the stomach, dig where we didn't — and don't bring me what you find.")
+                        { OffersQuest = "crew_ashes" },
+                ],
                 Lines = ["Welcome to Seoshe. Keep your purse close and your questions closer.",
                          "My captain drinks on the crews' coin, and the crews drink on his. That's the whole of the law down here.",
                          "There was a fire at the docks, months back. A whole crew gone, and a warehouse with them. We don't dig into it. Neither should you."] },

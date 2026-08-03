@@ -129,6 +129,7 @@
     <property name="Verb" value="Search"/>
     <property name="ReadKind" value="plaque"/>
     <property name="Radius" value="44"/>
+    <property name="SetsFlag" value="sq_crew_seen"/>
     <property name="Pages" value="What the fire left of them, gathered into one crate by some kind hand and never claimed. Kas's rolls of tavern gossip. Yash's fetishes of bone and silk twine. Essil's neat folios. Two sets of stonemason's picks, identical. There is no one left to come for them."/>
    </properties>
    <point/>
@@ -139,6 +140,7 @@
     <property name="Verb" value="Examine"/>
     <property name="ReadKind" value="note"/>
     <property name="Radius" value="44"/>
+    <property name="SetsFlag" value="sq_crew_coat"/>
     <property name="Pages" value="A burgher's overcoat of brushed velvet, fine enough to walk High Street unremarked, folded over a broken chair. In its pocket: a pair of loaded dice and a black headscarf. He prayed to the Mother of all Luck, and she loved him right up until the night she didn't."/>
    </properties>
    <point/>

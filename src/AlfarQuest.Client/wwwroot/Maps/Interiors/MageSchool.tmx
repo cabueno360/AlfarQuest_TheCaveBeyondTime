@@ -141,6 +141,7 @@
     <property name="Verb" value="Read"/>
     <property name="ReadKind" value="plaque"/>
     <property name="Radius" value="44"/>
+    <property name="SetsFlag" value="sq_name_memorial"/>
     <property name="Pages" value="A plaque, and beneath it fresh flowers. &quot;In memory of the apprentices lost at the tests: BRUELOS. GERSIMO. THAMI. RAZA. ILLELLI. EMRYS. And the grandmaster who burned holding the fire back.&quot;␟Below, a line has been chiselled out and left blank. &quot;The one who summoned it was not executed, but banished — a greater demon sealed within his own heart, to carry until he can be rid of it. His name is struck from every roll of this Academy.&quot;"/>
    </properties>
    <point/>

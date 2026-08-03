@@ -386,6 +386,7 @@ public partial class World
                 Kind = o.Str("ReadKind", "note"),
                 Pages = pages,
                 PageFlags = flags,
+                SetsFlag = o.Str("SetsFlag"),
             });
         }
     }

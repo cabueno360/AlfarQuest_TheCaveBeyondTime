@@ -26,6 +26,12 @@ public partial class World
         /// page can be read, so a journal fills in as the tale earns it. An empty
         /// flag (or no list at all) means the page is always open.</summary>
         public IReadOnlyList<string>? PageFlags;
+
+        /// <summary>A story flag raised the first time this is read — how READING
+        /// advances a quest: the memorial names the struck name, the burnt crate
+        /// says what the fire left. Empty = reading it claims nothing. Rides the
+        /// same one-shot claim set everything else does, so it pays once ever.</summary>
+        public string SetsFlag = "";
     }
 
     public List<Examinable> Examinables { get; } = [];
@@ -74,6 +80,11 @@ public partial class World
             pages = shown;
         }
         if (ReadBridge.Offer(new OpenedReading(e.Title, e.Kind, pages))) Reading = e;
+
+        // Reading it is the deed: the flag goes up the moment the page is open,
+        // through the same gated claim every one-shot uses — so an examinable in
+        // a Tiled map can advance a quest with one SetsFlag property.
+        if (Reading is not null && e.SetsFlag.Length > 0) Claim(e.SetsFlag);
     }
 
     /// <summary>Closes the reading from the engine's side. Wired to

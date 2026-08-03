@@ -164,9 +164,46 @@ public static class QuestCatalog
         StartFlag: "cave_deep")
     { Reward = new(Xp: 500) };
 
+    /// <summary>The Thief's own thread. His backstory is already STAGED — the
+    /// burnt warehouse, the crew's things, the boss's coat — this quest simply
+    /// walks a player through it. Steps complete by READING (Examinable.SetsFlag),
+    /// offered by the harbour watchman who has spent months not digging into it.</summary>
+    public static readonly QuestDef CrewAshes = new(
+        Id: "crew_ashes",
+        Title: "Ashes of the Crew",
+        Kind: QuestKind.Side,
+        Summary: "A warehouse on Seoshe's Low Docks burned with a whole crew inside — " +
+                 "the Thief's crew. Silver-blue ash, a boss who walked out, and a watch " +
+                 "that never dug into it. Someone should.",
+        Steps: new QuestStep[]
+        {
+            new("Search the burnt warehouse for what the fire left of the crew", "sq_crew_seen"),
+            new("Find the boss's coat, and what its lining hides", "sq_crew_coat"),
+        },
+        StartFlag: "sq_crew_started")
+    { Reward = new(Xp: 350, Gold: 150, Items: ["daggers_twin"]) };
+
+    /// <summary>The Mage's own thread: the seventh line on the Academy memorial,
+    /// chiselled blank. The Grandmaster will not say the name — but he will point
+    /// at the stones that keep it. Steps complete by reading them.</summary>
+    public static readonly QuestDef StruckName = new(
+        Id: "struck_name",
+        Title: "The Struck Name",
+        Kind: QuestKind.Side,
+        Summary: "Six apprentices died at the midsummer tests, and a seventh line on " +
+                 "the Academy's memorial is chiselled blank. The Grandmaster will not " +
+                 "say the name. The stones might.",
+        Steps: new QuestStep[]
+        {
+            new("Read the memorial in the Academy hall", "sq_name_memorial"),
+            new("Study the courtyard wards the fire could not unmake", "sq_name_wards"),
+        },
+        StartFlag: "sq_name_started")
+    { Reward = new(Xp: 350, Gold: 150, Items: ["tome_embers"]) };
+
     public static readonly IReadOnlyList<QuestDef> All = new[]
     {
-        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome,
+        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome, CrewAshes, StruckName,
     };
 
     public static QuestDef? Find(string id) => All.FirstOrDefault(q => q.Id == id);
