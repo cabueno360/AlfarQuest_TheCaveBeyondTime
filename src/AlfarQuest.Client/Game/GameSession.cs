@@ -13,6 +13,12 @@ public static class GameSession
     /// campaign loader reads nothing and the first exit creates a fresh save.</summary>
     public static int SaveId { get; set; }
 
+    /// <summary>Whether the select screen actually made a choice this app
+    /// lifetime. False on a cold arrival at /play (a refresh mid-game, a
+    /// bookmark) — where a zero SaveId means "nothing chosen", NOT "new game",
+    /// and the campaign loader resumes the newest save instead.</summary>
+    public static bool SlotChosen { get; set; }
+
     /// <summary>The playthrough's name — chosen at New Game, shown on the slot.</summary>
     public static string SaveName { get; set; } = "";
 

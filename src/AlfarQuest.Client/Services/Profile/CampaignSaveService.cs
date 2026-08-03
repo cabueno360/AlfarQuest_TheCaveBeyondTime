@@ -28,13 +28,20 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
     {
         _loaded = true;
         _saveId = null;
-        if (GameSession.SaveId <= 0) return;    // a fresh delve: nothing to read
+
+        // A zero id means a fresh delve ONLY when the select screen said so.
+        // A cold arrival at /play — a refresh mid-game, a bookmark — has no
+        // choice on record, and must resume the NEWEST save rather than fork a
+        // brand-new campaign over the player's real one.
+        if (GameSession.SaveId <= 0 && GameSession.SlotChosen) return;
 
         var saves = await api.MySavesAsync();
-        var save = saves.FirstOrDefault(s => s.Id == GameSession.SaveId)
-                   ?? saves.FirstOrDefault();   // a stale id falls back to the newest
-        if (save is null) return;
+        var save = GameSession.SaveId > 0
+            ? saves.FirstOrDefault(s => s.Id == GameSession.SaveId) ?? saves.FirstOrDefault()
+            : saves.FirstOrDefault();           // cold boot: the newest
+        if (save is null) return;               // truly a first run
         _saveId = save.Id;
+        GameSession.SaveId = save.Id;
 
         // Where to stand back up. The World constructor reads this hand-off when
         // the engine builds — region plus the very spot inside it.

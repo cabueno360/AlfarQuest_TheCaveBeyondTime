@@ -199,6 +199,7 @@ public sealed partial class Play : IAsyncDisposable
         // StateHasChanged after each: this arrives from JS, and Blazor only
         // re-renders automatically after its own event handlers. Without it the
         // sheet closed in state and stayed on screen.
+        if (QuitOpen) { await CancelQuit(); return; }
         if (Read.Open is not null) { Read.Close(); StateHasChanged(); return; }
         if (Shop.Open is not null) { Shop.Close(); StateHasChanged(); return; }
         if (Loot.Open is not null) { Loot.Close(); StateHasChanged(); return; }

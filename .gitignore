@@ -442,6 +442,13 @@ bin/
 obj/
 *.user
 
+# The plain obj/ rule above also swallows GAME ASSETS that happen to live in a
+# folder named obj — wwwroot/assets/Outside/house/obj/ (the furniture sprites)
+# was silently never committed because of it, which is how the Cleric's house
+# lost Mirka's bed on a fresh checkout. Re-include the wwwroot tree explicitly.
+!src/AlfarQuest.Client/wwwroot/**/obj/
+!src/AlfarQuest.Client/wwwroot/**/obj/**
+
 # A developer's own connection string and secrets.
 appsettings.Development.json
 

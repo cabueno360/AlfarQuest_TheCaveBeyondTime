@@ -164,6 +164,7 @@ public sealed partial class Home : IAsyncDisposable
 
         // Which slot this session plays. Cleared resume hand-off either way — the
         // campaign loader sets it again from the save it actually reads.
+        GameSession.SlotChosen = true;
         GameSession.ResumeRegion = null;
         GameSession.ResumeX = GameSession.ResumeY = 0;
         if (_newGame || SelectedSave is null)

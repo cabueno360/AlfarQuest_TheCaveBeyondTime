@@ -216,7 +216,11 @@ export function loadAtlases(onFramesReady) {
         const im = new Image();
         const rec = { img: im, ready: false };
         im.onload = () => { rec.ready = true; };
-        im.onerror = () => console.error("house object failed to load:", n);
+        // Quietly absent, not an error: most furniture is painted into the
+        // interior maps' own tiles now, and only a handful of pieces (Mirka's
+        // bed) still ship as sprites. A missing one draws nothing — the map
+        // already shows the room — so fifty red lines per load said nothing.
+        im.onerror = () => { rec.ready = false; };
         im.src = `assets/Outside/house/obj/${n}.png`;
         HOUSE_OBJ[n] = rec;
     }
