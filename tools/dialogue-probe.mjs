@@ -133,15 +133,17 @@ const held = await hud();
 check('the hero is held while talking — no prompt behind the window', !held?.promptVerb, `verb "${held?.promptVerb ?? ''}"`);
 
 console.log('\n=== asking a question ===');
-// Ask the one with a two-page answer we can turn.
-const cerno = topics.filter({ hasText: 'Who is Cerno' });
-await cerno.click();
+// Ask one with a two-page answer we can turn. NOT "Who is Cerno" — that topic
+// OFFERS a quest now, so its last page leads to the offer panel, not back to
+// the list. The Panacea question is plain telling, two pages, no offer.
+const panacea = topics.filter({ hasText: 'What is the Panacea' });
+await panacea.click();
 await settle(400);
 const asked = (await page.locator('.aq-talk-asked').textContent().catch(() => ''))?.trim() ?? '';
-check('the question is echoed above the answer', /Cerno/i.test(asked), asked);
+check('the question is echoed above the answer', /Panacea/i.test(asked), asked);
 
 let answer = (await page.locator('.aq-talk-answer').textContent().catch(() => ''))?.trim() ?? '';
-check('he answers in the book\'s own terms', /Kaladash/i.test(answer), `"${answer.slice(0, 54)}…"`);
+check('he answers in the book\'s own terms', /drops|Cave/i.test(answer), `"${answer.slice(0, 54)}…"`);
 
 const pages = (await page.locator('.aq-talk-pages').textContent().catch(() => ''))?.trim() ?? '';
 check('a long answer turns a leaf at a time', pages.startsWith('1 /'), pages);

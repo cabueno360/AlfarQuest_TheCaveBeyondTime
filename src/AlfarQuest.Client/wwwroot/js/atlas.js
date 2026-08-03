@@ -93,16 +93,11 @@ export const getCharFrames = () => charFrames;
 // extracted from the concept art (tools/extract+segment+select-house-assets.py).
 // Referenced by props whose kind is "h_<name>" and drawn whole (drawHouseObj).
 export const HOUSE_OBJ = {};                  // name -> { img, ready }
-const HOUSE_NAMES = ["apothecary","armchair","bed","bedside","bench","bench_long",
-    "book_green","book_red","bookshelf","bottle","cabinet","candelabra","candle",
-    "chair","chair_b","chalice","chest","cross","cupboard","curtains","desk",
-    "dining_table","flowers","flowers_yellow","font","frame","globe","herbs","icon",
-    "journal","letter","low_table","medicine_stand","nightstand","panacea","plant",
-    "records","rug","rug_stone","sconce","screen","side_table","washstand","wedding",
-    // the cottage's yard — fence, cart and the small authored details outside
-    "fence","cart","bush","rock","flowerbush","wildflowers","stone","signpost","bucket",
-    // Mirka asleep in her sickbed — one prop, cut from the second-floor plan
-    "bed_mirka","fireplace"];
+// Only the pieces whose PNGs actually ship. The rest of the cottage furniture
+// is painted into the interior maps' tiles now; naming a file here that does
+// not exist costs a browser-console 404 per load, which reads as a real error
+// and trips the probes. Add a name back the day its art lands in house/obj/.
+const HOUSE_NAMES = ["bed_mirka"];
 
 // A flat-coloured copy of an atlas, keeping only its silhouette.
 //

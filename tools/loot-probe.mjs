@@ -48,10 +48,12 @@ const nudge = async (key, ms) => {
   await page.waitForTimeout(140);
 };
 
-/// Villagers offer a prompt too — "Talk to" for most, "Trade with" for the
-/// shopkeepers among them — and this probe is about neither.
-const NPC_VERBS = ['Talk to', 'Trade with'];
-const isContainer = h => h?.promptName && !NPC_VERBS.includes(h.promptVerb);
+/// Only the verbs that open a CONTAINER. Excluding just "Talk to"/"Trade with"
+/// let everything else through — and "Examine" opens the reading window, which
+/// re-offers forever: one run spent all sixteen attempts examining the village
+/// well and concluded the world held no loot.
+const CONTAINER_VERBS = ['Open', 'Search', 'Mine', 'Gather', 'Prise', 'Unlock'];
+const isContainer = h => h?.promptName && CONTAINER_VERBS.includes(h.promptVerb);
 
 /// Walks a deliberate sweep of the spawn camp until a container is in reach.
 ///
@@ -65,9 +67,14 @@ const findContainer = async (rounds = 10) => {
                  ['w', 1300], ['d', 1500], ['s', 1700], ['a', 1900]];
   for (let r = 0; r < rounds; r++) {
     for (const [key, ms] of sweep) {
-      const h = await hud();
-      if (isContainer(h)) return h;
-      await nudge(key, ms);
+      // The leg is walked in short steps, looking around at each. Sampling
+      // only at the leg's end walked straight past the smith's stock and
+      // reported a village with six containers as empty ground.
+      for (let walked = 0; walked < ms; walked += 250) {
+        const h = await hud();
+        if (isContainer(h)) return h;
+        await nudge(key, Math.min(250, ms - walked));
+      }
       await clearLevelUp();
     }
   }
@@ -96,10 +103,11 @@ check('the world has things to interact with', start?.rewardsLeft >= 12, `${star
 
 console.log('\n=== the prompt ===');
 
-// Start the sweep in the village, where the containers are — the smith's
-// stock, the inn cellar, the provisioner's crates — rather than out at the
-// gate where the party spawns.
-await warp(30, 29); await settle(500); await clearLevelUp();
+// Start the sweep beside the smith's stock (tile 27,29 in Ashwold), with the
+// slack tub and the miller's store a short walk away — rather than out at the
+// gate where the party spawns, or by the well, whose "Examine" prompt shadows
+// every container while it is the nearest thing.
+await warp(27, 29); await settle(500); await clearLevelUp();
 const near = await findContainer();
 check('walking up to something offers it', isContainer(near), near?.promptName ?? '(nothing in reach)');
 check('the prompt names the action, not just the thing',
@@ -109,8 +117,19 @@ await page.screenshot({ path: 'tools/shots/loot-1-prompt.png' });
 
 console.log('\n=== opening ===');
 
+// An examinable can win the [E] over a nearby container (a book on a table is
+// the more deliberate target), which opens the READING window — whose scrim
+// then swallows every click aimed at the loot window. Close it and move on.
+const closeReading = async () => {
+  if ((await page.locator('.aq-read-scrim').count()) > 0) {
+    await page.keyboard.press('Escape');
+    await settle(400);
+  }
+};
+
 await page.keyboard.press('e');
 await settle(900);
+await closeReading();
 
 const windowOpen = (await page.locator('.aq-loot').count()) > 0;
 check('opening either shows contents or says it was empty',
@@ -149,6 +168,7 @@ while (cells < 2 && tries++ < 16) {
   seen.add(found.promptName);
   await page.keyboard.press('e');
   await settle(800);
+  await closeReading();
   cells = await lines();
   if (cells > 0) everHadLoot = true;
 }
@@ -226,6 +246,12 @@ if ((await page.locator('.aq-loot').count()) > 0) { await page.keyboard.press('E
 if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(700); }
 const beforeQuit = await hud();
 await page.click('button:has-text("Abandon Delve")');
+// Quitting asks for a name now — the save is written when the dialog is
+// confirmed, not when the button is pressed. Leaving without confirming
+// leaves nothing on disk, which is the dialog doing its job.
+await page.waitForSelector('.aq-quitbox', { timeout: 5000 });
+await page.fill('.aq-quitbox input', 'Loot Probe Delve');
+await page.click('.aq-quitrow button:has-text("Save and leave")');
 await settle(3000);
 
 const saved = await page.evaluate(async () => {

@@ -457,8 +457,13 @@ appsettings.Development.json
 tools/node_modules/
 
 # Screenshots written by the verification probes. Regenerated on every run,
-# and eighteen megabytes of them is not history worth keeping.
+# and eighteen megabytes of them is not history worth keeping. The doubled
+# tools/tools/ is the same folder when a probe is launched from inside tools/.
 tools/shots/
+tools/tools/
+
+# Windows Explorer shortcuts a developer makes for themselves
+*.lnk
 
 # macOS
 .DS_Store

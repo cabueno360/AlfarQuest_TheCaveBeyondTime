@@ -123,10 +123,12 @@ check('skipping the cutscene resumed the game (no video left)', (await cutsceneS
 // ------------------------------------------------------------------
 console.log('\n=== the Crystal Heart has a Guardian ===');
 
+// One keeper per named depth now: depth 1 belongs to the Warden of the
+// Cistern, the teaching boss — the true Guardian waits at depth 5.
 const boss0 = afterEnter?.boss;
-check('a boss holds the chamber — the Guardian of the Crystal Heart',
-  /guardian/i.test(boss0?.name || ''), boss0?.name || '(no boss)');
-check('  and it is a real health pool, not a husk', (boss0?.mhp ?? 0) >= 700, `${boss0?.mhp ?? 0} hp`);
+check('a boss holds the chamber — the Warden of the Cistern',
+  /warden/i.test(boss0?.name || ''), boss0?.name || '(no boss)');
+check('  and it is a real health pool, not a husk', (boss0?.mhp ?? 0) >= 600, `${boss0?.mhp ?? 0} hp`);
 
 // Stand the steered hero beside the Guardian and let it act. Only the boss casts
 // in the cave (ordinary husks have no trick), so any cast that fires is the Guardian
@@ -167,9 +169,12 @@ await claim('cave_deep'); await settle(700);
 // sim — so the snapshot freezes on the old step. Clear the cards first; then the
 // world runs again and recomputes the (now empty) objective. Also unobscures the toast.
 await clearLevelUp(); await settle(500);
+// The main line hands the HUD to the epilogue now: the Pact's payout is the
+// Panacea, and "The Way Back Up" starts by itself the moment cave_deep lands —
+// so the objective is Mirka's bedside, not an empty string.
 const objDeep = (await hud())?.objective ?? '';
-check('reaching the Cave Beyond Time completes the main line (no step left)',
-  objDeep === '', `"${objDeep}"`);
+check('reaching the Cave Beyond Time hands the objective to the epilogue',
+  /panacea|mirka/i.test(objDeep), `"${objDeep}"`);
 
 // ------------------------------------------------------------------
 console.log('\n=== the reward: shown on the banner, and really in the pack ===');
