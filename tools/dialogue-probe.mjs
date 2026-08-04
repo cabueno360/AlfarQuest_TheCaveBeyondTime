@@ -161,6 +161,20 @@ check('the answer ends back at the list of questions', await page.locator('.aq-t
 check('what you already asked is marked', await page.locator('.aq-talk-topic.heard').count() === 1);
 await page.screenshot({ path: 'tools/shots/dialogue-menu.png' });
 
+console.log('\n=== an answer unlocks questions MID-conversation ===');
+// Asking of the Cave sets quest_cave_learned, which gates "Then where does the
+// old mine lie?" — the menu must grow the moment the answer is read, without
+// closing the window and coming back.
+await page.locator('.aq-talk-topic', { hasText: 'Have you heard of the Cave' }).click();
+await settle(450);
+for (let i = 0; i < 4 && (await page.locator('.aq-talk-go').count()) > 0; i++) {
+  await page.click('.aq-talk-go'); await settle(350);
+}
+const grown = await page.locator('.aq-talk-topic').count();
+check('the menu grew mid-conversation', grown === 12, `${grown} questions (was 11)`);
+check('  and the unlocked road question is on it',
+  (await page.locator('.aq-talk-topic', { hasText: 'old mine lie' }).count()) === 1);
+
 console.log('\n=== taking your leave ===');
 await page.click('.aq-talk-leave');
 await settle(600);

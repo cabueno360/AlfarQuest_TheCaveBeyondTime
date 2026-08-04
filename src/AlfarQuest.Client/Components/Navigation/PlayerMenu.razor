@@ -60,6 +60,9 @@
     {
         Close();
         await Auth.SignOutAsync();
+        // Statics survive the navigation — the next account must not inherit
+        // this one's slot id or delve name.
+        AlfarQuest.Client.Game.GameSession.ForgetPlayer();
         Nav.NavigateTo("/", replace: true);
     }
 

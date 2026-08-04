@@ -349,6 +349,15 @@ public sealed partial class Play : IAsyncDisposable
         await OpenQuit();
     }
 
+    /// <summary>Keys typed into the quit dialog's name box. Esc closes the dialog
+    /// (and Enter confirms) — the global key bridge never sees keys aimed at a
+    /// text field, so the box answers them itself.</summary>
+    private async Task QuitNameKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") await CancelQuit();
+        else if (e.Key == "Enter") await ConfirmQuit();
+    }
+
     /// <summary>Names the delve and leaves — the save written on the way out
     /// carries whatever was typed here.</summary>
     private async Task ConfirmQuit()

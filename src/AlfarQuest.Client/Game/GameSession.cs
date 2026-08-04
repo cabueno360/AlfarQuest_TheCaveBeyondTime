@@ -36,4 +36,20 @@ public static class GameSession
     /// <summary>Real seconds per in-world hour. 90 → a full day-night cycle takes 36
     /// real minutes; the hours pass slowly, by request. One knob to retune the pace.</summary>
     public const float SecondsPerHour = 90f;
+
+    /// <summary>Forgets everything belonging to the signed-in player. Called on
+    /// sign-out: these are statics, and a sign-out is only a navigation — without
+    /// this, the NEXT account inherited the last one's slot id and delve name,
+    /// and its first save was written wearing a stranger's title.</summary>
+    public static void ForgetPlayer()
+    {
+        PartyKeys = ["mage", "thief"];
+        PlayerName = "Wanderer";
+        SaveId = 0;
+        SlotChosen = false;
+        SaveName = "";
+        ResumeRegion = null;
+        ResumeX = ResumeY = 0f;
+        TimeOfDay = 8f;
+    }
 }

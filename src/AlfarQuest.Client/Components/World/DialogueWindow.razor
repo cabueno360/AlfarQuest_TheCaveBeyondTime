@@ -95,7 +95,7 @@
             <p class="aq-talk-greeting">@L[talk.Greeting]</p>
 
             <ul class="aq-talk-topics">
-                @foreach (var topic in talk.Topics)
+                @foreach (var topic in Talk.VisibleTopics)
                 {
                     var heard = Talk.AlreadyAsked(topic);
                     <li>

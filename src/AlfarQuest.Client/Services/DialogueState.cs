@@ -14,11 +14,19 @@ public sealed class DialogueState(PartyState party)
 {
     private readonly PartyState _party = party;
 
-    /// <summary>The open conversation, resolved from the NPC so the window can draw a
-    /// header and its list of questions without reaching back for anything.</summary>
-    public sealed record OpenTalk(string Name, string Role, string Kind, string Greeting, IReadOnlyList<DialogueTopic> Topics);
+    /// <summary>The open conversation, resolved from the NPC so the window can draw
+    /// a header without reaching back for anything. The QUESTIONS are not snapshot
+    /// here — see <see cref="VisibleTopics"/>, which refilters live.</summary>
+    public sealed record OpenTalk(string Name, string Role, string Kind, string Greeting, NpcDefinition Npc);
 
     public OpenTalk? Open { get; private set; }
+
+    /// <summary>The questions currently on the table, refiltered against the flag
+    /// set EVERY read — so a topic unlocked by an answer given this conversation
+    /// (Halvard naming the Cave unlocks the ones gated on knowing of it) appears
+    /// the moment the player is back at the menu, not on the next visit.</summary>
+    public IReadOnlyList<DialogueTopic> VisibleTopics =>
+        Open is null ? [] : [.. Open.Npc.Topics.Where(t => t.Visible(_party.ClaimedRewards))];
 
     /// <summary>The question being answered, or null while the menu of questions is
     /// showing. <see cref="Page"/> is which leaf of a multi-page answer is up.</summary>
@@ -54,11 +62,7 @@ public sealed class DialogueState(PartyState party)
             var greeting = string.IsNullOrEmpty(npc.Greeting)
                 ? (npc.Lines.Count > 0 ? npc.Lines[0] : "")
                 : npc.Greeting;
-            // Only the topics that fit where the story stands — a hint about the
-            // Cave appears once there is reason to give it, and a spent one drops
-            // away. Resolved against the persisted flag set.
-            var topics = npc.Topics.Where(t => t.Visible(_party.ClaimedRewards)).ToList();
-            Open = new OpenTalk(npc.Name, npc.Role, npc.Kind, greeting, topics);
+            Open = new OpenTalk(npc.Name, npc.Role, npc.Kind, greeting, npc);
             Asked = null; Page = 0; Offer = null; _heard.Clear();
             Changed?.Invoke();
             return true;
