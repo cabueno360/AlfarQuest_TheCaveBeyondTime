@@ -23,15 +23,15 @@ let current = null;      // the roll being animated — read when the die settle
 function ensureTable() {
     let el = document.getElementById("aq-dice");
     if (el) return el;
-    // A centred square rather than the whole viewport: the die lands mid-screen
-    // where the eye already is, not in a corner behind the HUD.
+    // The WHOLE viewport. A smaller centred box put the physics walls in the
+    // middle of the scene: a die resting against one was clipped at the canvas
+    // edge and read as "behind the map". Full-screen, the only walls are the
+    // screen's own edges — the die is above everything, everywhere; a gentler
+    // throw (see throwForce) is what keeps it settling near the centre.
     el = document.createElement("div");
     el.id = "aq-dice";
     Object.assign(el.style, {
-        position: "fixed",
-        left: "50%", top: "50%",
-        width: "min(58vmin, 560px)", height: "min(58vmin, 560px)",
-        transform: "translate(-50%, -50%)",
+        position: "fixed", inset: "0",
         zIndex: "10000",
         pointerEvents: "none",
     });
@@ -48,7 +48,7 @@ function plaque() {
     el.id = "aq-dice-plaque";
     Object.assign(el.style, {
         position: "fixed",
-        left: "50%", top: "calc(50% + min(31vmin, 300px))",
+        left: "50%", bottom: "15vh",
         transform: "translate(-50%, 0)",
         zIndex: "10001",
         pointerEvents: "none",
@@ -102,10 +102,15 @@ async function init() {
         container: "#aq-dice",
         assetPath: "/lib/dice-box/assets/",
         theme: "default",
-        scale: 14,              // a fate die is read across the room, not squinted at
-        gravity: 1.4,
+        scale: 16,              // a fate die is read across the room, not squinted at
+        gravity: 1.6,
         mass: 1.2,
-        friction: 0.9,
+        friction: 0.95,
+        // A soft throw with plenty of spin: the die loses its travel early and
+        // tends to die out around the middle of the screen instead of streaking
+        // to a corner the way the default force sends it.
+        throwForce: 3.5,
+        spinForce: 5,
         settleTimeout: 4000,
         lightIntensity: 1,
         shadowTransparency: 0.7,
