@@ -95,7 +95,7 @@ public partial class World
             if (Stage == 2) LeaveCave();     // out of the DELVE — back to the region, not a doorstep
             else ExitInterior();             // out of a building — back to the doorstep
         }
-        else if (p.Target == Tiled.MapCatalog.Cave) EnterCave();   // the mouth — down into the delve
+        else if (p.Target == Tiled.MapCatalog.Cave) TryDescend();  // the mouth — the light first, then down
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
         else
         {

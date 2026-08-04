@@ -130,6 +130,17 @@ public partial class World
         var act = Party[Active];
         float flick = 0.85f + (float)Math.Sin(TorchTime * 11f) * 0.06f + (float)Math.Sin(TorchTime * 3.3f) * 0.05f;
         lights.Add(new RLight { x = act.Pos.X, y = act.Pos.Y, rad = 300 * flick, c = act.Def.HeroClass == "Mage" ? "#2f8f88" : "#e8a94a" });
+
+        // The summoned light — the Mage's little friend, bobbing above the
+        // leader's shoulder in the cave. Two lights, not an entity: a tight
+        // bright core that reads as the orb herself, and a wide warm wash that
+        // is the point of having called her.
+        if (Stage == 2 && LightOrb)
+        {
+            float bob = (float)Math.Sin(TorchTime * 2.2f) * 10f;
+            lights.Add(new RLight { x = act.Pos.X + 26, y = act.Pos.Y - 52 + bob, rad = 34, c = "#fff6d8" });
+            lights.Add(new RLight { x = act.Pos.X + 26, y = act.Pos.Y - 52 + bob, rad = 480 * flick, c = "#ffe9b0" });
+        }
         foreach (var (h, i) in Party.Select((h, i) => (h, i)))
             if (i != Active && h.Alive) lights.Add(new RLight { x = h.Pos.X, y = h.Pos.Y, rad = 120, c = "#5566aa" });
 

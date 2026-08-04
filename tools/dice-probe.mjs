@@ -93,6 +93,38 @@ if (/Search/.test(tub?.promptVerb ?? '')) {
   console.log(`  (no barrel in reach — "${tub?.promptVerb} ${tub?.promptName}" — skipped)`);
 }
 
+console.log('\n=== the Mouth asks for a light ===');
+// The cave will not have the party without the summoned orb: E at The Mouth
+// rolls d20 + the Mage's mind against 12. Success descends when the die lands;
+// failure locks the summoning for ten minutes — pressing E again rolls nothing.
+await clearLevelUp();
+await page.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r3_deepdelve'));
+await settle(1500); await clearLevelUp();
+let mouth = null;
+for (const [x, y] of [[54, 13], [55, 14], [54, 15], [53, 14]]) {
+  await clearLevelUp(); await warp(x, y); await settle(450); await clearLevelUp();
+  const h = await hud();
+  if (/Descend/.test(h?.promptVerb ?? '')) { mouth = h; break; }
+}
+check('standing at The Mouth', !!mouth, mouth ? `"${mouth.promptVerb} ${mouth.promptName}"` : 'no prompt reached');
+const beforeSummon = (await dice()).length;
+await page.keyboard.press('e'); await settle(600);
+const summon = (await dice()).slice(beforeSummon).find(d => d.kind === 'summon');
+check('the descent consults the fates', !!summon, JSON.stringify(summon ?? null));
+await settle(3500);
+await page.click('.aq-cutscene-skip', { timeout: 2500 }).catch(() => { });
+await settle(1200); await clearLevelUp();
+const under = await hud();
+if (summon && summon.total >= 12) {
+  check('success: the party descends once the die lands', under?.stage === 2, `stage ${under?.stage}`);
+} else {
+  check('failure: the dark holds the door', under?.stage !== 2, `stage ${under?.stage}`);
+  const lockedAt = (await dice()).length;
+  await page.keyboard.press('e'); await settle(600);
+  check('  and the weave is not asked again during the lockout',
+    (await dice()).length === lockedAt, 'no new roll');
+}
+
 console.log('\n=== every skill cast throws the die ===');
 // Firebolt is slot 1, unlocked at level 1 — the die must roll from the very
 // first cast, not only for the ultimate.

@@ -151,17 +151,44 @@ public partial class World
         if (_pendingReveal is not null) return true;
 
         // A lock is checked before anything else happens: no XP, no particles and
-        // no "opened" flag for a chest that did not open.
+        // no "opened" flag for a chest that did not open. Without the key, the
+        // Thief (or whoever leads) can try the pick: d20 + their prime attribute
+        // against 14. Success opens without spending anything; failure jams the
+        // mechanism for ten minutes and the box sits there smug about it.
+        var picked = false;
         if (thing.Kind.RequiresKey is { } key && !thing.Opened)
         {
             if (!ContainerBridge.CarryingKey(key))
             {
-                Floaters.Add(new FloatText(thing.Pos + new Vec(0, -30),
-                                           "Locked — needs a {0}", "#d98a8a", key));
-                return true;               // handled: it must not fall through to an NPC
+                const int PickDC = 14;
+                if (JamRemaining(thing) is > 0 and var left)
+                {
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -30),
+                                               "The lock is jammed — {0} min", "#9a95b6",
+                                               MathF.Ceiling(left / 60f).ToString()));
+                    return true;
+                }
+                var picker = Party.FirstOrDefault(h => h.Def.Key == "thief") ?? Party[Active];
+                var pick = RollFate("pick", 20, CharacterStats.For(picker.Def.Key).FateMod, FateColour(picker.Def.HeroClass));
+                if (pick.total >= PickDC)
+                {
+                    pick.outcome = "good";
+                    picked = true;
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The lock yields to the pick", "#f0d99a"));
+                }
+                else
+                {
+                    pick.outcome = "bad";
+                    _jams[thing] = FateLockout;
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The pick slips — the lock jams", "#d98a8a"));
+                    return true;
+                }
             }
-            ContainerBridge.SpendKey(key);
-            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "{0} turns", "#f0d99a", key));
+            else
+            {
+                ContainerBridge.SpendKey(key);
+                Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "{0} turns", "#f0d99a", key));
+            }
         }
 
         // First opening rolls it; later ones show whatever is still inside.
@@ -172,8 +199,10 @@ public partial class World
             // A CHEST consults the fates: a d6 plus the opener's Luck, tumbled
             // at the centre of the screen. The number sweetens (or sours) the
             // loot table's chances, and the reveal waits for the die to settle
-            // — barrels, ore and herb patches stay quick and quiet.
-            var fated = thing.Kind.Verb is "Open" or "Unlock";
+            // — barrels, ore and herb patches stay quick and quiet. A lock that
+            // just yielded to the pick skips the fortune die: that throw was
+            // the pick's, and two dice for one box is a casino.
+            var fated = !picked && thing.Kind.Verb is "Open" or "Unlock";
             if (fated)
             {
                 var d = RollFate("fortune", 6, CharacterStats.For(SteeredKey).LuckMod, "#c9a227");
@@ -194,8 +223,9 @@ public partial class World
             StatBridge.Record(SteeredKey, HeroStats.Kind.TreasuresOpened);
             Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
 
-            // The window opens when the die lands — see UpdateFate.
-            if (fated) { _pendingReveal = thing; _revealIn = RevealDelay; return true; }
+            // The window opens when the die lands — see UpdateFate. A picked
+            // lock waits on the pick's own die the same way.
+            if (fated || picked) { _pendingReveal = thing; _revealIn = RevealDelay; return true; }
         }
 
         Reveal(thing);

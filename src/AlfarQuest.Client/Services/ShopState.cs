@@ -73,6 +73,49 @@ public sealed class ShopState(PartyState party)
     /// key its coin-and-sparkle animation to without diffing inventories itself.</summary>
     public int TradePulse { get; private set; }
 
+    /// <summary>Whether this visit's one haggle has been tried, and what the
+    /// counter charges because of it. Won: buying softens and selling sweetens.
+    /// Lost badly: the keeper bristles and everything tilts the other way.</summary>
+    public bool Haggled { get; private set; }
+    private float _buyFactor = 1f, _sellFactor = 1f;
+
+    /// <summary>One try at the keeper's prices per visit: d20 + the party's best
+    /// Wisdom. 16 or better wins the counter over; 4 or under offends it; the
+    /// middle spends the attempt on a shrug. Returns the throw for the dice
+    /// overlay, or null when this visit already had its word.</summary>
+    public object? TryHaggle()
+    {
+        if (Open is null || Haggled) return null;
+        Haggled = true;
+
+        var mod = party.Members.Count == 0 ? 0
+            : party.Members.Max(m => Math.Clamp((m.Total.Wisdom - 10) / 2, 0, 5));
+        var roll = Random.Shared.Next(1, 21);
+        var total = roll + mod;
+
+        string outcome;
+        if (total >= 16)
+        {
+            _buyFactor = 0.85f; _sellFactor = 1.15f;
+            Notice = "The keeper grumbles — prices soften.";
+            outcome = "good";
+        }
+        else if (total <= 4)
+        {
+            _buyFactor = 1.10f; _sellFactor = 0.90f;
+            Notice = "The keeper bristles — prices harden.";
+            outcome = "bad";
+        }
+        else
+        {
+            Notice = "The keeper shrugs. The prices stand.";
+            outcome = "plain";
+        }
+        Changed?.Invoke();
+        // The same shape the engine's fate rolls travel in, for dice.js.
+        return new { sides = 20, value = roll, mod, total, kind = "haggle", c = "#e0c66b", outcome };
+    }
+
     public event Action? Changed;
 
     /// <summary>The buyer's spendable gold, through the same purse the rest of the
@@ -91,6 +134,9 @@ public sealed class ShopState(PartyState party)
             Screen = Stage.Greeting;
             Buyer = party.Find(buyerKey) ?? party.Selected ?? party.Members.FirstOrDefault();
             Detail = null; DetailFromShop = false; Filter = null; Notice = null;
+            // A fresh visit, a fresh chance to haggle — and yesterday's bad
+            // blood (or good word) does not follow the party to the counter.
+            Haggled = false; _buyFactor = 1f; _sellFactor = 1f;
             EnsureShelf(npcId);
             Changed?.Invoke();
             return true;
@@ -172,8 +218,10 @@ public sealed class ShopState(PartyState party)
     /// <summary>What the buyer would pay for this shelf item and be paid for a pack
     /// item — routed through <see cref="ShopEconomy"/> so a future discount lands
     /// here. With the economy levers off these equal the item's list prices.</summary>
-    public int PriceToBuy(Item item) => Open is { } s ? ShopEconomy.BuyPrice(item, Buyer, s.Merchant) : item.BuyPrice;
-    public int PriceToSell(Item item) => Open is { } s ? ShopEconomy.SellPrice(item, Buyer, s.Merchant) : item.SellPrice;
+    public int PriceToBuy(Item item) => (int)Math.Max(1, Math.Round(
+        (Open is { } s ? ShopEconomy.BuyPrice(item, Buyer, s.Merchant) : item.BuyPrice) * _buyFactor));
+    public int PriceToSell(Item item) => (int)Math.Max(1, Math.Round(
+        (Open is { } s2 ? ShopEconomy.SellPrice(item, Buyer, s2.Merchant) : item.SellPrice) * _sellFactor));
 
     public bool CanAfford(Item item) => Buyer is not null && BuyerGold >= PriceToBuy(item);
 

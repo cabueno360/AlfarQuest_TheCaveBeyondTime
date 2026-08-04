@@ -5,6 +5,7 @@
 @implements IDisposable
 @inject ShopState Shop
 @inject Translator L
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 @* The merchant's counter.
 
@@ -77,9 +78,19 @@
                 <div class="aq-shop-choices">
                     <button type="button" class="aq-btn aq-shop-choice" @onclick="Shop.ShowBuy">@L["Buy"]</button>
                     <button type="button" class="aq-btn aq-shop-choice" @onclick="Shop.ShowSell">@L["Sell"]</button>
+                    @* One try per visit at the keeper's prices — d20 + the party's
+                       best Wisdom, thrown on the fate dice like every other check. *@
+                    @if (!Shop.Haggled)
+                    {
+                        <button type="button" class="aq-btn aq-shop-choice" @onclick="Haggle">🎲 @L["Haggle"]</button>
+                    }
                     <button type="button" class="aq-btn aq-shop-choice" @onclick="Ask">@L["Ask About This Place"]</button>
                     <button type="button" class="aq-btn aq-shop-choice ghost" @onclick="Close">@L["Goodbye"]</button>
                 </div>
+                @if (Shop.Haggled && Shop.Notice is { } word)
+                {
+                    <p class="aq-shop-line">@L[word]</p>
+                }
             </div>
         }
         else
@@ -227,6 +238,20 @@
     private int _ask;
     private string _line = "";
     private string? _shownId;   // which merchant _line belongs to
+
+    /// <summary>The one haggle: the state rolls and sets the prices, this throws
+    /// the same roll onto the fate dice so the counter is as theatrical as a
+    /// chest. The overlay failing is cosmetic — the prices already moved.</summary>
+    private async Task Haggle()
+    {
+        if (Shop.TryHaggle() is not { } roll) return;
+        try
+        {
+            var dice = await JS.InvokeAsync<Microsoft.JSInterop.IJSObjectReference>("import", "./js/dice.js");
+            await dice.InvokeVoidAsync("rollFate", roll);
+        }
+        catch { /* the dice are ceremony; the ledger already changed */ }
+    }
 
     protected override void OnInitialized() => Shop.Changed += Refresh;
 
