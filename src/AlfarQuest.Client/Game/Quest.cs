@@ -229,9 +229,21 @@ public static class QuestCatalog
     public static IEnumerable<QuestDef> CompletedBy(string flag, IReadOnlyCollection<string> flags)
     {
         var before = flags.Where(f => f != flag).ToHashSet();
-        // Started-before matters: a side quest's done-flag can be set by the world
-        // (WordForTheCleric ends on `cave_entered`, which every delver trips) without
-        // the quest ever having been TAKEN. Only toast one the player actually holds.
-        return All.Where(q => q.IsComplete(flags) && !q.IsComplete(before) && q.IsStarted(before));
+        return All.Where(q =>
+            q.IsComplete(flags)
+            && (
+                // The normal case: this flag finished the last step of a quest the
+                // player already held. Started-before matters here: a side quest's
+                // done-flag can be set by the world (WordForTheCleric ends on
+                // `cave_entered`, which every delver trips) without the quest ever
+                // having been TAKEN — only pay one the player actually holds.
+                (!q.IsComplete(before) && q.IsStarted(before))
+                // The retro case: this flag IS the quest's own acceptance, and the
+                // legwork was already done — every step tripped before the offer
+                // was taken (the warehouse read before the watchman spoke, the
+                // memorial before the Grandmaster). Pay on the spot: without this,
+                // accepting was a silent completion that swallowed the reward.
+                || (flag == q.StartFlag && q.StartFlag.Length > 0 && !q.IsStarted(before))
+            ));
     }
 }
