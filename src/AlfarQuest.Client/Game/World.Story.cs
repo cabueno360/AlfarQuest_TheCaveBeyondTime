@@ -41,26 +41,84 @@ public partial class World
             "Silver-blue smoke where five people were, and a building coming down. And the thought carried down every stair since, polished smooth as a coin: not dead. Taken. The cave in the visions has them. The face in the crystal is your own — and it is grinning.");
     }
 
+    /// <summary>Kazzat's hut by the Forgotten Shrine — the guardian of the
+    /// Cistern, his kettle, and the way onward. He lives on depth 1: the shrine
+    /// room is the tale's island at the bottom of the cistern, the one safe
+    /// kindness the delve offers before the Warden's door.</summary>
+    void AddKazzat()
+    {
+        var shrine = CaveRegions.FirstOrDefault(r => r.Key == "sanctuary");
+        if (shrine is null || NpcCatalog.Find("kazzat") is not { } def) return;
+
+        var at = TileCentre(shrine.Cx, shrine.Cy);
+        Npcs.Add(new Npc(def, at));
+
+        Examinables.Add(new Examinable
+        {
+            Pos = at + new Vec(52f, -30f), R = 56f, Verb = "Examine", Kind = "note",
+            Title = "the guardian's hut",
+            Pages =
+            [
+                "A squat, wide shape of dark bricks and waterlogged copper sheeting, put together with more patience than mortar. Faint light leaks through the shutter seams, and a kettle inside is giving off cinnamon, ginger, and a strong dark tea.",
+                "The door hangs crooked on old hinges, mended many times and never quite level. Whoever keeps this place has been keeping it a very long while.",
+            ],
+        });
+    }
+
     /// <summary>Bruelos, at the edge of the light. Once per session, somewhere in
     /// the first stretch of a delve, the Mage sees him — the way he has seen him
     /// in every dark corner for six years. Armed on entering the cave.</summary>
     bool _bruelosShown;
     float _bruelosIn;
 
+    /// <summary>The pipes letting go: every few minutes underground, something
+    /// vast comes home to the Cistern's sea, heard rather than seen. Endless —
+    /// the sea has been fed since before the stone.</summary>
+    float _pipeFallIn;
+    int _pipeFallNext;
+
+    static readonly string[] PipeFalls =
+    [
+        "(Far off, a pipe lets go — something vast falls a long time before the sea takes it.)",
+        "(A ship — grey steel, of no yard that ever was — slides from a high pipe and breaks its back on the waves below.)",
+        "(Something with too many arms tumbles past the far light and is gone. The sea does not even splash.)",
+    ];
+
     /// <summary>Arms the cave's story timers. Called by EnterCave.</summary>
     void ArmCaveStory()
     {
         if (!_bruelosShown && Party.Any(h => h.Def.Key == "mage"))
             _bruelosIn = 50f + (float)_rng.NextDouble() * 70f;
+        _pipeFallIn = 70f + (float)_rng.NextDouble() * 60f;
     }
 
     void UpdateStory(float dt)
     {
-        if (Stage != 2 || _bruelosIn <= 0) return;
-        _bruelosIn -= dt;
-        if (_bruelosIn > 0) return;
-        _bruelosShown = true;
-        Say("The Fallen Mage",
-            "(At the edge of the light — Bruelos. Wine-flushed, sneering, exactly as he was. Gone the instant I turn. Six years, and he keeps finding me.)", 7f);
+        if (Stage != 2) return;
+
+        if (_bruelosIn > 0)
+        {
+            _bruelosIn -= dt;
+            if (_bruelosIn <= 0)
+            {
+                _bruelosShown = true;
+                Say("The Fallen Mage",
+                    "(At the edge of the light — Bruelos. Wine-flushed, sneering, exactly as he was. Gone the instant I turn. Six years, and he keeps finding me.)", 7f);
+            }
+        }
+
+        if (_pipeFallIn > 0)
+        {
+            _pipeFallIn -= dt;
+            if (_pipeFallIn <= 0)
+            {
+                if (Party.Count > 0)
+                    Say(Party[Active].Def.Name, PipeFalls[_pipeFallNext % PipeFalls.Length], 6.5f);
+                _pipeFallNext++;
+                Shake = MathF.Max(Shake, 0.45f);
+                PlaySound("mine", Camera, 0.6f);
+                _pipeFallIn = 120f + (float)_rng.NextDouble() * 120f;   // and again, forever
+            }
+        }
     }
 }

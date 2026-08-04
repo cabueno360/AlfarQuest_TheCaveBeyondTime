@@ -198,6 +198,36 @@ public static class NpcCatalog
                          "I turned back too soon. What waits below, no man was meant to carry back out.",
                          "You mean to descend? Then hear me plainly — you will descend into madness.",
                          "Two roads run from this pit: west into the Vale, south to the sun-road for Kae Ychel. Either is kinder than the climb behind me."] },
+        // Kazzat — the guardian at the bottom of the Cistern, keeping his hut of
+        // dark brick and copper by the Forgotten Shrine. From the source tale: the
+        // seven-foot lizard who serves tea, sees everyone for what they are, and
+        // holds the bronze key to the Diver. Placed by World.Story on depth 1.
+        // KIND IS A PLACEHOLDER: npcScryer stands in until a lizard sheet exists.
+        new() { Id = "kazzat", Kind = "npcScryer", Name = "Kazzat", Role = "Guardian of the Cistern",
+                Greeting = "Who goes— no. No one should be down here. And yet here you stand, three of you, dripping fate onto my floor. I am Kazzat, keeper of this place. Sit; the kettle has just sung.",
+                Topics =
+                [
+                    new("What is this place?",
+                        "The Great Cistern. Every water from every place and every time comes home through those pipes — the sea below is the ocean made of all oceans, the final place all water returns to.",
+                        "Things come home through the pipes too. Ships. Beasts. Once, an island. The sea takes them all, and does not even slow."),
+                    new("What are you?",
+                        "I am Kazzat, and I keep this place. That is the whole of what I am, and more of an answer than you have earned.",
+                        "But I will give you this for nothing: I see you. I see all of you. It is my gift, my way. The heart that burns, the bargain half-paid, the box that should have stayed shut — I see them plainly, and I am not in the habit of telling."),
+                    new("What waits deeper?",
+                        "You are walking through a place older than the very stone that shapes around it. More ancient than the ancientmost of the gods of your peoples.",
+                        "You understand stories — fanciful tales from the few who crawl out, desperate to justify their madness. You do not understand. You cannot. Only those who go to the very depths can begin to comprehend, and to comprehend is to be changed completely.",
+                        "Changed how, you will ask. Changed. You will see, if you get deep enough."),
+                    new("How do we go on from here?",
+                        "With this. A key of bronze, a triple helix around a sliver of sleeping crystal. There is a cave a short walk from my door; the key wakes the Diver that sleeps there, and the Diver crosses beneath the sea to the Great Coral Tree.",
+                        "Beware the crossing. That is an ocean of every monstrosity across all times and places, and the Diver is a very small bell to ring in it.")
+                        { SetsFlag = "kazzat_key" },
+                    new("Has anyone else come this way?",
+                        "The one you call Cerno sat where you sit, in that same wet-dog silence. He drank his tea, would not speak of what he had seen below, and went back UP.",
+                        "The wiser direction, if you ask the kettle. Nobody asks the kettle."),
+                ],
+                Lines = ["No one should be down here. Drink your tea.",
+                         "I see you. I see all of you. It is my gift, my way.",
+                         "To comprehend is to be changed completely. You will see, if you get deep enough."] },
         // Mirka's father — sent his son-in-law, the Cleric, into the dark to save
         // his dying daughter; keeps her house on the hill while the priest is gone.
         // The concept art's "ideas of conversation", made literal: he answers a menu

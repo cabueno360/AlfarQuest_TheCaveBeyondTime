@@ -32,11 +32,16 @@ public partial class World
         _rng = new Random(42);
         Props.Clear(); Crystals.Clear(); Husks.Clear(); Shots.Clear(); Slashes.Clear(); Aoe.Clear(); Fx.Clear();
         Portals.Clear(); Examinables.Clear(); Reading = null;
+        // The village must not follow the party down: without this, overworld
+        // NPCs lingered in the list at coordinates the cave now owns.
+        Npcs.Clear(); Talking = null;
 
         BuildWorld();
         BuildChamber();
-        // The Cistern looks back: the three faces in the crystal, a few steps in.
+        // The Cistern looks back: the three faces in the crystal, a few steps in —
+        // and Kazzat keeps his kettle by the Forgotten Shrine.
         AddCisternMirrors();
+        AddKazzat();
         ArmCaveStory();
 
         var start = Spawn;
@@ -231,9 +236,10 @@ public partial class World
         Phase = "playing";
         ClearedFor = 0f;
         Crystals.Clear(); Husks.Clear(); Shots.Clear(); Slashes.Clear(); Aoe.Clear(); Fx.Clear();
-        // Depth 1's mirrors (and any other readable) must not linger into the
-        // deeper floors at their old coordinates.
+        // Depth 1's mirrors, Kazzat and any other readable must not linger into
+        // the deeper floors at their old coordinates.
         Examinables.Clear(); Reading = null;
+        Npcs.Clear(); Talking = null;
         _rng = new Random(42 + Level * 101);
 
         BuildWorld();
