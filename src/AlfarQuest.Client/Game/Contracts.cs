@@ -26,7 +26,7 @@ public class RSound { public string f = ""; public float v = 1f; }
 /// applied the result — <c>value</c> is where the 3D die must land. <c>kind</c>
 /// says why the fates were consulted ("surge" for an ultimate, "fortune" for a
 /// chest); <c>mod</c> is the attribute bonus already inside <c>total</c>.</summary>
-public class RDice { public int sides = 20, value, mod, total; public string kind = "", c = "#c9a227"; }
+public class RDice { public int sides = 20, value, mod, total; public string kind = "", c = "#c9a227"; public string outcome = "plain"; }
 
 public class RVec { public float x, y; }
 

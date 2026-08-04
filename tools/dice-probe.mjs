@@ -66,15 +66,18 @@ const rolls = await dice();
 check('the engine recorded a fortune roll', rolls.some(d => d.kind === 'fortune'),
   JSON.stringify(rolls[0] ?? null));
 const r = rolls.find(d => d.kind === 'fortune');
-check('the roll is a d20 with its modifier folded in',
-  r && r.sides === 20 && r.value >= 1 && r.value <= 20 && r.total === r.value + r.mod,
-  r ? `d20=${r.value} +${r.mod} = ${r.total}` : 'no roll');
+check('the fortune roll is a d6 with its modifier folded in',
+  r && r.sides === 6 && r.value >= 1 && r.value <= 6 && r.total === r.value + r.mod,
+  r ? `d6=${r.value} +${r.mod} = ${r.total} (${r.outcome})` : 'no roll');
 
 await settle(2200); await clearLevelUp();
 const after = await page.locator('.aq-loot').count();
 const empt = await hud();
 check('the reveal arrives once the die settles', after > 0 || (empt !== null),
   after > 0 ? 'loot window opened' : 'roll came up empty (floater said so)');
+check('the plaque reads the roll out',
+  await page.evaluate(() => document.getElementById('aq-dice-plaque')?.style.opacity === '1'),
+  await page.evaluate(() => document.getElementById('aq-dice-plaque')?.textContent ?? 'no plaque'));
 await page.screenshot({ path: `${DIR}/dice-settled.png` });
 if (after > 0) { await page.keyboard.press('Escape'); await settle(500); }
 

@@ -26,13 +26,15 @@ public partial class World
     /// <summary>Seconds the reveal waits for the die to settle.</summary>
     const float RevealDelay = 2.1f;
 
-    /// <summary>Rolls a d20, applies nothing, hides nothing: the caller applies
-    /// the outcome and this records the throw for the screen.</summary>
-    (int roll, int total) RollFate(string kind, int mod, string colour)
+    /// <summary>Rolls a die, applies nothing, hides nothing: the caller applies
+    /// the outcome (and stamps it on the returned record, so the screen's plaque
+    /// can say Success or Failure) — this only throws and remembers.</summary>
+    RDice RollFate(string kind, int sides, int mod, string colour)
     {
-        var roll = _rng.Next(1, 21);
-        _dice.Add(new RDice { sides = 20, value = roll, mod = mod, total = roll + mod, kind = kind, c = colour });
-        return (roll, roll + mod);
+        var roll = _rng.Next(1, sides + 1);
+        var d = new RDice { sides = sides, value = roll, mod = mod, total = roll + mod, kind = kind, c = colour };
+        _dice.Add(d);
+        return d;
     }
 
     /// <summary>The die a hero throws wears their class's colour.</summary>

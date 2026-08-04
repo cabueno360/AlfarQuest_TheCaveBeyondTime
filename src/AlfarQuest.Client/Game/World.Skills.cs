@@ -63,15 +63,16 @@ public partial class World
         // Cooldowns are what keep the table from never being still.
         {
             var m = CharacterStats.For(h.Def.Key);
-            var (_, total) = RollFate("surge", m.FateMod, FateColour(h.Def.HeroClass));
-            var mult = total >= 18 ? 1.5f : total <= 4 ? 0.75f : 1f;
+            var d = RollFate("surge", 20, m.FateMod, FateColour(h.Def.HeroClass));
+            var mult = d.total >= 18 ? 1.5f : d.total <= 4 ? 0.75f : 1f;
+            d.outcome = mult > 1f ? "good" : mult < 1f ? "bad" : "plain";
             if (mult != 1f)
             {
                 dmg = (int)MathF.Round(dmg * mult);
                 heal = (int)MathF.Round(heal * mult);
                 Floaters.Add(new FloatText(h.Pos + new Vec(0, -44),
                     mult > 1f ? "Fate surges — {0}!" : "Fate falters — {0}",
-                    mult > 1f ? "#f0d99a" : "#9a95b6", total.ToString()));
+                    mult > 1f ? "#f0d99a" : "#9a95b6", d.total.ToString()));
             }
         }
 

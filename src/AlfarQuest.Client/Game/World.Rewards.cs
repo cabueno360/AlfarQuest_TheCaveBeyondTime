@@ -169,19 +169,20 @@ public partial class World
         {
             var (luck, _) = CharacterStats.PartyFortune?.Invoke() ?? (0f, 0f);
 
-            // A CHEST consults the fates: a d20 plus the opener's Luck, thrown
-            // across the screen. The number sweetens (or sours) the loot table's
-            // chances, and the reveal waits for the die to settle — barrels,
-            // ore and herb patches stay quick and quiet.
+            // A CHEST consults the fates: a d6 plus the opener's Luck, tumbled
+            // at the centre of the screen. The number sweetens (or sours) the
+            // loot table's chances, and the reveal waits for the die to settle
+            // — barrels, ore and herb patches stay quick and quiet.
             var fated = thing.Kind.Verb is "Open" or "Unlock";
             if (fated)
             {
-                var (_, total) = RollFate("fortune", CharacterStats.For(SteeredKey).LuckMod, "#c9a227");
-                luck = MathF.Max(0f, luck + (total - 10) * 0.035f);
-                if (total >= 20)
-                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates smile — {0}!", "#f0d99a", total.ToString()));
-                else if (total <= 4)
-                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates look away — {0}", "#9a95b6", total.ToString()));
+                var d = RollFate("fortune", 6, CharacterStats.For(SteeredKey).LuckMod, "#c9a227");
+                luck = MathF.Max(0f, luck + (d.total - 3.5f) * 0.12f);
+                d.outcome = d.total >= 6 ? "good" : d.total <= 2 ? "bad" : "plain";
+                if (d.outcome == "good")
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates smile — {0}!", "#f0d99a", d.total.ToString()));
+                else if (d.outcome == "bad")
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates look away — {0}", "#9a95b6", d.total.ToString()));
             }
 
             thing.Contents = thing.Kind.Loot.Roll(_rng.NextDouble, luck);

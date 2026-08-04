@@ -340,7 +340,7 @@ function loop(now) {
     // lazily so sessions that never roll never pay for the physics world.
     if (state.dice) for (const d of state.dice) {
         _diceSeen.push(d);
-        import("./dice.js").then(m => m.rollFate(d.sides, d.value, d.c)).catch(() => { });
+        import("./dice.js").then(m => m.rollFate(d)).catch(() => { });
     }
     const _f1 = performance.now();
     render(state, dt / 1000);
