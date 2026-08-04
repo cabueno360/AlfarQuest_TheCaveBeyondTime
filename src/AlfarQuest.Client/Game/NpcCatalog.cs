@@ -292,6 +292,14 @@ public static class NpcCatalog
                         "We do not say his name. He bound a greater demon at the tests, it took half his year with it, and the Regent sealed the thing in his heart and cast him out. That is all the Academy owes the question.",
                         "But stones keep what mouths will not. Read the memorial, if you must — and the courtyard wards the fire could not unmake. Then leave it be.")
                         { OffersQuest = "struck_name" },
+                    // A persuasion: press the Grandmaster to recite what the stone
+                    // says, and the memorial's step is earned without the walk.
+                    // Only once the quest is taken; gone once the stone is read.
+                    new("Press him: say what the memorial says",
+                        "For a long moment he only looks at you. Then, very quietly, he recites what the stone will not be spared: the name's absence, the year, the sentence in full. 'There. You have it without troubling the dead. Do not make me regret the telling.'")
+                        { Persuade = 13, SetsFlag = "sq_name_memorial",
+                          ShowWhen = "sq_name_started", HideWhen = "sq_name_memorial",
+                          FailA = ["'You press like a creditor.' His face closes like a door. 'The stone in the hall has more patience than I do. Ask it.'"] },
                 ],
                 Lines = ["This is but an outpost. The Academy itself takes up a quarter of Kae Ychel — gardens, towers, libraries, the greatest school on the continent.",
                          "Each midsummer the finest hundred are tested before the Twin Sun King's avatar. Ten receive his boon. It is the making of a mage, or the breaking of one.",
@@ -322,6 +330,14 @@ public static class NpcCatalog
                         "A warehouse on the Low Docks, months back — a whole crew inside it. Silver-blue ash, Cayhall goods, and a boss who walked out and kept walking. No inquiry.",
                         "We don't dig into it. But you're not the watch, are you. If you've the stomach, dig where we didn't — and don't bring me what you find.")
                         { OffersQuest = "crew_ashes" },
+                    // A persuasion: the watch DID make a tally the morning after,
+                    // whatever the captain says — press for it and the warehouse
+                    // walk-through is spared. Only once the quest is taken.
+                    new("Press the watch: there was a tally, wasn't there?",
+                        "A long look up and down the quay. 'There was. Sea-chests full of Cayhall silks, a crew's worth of berths slept in, and papers for cargo that never came off any ship. You didn't hear the half of it from me.'")
+                        { Persuade = 13, SetsFlag = "sq_crew_seen",
+                          ShowWhen = "sq_crew_started", HideWhen = "sq_crew_seen",
+                          FailA = ["'You've mistaken me for someone the captain doesn't own.' The watchman looks past you at the harbour and is done talking about fires."] },
                 ],
                 Lines = ["Welcome to Seoshe. Keep your purse close and your questions closer.",
                          "My captain drinks on the crews' coin, and the crews drink on his. That's the whole of the law down here.",

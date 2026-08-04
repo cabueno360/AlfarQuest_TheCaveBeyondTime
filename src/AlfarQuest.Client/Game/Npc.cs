@@ -72,6 +72,16 @@ public sealed record DialogueTopic(string Q, params string[] A)
     /// quest. Use this instead of SetsFlag for the start of a takeable side quest.</summary>
     public string OffersQuest { get; init; } = "";
 
+    /// <summary>A persuasion: the DC a d20 + the party's best Wisdom must reach
+    /// before this topic answers with <see cref="A"/> (and claims SetsFlag).
+    /// Failing answers with <see cref="FailA"/> instead, sets nothing, and the
+    /// topic refuses to be pressed again for ten minutes. Zero = a plain topic.</summary>
+    public int Persuade { get; init; }
+
+    /// <summary>What they say when the persuasion fails. Only read when
+    /// <see cref="Persuade"/> is set.</summary>
+    public string[] FailA { get; init; } = [];
+
     /// <summary>Whether this topic should appear, given the flags set so far.</summary>
     public bool Visible(IReadOnlyCollection<string> flags) =>
         (ShowWhen.Length == 0 || flags.Contains(ShowWhen)) &&

@@ -35,6 +35,12 @@ public sealed class DialogueState(PartyState party)
     private readonly HashSet<string> _heard = [];
     public bool AlreadyAsked(DialogueTopic t) => _heard.Contains(t.Q);
 
+    /// <summary>Persuasions that failed, and when each may be pressed again.
+    /// Keyed by the question; real time, because a conversation is real time.</summary>
+    private readonly Dictionary<string, DateTime> _rebuffed = [];
+    public bool Rebuffed(DialogueTopic t) =>
+        _rebuffed.TryGetValue(t.Q, out var until) && until > DateTime.UtcNow;
+
     public event Action? Changed;
 
     /// <summary>Registers with the engine. The offer carries only which NPC — the
@@ -60,16 +66,55 @@ public sealed class DialogueState(PartyState party)
     }
 
     /// <summary>Puts a question to them — shows its first answer page and remembers
-    /// it was asked.</summary>
-    public void Ask(DialogueTopic t)
+    /// it was asked. A PERSUASION rolls first: d20 + the party's best Wisdom
+    /// against the topic's DC. Winning answers properly and claims the flag;
+    /// losing answers with the rebuff and locks the pressing for ten minutes.
+    /// Returns the throw for the dice overlay, or null when no die was cast.</summary>
+    public object? Ask(DialogueTopic t)
     {
-        Asked = t; Page = 0; _heard.Add(t.Q);
+        _heard.Add(t.Q); Page = 0;
+
+        // A persuasion already WON stays won: its flag is claimed, and clicking
+        // the topic again just repeats the answer — the fates are not asked to
+        // re-judge a case they closed.
+        if (t.Persuade > 0 && (t.SetsFlag.Length == 0 || !_party.ClaimedRewards.Contains(t.SetsFlag)))
+        {
+            if (Rebuffed(t))
+            {
+                // Still smarting from the last press: one curt line, no roll.
+                Asked = t with { A = ["They have heard enough of your pressing for now. Come back with a cooler tongue."] };
+                Changed?.Invoke();
+                return null;
+            }
+
+            var mod = _party.Members.Count == 0 ? 0
+                : _party.Members.Max(m => Math.Clamp((m.Total.Wisdom - 10) / 2, 0, 5));
+            var roll = Random.Shared.Next(1, 21);
+            var total = roll + mod;
+            var won = total >= t.Persuade;
+
+            if (won)
+            {
+                Asked = t;
+                if (t.SetsFlag.Length > 0) _party.ClaimFlag(t.SetsFlag);
+            }
+            else
+            {
+                Asked = t with { A = t.FailA.Length > 0 ? t.FailA : ["They look at you a long moment, and say nothing at all."] };
+                _rebuffed[t.Q] = DateTime.UtcNow.AddMinutes(10);
+            }
+            Changed?.Invoke();
+            return new { sides = 20, value = roll, mod, total, kind = "persuade", c = "#e0c66b", outcome = won ? "good" : "bad" };
+        }
+
+        Asked = t;
         // A plain hint-topic sets its flag now. An OFFER topic holds off: its pitch
         // (the answer) plays first, and the panel with the terms comes only once it
         // is read — see Next() — so the player hears them out before deciding.
         if (t.OffersQuest.Length == 0 && t.SetsFlag.Length > 0)
             _party.ClaimFlag(t.SetsFlag);
         Changed?.Invoke();
+        return null;
     }
 
     /// <summary>Whether asking this topic to its end will lay a quest on the table —

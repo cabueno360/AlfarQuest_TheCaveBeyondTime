@@ -20,6 +20,12 @@ let clearTimer = 0;
 let knockTimer = 0;
 let current = null;      // the roll being animated — read when the die settles
 
+/// Every roll ever thrown on this table, engine- and UI-side alike — the
+/// probes' record, since UI rolls (a haggle, a persuasion) never ride the
+/// engine's snapshot channel that game.js's diceSeen() watches.
+const _rolled = [];
+export function rolledLog() { return _rolled; }
+
 function ensureTable() {
     let el = document.getElementById("aq-dice");
     if (el) return el;
@@ -124,6 +130,7 @@ async function init() {
 /// One fate roll — `d` is the engine's record of it (sides, value, mod, total,
 /// outcome, colour). The die is thrown preset to land on d.value.
 export async function rollFate(d) {
+    _rolled.push(d);
     try {
         if (!box) await (initing ??= init());
         clearTimeout(clearTimer);

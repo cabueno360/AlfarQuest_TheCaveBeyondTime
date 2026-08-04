@@ -156,6 +156,52 @@ if (lore && lore.total >= 12) {
     (await dice()).length === lockedLore, 'no new roll');
 }
 
+console.log('\n=== a persuasion rolls at the table ===');
+// The pressing only exists once the Struck Name is underway; the Grandmaster
+// lives in the Academy hall. Win and the memorial step is earned on the spot;
+// lose and he is done being pressed for ten minutes — no second roll.
+await clearLevelUp();
+await page.evaluate(async () => (await import('/js/game.js')).debugClaim('sq_name_started'));
+await settle(400);
+await page.evaluate(async () => (await import('/js/game.js')).debugLoadInterior('mage_school'));
+await settle(1200); await clearLevelUp();
+await page.evaluate(async () => (await import('/js/game.js')).debugTalkTo('grandmaster'));
+await settle(900);
+// UI-side rolls (a persuasion, a haggle) never ride the engine snapshot, so
+// they are read from the dice table's own log instead of diceSeen().
+const rolled = () => page.evaluate(async () => (await import('/js/dice.js')).rolledLog());
+const pressTopic = page.locator('.aq-talk-topic', { hasText: 'memorial says' });
+check('the pressing joins the menu once the quest is taken', (await pressTopic.count()) === 1);
+const beforePress = (await rolled()).length;
+await pressTopic.click().catch(() => { }); await settle(700);
+const press = (await rolled()).slice(beforePress).find(d => d.kind === 'persuade');
+check('pressing consults the fates', !!press, JSON.stringify(press ?? null));
+const pressAnswer = (await page.locator('.aq-talk-answer').textContent().catch(() => '')) ?? '';
+if (press && press.total >= 13) {
+  check('success: he recites, and the step is earned', /recites|troubling the dead/i.test(pressAnswer), `"${pressAnswer.slice(0, 48)}…"`);
+  // A case the fates closed is not re-judged: clicking again repeats the
+  // answer with no new roll.
+  await page.click('.aq-talk-go').catch(() => { }); await settle(400);
+  const wonAt = (await rolled()).length;
+  await pressTopic.click().catch(() => { }); await settle(600);
+  check('  and a won case is not re-rolled', (await rolled()).length === wonAt, 'no new roll');
+} else {
+  check('failure: his face closes like a door', /creditor|patience/i.test(pressAnswer), `"${pressAnswer.slice(0, 48)}…"`);
+  await page.click('.aq-talk-go').catch(() => { }); await settle(400);
+  const lockedPress = (await rolled()).length;
+  await pressTopic.click().catch(() => { }); await settle(600);
+  check('  and pressing again is rebuffed without a roll', (await rolled()).length === lockedPress,
+    (((await page.locator('.aq-talk-answer').textContent().catch(() => '')) ?? '').slice(0, 44)));
+}
+// Out of the conversation whatever screen it is on — answers page back to the
+// menu first, then the leave button — so the skill cast below is not held.
+for (let i = 0; i < 4 && (await page.locator('.aq-talk-go').count()) > 0; i++) {
+  await page.click('.aq-talk-go').catch(() => { }); await settle(350);
+}
+await page.locator('.aq-talk-leave').click().catch(() => { });
+await settle(600);
+check('the conversation is closed', (await page.locator('.aq-talk').count()) === 0);
+
 console.log('\n=== every skill cast throws the die ===');
 // Firebolt is slot 1, unlocked at level 1 — the die must roll from the very
 // first cast, not only for the ultimate.

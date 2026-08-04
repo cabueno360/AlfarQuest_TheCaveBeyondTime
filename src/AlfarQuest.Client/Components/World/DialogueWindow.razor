@@ -5,6 +5,7 @@
 @implements IDisposable
 @inject DialogueState Talk
 @inject Translator L
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 @* A conversation with someone who has more than one thing to say.
 
@@ -99,8 +100,8 @@
                     var heard = Talk.AlreadyAsked(topic);
                     <li>
                         <button type="button" class="aq-talk-topic @(heard ? "heard" : "")"
-                                @onclick="() => Talk.Ask(topic)">
-                            <span class="aq-talk-bullet" aria-hidden="true">@(heard ? "✓" : "❧")</span>
+                                @onclick="() => AskAsync(topic)">
+                            <span class="aq-talk-bullet" aria-hidden="true">@(topic.Persuade > 0 ? "🎲" : heard ? "✓" : "❧")</span>
                             @L[topic.Q]
                         </button>
                     </li>
@@ -117,6 +118,19 @@
 @code {
     private ElementReference _panel;
     private bool _focus;
+
+    /// <summary>Asks a topic. A persuasion comes back with a die to throw — the
+    /// state has already rolled and applied it; the overlay is the theatre.</summary>
+    private async Task AskAsync(DialogueTopic topic)
+    {
+        if (Talk.Ask(topic) is not { } roll) return;
+        try
+        {
+            var dice = await JS.InvokeAsync<Microsoft.JSInterop.IJSObjectReference>("import", "./js/dice.js");
+            await dice.InvokeVoidAsync("rollFate", roll);
+        }
+        catch { /* ceremony only — the answer is already chosen */ }
+    }
 
     protected override void OnInitialized() => Talk.Changed += Refresh;
 
