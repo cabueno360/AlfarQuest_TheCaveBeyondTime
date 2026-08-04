@@ -114,9 +114,22 @@ public partial class World
         if (claimed.Contains("mirka_woken") || !claimed.Contains("cave_deep")) return false;
         if (PartyBridge.TakeItem?.Invoke("phial_panacea") != true) return false;
 
+        // The fates attend the epilogue. The die cannot fail her — the Panacea
+        // is the Panacea — it only chooses HOW the dawn comes: a high throw and
+        // she wakes to their presence before the phial ever touches her; a rare
+        // gutter roll and there is one long terrible breath of nothing first.
+        var healer = Party.FirstOrDefault(h => h.Def.Key == "cleric") ?? Party[Active];
+        var wake = RollFate("wake", 20, CharacterStats.For(healer.Def.Key).FateMod, FateColour("Cleric"));
+        wake.outcome = wake.total >= 18 ? "good" : wake.total < 8 ? "bad" : "plain";
+
         Burst(npc.Pos, "#f0d99a", 26);
         Play("chest_rare", npc.Pos);
-        Say("Mirka", "(The phial touches her lips. Colour comes back the way dawn comes — slowly, then all at once.)", 6.5f);
+        if (wake.outcome == "good")
+            Say("Mirka", "(Her eyes open before the phial touches her lips — as though it was the waiting, all along, that held her under.)", 6.5f);
+        else if (wake.outcome == "bad")
+            Say("Mirka", "(The phial trembles at her lips. For one long breath — nothing. Then colour, the way dawn comes after a false dawn: doubted first, then everywhere.)", 7f);
+        else
+            Say("Mirka", "(The phial touches her lips. Colour comes back the way dawn comes — slowly, then all at once.)", 6.5f);
         Say("Mirka", "…I know your faces. He wrote of you in the margins of his journal. Is he— is my husband here?", 6.5f);
         if (Party.Any(h => h.Def.Key == "cleric"))
             Say("The Grieving Cleric", "I am here, Mirka. The bargain is paid, and the dark is behind me. I am home.", 7.5f);
