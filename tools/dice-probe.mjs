@@ -75,8 +75,14 @@ const after = await page.locator('.aq-loot').count();
 const empt = await hud();
 check('the reveal arrives once the die settles', after > 0 || (empt !== null),
   after > 0 ? 'loot window opened' : 'roll came up empty (floater said so)');
-check('the plaque reads the roll out',
-  await page.evaluate(() => document.getElementById('aq-dice-plaque')?.style.opacity === '1'),
+// The die can take up to its 4s settleTimeout on a busy machine — poll for the
+// plaque rather than reading one instant, and stop as soon as it shows.
+let plaqueUp = false;
+for (let i = 0; i < 10 && !plaqueUp; i++) {
+  plaqueUp = await page.evaluate(() => document.getElementById('aq-dice-plaque')?.style.opacity === '1');
+  if (!plaqueUp) await settle(300);
+}
+check('the plaque reads the roll out', plaqueUp,
   await page.evaluate(() => document.getElementById('aq-dice-plaque')?.textContent ?? 'no plaque'));
 await page.screenshot({ path: `${DIR}/dice-settled.png` });
 if (after > 0) { await page.keyboard.press('Escape'); await settle(500); }

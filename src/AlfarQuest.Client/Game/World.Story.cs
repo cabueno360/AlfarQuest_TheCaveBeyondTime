@@ -65,6 +65,47 @@ public partial class World
         });
     }
 
+    /// <summary>The way down from the Cistern is the Diver: the metal sphere in
+    /// the crack by Kazzat's door, and it does not wake without his bronze key.
+    /// Without kazzat_key the sealed door refuses; with it, the first boarding
+    /// plays the tale's beat — the Mage at the levers — and the crossing is the
+    /// descent. Deeper floors keep their plain way down.</summary>
+    bool _diverAwoken;
+    float _diveIn;
+    float _diveRefusedFor;
+
+    void TryDive()
+    {
+        if (Level != 1) { Descend(); return; }
+        if (_diveIn > 0) return;                 // the boarding is already playing
+
+        if (!RewardBridge.Claimed().Contains("kazzat_key"))
+        {
+            if (_diveRefusedFor <= 0)
+            {
+                Floaters.Add(new FloatText(ExitPos + new Vec(0, -40),
+                    "A sealed metal door — the guardian by the shrine keeps its key", "#9a95b6"));
+                _diveRefusedFor = 3f;
+            }
+            return;
+        }
+
+        if (_diverAwoken) { Descend(); return; } // the sphere knows them now
+
+        // The deeper dark's level gate speaks BEFORE the boarding scene — a
+        // party turned back at the hatch should not have watched the door open.
+        if (PartyLevel() is > 0 and var have && have < RecommendedLevel(Level + 1)) { Descend(); return; }
+
+        _diverAwoken = true;
+        Say(Party[Active].Def.Name,
+            "(The key turns in its socket. Somewhere inside the rock, old metal wakes with a hiss, and a door that has not moved in ages swings wide on a great riveted sphere.)", 6.5f);
+        if (Party.Any(h => h.Def.Key == "mage"))
+            Say("The Fallen Mage", "Come now, holy man — I can pilot this thing to the bottom. It doesn't seem too complicated.", 5.5f);
+        if (Party.Any(h => h.Def.Key == "cleric"))
+            Say("The Grieving Cleric", "That is precisely what worries me.", 4.5f);
+        _diveIn = 7.5f;                          // the crossing follows the scene
+    }
+
     /// <summary>Bruelos, at the edge of the light. Once per session, somewhere in
     /// the first stretch of a delve, the Mage sees him — the way he has seen him
     /// in every dark corner for six years. Armed on entering the cave.</summary>
@@ -95,6 +136,19 @@ public partial class World
     void UpdateStory(float dt)
     {
         if (Stage != 2) return;
+
+        if (_diveRefusedFor > 0) _diveRefusedFor -= dt;
+        if (_diveIn > 0)
+        {
+            _diveIn -= dt;
+            if (_diveIn <= 0)
+            {
+                Descend();
+                if (Level > 1)
+                    Say(Party[Active].Def.Name,
+                        "(The craft groans like a wounded beast and creeps through black water, its lamps eaten a dozen feet out — until the sea lets go, and there is another shore. The dark here weeps.)", 7f);
+            }
+        }
 
         if (_bruelosIn > 0)
         {

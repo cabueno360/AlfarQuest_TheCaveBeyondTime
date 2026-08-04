@@ -398,7 +398,7 @@ public partial class World
             // the last husk dies, with the player still holding a movement key.
             if (ClearedFor > 0.8f && Party[Active].Alive &&
                 (Party[Active].Pos - ExitPos).Len() < 62f)
-                Descend();
+                TryDive();   // depth 1 goes down through the Diver; deeper floors just descend
         }
     }
 
