@@ -55,12 +55,12 @@ public partial class World
         var dmg = SkillDamage(h, skill);
         var heal = skill.Heal;
 
-        // The ultimate consults the fates: a d20 plus the class's prime
+        // Every cast consults the fates: a d20 plus the class's prime
         // attribute, thrown big across the screen. The number is decided here
         // and applied NOW — the 3D die lands on the same value a moment later,
         // so combat never waits on physics. High and the skill surges; a
         // gutter roll and it falters; most casts are simply themselves.
-        if (skill.Slot == 4)
+        // Cooldowns are what keep the table from never being still.
         {
             var m = CharacterStats.For(h.Def.Key);
             var (_, total) = RollFate("surge", m.FateMod, FateColour(h.Def.HeroClass));

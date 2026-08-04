@@ -90,6 +90,16 @@ if (/Search/.test(tub?.promptVerb ?? '')) {
   console.log(`  (no barrel in reach — "${tub?.promptVerb} ${tub?.promptName}" — skipped)`);
 }
 
+console.log('\n=== every skill cast throws the die ===');
+// Firebolt is slot 1, unlocked at level 1 — the die must roll from the very
+// first cast, not only for the ultimate.
+await clearLevelUp();
+const beforeCast = (await dice()).length;
+await page.keyboard.press('1'); await settle(800);
+const castRolls = (await dice()).slice(beforeCast);
+check('casting skill 1 rolls a surge d20', castRolls.some(d => d.kind === 'surge'),
+  JSON.stringify(castRolls[0] ?? null));
+
 console.log('\n=== console ===');
 const noisy = errors.filter(e => !/favicon|status of 401/.test(e));
 check('the game logged no errors', noisy.length === 0, noisy.slice(0, 2).join(' | '));
