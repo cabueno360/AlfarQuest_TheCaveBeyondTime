@@ -144,6 +144,7 @@ public partial class World
         BeginSfxFrame(dt);
         _dice.Clear();
         UpdateFate(dt);
+        UpdateStory(dt);
 
         // Hit-stop: the world holds still for a fraction of a second after an
         // impact so the blow lands instead of passing through. Particles and the

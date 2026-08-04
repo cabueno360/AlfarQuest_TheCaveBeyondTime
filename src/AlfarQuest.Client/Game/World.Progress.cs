@@ -35,6 +35,9 @@ public partial class World
 
         BuildWorld();
         BuildChamber();
+        // The Cistern looks back: the three faces in the crystal, a few steps in.
+        AddCisternMirrors();
+        ArmCaveStory();
 
         var start = Spawn;
         for (int i = 0; i < Party.Count; i++)
@@ -57,6 +60,10 @@ public partial class World
         {
             RewardBridge.Claim(CaveEnteredFlag);
             RecruitCleric();
+            // His canticle, whispered on the way down — queued behind his joining
+            // lines, spoken as the descent begins in earnest.
+            Say("The Grieving Cleric",
+                "O' Holy Light of the world. Bringer of Dawn. Be with me now — I am a child stumbling in the wilderness, blind and lost and cold without you. Watch over me.", 8f);
             VideoBridge.Play("assets/Videos/entrance-of-cave.mp4");
         }
     }
@@ -224,6 +231,9 @@ public partial class World
         Phase = "playing";
         ClearedFor = 0f;
         Crystals.Clear(); Husks.Clear(); Shots.Clear(); Slashes.Clear(); Aoe.Clear(); Fx.Clear();
+        // Depth 1's mirrors (and any other readable) must not linger into the
+        // deeper floors at their old coordinates.
+        Examinables.Clear(); Reading = null;
         _rng = new Random(42 + Level * 101);
 
         BuildWorld();
