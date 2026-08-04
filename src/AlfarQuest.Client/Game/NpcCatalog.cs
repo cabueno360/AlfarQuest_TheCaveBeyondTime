@@ -202,8 +202,9 @@ public static class NpcCatalog
         // dark brick and copper by the Forgotten Shrine. From the source tale: the
         // seven-foot lizard who serves tea, sees everyone for what they are, and
         // holds the bronze key to the Diver. Placed by World.Story on depth 1.
-        // KIND IS A PLACEHOLDER: npcScryer stands in until a lizard sheet exists.
-        new() { Id = "kazzat", Kind = "npcScryer", Name = "Kazzat", Role = "Guardian of the Cistern",
+        // His art is the Gemini sheet (assets/sprites/kazzat-sheet.png), the
+        // cane-idle pose packed into atlas_chars as npcKazzat.
+        new() { Id = "kazzat", Kind = "npcKazzat", Name = "Kazzat", Role = "Guardian of the Cistern",
                 Greeting = "Who goes— no. No one should be down here. And yet here you stand, three of you, dripping fate onto my floor. I am Kazzat, keeper of this place. Sit; the kettle has just sung.",
                 Topics =
                 [
