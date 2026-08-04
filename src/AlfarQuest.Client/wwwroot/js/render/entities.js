@@ -291,6 +291,12 @@ function drawHusk(e) {
     // to its own atlas art (drawCreature below) and REVERTED by taste: the packed
     // creature frames read worse in the world than the one well-drawn husk. To
     // give a specific kind its own art later, dispatch it here by name.
+    //
+    // The KEEPERS are that later: a boss whose own sheet is packed (kind boss*
+    // present in the atlas) steps out of the husk and wears it — the Vault
+    // Keeper's key-halberd, the Mirrored One's shards, the Guardian's wings.
+    if (e.name && e.name.startsWith("boss") && getCharFrames()?.[e.name]?.length)
+        return drawCreature(e);
     const { x, y, r } = e;
     const a = ATLAS.party;
     if (!a.ready) return;

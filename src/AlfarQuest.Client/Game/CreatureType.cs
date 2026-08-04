@@ -313,7 +313,7 @@ public static class CreatureCatalog
 
         // Depth 3, the Sunken Vault — armour and earth. Slow, physical and heavy;
         // its quake reaches further than it looks, and blades barely mark it.
-        new() { Id = "vault_keeper", Kind = "mobKnight", Name = "The Vault Keeper",
+        new() { Id = "vault_keeper", Kind = "bossVault", Name = "The Vault Keeper",
                 Biome = Biome.Cave,
                 MaxHp = 1500, Damage = 24, Speed = 42, Radius = 27, Scale = 2.2f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
@@ -328,7 +328,7 @@ public static class CreatureCatalog
 
         // Depth 4, the Mirror Halls — the fight where you cannot trust your eyes.
         // It splits into shimmering copies; kill the one that bleeds crystal.
-        new() { Id = "mirrored_one", Kind = "mobMage", Name = "The Mirrored One",
+        new() { Id = "mirrored_one", Kind = "bossMirror", Name = "The Mirrored One",
                 Biome = Biome.Cave,
                 MaxHp = 1850, Damage = 26, Speed = 48, Radius = 25, Scale = 2.0f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
@@ -344,9 +344,11 @@ public static class CreatureCatalog
         // Depth 5, the Cave Beyond Time — the true Guardian of the Crystal Heart,
         // in the one place time runs wrong. It thickens time around the whole
         // party, and below half health it shatters and reforms into a second kit.
-        new() { Id = "guardian", Kind = "bossGiant", Name = "Guardian of the Crystal Heart",
+        new() { Id = "guardian", Kind = "bossGuardian", Name = "Guardian of the Crystal Heart",
                 Biome = Biome.Cave,
-                MaxHp = 2700, Damage = 30, Speed = 44, Radius = 30, Scale = 1.5f,
+                // Scale retuned for the Gemini sheet's 72px frames — drawing only;
+                // collision stays Radius.
+                MaxHp = 2700, Damage = 30, Speed = 44, Radius = 30, Scale = 2.0f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Crystal,
