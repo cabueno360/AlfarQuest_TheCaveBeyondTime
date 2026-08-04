@@ -125,6 +125,37 @@ if (summon && summon.total >= 12) {
     (await dice()).length === lockedAt, 'no new roll');
 }
 
+console.log('\n=== a warded text asks for a mind ===');
+// The road-grave on Kae'Ychel Road carries FateCheck 12: reading it rolls
+// d20 + the party's best Intelligence. Success opens the page when the die
+// lands; failure locks the letters for ten minutes.
+await clearLevelUp();
+await page.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r4_kae_ychel_road'));
+await settle(1500); await clearLevelUp();
+let grave = null;
+for (const [x, y] of [[10, 48], [11, 48], [10, 49], [11, 49]]) {
+  await clearLevelUp(); await warp(x, y); await settle(450); await clearLevelUp();
+  const h = await hud();
+  if (/road-grave|headstone/.test(h?.promptName ?? '')) { grave = h; break; }
+}
+check('standing at the road-grave', !!grave, grave ? `"${grave.promptVerb} ${grave.promptName}"` : 'no prompt reached');
+const beforeLore = (await dice()).length;
+await page.keyboard.press('e'); await settle(600);
+const lore = (await dice()).slice(beforeLore).find(d => d.kind === 'lore');
+check('the reading consults the fates', !!lore, JSON.stringify(lore ?? null));
+await settle(2600); await clearLevelUp();
+const readOpen = (await page.locator('.aq-read-scrim').count()) > 0;
+if (lore && lore.total >= 12) {
+  check('success: the page opens once the die lands', readOpen, readOpen ? 'reading window up' : 'no window');
+  if (readOpen) { await page.keyboard.press('Escape'); await settle(500); }
+} else {
+  check('failure: the letters keep their secret', !readOpen, readOpen ? 'window opened anyway' : 'no window');
+  const lockedLore = (await dice()).length;
+  await page.keyboard.press('e'); await settle(600);
+  check('  and the letters are not asked again during the lockout',
+    (await dice()).length === lockedLore, 'no new roll');
+}
+
 console.log('\n=== every skill cast throws the die ===');
 // Firebolt is slot 1, unlocked at level 1 — the die must roll from the very
 // first cast, not only for the ultimate.

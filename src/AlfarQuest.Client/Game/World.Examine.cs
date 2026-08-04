@@ -32,6 +32,15 @@ public partial class World
         /// says what the fire left. Empty = reading it claims nothing. Rides the
         /// same one-shot claim set everything else does, so it pays once ever.</summary>
         public string SetsFlag = "";
+
+        /// <summary>A fate check guarding the text: the d20 + the party's best
+        /// mind must reach this before the thing lets itself be read. Zero (the
+        /// default) reads freely. Authored in Tiled as FateCheck.</summary>
+        public int CheckDC;
+
+        /// <summary>Damage a failed check bites out of the reader — the wards
+        /// that answer a clumsy mind. Zero fails harmlessly. Tiled: FateBite.</summary>
+        public int CheckBite;
     }
 
     public List<Examinable> Examinables { get; } = [];
@@ -56,9 +65,17 @@ public partial class World
         }
     }
 
-    /// <summary>Opens an examinable's text, if a reader is listening, and holds the
-    /// hero while it is up.</summary>
+    /// <summary>Opens an examinable's text — or, when the text is warded by a
+    /// fate check, rolls for it first: success opens the page once the die
+    /// settles (and pays a Puzzle's worth of XP, once); failure locks the
+    /// attempt for ten minutes, and a warded text may bite. See World.Fate.</summary>
     void OpenReading(Examinable e)
+    {
+        if (e.CheckDC > 0 && !_deciphered.Contains(e)) { TryDecipher(e); return; }
+        OpenReadingNow(e);
+    }
+
+    void OpenReadingNow(Examinable e)
     {
         var pages = e.Pages;
         if (e.PageFlags is { } gates)

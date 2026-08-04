@@ -387,6 +387,10 @@ public partial class World
                 Pages = pages,
                 PageFlags = flags,
                 SetsFlag = o.Str("SetsFlag"),
+                // A warded text: the fate check that guards it, and what a
+                // failed reading bites out of the reader. Both optional.
+                CheckDC = o.Int("FateCheck"),
+                CheckBite = o.Int("FateBite"),
             });
         }
     }

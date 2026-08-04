@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="630" nextobjectid="297">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="630" nextobjectid="299">
  <properties>
   <property name="DisplayName" value="The Kae Ychel Road"/>
   <property name="EngineTile" type="int" value="32"/>
@@ -223,12 +223,36 @@
   </object>
   <object id="271" name="the courtyard wards" x="824" y="360">
    <properties>
+    <property name="FateBite" value="6"/>
+    <property name="FateCheck" value="12"/>
     <property name="InteractionType" value="Examine"/>
     <property name="Pages" value="Crystal set into iron stands at the corners of the yard, and the air between them has a grain to it, like heat-shimmer that will not go away. This is the Academy's own art — the art that bound the demon that emptied the memorial inside, and unmade six apprentices doing it."/>
     <property name="Radius" value="46"/>
     <property name="SetsFlag" value="sq_name_wards"/>
     <property name="ReadKind" value="note"/>
     <property name="Verb" value="Examine"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="297" name="a road-grave" x="168" y="776">
+   <properties>
+    <property name="FateCheck" value="12"/>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="A flat stone half-swallowed by the verge, the letters worn to shadows. Read slowly, they give up a carter's name and a line beneath it: HE KEPT THE ROAD WHEN THE ROAD KEPT NO ONE. The dates are from the years the wood went quiet — when this road still ran somewhere, and somebody thought it worth dying to keep open."/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Verb" value="Read"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="298" name="a leaning headstone" x="272" y="824">
+   <properties>
+    <property name="FateCheck" value="12"/>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="The stone leans as if listening for the road. The name at its head has been chiselled out — not weathered: struck, the same deliberate cuts as the memorial in the Academy outpost. Whoever lies here was unmade twice, once by dying and once by the Order's ledger. Beneath the wound, small and unstruck, someone later added two words: WE REMEMBER."/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Verb" value="Read"/>
    </properties>
    <point/>
   </object>

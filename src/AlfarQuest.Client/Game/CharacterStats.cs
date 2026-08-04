@@ -90,6 +90,9 @@ public readonly record struct HeroModifiers(
     // the d20 a chest's fortune throws. Both small — a die should stay a die.
     int FateMod = 0,
     int LuckMod = 0,
+    // Intelligence's own die bonus, for the checks that are about the MIND
+    // regardless of class — deciphering a warded text, reading a worn grave.
+    int IntMod = 0,
     // What the basic attack deals, so a creature can resist it.
     Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {

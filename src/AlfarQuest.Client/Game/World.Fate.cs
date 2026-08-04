@@ -37,8 +37,15 @@ public partial class World
     float _summonLockout;
     float _pendingDescent;
 
-    /// <summary>Locks that took a failed pick badly, and how long each sulks.</summary>
-    readonly Dictionary<Interactable, float> _jams = [];
+    /// <summary>Things that took a failed check badly — a jammed lock, letters
+    /// that would not settle — and how long each sulks. Keyed on the thing
+    /// itself, whatever kind of thing it is.</summary>
+    readonly Dictionary<object, float> _jams = [];
+
+    /// <summary>Warded texts already read true — a check passes once, ever.</summary>
+    readonly HashSet<Examinable> _deciphered = [];
+    Examinable? _pendingRead;
+    float _readIn;
 
     /// <summary>The light-summoning at the mouth. With the orb already called,
     /// straight down; with the weave still torn from a failed call, a refusal
@@ -77,8 +84,52 @@ public partial class World
         }
     }
 
-    /// <summary>Seconds this lock still refuses the pick, or zero.</summary>
-    float JamRemaining(Interactable thing) => _jams.GetValueOrDefault(thing);
+    /// <summary>Seconds this thing still refuses another try, or zero.</summary>
+    float JamRemaining(object thing) => _jams.GetValueOrDefault(thing);
+
+    /// <summary>A warded text: the party's best mind rolls d20 + Intelligence
+    /// against the text's own DC. Success opens the page when the die settles
+    /// and pays a Puzzle's XP; failure locks the letters for ten minutes — and
+    /// a text with teeth (FateBite) takes its due out of whoever leads.</summary>
+    void TryDecipher(Examinable e)
+    {
+        if (_pendingRead is not null) return;            // a die is already tumbling
+        if (JamRemaining(e) is > 0 and var left)
+        {
+            Floaters.Add(new FloatText(e.Pos + new Vec(0, -34),
+                "The letters still swim — {0} min", "#9a95b6",
+                MathF.Ceiling(left / 60f).ToString()));
+            return;
+        }
+
+        // The best mind present does the reading, whoever is steered.
+        var reader = Party.OrderByDescending(h => CharacterStats.For(h.Def.Key).IntMod).First();
+        var d = RollFate("lore", 20, CharacterStats.For(reader.Def.Key).IntMod, FateColour(reader.Def.HeroClass));
+
+        if (d.total >= e.CheckDC)
+        {
+            d.outcome = "good";
+            _deciphered.Add(e);
+            Floaters.Add(new FloatText(e.Pos + new Vec(0, -34), "The letters settle into sense", "#f0d99a"));
+            Award(40, XpSource.Puzzle, e.Pos);
+            _pendingRead = e;
+            _readIn = RevealDelay;                       // the page opens with the die
+        }
+        else
+        {
+            d.outcome = "bad";
+            _jams[e] = FateLockout;
+            Floaters.Add(new FloatText(e.Pos + new Vec(0, -34), "The letters swim before the eyes", "#9a95b6"));
+            if (e.CheckBite > 0 && Party.Count > 0)
+            {
+                var h = Party[Active];
+                h.Hp = Math.Max(1, h.Hp - e.CheckBite);  // a ward stings; it does not kill
+                Floaters.Add(new FloatText(h.Pos + new Vec(0, -26), "-{0}", "#d98a8a", e.CheckBite.ToString()));
+                Play("hit_crystal", h.Pos);
+                PlaySound("magic_frost", h.Pos, 0.7f);
+            }
+        }
+    }
 
     /// <summary>Rolls a die, applies nothing, hides nothing: the caller applies
     /// the outcome (and stamps it on the returned record, so the screen's plaque
@@ -117,6 +168,12 @@ public partial class World
         {
             _pendingDescent -= dt;
             if (_pendingDescent <= 0) EnterCave();
+        }
+
+        if (_pendingRead is { } text)
+        {
+            _readIn -= dt;
+            if (_readIn <= 0) { _pendingRead = null; OpenReadingNow(text); }
         }
 
         if (_pendingReveal is not { } thing) return;
