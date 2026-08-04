@@ -85,6 +85,11 @@ public readonly record struct HeroModifiers(
     // Intelligence turned into magic-skill power, so a caster's spells grow with
     // the mind the way a fighter's blows grow with the arm.
     float SpellPower = 0,
+    // The fate-dice bonuses: FateMod rides the class's prime attribute and is
+    // added to the d20 an ultimate throws; LuckMod rides Luck and is added to
+    // the d20 a chest's fortune throws. Both small — a die should stay a die.
+    int FateMod = 0,
+    int LuckMod = 0,
     // What the basic attack deals, so a creature can resist it.
     Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {

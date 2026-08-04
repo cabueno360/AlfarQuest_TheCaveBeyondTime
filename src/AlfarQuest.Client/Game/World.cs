@@ -138,8 +138,12 @@ public partial class World
         GameSession.TimeOfDay = (GameSession.TimeOfDay + dt / GameSession.SecondsPerHour) % 24f;
         Shake = Math.Max(0, Shake - dt * 4f);
         // Emptied here so the sounds raised during this tick are exactly what the
-        // frame's render payload carries — see World.Sfx.
+        // frame's render payload carries — see World.Sfx. The fate dice follow
+        // the same one-frame contract, and a chest whose die is still tumbling
+        // gets its reveal counted down here too.
         BeginSfxFrame(dt);
+        _dice.Clear();
+        UpdateFate(dt);
 
         // Hit-stop: the world holds still for a fraction of a second after an
         // impact so the blow lands instead of passing through. Particles and the

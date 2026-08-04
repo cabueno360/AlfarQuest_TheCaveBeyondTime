@@ -228,7 +228,18 @@ public sealed class PartyState
                 WeaponDamage: weapon.Damage,
                 Accuracy: StatCalculator.Accuracy(c.Total),
                 DodgeChance: StatCalculator.Dodge(c.Total),
-                SpellPower: c.Total.Intelligence * 1.4f);
+                SpellPower: c.Total.Intelligence * 1.4f,
+                // The fate-dice bonuses. The prime attribute is the class's own
+                // (the arm, the mind, the hand, the faith); Luck is everyone's
+                // fortune at a chest. (attr−10)/2, clamped so a die stays a die.
+                FateMod: Math.Clamp((c.Class switch
+                {
+                    "Mage" => c.Total.Intelligence,
+                    "Thief" => c.Total.Dexterity,
+                    "Cleric" => c.Total.Wisdom,
+                    _ => c.Total.Strength,
+                } - 10) / 2, 0, 5),
+                LuckMod: Math.Clamp((c.Total.Luck - 10) / 2, 0, 5));
         };
     }
 

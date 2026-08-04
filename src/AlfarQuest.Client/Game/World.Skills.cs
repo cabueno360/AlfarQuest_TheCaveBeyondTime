@@ -53,6 +53,27 @@ public partial class World
     {
         var dir = AimDir(h);
         var dmg = SkillDamage(h, skill);
+        var heal = skill.Heal;
+
+        // The ultimate consults the fates: a d20 plus the class's prime
+        // attribute, thrown big across the screen. The number is decided here
+        // and applied NOW — the 3D die lands on the same value a moment later,
+        // so combat never waits on physics. High and the skill surges; a
+        // gutter roll and it falters; most casts are simply themselves.
+        if (skill.Slot == 4)
+        {
+            var m = CharacterStats.For(h.Def.Key);
+            var (_, total) = RollFate("surge", m.FateMod, FateColour(h.Def.HeroClass));
+            var mult = total >= 18 ? 1.5f : total <= 4 ? 0.75f : 1f;
+            if (mult != 1f)
+            {
+                dmg = (int)MathF.Round(dmg * mult);
+                heal = (int)MathF.Round(heal * mult);
+                Floaters.Add(new FloatText(h.Pos + new Vec(0, -44),
+                    mult > 1f ? "Fate surges — {0}!" : "Fate falters — {0}",
+                    mult > 1f ? "#f0d99a" : "#9a95b6", total.ToString()));
+            }
+        }
 
         switch (skill.Shape)
         {
@@ -60,10 +81,10 @@ public partial class World
                 CastProjectiles(h, skill, dir, dmg);
                 break;
             case SkillShape.Nova:
-                CastNova(h, skill, dmg);
+                CastNova(h, skill, dmg, heal);
                 break;
             case SkillShape.Heal:
-                CastHeal(h, skill);
+                CastHeal(h, heal);
                 break;
         }
 
@@ -104,7 +125,7 @@ public partial class World
         }
     }
 
-    void CastNova(Hero h, ActiveSkill skill, int dmg)
+    void CastNova(Hero h, ActiveSkill skill, int dmg, int heal)
     {
         float radius = skill.Radius + h.AbilityRadiusBonus;
         Slashes.Add(new Slash(h.Pos, 0, skill.Colour, 0.4f) { Nova = true, Radius = radius });
@@ -120,12 +141,12 @@ public partial class World
             k.Knock += to.Norm() * 150f;
         }
 
-        if (skill.Heal > 0) HealParty(skill.Heal);
+        if (heal > 0) HealParty(heal);
     }
 
-    void CastHeal(Hero h, ActiveSkill skill)
+    void CastHeal(Hero h, int heal)
     {
-        HealParty(skill.Heal);
+        HealParty(heal);
         Play("holy", h.Pos, null, 1f);
     }
 

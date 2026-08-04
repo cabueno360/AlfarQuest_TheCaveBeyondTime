@@ -335,6 +335,13 @@ function loop(now) {
     // Accumulated for the probe: a sound is in the payload for a single frame, so
     // polling snapshots misses sparse events. This rolling set does not.
     if (state.sounds) for (const s of state.sounds) _familiesSeen.add(s.f);
+    // Fate dice the frame asked for — the engine already decided the number;
+    // the module throws a 3D die that lands on it, above every window. Loaded
+    // lazily so sessions that never roll never pay for the physics world.
+    if (state.dice) for (const d of state.dice) {
+        _diceSeen.push(d);
+        import("./dice.js").then(m => m.rollFate(d.sides, d.value, d.c)).catch(() => { });
+    }
     const _f1 = performance.now();
     render(state, dt / 1000);
     const _f2 = performance.now();
@@ -409,6 +416,8 @@ export function stopGame() {
     // Module state survives an in-app navigation (the ES module is cached), so a
     // pause left set here started the NEXT delve frozen until a menu was opened.
     paused = false;
+    _diceSeen.length = 0;
+    import("./dice.js").then(m => m.clearDice()).catch(() => { });
     cancelAnimationFrame(raf);
     resetLatch();                       // don't carry a press into the next delve
     music?.stop(); music = null; tracks = null;
@@ -527,6 +536,12 @@ export function sfxCount() { return sfxPlayed(); }
 /// probe check the engine raised the right family, separately from whether it
 /// played.
 export function lastSounds() { return lastState?.sounds ?? []; }
+
+/// Every fate roll the engine has asked for this session — value, sides, kind.
+/// For the probes: a roll is in the payload for one frame, and the 3D throw is
+/// ceremony; this is the record of what the fates actually said.
+const _diceSeen = [];
+export function diceSeen() { return _diceSeen; }
 
 /// The last frame's render entities — a seam so a probe can assert what the
 /// renderer was actually handed (name-plates, husks, projectiles). Never used in play.

@@ -147,6 +147,8 @@ public partial class World
     bool UseThingInReach()
     {
         if (ThingInReach is not { } thing) return false;
+        // One fortune at a time: a die is still tumbling for the last chest.
+        if (_pendingReveal is not null) return true;
 
         // A lock is checked before anything else happens: no XP, no particles and
         // no "opened" flag for a chest that did not open.
@@ -166,6 +168,22 @@ public partial class World
         if (!thing.Opened)
         {
             var (luck, _) = CharacterStats.PartyFortune?.Invoke() ?? (0f, 0f);
+
+            // A CHEST consults the fates: a d20 plus the opener's Luck, thrown
+            // across the screen. The number sweetens (or sours) the loot table's
+            // chances, and the reveal waits for the die to settle — barrels,
+            // ore and herb patches stay quick and quiet.
+            var fated = thing.Kind.Verb is "Open" or "Unlock";
+            if (fated)
+            {
+                var (_, total) = RollFate("fortune", CharacterStats.For(SteeredKey).LuckMod, "#c9a227");
+                luck = MathF.Max(0f, luck + (total - 10) * 0.035f);
+                if (total >= 20)
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates smile — {0}!", "#f0d99a", total.ToString()));
+                else if (total <= 4)
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46), "The fates look away — {0}", "#9a95b6", total.ToString()));
+            }
+
             thing.Contents = thing.Kind.Loot.Roll(_rng.NextDouble, luck);
             thing.Opened = true;
             thing.OpenedAt = DateTime.UtcNow;
@@ -174,23 +192,12 @@ public partial class World
             Record(thing);
             StatBridge.Record(SteeredKey, HeroStats.Kind.TreasuresOpened);
             Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
+
+            // The window opens when the die lands — see UpdateFate.
+            if (fated) { _pendingReveal = thing; _revealIn = RevealDelay; return true; }
         }
 
-        Play(EffectFor(thing.Kind), thing.Pos);
-
-        var contents = thing.Contents!;
-        if (contents.IsEmpty)
-        {
-            Floaters.Add(new FloatText(thing.Pos + new Vec(0, -32), thing.Kind.WhenEmpty, "#9a95b6"));
-            return true;
-        }
-
-        // Offered to the interface. If nothing is listening — a test, or before
-        // the party loads — the contents go straight to the party instead, so the
-        // simulation never depends on a window existing.
-        if (!ContainerBridge.Offer(new OpenedContainer(thing.Name, thing.Kind, contents, SteeredKey)))
-            TakeEverything(thing);
-
+        Reveal(thing);
         return true;
     }
 
