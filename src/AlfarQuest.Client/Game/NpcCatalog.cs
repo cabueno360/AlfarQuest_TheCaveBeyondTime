@@ -119,6 +119,12 @@ public static class NpcCatalog
                         "North through the Whispering Wood, then east at the vale to the old workings. The road still remembers the way even if the men who walked it do not.",
                         "Take light, and take more of it than you think you need.")
                         { ShowWhen = "quest_cave_learned" },
+                    // A persuasion — the thing Halvard swore not to repeat.
+                    new("Press him: what did Cerno not say?",
+                        "The old man holds your eye a long moment, then looks at the fire. 'He wept. There — you have what he'd kill me for telling. The great Cerno of Kaladash sat at my table and wept like a boy.'",
+                        "'He said the cave gives back what you love most — wrong. Changed. That is all he would say, and all I will. He did not go down there for treasure, whatever the songs decide later.'")
+                        { Persuade = 12, ShowWhen = "quest_cave_learned",
+                          FailA = ["'Some things were said at my table in confidence. A table you are a guest at, mind.' He stirs the fire and lets the silence answer the rest."] },
                 ],
                 Lines = ["The mine took my son's crew. Do not go in light.",
                          "Follow the road north. It still remembers the way.",
@@ -369,6 +375,12 @@ public static class NpcCatalog
                         { Persuade = 13, SetsFlag = "sq_crew_seen",
                           ShowWhen = "sq_crew_started", HideWhen = "sq_crew_seen",
                           FailA = ["'You've mistaken me for someone the captain doesn't own.' The watchman looks past you at the harbour and is done talking about fires."] },
+                    // A persuasion — the ledger behind the captain's bar bill.
+                    new("Press the watch: who does the captain answer to?",
+                        "'You didn't hear this.' A glance down the quay. 'Cayhall gold pays the captain's bar bill, and a Cayhall clerk collects his ledger the first of every month. The fire inquiry died on that clerk's desk.'",
+                        "'Now buy a fish or move along, before somebody wonders what we're discussing.'")
+                        { Persuade = 13,
+                          FailA = ["'That question gets watchmen reassigned to counting grain sacks.' He straightens his coat and becomes very interested in the far end of the harbour."] },
                 ],
                 Lines = ["Welcome to Seoshe. Keep your purse close and your questions closer.",
                          "My captain drinks on the crews' coin, and the crews drink on his. That's the whole of the law down here.",
@@ -377,6 +389,19 @@ public static class NpcCatalog
                 Lines = ["A fine city, Seoshe — if you keep to High Street and don't ask what the Low Docks import.",
                          "The Neruum flotilla's due. Spices, silks. Half of it above board, and the other half is why the guard looks the other way."] },
         new() { Id = "seoshe_noble", Kind = "npcNoble", Name = "A Baron of the Hill", Role = "Baron Hill",
+                Greeting = "A caller. How novel. Baron Hill does not often receive the... travelling sort. Say your piece, then, before my patience remembers its manners.",
+                Topics =
+                [
+                    new("What of House Cayhall?",
+                        "Shuttered doors, drawn curtains, and a ship of theirs that came in carrying nothing and burned a warehouse the night it docked. In my circles we call that a statement.",
+                        "A statement of what, none of us cares to guess aloud. Guessing aloud is how one stops being invited to things."),
+                    // A persuasion — what the Hill actually knows about that ship.
+                    new("Press the Baron: what was ON that ship?",
+                        "He examines his rings for a long moment. 'A box. Red lacquer, sealed like a king's tomb, and a Ychellen crew that would not let the harbourmaster within ten paces of it.'",
+                        "'Cayhall did not order it — Cayhall was PAID to receive it, and handsomely. And whatever was in that box... it never left the Low Docks. Nothing that took delivery of it did, either.'")
+                        { Persuade = 14,
+                          FailA = ["'You mistake yourself for someone with the standing to press me.' The Baron's smile is a closed door with excellent hinges."] },
+                ],
                 Lines = ["Baron Hill. Manors and small palaces, and gates that do not open to the likes of the harbour crowd.",
                          "House Cayhall has shuttered its doors. A ship of theirs came in carrying nothing, and burned a warehouse the night it docked. Draw your own conclusions; I have drawn mine."] },
         new() { Id = "seoshe_sailor", Kind = "npcFisherman", Name = "A Dock Hand", Role = "The Low Docks",

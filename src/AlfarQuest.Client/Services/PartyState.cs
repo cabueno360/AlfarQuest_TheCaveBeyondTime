@@ -240,7 +240,9 @@ public sealed class PartyState
                     _ => c.Total.Strength,
                 } - 10) / 2, 0, 5),
                 LuckMod: Math.Clamp((c.Total.Luck - 10) / 2, 0, 5),
-                IntMod: Math.Clamp((c.Total.Intelligence - 10) / 2, 0, 5));
+                IntMod: Math.Clamp((c.Total.Intelligence - 10) / 2, 0, 5),
+                StrMod: Math.Clamp((c.Total.Strength - 10) / 2, 0, 5),
+                WisMod: Math.Clamp((c.Total.Wisdom - 10) / 2, 0, 5));
         };
     }
 

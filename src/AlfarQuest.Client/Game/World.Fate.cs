@@ -42,6 +42,10 @@ public partial class World
     /// itself, whatever kind of thing it is.</summary>
     readonly Dictionary<object, float> _jams = [];
 
+    /// <summary>Seconds the party's pick is still chipped — a bare 1 on the
+    /// harvest die. While it runs, nothing mines.</summary>
+    float _pickChipFor;
+
     /// <summary>Warded texts already read true — a check passes once, ever.</summary>
     readonly HashSet<Examinable> _deciphered = [];
     Examinable? _pendingRead;
@@ -158,6 +162,7 @@ public partial class World
     void UpdateFate(float dt)
     {
         if (_summonLockout > 0) _summonLockout -= dt;
+        if (_pickChipFor > 0) _pickChipFor -= dt;
         foreach (var key in _jams.Keys.ToList())
         {
             _jams[key] -= dt;

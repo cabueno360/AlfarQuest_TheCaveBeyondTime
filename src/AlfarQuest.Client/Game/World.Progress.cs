@@ -257,6 +257,9 @@ public partial class World
 
         BuildWorld();
         BuildChamber();
+        // The deeper dark presses the light in (see the eat factor in the
+        // snapshot) — the first time it visibly bites, someone says so.
+        NoteDeepDark();
 
         var start = Spawn;
         for (int i = 0; i < Party.Count; i++)

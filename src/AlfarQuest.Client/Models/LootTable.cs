@@ -81,6 +81,16 @@ public sealed class LootStack(int coin, List<(string Id, int Count)> materials, 
 
     public bool IsEmpty => Coin <= 0 && Materials.Count == 0 && Items.Count == 0;
 
+    /// <summary>Doubles the coin and every material stack — the harvest die's
+    /// jackpot: the vein that cracks wide, the rare bloom among the leaves.
+    /// Items are left alone; a second sword does not grow out of a lucky swing.</summary>
+    public void Bounty()
+    {
+        Coin *= 2;
+        for (var i = 0; i < Materials.Count; i++)
+            Materials[i] = (Materials[i].Id, Materials[i].Count * 2);
+    }
+
     public int LineCount => (Coin > 0 ? 1 : 0) + Materials.Count + Items.Count;
 
     public void TakeCoin() => Coin = 0;

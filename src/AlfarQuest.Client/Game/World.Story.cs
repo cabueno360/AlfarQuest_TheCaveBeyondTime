@@ -106,6 +106,19 @@ public partial class World
         _diveIn = 7.5f;                          // the crossing follows the scene
     }
 
+    /// <summary>The first time the deeper dark visibly presses the light in
+    /// (depth 3, where the eating is a quarter gone), someone says so — once a
+    /// session, so the rule is FELT before it is deduced.</summary>
+    bool _darkNoted;
+
+    void NoteDeepDark()
+    {
+        if (_darkNoted || Level < 3 || Party.Count == 0) return;
+        _darkNoted = true;
+        Say(Party[Active].Def.Name,
+            "(The torch is the same torch. The dark is not the same dark — it leans in now, and the light gives ground.)", 6.5f);
+    }
+
     /// <summary>Bruelos, at the edge of the light. Once per session, somewhere in
     /// the first stretch of a delve, the Mage sees him — the way he has seen him
     /// in every dark corner for six years. Armed on entering the cave.</summary>

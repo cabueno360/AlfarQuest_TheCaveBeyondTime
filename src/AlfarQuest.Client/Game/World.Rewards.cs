@@ -196,6 +196,28 @@ public partial class World
         {
             var (luck, _) = CharacterStats.PartyFortune?.Invoke() ?? (0f, 0f);
 
+            // MINE and GATHER throw a harvest d6 — the arm behind the pick, the
+            // eye that knows the rare bloom. Six or better doubles the yield; a
+            // bare 1 on the pick chips it and nothing mines for three minutes.
+            // No held reveal: the die lands while the pouch is already filling.
+            RDice? harvest = null;
+            var harvestKind = thing.Kind.Verb is "Mine" or "Prise" ? "mine"
+                            : thing.Kind.Verb == "Gather" ? "gather" : null;
+            if (harvestKind is not null)
+            {
+                if (harvestKind == "mine" && _pickChipFor > 0)
+                {
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -30),
+                        "The pick is chipped — {0} min", "#9a95b6",
+                        MathF.Ceiling(_pickChipFor / 60f).ToString()));
+                    return true;
+                }
+                var mods = CharacterStats.For(SteeredKey);
+                harvest = RollFate("harvest", 6,
+                    harvestKind == "mine" ? mods.StrMod : mods.WisMod,
+                    harvestKind == "mine" ? "#c05b4d" : "#4f9e64");
+            }
+
             // A CHEST consults the fates: a d6 plus the opener's Luck, tumbled
             // at the centre of the screen. The number sweetens (or sours) the
             // loot table's chances, and the reveal waits for the die to settle
@@ -215,6 +237,24 @@ public partial class World
             }
 
             thing.Contents = thing.Kind.Loot.Roll(_rng.NextDouble, luck);
+            if (harvest is not null)
+            {
+                if (harvest.total >= 6)
+                {
+                    harvest.outcome = "good";
+                    thing.Contents.Bounty();
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46),
+                        harvestKind == "mine" ? "The vein cracks wide — twice the yield!"
+                                              : "A rare bloom among the leaves — twice the pick!", "#f0d99a"));
+                }
+                else if (harvestKind == "mine" && harvest.value == 1)
+                {
+                    harvest.outcome = "bad";
+                    _pickChipFor = 180f;
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46),
+                        "The pick chips on the stone", "#d98a8a"));
+                }
+            }
             thing.Opened = true;
             thing.OpenedAt = DateTime.UtcNow;
 
