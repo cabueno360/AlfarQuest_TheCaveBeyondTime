@@ -1,0 +1,98 @@
+@using AlfarQuest.Client.Game
+@using AlfarQuest.Client.Services
+@using AlfarQuest.Client.Services.Profile
+@using AlfarQuest.Shared
+@inject PlayTimeTracker PlayTime
+@inject GameApiClient Api
+@inject Translator L
+
+@* The delve itself: which tale is being written, how long this sitting has run,
+   every saved delve on the account — and the way out. The window pauses the
+   world, so these numbers hold still while they are read. *@
+
+<div class="aq-delve">
+    <section class="aq-delve-now">
+        <h3 class="aq-delve-heading">@L["This delve"]</h3>
+        <dl class="aq-delve-facts">
+            <div><dt>@L["Name"]</dt><dd>@CurrentName</dd></div>
+            <div><dt>@L["Time this sitting"]</dt><dd>@Sitting</dd></div>
+        </dl>
+        <button type="button" class="aq-btn aq-delve-leave" @onclick="Quit">
+            @L["Save and leave"]
+        </button>
+        <p class="aq-delve-hint">@L["Esc also opens the save-and-leave dialog."]</p>
+    </section>
+
+    <section class="aq-delve-slots">
+        <h3 class="aq-delve-heading">@L["All delves"]</h3>
+        @if (_saves is null)
+        {
+            <p class="aq-delve-hint">@L["Fetching the ledger…"]</p>
+        }
+        else if (_saves.Count == 0)
+        {
+            <p class="aq-delve-hint">@L["Nothing written yet — the first save happens when you leave."]</p>
+        }
+        else
+        {
+            <ul class="aq-delve-list">
+                @foreach (var s in _saves)
+                {
+                    <li class="@(s.Id == GameSession.SaveId ? "current" : "")">
+                        <span class="aq-delve-slotname">@SlotName(s)</span>
+                        <span class="aq-delve-where">@Prettify(s.Region)</span>
+                        <span class="aq-delve-when">@Ago(s.UpdatedAt)</span>
+                        @if (s.Id == GameSession.SaveId)
+                        {
+                            <span class="aq-delve-badge">@L["playing now"]</span>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnQuit { get; set; }
+
+    private IReadOnlyList<SaveGameDto>? _saves;
+
+    protected override async Task OnInitializedAsync() => _saves = await Api.MySavesAsync();
+
+    private Task Quit() => OnQuit.InvokeAsync();
+
+    private string CurrentName =>
+        GameSession.SaveName is { Length: > 0 } n ? n : L["Unnamed delve"];
+
+    private string Sitting
+    {
+        get
+        {
+            var t = PlayTime.Elapsed;
+            return t.TotalHours >= 1 ? $"{(int)t.TotalHours}h {t.Minutes}m" : $"{t.Minutes}m {t.Seconds}s";
+        }
+    }
+
+    private string SlotName(SaveGameDto s) =>
+        string.IsNullOrWhiteSpace(s.PlayerName) ? L["Unnamed delve"] : s.PlayerName;
+
+    private string Prettify(string? region)
+    {
+        if (string.IsNullOrWhiteSpace(region)) return L["The approach"];
+        var trimmed = System.Text.RegularExpressions.Regex.Replace(region, @"^r\d+_", "");
+        var name = string.Join(' ', trimmed.Replace('_', ' ')
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(w => char.ToUpper(w[0]) + w[1..]));
+        return L[name];
+    }
+
+    private string Ago(DateTime whenUtc)
+    {
+        var d = DateTime.UtcNow - whenUtc;
+        if (d.TotalMinutes < 1) return L["just now"];
+        if (d.TotalHours < 1) return L.Format("{0} min ago", (int)d.TotalMinutes);
+        if (d.TotalDays < 1) return L.Format("{0} h ago", (int)d.TotalHours);
+        return L.Format("{0} d ago", (int)d.TotalDays);
+    }
+}

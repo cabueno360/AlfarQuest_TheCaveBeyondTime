@@ -19,7 +19,9 @@ public sealed record CharacterTab(string Key, string Name, string Icon, bool Ava
         new("inventory", "Inventory", "🎒"),
         new("stats",     "Stats",     "⚔"),
         new("crafting",  "Crafting",  "🔨"),
-        new("quests",    "Quests",    "📜", Available: false),
+        new("quests",    "Quests",    "📜"),
+        new("clock",     "Clock",     "🕰"),
+        new("delve",     "Delve",     "🗺"),
     ];
 
     /// <summary>Where the window opens the first time. Named rather than "the

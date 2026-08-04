@@ -168,10 +168,13 @@ const drew = await page.evaluate(() => {
 check('the canvas has been sized and is rendering', drew);
 await shot('08-game-running');
 
-// Leaving via the in-game button rather than a fresh page load: that is the
-// path a player takes, and it is the one that disposes the page and reports the
-// session.
-await page.click('button:has-text("Abandon Delve")');
+// Leaving the way a player does — Esc opens the save-and-leave dialog, and
+// confirming it disposes the page and reports the session.
+for (let i = 0; i < 4 && (await page.locator('.aq-quitbox').count()) === 0; i++) {
+  await page.keyboard.press('Escape');
+  await settle(500);
+}
+await page.click('.aq-quitrow button:has-text("Save and leave")').catch(() => { });
 await settle(2500);
 check('abandoning the delve returns to hero select', page.url().includes('/heroes'), page.url());
 

@@ -35,11 +35,11 @@ public sealed partial class Play : IAsyncDisposable
     [Inject] private ShopState Shop { get; set; } = default!;
     [Inject] private ReadState Read { get; set; } = default!;
     [Inject] private DialogueState Dialogue { get; set; } = default!;
+    [Inject] private Services.Character.CharacterWindowState Sheet { get; set; } = default!;
 
     private const string SheetHold = "character-window";
     private const string LevelUpHold = "level-up";
     private const string CutsceneHold = "cutscene";
-    private const string JournalHold = "quest-journal";
     private const string QuitHold = "quit-dialog";
 
     /// <summary>Whether the save-and-leave dialog is up — the quit button opens
@@ -47,10 +47,6 @@ public sealed partial class Play : IAsyncDisposable
     /// the moment it is written. The world pauses under it like any window.</summary>
     private bool QuitOpen;
     private string _quitName = "";
-
-    /// <summary>Whether the quest journal (J) is open. Freezes the game like the
-    /// character sheet while it shows.</summary>
-    private bool JournalOpen;
 
     /// <summary>The fullscreen cutscene playing right now, or null. Set when the
     /// engine asks for a video (the first descent into the Cave); cleared when it
@@ -80,12 +76,6 @@ public sealed partial class Play : IAsyncDisposable
 
     private sealed record QuestToast(int Id, string Title, IReadOnlyList<RewardChip> Items, int Xp, int Gold);
     private sealed record RewardChip(string Name, string Icon, string Colour);
-
-    /// <summary>Whether the old clock is up. Non-blocking — the world runs behind it —
-    /// so it does not go through the pause-hold path the sheet and journal use.</summary>
-    private bool _clockOpen;
-    private void ToggleClock() => _clockOpen = !_clockOpen;
-    private void CloseClock() => _clockOpen = false;
 
     private void OnQuestCompleted(QuestDef quest) => _ = InvokeAsync(async () =>
     {
@@ -192,7 +182,9 @@ public sealed partial class Play : IAsyncDisposable
     public async Task MenuKey(string action, string? activeHeroKey = null)
     {
         if (action == "character") { await ToggleCharacterSheet(activeHeroKey); return; }
-        if (action == "journal") { await ToggleJournal(); return; }
+        // The journal key opens the same window on its Quests page — the old
+        // standalone journal is a tab now.
+        if (action == "journal") { await ToggleQuestsTab(activeHeroKey); return; }
 
         // The level-up window is deliberately not in this list: it is dismissed
         // by reading it, and an Escape reflex should not skip past a level.
@@ -203,16 +195,33 @@ public sealed partial class Play : IAsyncDisposable
         if (Read.Open is not null) { Read.Close(); StateHasChanged(); return; }
         if (Shop.Open is not null) { Shop.Close(); StateHasChanged(); return; }
         if (Loot.Open is not null) { Loot.Close(); StateHasChanged(); return; }
-        if (JournalOpen) { await CloseJournal(); StateHasChanged(); return; }
-        if (SheetOpen) { await CloseSheet(); StateHasChanged(); }
+        if (SheetOpen) { await CloseSheet(); StateHasChanged(); return; }
+
+        // Nothing was open: Escape IS the way out now that the Abandon Delve
+        // button is gone. Not over a level-up or a cutscene — those two own the
+        // screen until they are read or end.
+        if (CurrentLevelUp is null && _cutscene is null) await OpenQuit();
+    }
+
+    /// <summary>The journal key (L): the window on its Quests page. Pressing it
+    /// again with that page in front closes the window, like the sheet's C.</summary>
+    private async Task ToggleQuestsTab(string? activeHeroKey)
+    {
+        if (SheetOpen && Sheet.Tab == "quests") { await CloseSheet(); StateHasChanged(); return; }
+        Sheet.GoTo("quests");
+        if (!SheetOpen) await ToggleCharacterSheet(activeHeroKey);
+        else StateHasChanged();
     }
 
     [JSInvokable]
     public async Task ToggleCharacterSheet(string? activeHeroKey = null)
     {
         // The counter or the page comes first: pressing C mid-purchase or mid-read
-        // should not stack the sheet on top. Finish, then open it.
+        // should not stack the sheet on top. Finish, then open it. The same for
+        // the save-and-leave dialog, a level-up and a cutscene — each owns the
+        // screen, and C stacking the sheet over them was a way to lose the input.
         if (Shop.Open is not null || Read.Open is not null) return;
+        if (QuitOpen || CurrentLevelUp is not null || _cutscene is not null) return;
 
         SheetOpen = !SheetOpen;
         // Open on whoever the player is steering, not on whoever happens to be
@@ -234,32 +243,9 @@ public sealed partial class Play : IAsyncDisposable
         AtCraftsman = await _module.InvokeAsync<bool>("atCraftsman");
     }
 
-    /// <summary>Same action as the C key, for players who reach for a button.</summary>
-    private async Task OpenCharacterSheet()
-    {
-        var key = _module is null ? null : await _module.InvokeAsync<string>("activeHero");
-        await ToggleCharacterSheet(key);
-    }
-
     private Task CloseSheet()
     {
         SheetOpen = false;
-        return ApplyPause();
-    }
-
-    /// <summary>Open or close the quest journal (J). Not stacked over the counter or
-    /// a page, like the character sheet.</summary>
-    private async Task ToggleJournal()
-    {
-        if (Shop.Open is not null || Read.Open is not null) return;
-        JournalOpen = !JournalOpen;
-        await ApplyPause();
-        StateHasChanged();
-    }
-
-    private Task CloseJournal()
-    {
-        JournalOpen = false;
         return ApplyPause();
     }
 
@@ -329,7 +315,6 @@ public sealed partial class Play : IAsyncDisposable
         if (SheetOpen) Clock.Hold(SheetHold); else Clock.Release(SheetHold);
         if (CurrentLevelUp is not null) Clock.Hold(LevelUpHold); else Clock.Release(LevelUpHold);
         if (_cutscene is not null) Clock.Hold(CutsceneHold); else Clock.Release(CutsceneHold);
-        if (JournalOpen) Clock.Hold(JournalHold); else Clock.Release(JournalHold);
         if (QuitOpen) Clock.Hold(QuitHold); else Clock.Release(QuitHold);
         if (_module is not null) await _module.InvokeVoidAsync("setPaused", Clock.IsPaused);
     }
@@ -356,6 +341,14 @@ public sealed partial class Play : IAsyncDisposable
         StateHasChanged();
     }
 
+    /// <summary>The Delve tab's Save-and-leave button: the window makes way for
+    /// the dialog, so the name box is not typing under a modal's veil.</summary>
+    private async Task QuitFromSheet()
+    {
+        SheetOpen = false;
+        await OpenQuit();
+    }
+
     /// <summary>Names the delve and leaves — the save written on the way out
     /// carries whatever was typed here.</summary>
     private async Task ConfirmQuit()
@@ -367,6 +360,10 @@ public sealed partial class Play : IAsyncDisposable
 
     private async Task Quit()
     {
+        // Let go of the pause BEFORE tearing the game down. The paused flag is
+        // module state in game.js and survives an in-app navigation — leaving
+        // with it set started the NEXT session frozen until a menu was opened.
+        await ApplyPause();
         await StopAsync();
         // Both before navigating: once the router moves on this component is
         // disposed, and an unawaited call would be cancelled mid-flight.
@@ -397,7 +394,6 @@ public sealed partial class Play : IAsyncDisposable
         Clock.Release(SheetHold);
         Clock.Release(LevelUpHold);
         Clock.Release(CutsceneHold);
-        Clock.Release(JournalHold);
         Clock.Release(QuitHold);
         await StopAsync();
         // Covers leaving by any other route — the top bar, the back button.

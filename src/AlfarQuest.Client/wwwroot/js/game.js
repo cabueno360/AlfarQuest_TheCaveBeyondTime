@@ -406,6 +406,9 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, interiorIntroUrl,
 
 export function stopGame() {
     running = false;
+    // Module state survives an in-app navigation (the ES module is cached), so a
+    // pause left set here started the NEXT delve frozen until a menu was opened.
+    paused = false;
     cancelAnimationFrame(raf);
     resetLatch();                       // don't carry a press into the next delve
     music?.stop(); music = null; tracks = null;

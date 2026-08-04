@@ -437,17 +437,12 @@ for (let i = 0; i < 4; i++) {
   await page.keyboard.press('Escape');
   await settle(600);
 }
-// What is still covering it, if anything — so a block reports the culprit
-// rather than thirty seconds of retries.
-const blocking = await page.evaluate(() => {
-  const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Abandon Delve'));
-  if (!btn) return 'no button';
-  const r = btn.getBoundingClientRect();
-  const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-  return top === btn ? 'clear' : `${top?.className || top?.tagName}`;
-});
-if (blocking !== 'clear') console.log(`  (quit button covered by: ${blocking})`);
-await page.click('button:has-text("Abandon Delve")');
+// Esc opens the save-and-leave dialog now — the Abandon Delve button is gone.
+for (let i = 0; i < 4 && (await page.locator('.aq-quitbox').count()) === 0; i++) {
+  await page.keyboard.press('Escape');
+  await settle(500);
+}
+await page.click('.aq-quitrow button:has-text("Save and leave")').catch(() => { });
 await settle(3000);
 check('abandoning returns to hero select', page.url().includes('/heroes'), page.url());
 
@@ -556,9 +551,11 @@ console.log('\n=== saving twice does not accumulate ===');
 // The upsert replaces a save's children by deleting and re-adding them. If the
 // delete missed anything, a second exit would double the rows rather than
 // replace them — and nothing on screen would show it.
-await page.keyboard.press('Escape');
-await settle(500);
-await page.click('button:has-text("Abandon Delve")');
+for (let i = 0; i < 4 && (await page.locator('.aq-quitbox').count()) === 0; i++) {
+  await page.keyboard.press('Escape');
+  await settle(500);
+}
+await page.click('.aq-quitrow button:has-text("Save and leave")').catch(() => { });
 await settle(3000);
 
 const secondSave = await page.evaluate(async () => {

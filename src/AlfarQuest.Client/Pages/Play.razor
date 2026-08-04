@@ -19,16 +19,13 @@
 
     <NowPlaying Track="The Ballad of the Wandering" Muted="Muted" OnToggle="ToggleMute" />
 
-    <MenuBar OnClock="ToggleClock" OnCharacter="OpenCharacterSheet" OnQuit="OpenQuit" />
-
-    <WorldClock Visible="_clockOpen" OnClose="CloseClock" />
-
     <ControlsHelp />
 
-    <CharacterWindow Visible="SheetOpen" AtCraftsman="AtCraftsman" OnClose="CloseSheet" />
-
-    @* The quest journal (J) — the main line and any side quests begun, with steps. *@
-    <QuestJournal Visible="JournalOpen" OnClose="CloseJournal" />
+    @* The one window: character, gear, quests, the clock and the delve are all
+       tabs of it now. Esc with nothing open brings up save-and-leave instead of
+       the old top-corner buttons. *@
+    <CharacterWindow Visible="SheetOpen" AtCraftsman="AtCraftsman" OnClose="CloseSheet"
+                     OnQuit="QuitFromSheet" />
 
     @* Sits above the character window in the markup so that when a level-up
        hands off to the sheet, the celebration is on top until it is dismissed. *@

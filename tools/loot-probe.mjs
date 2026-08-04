@@ -245,7 +245,13 @@ if ((await page.locator('.aq-loot').count()) > 0) { await page.keyboard.press('E
 // button. Closed the way a player would close it.
 if ((await page.locator('.aq-cw.shown').count()) > 0) { await page.keyboard.press('c'); await settle(700); }
 const beforeQuit = await hud();
-await page.click('button:has-text("Abandon Delve")');
+// Esc is the way out now — the Abandon Delve button is gone. With nothing open
+// it brings up the save-and-leave dialog; with something open it closes that
+// first, so a couple of presses always reach the dialog.
+for (let i = 0; i < 4 && (await page.locator('.aq-quitbox').count()) === 0; i++) {
+  await page.keyboard.press('Escape');
+  await settle(500);
+}
 // Quitting asks for a name now — the save is written when the dialog is
 // confirmed, not when the button is pressed. Leaving without confirming
 // leaves nothing on disk, which is the dialog doing its job.

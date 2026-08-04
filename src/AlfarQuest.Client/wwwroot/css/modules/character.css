@@ -495,3 +495,39 @@
 @media (prefers-reduced-motion: reduce) {
     .aq-cw, .aq-cw-page, .aq-tab-underline, .aq-slot, .aq-pack-item, .aq-skilltile { transition: none; animation: none; }
 }
+
+/* ---- the Clock tab: the old wall clock, centred on its page -------------- */
+.aq-clocktab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; min-height: 100%; padding: 26px 0;
+}
+.aq-clocktab .aq-clock-face { width: 230px; height: 230px; }
+
+/* ---- the Delve tab: this delve, the way out, and the ledger of saves ----- */
+.aq-delve { display: grid; gap: 22px; padding: 6px 2px; }
+.aq-delve-heading {
+    margin: 0 0 10px; font-size: .82rem; letter-spacing: .14em; text-transform: uppercase;
+    color: #b9a06a;
+}
+.aq-delve-facts { display: grid; gap: 6px; margin: 0 0 14px; }
+.aq-delve-facts div { display: flex; justify-content: space-between; gap: 14px; }
+.aq-delve-facts dt { color: #9a91b0; }
+.aq-delve-facts dd { margin: 0; color: #e8e2f2; font-weight: 600; }
+.aq-delve-leave { width: 100%; }
+.aq-delve-hint { margin: 8px 0 0; font-size: .82rem; color: #8d84a5; }
+.aq-delve-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.aq-delve-list li {
+    display: flex; align-items: baseline; gap: 10px; padding: 8px 12px;
+    border: 1px solid #3a3352; border-radius: 8px; background: rgba(20, 16, 34, .55);
+}
+.aq-delve-list li.current { border-color: #b9a06a; }
+.aq-delve-slotname { font-weight: 600; color: #e8e2f2; }
+.aq-delve-where { color: #9a91b0; }
+.aq-delve-when { margin-left: auto; font-size: .82rem; color: #8d84a5; }
+.aq-delve-badge {
+    font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    color: #1c1530; background: #b9a06a; border-radius: 999px; padding: 2px 8px;
+}
+
+/* The quest list, when it is a page of the window rather than its own scrim. */
+.aq-journal-list.in-tab { max-height: none; overflow: visible; }

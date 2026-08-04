@@ -149,7 +149,12 @@ console.log('\n=== the save keeps each hero\'s own ===');
 // real round-trip, not the in-memory copy.
 await closeSheet();
 if ((await page.locator('.aq-loot').count()) > 0) { await page.keyboard.press('Escape'); await settle(500); }
-await page.click('button:has-text("Abandon Delve")').catch(() => { });
+// Esc opens the save-and-leave dialog now; confirming writes the save.
+for (let i = 0; i < 4 && (await page.locator('.aq-quitbox').count()) === 0; i++) {
+  await page.keyboard.press('Escape');
+  await settle(500);
+}
+await page.click('.aq-quitrow button:has-text("Save and leave")').catch(() => { });
 await settle(3000);
 
 const save = await mySave();

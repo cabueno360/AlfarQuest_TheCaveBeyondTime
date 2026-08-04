@@ -28,6 +28,10 @@ public sealed class PlayTimeTracker(PartyState party, ProfileService profiles)
     private long _reported;
     private CancellationTokenSource? _checkpoints;
 
+    /// <summary>How long this session has run — what the Delve tab shows. Reading
+    /// it does not disturb the reporting maths, which works in deltas.</summary>
+    public TimeSpan Elapsed => _elapsed.Elapsed;
+
     public void Start()
     {
         _reported = 0;

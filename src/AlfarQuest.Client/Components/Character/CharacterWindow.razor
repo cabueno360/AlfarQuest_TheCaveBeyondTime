@@ -85,6 +85,9 @@
                         case "inventory": <InventoryTab Character="c" /> break;
                         case "stats":     <StatsTab Character="c" /> break;
                         case "crafting":  <CraftingTab Character="c" AtStation="AtCraftsman" /> break;
+                        case "quests":    <QuestsTab /> break;
+                        case "clock":     <ClockTab /> break;
+                        case "delve":     <DelveTab OnQuit="OnQuit" /> break;
                     }
                 </div>
             </div>
@@ -118,6 +121,9 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public bool AtCraftsman { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
+    /// <summary>Raised by the Delve tab's Save-and-leave button; the page closes
+    /// this window and opens the save-and-leave dialog.</summary>
+    [Parameter] public EventCallback OnQuit { get; set; }
 
     protected override void OnInitialized()
     {

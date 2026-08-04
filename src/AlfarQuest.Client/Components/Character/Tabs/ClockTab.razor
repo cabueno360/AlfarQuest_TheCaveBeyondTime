@@ -1,0 +1,102 @@
+@using System.Globalization
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject Translator L
+
+@* The old wall clock, now a page of the window rather than a floating aside.
+   The world is paused while the window is open, so the hands show the hour the
+   world stopped at — which is exactly the hour the player wants to read. *@
+
+<div class="aq-clocktab">
+    <svg viewBox="0 0 200 200" class="aq-clock-face" aria-hidden="true">
+        <circle cx="100" cy="100" r="97" class="aq-clock-ring-outer" />
+        <circle cx="100" cy="100" r="90" class="aq-clock-ring-mid" />
+        <circle cx="100" cy="100" r="84" class="aq-clock-dial" />
+
+        @for (int i = 0; i < 60; i++)
+        {
+            var a = i * 6 * Math.PI / 180;
+            var inner = i % 5 == 0 ? 72.0 : 77.0;
+            <line x1="@F(100 + inner * Math.Sin(a))" y1="@F(100 - inner * Math.Cos(a))"
+                  x2="@F(100 + 81 * Math.Sin(a))" y2="@F(100 - 81 * Math.Cos(a))"
+                  class="@(i % 5 == 0 ? "aq-clock-tick major" : "aq-clock-tick")" />
+        }
+
+        @Numerals
+
+        <line x1="100" y1="112" x2="100" y2="50" class="aq-clock-hand-hour"
+              transform="rotate(@F(_hourAngle) 100 100)" />
+        <line x1="100" y1="114" x2="100" y2="32" class="aq-clock-hand-minute"
+              transform="rotate(@F(_minuteAngle) 100 100)" />
+        <circle cx="100" cy="100" r="6" class="aq-clock-hub" />
+        <circle cx="100" cy="100" r="2.5" class="aq-clock-hub-pin" />
+    </svg>
+
+    <div class="aq-clock-readout">
+        <span class="aq-clock-digital">@_digital</span>
+        <span class="aq-clock-period">@L[_period]</span>
+    </div>
+</div>
+
+@code {
+    private IJSObjectReference? _module;
+    private float _hourAngle, _minuteAngle;
+    private string _digital = "—", _period = "";
+
+    private static readonly string[] RomanNumerals =
+        { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+
+    private static string Roman(int n) => RomanNumerals[(n - 1) % 12];
+    private static string F(double v) => v.ToString("0.##", CultureInfo.InvariantCulture);
+
+    // The roman numerals as raw SVG — Razor claims the bare <text> tag as a control
+    // keyword, so the dial's numbers are built as markup instead of in the loop.
+    private static readonly MarkupString Numerals = BuildNumerals();
+    private static MarkupString BuildNumerals()
+    {
+        var sb = new System.Text.StringBuilder();
+        for (int n = 1; n <= 12; n++)
+        {
+            double a = n * 30 * Math.PI / 180;
+            sb.Append($"<text x=\"{F(100 + 62 * Math.Sin(a))}\" y=\"{F(100 - 62 * Math.Cos(a) + 5.5)}\" class=\"aq-clock-num\">{Roman(n)}</text>");
+        }
+        return (MarkupString)sb.ToString();
+    }
+
+    // One read on open is enough: the pause the window holds means the world
+    // clock is not moving while this page is visible.
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/game.js");
+            Compute(await _module.InvokeAsync<double>("timeOfDay"));
+        }
+        catch { /* engine not up — the dial simply shows no time */ }
+    }
+
+    private void Compute(double t)
+    {
+        t = ((t % 24) + 24) % 24;
+        double h12 = t % 12;
+        double minute = (t - Math.Floor(t)) * 60;
+        _hourAngle = (float)((h12 + minute / 60.0) * 30.0);
+        _minuteAngle = (float)(minute * 6.0);
+        _digital = $"{(int)Math.Floor(t):00}:{(int)minute:00}";
+        _period = t switch
+        {
+            < 5 => "the small hours",
+            < 7 => "dawn",
+            < 11 => "morning",
+            < 13 => "midday",
+            < 17 => "afternoon",
+            < 19 => "dusk",
+            < 21 => "evening",
+            _ => "night",
+        };
+    }
+
+    public ValueTask DisposeAsync() =>
+        _module is not null ? _module.DisposeAsync() : ValueTask.CompletedTask;
+}

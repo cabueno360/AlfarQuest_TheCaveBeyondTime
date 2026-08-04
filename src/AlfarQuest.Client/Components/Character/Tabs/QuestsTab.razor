@@ -1,0 +1,53 @@
+@using AlfarQuest.Client.Game
+@using AlfarQuest.Client.Services
+@inject PartyState Party
+@inject Translator L
+
+@* The quest journal as a page of the character window — every quest taken up,
+   with its steps; the finished ones stay listed and wear their Complete mark.
+   This replaced the standalone journal window: same content, one home. *@
+
+@{
+    var flags = Party.ClaimedRewards;
+    var quests = QuestCatalog.Started(flags);
+}
+@if (quests.Count == 0)
+{
+    <p class="aq-journal-empty">
+        @L["No tales to your name yet. Speak with the folk of the vale — the Cleric's kin will set you on the road."]
+    </p>
+}
+else
+{
+    <div class="aq-journal-list in-tab">
+        @foreach (var q in quests)
+        {
+            var status = q.Status(flags);
+            <article class="aq-quest @(status == QuestStatus.Complete ? "done" : "")">
+                <div class="aq-quest-top">
+                    <span class="aq-quest-kind @(q.Kind == QuestKind.Main ? "main" : "side")">
+                        @L[q.Kind == QuestKind.Main ? "Main" : "Side"]
+                    </span>
+                    <h3>@L[q.Title]</h3>
+                    @if (status == QuestStatus.Complete)
+                    {
+                        <span class="aq-quest-complete">@L["Complete"]</span>
+                    }
+                </div>
+                <p class="aq-quest-summary">@L[q.Summary]</p>
+                <ul class="aq-quest-steps">
+                    @foreach (var entry in q.Progress(flags))
+                    {
+                        <li class="@entry.State.ToString().ToLowerInvariant()">
+                            <span class="aq-step-mark">
+                                @(entry.State == StepState.Done ? "✔"
+                                  : entry.State == StepState.Current ? "▸" : "·")
+                            </span>
+                            <span class="aq-step-text">@L[entry.Step.Objective]</span>
+                        </li>
+                    }
+                </ul>
+            </article>
+        }
+    </div>
+}
