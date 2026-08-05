@@ -39,9 +39,11 @@ public partial class World
         BuildWorld();
         BuildChamber();
         // The Cistern looks back: the three faces in the crystal, a few steps in —
-        // and Kazzat keeps his kettle by the Forgotten Shrine.
+        // and Kazzat keeps his kettle by the Forgotten Shrine. The alcove by the
+        // way up offers the depth's one rest.
         AddCisternMirrors();
         AddKazzat();
+        AddAlcove();
         ArmCaveStory();
 
         var start = Spawn;
@@ -258,8 +260,10 @@ public partial class World
         BuildWorld();
         BuildChamber();
         // The deeper dark presses the light in (see the eat factor in the
-        // snapshot) — the first time it visibly bites, someone says so.
+        // snapshot) — the first time it visibly bites, someone says so. And
+        // each depth keeps its own alcove by the way up, one watch apiece.
         NoteDeepDark();
+        AddAlcove();
 
         var start = Spawn;
         for (int i = 0; i < Party.Count; i++)

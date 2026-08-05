@@ -94,9 +94,11 @@ public readonly record struct HeroModifiers(
     // regardless of class — deciphering a warded text, reading a worn grave.
     int IntMod = 0,
     // Strength and Wisdom likewise, for the harvest dice: the arm behind the
-    // pick, the eye that knows the rare bloom.
+    // pick, the eye that knows the rare bloom. Vitality for the watch — how
+    // well a body rests in a place that does not want it to.
     int StrMod = 0,
     int WisMod = 0,
+    int VitMod = 0,
     // What the basic attack deals, so a creature can resist it.
     Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {

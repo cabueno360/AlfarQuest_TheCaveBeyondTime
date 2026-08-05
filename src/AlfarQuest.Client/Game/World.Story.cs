@@ -106,6 +106,69 @@ public partial class World
         _diveIn = 7.5f;                          // the crossing follows the scene
     }
 
+    /// <summary>The alcove — the tale's reprieve off the slope trail, one small
+    /// camp per depth by the way back up. Resting throws a d20 + the party's
+    /// best Vitality: a quiet watch heals well; a haunted one heals half as
+    /// much, and someone's nightmare says whose. Once per depth — the second
+    /// watch never comes in a place like this.</summary>
+    public const string RestTarget = "__rest__";
+    bool _restedThisDepth;
+
+    void AddAlcove()
+    {
+        _restedThisDepth = false;
+        var entrance = CaveRegions.FirstOrDefault(r => r.Key == "entrance");
+        if (entrance is null) return;
+
+        var at = TileCentre(entrance.Cx, entrance.Cy) + new Vec(TILE * 2.6f, TILE * 1.1f);
+        if (Blocked(at, 14f)) at = NearestOpen(at);
+        Portals.Add(new Portal { Pos = at, Target = RestTarget, Label = "the alcove", Verb = "Rest", R = 46f });
+        Props.Add(new Prop { X = at.X, Y = at.Y - 6f, Kind = "campfire", S = 0.8f, Solid = false, R = 0f });
+    }
+
+    void RestAtAlcove()
+    {
+        if (Party.Count == 0) return;
+        var at = Party[Active].Pos;
+        if (_restedThisDepth)
+        {
+            Floaters.Add(new FloatText(at + new Vec(0, -34), "The watch is spent — the alcove gives one rest a depth", "#9a95b6"));
+            return;
+        }
+        _restedThisDepth = true;
+
+        var mod = Party.Max(h => CharacterStats.For(h.Def.Key).VitMod);
+        var d = RollFate("rest", 20, mod, "#7fd694");
+        var quiet = d.total >= 12;
+        d.outcome = quiet ? "good" : "bad";
+
+        foreach (var h in Party)
+            if (h.Alive)
+            {
+                var heal = (int)MathF.Round(h.MaxHp * (quiet ? 0.45f : 0.22f));
+                h.Hp = Math.Min(h.MaxHp, h.Hp + heal);
+                Floaters.Add(new FloatText(h.Pos + new Vec(0, -24), "+{0}", "#7fd694", heal.ToString()));
+            }
+        Play("holy", at, null, 0.8f);
+
+        if (quiet)
+        {
+            Say(Party[Active].Def.Name, "(The watch passes quietly. For a little while, the dark is only dark.)", 6f);
+            return;
+        }
+
+        // A haunted watch: whoever dreams worst tonight says so — each nightmare
+        // is that hero's own chapter leaning on them.
+        var dreamer = Party[(int)(TorchTime * 7) % Party.Count];
+        Say(dreamer.Def.Name, dreamer.Def.Key switch
+        {
+            "mage" => "(Sleep comes, and Bruelos is in it — reaching out of the light again. I wake with my heart trying to leave my chest. Half a rest is what the dark allows.)",
+            "cleric" => "(I dream of her hand going grey in mine, and the phial always an inch too far. I wake more tired than I lay down. The prayer helps. A little.)",
+            "thief" => "(Kas screams in the dream, same as he did. Every time I sleep down here he screams. Half a rest, then — the dice owe me one.)",
+            _ => "(The dreams down here are not ours. Half a rest is what the dark allows.)",
+        }, 7f);
+    }
+
     /// <summary>The first time the deeper dark visibly presses the light in
     /// (depth 3, where the eating is a quarter gone), someone says so — once a
     /// session, so the rule is FELT before it is deduced.</summary>

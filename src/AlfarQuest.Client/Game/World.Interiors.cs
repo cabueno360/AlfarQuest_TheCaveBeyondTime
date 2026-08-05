@@ -96,6 +96,7 @@ public partial class World
             else ExitInterior();             // out of a building — back to the doorstep
         }
         else if (p.Target == Tiled.MapCatalog.Cave) TryDescend();  // the mouth — the light first, then down
+        else if (p.Target == RestTarget) RestAtAlcove();           // the alcove — one watch per depth
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
         else
         {
