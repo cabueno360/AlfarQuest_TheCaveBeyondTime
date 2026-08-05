@@ -14,7 +14,7 @@ public class InputState
     public float viewW = 1280, viewH = 720;
 }
 
-public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public bool outdoor; public string floorStyle = ""; public string mapId = ""; public string music = ""; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); public List<RSound> sounds = new(); public List<RDice> dice = new(); }
+public class RenderState { public RVec cam = new(); public float chamberW, chamberH; public int level, tile, stage, rev; public bool outdoor; public string floorStyle = ""; public string caveTint = ""; public string mapId = ""; public string music = ""; public List<REnt> ents = new(); public List<RLight> lights = new(); public List<RFloat> floats = new(); public RHud hud = new(); public List<RSound> sounds = new(); public List<RDice> dice = new(); }
 
 /// <summary>One sound the frame asked for: a family (a folder of interchangeable
 /// takes, picked from at random on the JS side) and how loud, already faded for

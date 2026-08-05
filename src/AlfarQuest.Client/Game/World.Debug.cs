@@ -151,6 +151,20 @@ public partial class World
     public void DebugEnterCave() => EnterCave();
     public void DebugLeaveCave() => LeaveCave();
 
+    /// <summary>Runs the Diver's crossing directly — the boarding scene, the
+    /// crossing die and the landing on the Coral shore — without asking the test
+    /// to first put down every husk in the Cistern. Never called from play, where
+    /// the dive only offers itself once the chamber is quiet.</summary>
+    public void DebugDive() => TryDive();
+
+    /// <summary>Feeds every hero's sheet the given XP, so a test can stand a
+    /// party tall enough for the deeper gates without grinding the chambers.
+    /// Never called from play.</summary>
+    public void DebugGrantXp(int xp)
+    {
+        foreach (var h in Party) RewardBridge.Grant(xp, Models.XpSource.Quest, h.Def.Key);
+    }
+
     /// <summary>Sets a persisted quest/progress flag directly, so a test can drive
     /// the quest chain to any state without playing every step to it — used by
     /// quest-probe to walk the cave objectives without a five-level descent. Never

@@ -269,6 +269,9 @@ public partial class World
 
         return new RenderState { cam = new RVec { x = Camera.X, y = Camera.Y }, outdoor = OutdoorLook,
                                  floorStyle = FloorStyle, mapId = MapId,
+                                 // The Tree's shore trades the cistern's cold blue wash
+                                 // for a warm rose one — same tiles, another sea.
+                                 caveTint = OnCoralDepth ? "rgba(46,16,26,0.24)" : "",
                                  // A map can name its own track (the Music map property);
                                  // the renderer lets it outrank the stage defaults.
                                  music = Tiled.MapCatalog.Find(MapId)?.Property("Music") ?? "",

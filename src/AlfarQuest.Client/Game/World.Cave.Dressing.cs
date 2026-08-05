@@ -149,11 +149,21 @@ public partial class World
         };
     }
 
+    /// <summary>The Tree's shore has its own rank-and-file: what the sea kept.
+    /// A mix rather than one species — mostly the drowned crews of the fallen
+    /// fleet, with skitterers in the reefs and brine off the lagoon. Tuned to
+    /// the depth's gate directly, so no per-level scaling here.</summary>
+    CreatureType CoralSpawnDef()
+    {
+        var roll = _rng.NextDouble();
+        return CreatureCatalog.Of(roll < 0.5 ? "drowned" : roll < 0.8 ? "reef_skitterer" : "brine_swarm");
+    }
+
     void SpawnHusks(int n)
     {
-        var def = CaveHuskDef();
         for (int i = 0; i < n; i++)
         {
+            var def = OnCoralDepth ? CoralSpawnDef() : CaveHuskDef();
             Vec p = Spawn;
             for (int guard = 0; guard < 300; guard++)
             {
@@ -173,9 +183,10 @@ public partial class World
     static string BossFor(int level) => level switch
     {
         1 => "cistern_warden",
-        2 => "weeping_warden",
-        3 => "vault_keeper",
-        4 => "mirrored_one",
+        2 => "coral_warden",
+        3 => "weeping_warden",
+        4 => "vault_keeper",
+        5 => "mirrored_one",
         _ => "guardian",
     };
 

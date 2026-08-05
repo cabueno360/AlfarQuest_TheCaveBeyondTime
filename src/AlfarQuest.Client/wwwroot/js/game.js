@@ -615,6 +615,18 @@ export function debugLeaveCave() {
     try { DotNet.invokeMethod(ASM, "DebugLeaveCave"); } catch { /* engine not up */ }
 }
 
+/// Runs the Diver's crossing directly, so the coral-shore probe can land on
+/// depth 2 without clearing the Cistern first. Never used in play.
+export function debugDive() {
+    try { DotNet.invokeMethod(ASM, "DebugDive"); } catch { /* engine not up */ }
+}
+
+/// Feeds every hero's sheet the given XP, so a probe can stand a party tall
+/// enough for the deeper gates without grinding. Never used in play.
+export function debugGrantXp(xp) {
+    try { DotNet.invokeMethod(ASM, "DebugGrantXp", xp); } catch { /* engine not up */ }
+}
+
 /// Sets a quest/progress flag directly — so the quest probe can walk the cave
 /// objectives without a full five-level descent. Never used in play.
 export function debugClaim(flag) {

@@ -10,9 +10,43 @@ public partial class World
     // delve keeps going and the depth is just numbered.
     static readonly string[] RegionNames =
     {
-        "The Crystal Cistern", "The Weeping Gallery", "The Sunken Vault",
-        "The Mirror Halls", "The Cave Beyond Time",
+        "The Crystal Cistern", "The Great Coral Tree", "The Weeping Gallery",
+        "The Sunken Vault", "The Mirror Halls", "The Cave Beyond Time",
     };
+
+    /// <summary>The other shore. The Diver's crossing from the Cistern lands
+    /// here, exactly as Kazzat promised — the one living place in the dead sea.
+    /// The depth reuses the delve's rooms but renames its geography, keeps its
+    /// own bestiary and keeper, and trades the cold blue wash for the Tree's
+    /// warmth.</summary>
+    public const int CoralDepth = 2;
+    bool OnCoralDepth => Stage == 2 && Level == CoralDepth;
+
+    /// <summary>What the delve's rooms are called on the Tree's shore. Keyed by
+    /// the same room keys every depth shares; discovery XP announces these
+    /// instead of the mine-names that would make no sense under the sea.</summary>
+    static readonly Dictionary<string, string> CoralRooms = new()
+    {
+        ["entrance"]  = "The Diver's Berth",
+        ["mine"]      = "The Polyp Shoals",
+        ["tunnels"]   = "The Bone Reefs",
+        ["lake"]      = "The Still Lagoon",
+        ["crystal"]   = "The Blooming Terraces",
+        ["ruins"]     = "The Drowned Fleet",
+        ["sanctuary"] = "The Roots of the Tree",
+        ["boss"]      = "The Heartwood",
+    };
+
+    /// <summary>On the coral shore, every room wears its sea-name. Runs after the
+    /// rooms are known (map-read or generator) and before rewards are placed, so
+    /// the discoveries announce the renamed geography.</summary>
+    void ApplyCoralNames()
+    {
+        if (!OnCoralDepth) return;
+        _caveRegions = CaveRegions
+            .Select(r => CoralRooms.TryGetValue(r.Key, out var name) ? r with { Name = name } : r)
+            .ToList();
+    }
 
     // Stage 1 is one named place; an interior is named by its own map's
     // DisplayName property; the cave numbers its depths.
@@ -91,6 +125,7 @@ public partial class World
                 : TileCentre(Reg("boss").Cx, Reg("boss").Cy);
             AddCaveExit();
 
+            ApplyCoralNames();
             if (Level == 1 && authored.Objects("Props").Any()) ReadCaveProps(authored);
             else DressRegions();
 
@@ -138,6 +173,7 @@ public partial class World
         Exit  = TileCentre(Reg("boss").Cx, Reg("boss").Cy);
         AddCaveExit();
 
+        ApplyCoralNames();
         DressRegions();
         PlaceCaveRewards();
     }

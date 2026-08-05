@@ -149,7 +149,8 @@
   "(The key turns in its socket. Somewhere inside the rock, old metal wakes with a hiss, and a door that has not moved in ages swings wide on a great riveted sphere.)": "(A chave gira no encaixe. Em algum lugar dentro da rocha, metal velho desperta com um silvo, e uma porta que não se movia há eras se abre para uma grande esfera rebitada.)",
   "Come now, holy man — I can pilot this thing to the bottom. It doesn't seem too complicated.": "Vamos, homem santo — eu consigo pilotar esta coisa até o fundo. Não parece tão complicado.",
   "That is precisely what worries me.": "É precisamente isso que me preocupa.",
-  "(The craft groans like a wounded beast and creeps through black water, its lamps eaten a dozen feet out — until the sea lets go, and there is another shore. The dark here weeps.)": "(A nave geme como uma fera ferida e rasteja pela água negra, as lanternas engolidas a poucos metros — até que o mar solta, e há outra margem. A escuridão aqui chora.)",
+  "(Mid-crossing, something vast finds the hull — one slow scrape along the plates, testing, then gone. The craft groans; the sea keeps the sound.)": "(No meio da travessia, algo vasto encontra o casco — um raspar lento pelas chapas, testando, e some. A nave geme; o mar guarda o som.)",
+  "(The sea lets go at last, and the lamps find coral — terrace over terrace of it, climbing out of sight. Another shore. The Tree is real, and it is alive.)": "(O mar enfim solta, e os lampiões encontram coral — terraço sobre terraço, subindo até se perder de vista. Outra margem. A Árvore é real, e está viva.)",
   "Who goes— no. No one should be down here. And yet here you stand, three of you, dripping fate onto my floor. I am Kazzat, keeper of this place. Sit; the kettle has just sung.": "Quem vem— não. Ninguém deveria estar aqui embaixo. E no entanto aqui estão vocês, os três, pingando destino no meu chão. Sou Kazzat, guardião deste lugar. Sentem-se; a chaleira acabou de cantar.",
   "The Great Cistern. Every water from every place and every time comes home through those pipes — the sea below is the ocean made of all oceans, the final place all water returns to.": "A Grande Cisterna. Toda água de todo lugar e de todo tempo volta para casa por aqueles canos — o mar lá embaixo é o oceano feito de todos os oceanos, o lugar final ao qual toda água retorna.",
   "Things come home through the pipes too. Ships. Beasts. Once, an island. The sea takes them all, and does not even slow.": "Coisas também voltam para casa pelos canos. Navios. Feras. Uma vez, uma ilha. O mar toma todas, e nem diminui o passo.",
@@ -1462,5 +1463,27 @@
   "Ashwold": "Ashwold",
   "Deepdelve": "Deepdelve",
 
-  "A double row of pillars, half of them down, sunk to their capitals in dust that was a city floor. The stone is Ychellen — the same letters as the boundary marker in Ashwold's fields and the ruin in the wood's hollow. Three sightings of one people, and this is the only one that was a city. The sun found it. The road goes round it and does not go in.": "Uma fileira dupla de pilares, metade caídos, afundados até os capitéis numa poeira que já foi piso de cidade. A pedra é ychellen — as mesmas letras da pedra de fronteira nos campos de Ashwold e da ruína no vão do bosque. Três avistamentos de um só povo, e este é o único que foi uma cidade. O sol o encontrou. A estrada dá a volta nele e não entra."
+  "A double row of pillars, half of them down, sunk to their capitals in dust that was a city floor. The stone is Ychellen — the same letters as the boundary marker in Ashwold's fields and the ruin in the wood's hollow. Three sightings of one people, and this is the only one that was a city. The sun found it. The road goes round it and does not go in.": "Uma fileira dupla de pilares, metade caídos, afundados até os capitéis numa poeira que já foi piso de cidade. A pedra é ychellen — as mesmas letras da pedra de fronteira nos campos de Ashwold e da ruína no vão do bosque. Três avistamentos de um só povo, e este é o único que foi uma cidade. O sol o encontrou. A estrada dá a volta nele e não entra.",
+
+  "The Great Coral Tree": "A Grande Árvore de Coral",
+  "The Diver's Berth": "O Ancoradouro do Mergulhador",
+  "The Polyp Shoals": "Os Baixios de Pólipos",
+  "The Bone Reefs": "Os Recifes de Osso",
+  "The Still Lagoon": "A Lagoa Parada",
+  "The Blooming Terraces": "Os Terraços em Flor",
+  "The Drowned Fleet": "A Frota Afogada",
+  "The Roots of the Tree": "As Raízes da Árvore",
+  "The Heartwood": "O Cerne",
+  "Drowned Sailor": "Marinheiro Afogado",
+  "Reef Skitterer": "Rastejador do Recife",
+  "Brine Swarm": "Enxame de Salmoura",
+  "Warden of the Coral Tree": "Vigia da Árvore de Coral",
+  "Behold": "Contemplar",
+  "the Great Coral Tree": "a Grande Árvore de Coral",
+  "a ship of the fallen fleet": "um navio da frota caída",
+  "It has no crown you can see. The trunk is coral upon coral, terrace over terrace — rose, bone-white, deep red — climbing past the reach of any lamp into the dark above. The sea outside this shore is dead. The Tree is not.": "Não tem copa que se veja. O tronco é coral sobre coral, terraço sobre terraço — rosa, branco-osso, vermelho profundo — subindo além do alcance de qualquer lampião para a escuridão lá em cima. O mar além desta margem está morto. A Árvore não.",
+  "Lean close and the hum is there: the same note the Heart's crystal carries, far off and far down, like a bell heard through a wall. Whatever feeds the Tree drinks from the same deep the delve is walking toward.": "Chegue perto e o zumbido está lá: a mesma nota que o cristal do Coração carrega, longe e fundo, como um sino ouvido através de uma parede. Seja lá o que alimenta a Árvore, bebe do mesmo profundo para onde a descida caminha.",
+  "Kazzat never said what the Tree was. Only that the Diver crosses to it, and that the sea between is an ocean of every monstrosity across all times and places. Standing under it, you understand why something would grow a shore here — even the dead sea wanted one living thing.": "Kazzat nunca disse o que a Árvore era. Só que o Mergulhador cruza até ela, e que o mar no meio é um oceano de toda monstruosidade de todos os tempos e lugares. De pé sob ela, você entende por que algo faria crescer uma margem aqui — até o mar morto queria uma única coisa viva.",
+  "Grey steel, of no yard that ever was, broken-backed across the coral where the sea set it down. The pipes above the Cistern have fed this ocean since before the stone; this is where some of what falls comes to rest.": "Aço cinzento, de nenhum estaleiro que jamais existiu, de espinha partida sobre o coral onde o mar o pousou. Os canos acima da Cisterna alimentam este oceano desde antes da pedra; é aqui que parte do que cai vem descansar.",
+  "The plates are scoured clean and the holds are long empty. On what is left of the bow, under later growth, runs a line of characters in no alphabet the Academy teaches. The crew did not leave by any gangway. Some of them are still walking the shoals.": "As chapas estão lixadas até o limpo e os porões há muito vazios. No que resta da proa, sob crescimento mais novo, corre uma linha de caracteres em nenhum alfabeto que a Academia ensine. A tripulação não saiu por prancha nenhuma. Alguns deles ainda andam pelos baixios."
 }

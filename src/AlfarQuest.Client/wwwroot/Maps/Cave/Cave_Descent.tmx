@@ -3,14 +3,14 @@
      ONE map serves every depth: the layout is the same each time and only the
      population changes, so crystals, creatures and rewards stay in code while the
      place itself lives here. The eight regions of the story are on the Region
-     layer as named rectangles. Depths, in order: The Crystal Cistern, The Weeping Gallery, The Sunken Vault, The Mirror Halls, The Cave Beyond Time. -->
+     layer as named rectangles. Depths, in order: The Crystal Cistern, The Great Coral Tree, The Weeping Gallery, The Sunken Vault, The Mirror Halls, The Cave Beyond Time. -->
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down"
      width="176" height="112" tilewidth="16" tileheight="16" infinite="0"
      nextlayerid="320" nextobjectid="97">
  <properties>
   <property name="Stage" type="int" value="2"/>
   <property name="DisplayName" value="The Crystal Cistern"/>
-  <property name="Depths" value="The Crystal Cistern | The Weeping Gallery | The Sunken Vault | The Mirror Halls | The Cave Beyond Time"/>
+  <property name="Depths" value="The Crystal Cistern | The Great Coral Tree | The Weeping Gallery | The Sunken Vault | The Mirror Halls | The Cave Beyond Time"/>
   <property name="Music" value="cavern"/>
   <property name="EngineTile" type="int" value="32"/>
  </properties>

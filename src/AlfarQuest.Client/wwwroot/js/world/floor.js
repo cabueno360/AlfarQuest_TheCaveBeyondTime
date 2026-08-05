@@ -350,9 +350,13 @@ export function drawFloor(s, view, floorCanvas) {
         // rather than as a lit dungeon floor — but a home's floorboards get a warm
         // hearthlight wash instead, so the room reads as lived-in, not a cellar.
         if (s && !s.outdoor) {
-            ctx.fillStyle = s.floorStyle === "wood"
-                ? "rgba(48,30,12,0.16)"                // warm, lived-in
-                : "rgba(10,14,40,0.26)";               // cold, wet cave tint
+            // A depth can name its own wash (the coral shore's warm rose);
+            // otherwise homes read warm and the cave reads cold and wet.
+            ctx.fillStyle = s.caveTint
+                ? s.caveTint
+                : s.floorStyle === "wood"
+                    ? "rgba(48,30,12,0.16)"            // warm, lived-in
+                    : "rgba(10,14,40,0.26)";           // cold, wet cave tint
             ctx.fillRect(0, 0, floorCanvas.width, floorCanvas.height);
         }
         ctx.restore();

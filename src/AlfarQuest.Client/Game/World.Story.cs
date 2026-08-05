@@ -68,8 +68,9 @@ public partial class World
     /// <summary>The way down from the Cistern is the Diver: the metal sphere in
     /// the crack by Kazzat's door, and it does not wake without his bronze key.
     /// Without kazzat_key the sealed door refuses; with it, the first boarding
-    /// plays the tale's beat — the Mage at the levers — and the crossing is the
-    /// descent. Deeper floors keep their plain way down.</summary>
+    /// plays the tale's beat — the Mage at the levers — and the crossing lands
+    /// on the other shore: the Great Coral Tree, exactly as Kazzat promised.
+    /// Deeper floors keep their plain way down.</summary>
     bool _diverAwoken;
     float _diveIn;
     float _diveRefusedFor;
@@ -104,6 +105,34 @@ public partial class World
         if (Party.Any(h => h.Def.Key == "cleric"))
             Say("The Grieving Cleric", "That is precisely what worries me.", 4.5f);
         _diveIn = 7.5f;                          // the crossing follows the scene
+    }
+
+    /// <summary>The other shore, dressed: the Tree itself at the roots-room, and
+    /// one ship of the pipe-fallen fleet among the ruins. The tale never went
+    /// past the crossing — Kazzat's one line about the Tree is all it gave — so
+    /// this shore is the game's own, grown from that line. Reading is optional
+    /// and repeatable, like the mirrors.</summary>
+    void AddCoralTree()
+    {
+        void Sight(string regionKey, Vec off, string title, string verb, params string[] pages)
+        {
+            if (CaveRegions.FirstOrDefault(r => r.Key == regionKey) is not { } reg) return;
+            var at = TileCentre(reg.Cx, reg.Cy) + off;
+            if (Blocked(at, 14f)) at = NearestOpen(at);
+            Examinables.Add(new Examinable
+            {
+                Pos = at, R = 58f, Title = title, Verb = verb, Kind = "plaque", Pages = pages,
+            });
+        }
+
+        Sight("sanctuary", new Vec(0f, -TILE * 1.5f), "the Great Coral Tree", "Behold",
+            "It has no crown you can see. The trunk is coral upon coral, terrace over terrace — rose, bone-white, deep red — climbing past the reach of any lamp into the dark above. The sea outside this shore is dead. The Tree is not.",
+            "Lean close and the hum is there: the same note the Heart's crystal carries, far off and far down, like a bell heard through a wall. Whatever feeds the Tree drinks from the same deep the delve is walking toward.",
+            "Kazzat never said what the Tree was. Only that the Diver crosses to it, and that the sea between is an ocean of every monstrosity across all times and places. Standing under it, you understand why something would grow a shore here — even the dead sea wanted one living thing.");
+
+        Sight("ruins", new Vec(TILE * 1.2f, 0f), "a ship of the fallen fleet", "Examine",
+            "Grey steel, of no yard that ever was, broken-backed across the coral where the sea set it down. The pipes above the Cistern have fed this ocean since before the stone; this is where some of what falls comes to rest.",
+            "The plates are scoured clean and the holds are long empty. On what is left of the bow, under later growth, runs a line of characters in no alphabet the Academy teaches. The crew did not leave by any gangway. Some of them are still walking the shoals.");
     }
 
     /// <summary>The alcove — the tale's reprieve off the slope trail, one small
@@ -221,8 +250,31 @@ public partial class World
             {
                 Descend();
                 if (Level > 1)
+                {
+                    // Kazzat's warning, rolled: many horrors prowl the waves. The
+                    // Mother of all Luck decides whether the crossing goes
+                    // unnoticed — a failed die is a hull the sea tested, and the
+                    // party lands scraped. Once a session, like the boarding.
+                    var mod = Party.Count > 0 ? Party.Max(h => CharacterStats.For(h.Def.Key).LuckMod) : 0;
+                    var d = RollFate("crossing", 20, mod, "#4fa3a0");
+                    var quiet = d.total >= 10;
+                    d.outcome = quiet ? "good" : "bad";
+                    if (!quiet)
+                    {
+                        foreach (var h in Party)
+                            if (h.Alive)
+                            {
+                                var dmg = (int)MathF.Round(h.MaxHp * 0.14f);
+                                h.Hp = MathF.Max(1f, h.Hp - dmg);
+                                Floaters.Add(new FloatText(h.Pos + new Vec(0, -24), "-{0}", "#d98a8a", dmg.ToString()));
+                            }
+                        Shake = MathF.Max(Shake, 0.8f);
+                        Say(Party[Active].Def.Name,
+                            "(Mid-crossing, something vast finds the hull — one slow scrape along the plates, testing, then gone. The craft groans; the sea keeps the sound.)", 6.5f);
+                    }
                     Say(Party[Active].Def.Name,
-                        "(The craft groans like a wounded beast and creeps through black water, its lamps eaten a dozen feet out — until the sea lets go, and there is another shore. The dark here weeps.)", 7f);
+                        "(The sea lets go at last, and the lamps find coral — terrace over terrace of it, climbing out of sight. Another shore. The Tree is real, and it is alive.)", 7f);
+                }
             }
         }
 

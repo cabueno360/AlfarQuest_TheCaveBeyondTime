@@ -263,6 +263,41 @@ public static class CreatureCatalog
                 Material = "stone", Resist = Stone,
                 Loot = [("Stone", 0.5f), ("Small Crystal", 0.5f)] },
 
+        // --- the other shore: what prowls the Great Coral Tree (depth 2) ---
+        // Kazzat's warning made flesh: the sea beneath the Cistern is an ocean of
+        // every monstrosity across all times and places, and what washes up on
+        // the Tree's shore is what it kept. Tuned for the level-3 party the
+        // depth's gate asks for; SpawnHusks mixes the three.
+
+        // The crews of the pipe-fallen ships, still walking. The husk sprite is
+        // honest here — a drowned sailor IS a husk the sea made.
+        new() { Id = "drowned", Kind = "husk", Name = "Drowned Sailor", Biome = Biome.Cave,
+                MaxHp = 72, Damage = 12, Speed = 46, PatrolTiles = 0, AggroTiles = 999,
+                Xp = 20,
+                Demeanor = Demeanor.Wanderer,
+                Material = "flesh", Resist = Water,
+                Loot = [("Coins", 0.45f), ("Small Crystal", 0.2f)] },
+        // Things that scuttle in the bone reefs and are coloured like them —
+        // still until you are almost on one.
+        new() { Id = "reef_skitterer", Kind = "mobSpider", Name = "Reef Skitterer", Biome = Biome.Cave,
+                MaxHp = 52, Damage = 13, Speed = 74, Scale = 0.9f, PatrolTiles = 4, AggroTiles = 6,
+                Xp = 22,
+                Demeanor = Demeanor.Ambusher, AlertTiles = 4f,
+                Ability = MonsterAbility.PoisonSpit, AbilityRangeTiles = 5.5f, AbilityCooldown = 3f,
+                Evasion = 0.14f,
+                Loot = [("Spider Silk", 0.5f), ("Small Crystal", 0.3f)] },
+        // A cloud of brine-motes off the lagoon, glittering and spiteful.
+        new() { Id = "brine_swarm", Kind = "mobSwarm", Name = "Brine Swarm", Biome = Biome.Cave,
+                MaxHp = 34, Damage = 8, Speed = 78, Radius = 12, Scale = 0.75f,
+                PatrolTiles = 6, AggroTiles = 6,
+                Xp = 14,
+                Demeanor = Demeanor.Wanderer, FleeBelow = 0.35f, Protective = true, AlertTiles = 4f,
+                Ability = MonsterAbility.MagicMissile, AbilityRangeTiles = 5f, AbilityCooldown = 2.8f,
+                Magical = true,
+                Material = "crystal", Evasion = 0.22f,
+                Resist = Water,
+                Loot = [("Herbs", 0.35f), ("Coins", 0.3f)] },
+
         // --- the cave keeps its husks ---
         // Relentless and single-minded: they see the whole chamber and simply come.
         // No trick, no fear — the baseline the outdoor creatures are a relief from.
@@ -274,7 +309,7 @@ public static class CreatureCatalog
                 Material = "crystal", Resist = Crystal,
                 Loot = [("Small Crystal", 0.4f)] },
 
-        // --- the five keepers of the descent: one boss per named depth, each with
+        // --- the six keepers of the descent: one boss per named depth, each with
         // its own kit and a second kit it turns to below PhaseBelow, so the fight
         // a room is built around CHANGES as the party goes deeper — deeper is
         // different, not merely longer. Stats are tuned to each depth's
@@ -296,11 +331,30 @@ public static class CreatureCatalog
                 EnrageBelow = 0.3f, AbilityRangeTiles = 9f, AbilityCooldown = 2.8f,
                 Xp = 240, Loot = [("Small Crystal", 1f), ("Coins", 0.9f)] },
 
-        // Depth 2, the Weeping Gallery — water and cold. Punishes standing still:
+        // Depth 2, the Great Coral Tree — the thing the Tree grew around its
+        // heartwood to keep the sea's monstrosities off. Coral shards, the
+        // drowned called up from the fleet, and a shudder that runs through the
+        // roots. Fire is the one thing the wet polyp flesh cannot shrug.
+        // Kind "bossCoral": no packed frames yet, so the renderer's husk
+        // fallback carries it — pack a sheet later and it dresses itself.
+        new() { Id = "coral_warden", Kind = "bossCoral", Name = "Warden of the Coral Tree",
+                Biome = Biome.Cave,
+                MaxHp = 1050, Damage = 19, Speed = 42, Radius = 26, Scale = 2.1f,
+                PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
+                Demeanor = Demeanor.Wanderer,
+                Material = "stone", Resist = Water,
+                Boss = true,
+                Kit  = [MonsterAbility.CrystalVolley, MonsterAbility.SummonHusks, MonsterAbility.QuakeRings],
+                PhaseBelow = 0.45f,
+                Kit2 = [MonsterAbility.ShardNova, MonsterAbility.QuakeRings, MonsterAbility.SummonHusks],
+                EnrageBelow = 0.25f, AbilityRangeTiles = 9f, AbilityCooldown = 2.7f,
+                Xp = 360, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+
+        // Depth 3, the Weeping Gallery — water and cold. Punishes standing still:
         // the rain lands where you ARE, and the frost leaves you dragging.
         new() { Id = "weeping_warden", Kind = "husk", Name = "The Weeping Warden",
                 Biome = Biome.Cave,
-                MaxHp = 1050, Damage = 19, Speed = 44, Radius = 26, Scale = 2.1f,
+                MaxHp = 1500, Damage = 24, Speed = 44, Radius = 26, Scale = 2.1f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Water,
@@ -309,13 +363,13 @@ public static class CreatureCatalog
                 PhaseBelow = 0.45f,
                 Kit2 = [MonsterAbility.FrostVolley, MonsterAbility.WeepingRain, MonsterAbility.ShardNova],
                 EnrageBelow = 0.25f, AbilityRangeTiles = 9f, AbilityCooldown = 2.6f,
-                Xp = 360, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+                Xp = 500, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
 
-        // Depth 3, the Sunken Vault — armour and earth. Slow, physical and heavy;
+        // Depth 4, the Sunken Vault — armour and earth. Slow, physical and heavy;
         // its quake reaches further than it looks, and blades barely mark it.
         new() { Id = "vault_keeper", Kind = "bossVault", Name = "The Vault Keeper",
                 Biome = Biome.Cave,
-                MaxHp = 1500, Damage = 24, Speed = 42, Radius = 27, Scale = 2.2f,
+                MaxHp = 1850, Damage = 26, Speed = 42, Radius = 27, Scale = 2.2f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Material = "stone", Resist = Stone,
@@ -324,13 +378,13 @@ public static class CreatureCatalog
                 PhaseBelow = 0.5f,
                 Kit2 = [MonsterAbility.QuakeRings, MonsterAbility.CrystalVolley, MonsterAbility.Smash],
                 EnrageBelow = 0.25f, AbilityRangeTiles = 8f, AbilityCooldown = 3.0f,
-                Xp = 500, Loot = [("Stone", 1f), ("Small Crystal", 1f), ("Coins", 1f)] },
+                Xp = 650, Loot = [("Stone", 1f), ("Small Crystal", 1f), ("Coins", 1f)] },
 
-        // Depth 4, the Mirror Halls — the fight where you cannot trust your eyes.
+        // Depth 5, the Mirror Halls — the fight where you cannot trust your eyes.
         // It splits into shimmering copies; kill the one that bleeds crystal.
         new() { Id = "mirrored_one", Kind = "bossMirror", Name = "The Mirrored One",
                 Biome = Biome.Cave,
-                MaxHp = 1850, Damage = 26, Speed = 48, Radius = 25, Scale = 2.0f,
+                MaxHp = 2300, Damage = 28, Speed = 48, Radius = 25, Scale = 2.0f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Crystal, Evasion = 0.1f,
@@ -339,16 +393,16 @@ public static class CreatureCatalog
                 PhaseBelow = 0.5f,
                 Kit2 = [MonsterAbility.MirrorSplit, MonsterAbility.FrostVolley, MonsterAbility.ShardNova],
                 EnrageBelow = 0.3f, AbilityRangeTiles = 10f, AbilityCooldown = 2.4f,
-                Xp = 650, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+                Xp = 780, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
 
-        // Depth 5, the Cave Beyond Time — the true Guardian of the Crystal Heart,
+        // Depth 6, the Cave Beyond Time — the true Guardian of the Crystal Heart,
         // in the one place time runs wrong. It thickens time around the whole
         // party, and below half health it shatters and reforms into a second kit.
         new() { Id = "guardian", Kind = "bossGuardian", Name = "Guardian of the Crystal Heart",
                 Biome = Biome.Cave,
                 // Scale retuned for the Gemini sheet's 72px frames — drawing only;
                 // collision stays Radius.
-                MaxHp = 2700, Damage = 30, Speed = 44, Radius = 30, Scale = 2.0f,
+                MaxHp = 3200, Damage = 33, Speed = 44, Radius = 30, Scale = 2.0f,
                 PatrolTiles = 0, AggroTiles = 999, AlertTiles = 0,
                 Demeanor = Demeanor.Wanderer,
                 Magical = true, Material = "crystal", Resist = Crystal,
@@ -357,7 +411,7 @@ public static class CreatureCatalog
                 PhaseBelow = 0.5f,
                 Kit2 = [MonsterAbility.FrostVolley, MonsterAbility.MirrorSplit, MonsterAbility.TimeSlow, MonsterAbility.ShardNova],
                 EnrageBelow = 0.3f, AbilityRangeTiles = 10f, AbilityCooldown = 2.3f,
-                Xp = 900, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
+                Xp = 1050, Loot = [("Small Crystal", 1f), ("Coins", 1f)] },
     ];
 
     public static CreatureType Of(string id) => All.First(c => c.Id == id);

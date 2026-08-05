@@ -58,6 +58,12 @@ public static class GameEngine
     [JSInvokable]
     public static void DebugLeaveCave() => _world?.DebugLeaveCave();
 
+    [JSInvokable]
+    public static void DebugDive() => _world?.DebugDive();
+
+    [JSInvokable]
+    public static void DebugGrantXp(int xp) => _world?.DebugGrantXp(xp);
+
     // Set a quest/progress flag directly, so a test can drive the quest chain
     // without playing every step — see World.Debug. Never called from play.
     [JSInvokable]

@@ -207,8 +207,8 @@ public partial class World
     /// the ask keeps climbing.</summary>
     public static int RecommendedLevel(int depth) => depth switch
     {
-        <= 1 => 1, 2 => 3, 3 => 5, 4 => 8, 5 => 11,
-        _ => 11 + (depth - 5) * 2,
+        <= 1 => 1, 2 => 3, 3 => 5, 4 => 8, 5 => 11, 6 => 13,
+        _ => 13 + (depth - 6) * 2,
     };
 
     /// <summary>The party's standing: the average level of its members' sheets.
@@ -264,6 +264,7 @@ public partial class World
         // each depth keeps its own alcove by the way up, one watch apiece.
         NoteDeepDark();
         AddAlcove();
+        if (OnCoralDepth) AddCoralTree();
 
         var start = Spawn;
         for (int i = 0; i < Party.Count; i++)
