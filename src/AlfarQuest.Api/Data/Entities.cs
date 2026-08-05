@@ -113,6 +113,7 @@ public class SaveHero
     public long StatTreasuresOpened { get; set; }
     public long StatItemsCollected { get; set; }
     public long StatGoldEarned { get; set; }
+    public long StatGoldSpent { get; set; }
     public long StatDistanceWalked { get; set; }
     public long StatPlaySeconds { get; set; }
 

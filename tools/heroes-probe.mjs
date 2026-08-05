@@ -122,15 +122,16 @@ const mageAfter = await packBadge();
 check('equipping takes it out of the mage\'s pack', mageAfter !== mageBefore,
   `${mageBefore.trim()} → ${mageAfter.trim()}`);
 
-// Now the cleric (slot 2): their pack must be untouched by what the mage did.
+// Now the thief (slot 2 — the Cleric only joins at the Cave, so the party
+// sets out as two): their pack must be untouched by what the mage did.
 await closeSheet();
 await page.keyboard.press('F2');
 await settle(300);
 await openSheet();
 await tab('inventory');
-const clericPack = await packBadge();
-check('the cleric\'s pack is their own, not the mage\'s',
-  clericPack !== mageAfter, `mage ${mageAfter.trim()} vs cleric ${clericPack.trim()}`);
+const thiefPack = await packBadge();
+check('the thief\'s pack is their own, not the mage\'s',
+  thiefPack !== mageAfter, `mage ${mageAfter.trim()} vs thief ${thiefPack.trim()}`);
 await closeSheet();
 
 console.log('\n=== loot goes to whoever is steering ===');
@@ -159,7 +160,8 @@ await settle(3000);
 
 const save = await mySave();
 const party = save?.party ?? [];
-check('the save stored every hero', party.length >= 3, `${party.length} heroes`);
+// Two, not three: the Cleric joins at the Cave, and this probe never descends.
+check('the save stored every hero', party.length >= 2, `${party.length} heroes`);
 check('each hero carries their own inventory, purse and record',
   party.every(h => Array.isArray(h.inventory) && Array.isArray(h.purse) && h.statistics),
   party.map(h => h.heroKey).join(', '));

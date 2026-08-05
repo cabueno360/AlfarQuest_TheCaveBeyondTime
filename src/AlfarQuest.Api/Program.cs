@@ -37,6 +37,24 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
 var app = builder.Build();
 
 // Create the schema and seed heroes on first run. Wrapped so the API still
+// The one honest source for db/schema.sql: generated from the EF model itself,
+// so the file can never drift from the entities again. No database is touched —
+// the script is derived from the model alone.
+//     dotnet run --project src/AlfarQuest.Api -- --dump-schema
+if (args.Contains("--dump-schema"))
+{
+    using var dumpScope = app.Services.CreateScope();
+    var model = dumpScope.ServiceProvider.GetRequiredService<GameDbContext>();
+    var schemaPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "..", "db", "schema.sql"));
+    File.WriteAllText(schemaPath,
+        "-- GENERATED from the EF model — do not edit by hand.\n" +
+        "-- Regenerate after any entity change:\n" +
+        "--     dotnet run --project src/AlfarQuest.Api -- --dump-schema\n\n" +
+        model.Database.GenerateCreateScript());
+    Console.WriteLine($"schema written to {schemaPath}");
+    return;
+}
+
 // starts (returning 500s the client tolerates) if MySQL isn't up yet.
 using (var scope = app.Services.CreateScope())
 {

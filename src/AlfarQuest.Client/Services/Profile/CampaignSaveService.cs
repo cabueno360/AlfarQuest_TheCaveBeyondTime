@@ -11,8 +11,12 @@ namespace AlfarQuest.Client.Services.Profile;
 /// deliberately dull: it writes on every exit, reads once on entry, and does
 /// nothing clever in between. WHICH save is played is the select screen's
 /// decision, handed over in GameSession.SaveId — zero meaning a new game.</summary>
-public sealed class CampaignSaveService(GameApiClient api, PartyState party)
+public sealed class CampaignSaveService(GameApiClient api, PartyState party, PlayTimeTracker playTime)
 {
+    /// <summary>The play time the save already carried when it was loaded — this
+    /// session's stopwatch is added on top at write time, so the slot's total
+    /// grows across sittings instead of being forever zero.</summary>
+    private long _basePlaytime;
     /// <summary>The save being written to, once known. Null means "not loaded
     /// yet", which is why <see cref="SaveAsync"/> refuses to run before
     /// <see cref="LoadAsync"/> has: saving first would create a second save and
@@ -28,6 +32,7 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
     {
         _loaded = true;
         _saveId = null;
+        _basePlaytime = 0;
 
         // A zero id means a fresh delve ONLY when the select screen said so.
         // A cold arrival at /play — a refresh mid-game, a bookmark — has no
@@ -42,6 +47,7 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         if (save is null) return;               // truly a first run
         _saveId = save.Id;
         GameSession.SaveId = save.Id;
+        _basePlaytime = save.PlaytimeSeconds;
 
         // Where to stand back up. The World constructor reads this hand-off when
         // the engine builds — region plus the very spot inside it.
@@ -124,6 +130,10 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
             Region = region,
             PosX = x,
             PosY = y,
+            // The slot's lifetime play time: what it already carried, plus this
+            // sitting's stopwatch. Written every exit, so it survives crashes
+            // up to the last save.
+            PlaytimeSeconds = _basePlaytime + (long)playTime.Elapsed.TotalSeconds,
             Party = [.. party.Members.Select(ToDto)],
             ClaimedRewards = [.. party.ClaimedRewards],
             Containers = [.. party.Containers.Values.Select(ToDto)],
@@ -257,6 +267,7 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         TreasuresOpened = s.TreasuresOpened,
         ItemsCollected = s.ItemsCollected,
         GoldEarned = s.GoldEarned,
+        GoldSpent = s.GoldSpent,
         DistanceWalked = s.DistanceWalked,
         PlaySeconds = s.PlaySeconds,
     };
@@ -271,6 +282,7 @@ public sealed class CampaignSaveService(GameApiClient api, PartyState party)
         TreasuresOpened = d.TreasuresOpened,
         ItemsCollected = d.ItemsCollected,
         GoldEarned = d.GoldEarned,
+        GoldSpent = d.GoldSpent,
         DistanceWalked = d.DistanceWalked,
         PlaySeconds = d.PlaySeconds,
     };

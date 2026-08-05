@@ -104,6 +104,7 @@ public record HeroStatsDto
     public long TreasuresOpened { get; init; }
     public long ItemsCollected { get; init; }
     public long GoldEarned { get; init; }
+    public long GoldSpent { get; init; }
     public long DistanceWalked { get; init; }
     public long PlaySeconds { get; init; }
 }

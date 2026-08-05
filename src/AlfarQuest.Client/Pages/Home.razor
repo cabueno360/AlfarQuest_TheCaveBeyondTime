@@ -39,7 +39,7 @@
                              role="option" tabindex="0" @key="s.Id"
                              @onclick="() => SelectSave(s)">
                             <span class="aq-slot-name">@SlotName(s)</span>
-                            <span class="aq-slot-meta">@Prettify(s.Region) · @Ago(s.UpdatedAt)</span>
+                            <span class="aq-slot-meta">@Prettify(s.Region) · @Ago(s.UpdatedAt)@(s.PlaytimeSeconds > 0 ? $" · {Duration(s.PlaytimeSeconds)}" : "")</span>
                             <span class="aq-slot-del @(_confirmDelete == s.Id ? "arm" : "")"
                                   title="@L["Delete this delve"]"
                                   @onclick:stopPropagation="true" @onclick="() => DeleteSave(s)">
