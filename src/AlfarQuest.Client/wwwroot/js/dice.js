@@ -89,81 +89,14 @@ function hideAll() {
     box?.clear();
     const el = document.getElementById("aq-dice-plaque");
     if (el) el.style.opacity = "0";
-    const still = document.getElementById("aq-dice-still");
-    if (still) { still.style.opacity = "0"; still.style.transform = "translate(-50%, -50%) scale(.7)"; }
 }
 
-/// Physics owns the tumble; presentation owns the result. The die lands
-/// wherever momentum threw it — then it is LIFTED off the table: the settled
-/// frame is read back, the die cropped out of it, and mounted dead centre at
-/// twice the size, big enough to read from across the room.
-///
-/// Reading the WebGL canvas is also what forces this: dice-box stops
-/// rendering when the dice settle, and a readback consumes the unpreserved
-/// drawing buffer — so after reading, the live canvas is blank anyway. Taking
-/// the still and hiding the canvas turns that into the feature.
-const STILL_H = 300;                     // on-screen height of the lifted die
-
-function liftDie() {
-    try {
-        const canvas = document.querySelector("#aq-dice canvas");
-        if (!canvas || !canvas.width) return;
-
-        const full = document.createElement("canvas");
-        full.width = canvas.width; full.height = canvas.height;
-        const fg = full.getContext("2d", { willReadFrequently: true });
-        fg.drawImage(canvas, 0, 0);
-        const d = fg.getImageData(0, 0, full.width, full.height).data;
-
-        let x0 = full.width, y0 = full.height, x1 = -1, y1 = -1, n = 0;
-        for (let y = 0; y < full.height; y++)
-            for (let x = 0; x < full.width; x++)
-                if (d[(y * full.width + x) * 4 + 3] > 40) {
-                    n++;
-                    if (x < x0) x0 = x; if (x > x1) x1 = x;
-                    if (y < y0) y0 = y; if (y > y1) y1 = y;
-                }
-        window.__diceGlide = { n, x0, y0, x1, y1 };
-        if (n < 12) return;                  // nothing readable — leave the table alone
-
-        const still = document.getElementById("aq-dice-still") ?? (() => {
-            const c = document.createElement("canvas");
-            c.id = "aq-dice-still";
-            Object.assign(c.style, {
-                position: "fixed", left: "50%", top: "46%",
-                transform: "translate(-50%, -50%) scale(.7)",
-                zIndex: "10001", pointerEvents: "none",
-                opacity: "0", transition: "opacity .2s ease, transform .3s cubic-bezier(.2,.9,.3,1.2)",
-                filter: "drop-shadow(0 10px 22px rgba(0,0,0,.6))",
-            });
-            document.body.appendChild(c);
-            return c;
-        })();
-
-        const sw = x1 - x0 + 1, sh = y1 - y0 + 1;
-        const scale = STILL_H / sh;
-        still.width = Math.round(sw * scale); still.height = STILL_H;
-        const sg = still.getContext("2d");
-        sg.imageSmoothingEnabled = true;
-        sg.clearRect(0, 0, still.width, still.height);
-        sg.drawImage(full, x0, y0, sw, sh, 0, 0, still.width, still.height);
-
-        // The canvas has given up its picture to the still; hide it so the
-        // blank buffer does not read as a flicker.
-        canvas.style.opacity = "0";
-        requestAnimationFrame(() => {
-            still.style.opacity = "1";
-            still.style.transform = "translate(-50%, -50%) scale(1)";
-        });
-    } catch { /* readback refused — the die simply stays where it fell */ }
-}
-
-/// The die has landed: glide it to centre stage, read it out and let fate
-/// sting — a bright sting for a success, a dull thud for a failure, a clean
-/// metallic ding for the middle. Wired once, at init.
+/// The die has landed: it stays exactly where momentum left it — no lifted
+/// close-up, the table is the whole ceremony — while the plaque reads the
+/// number out and fate stings: a bright sting for a success, a dull thud for
+/// a failure, a clean metallic ding for the middle. Wired once, at init.
 function settled() {
     if (!current) return;
-    liftDie();
     showPlaque(current);
     if (current.outcome === "good") playSounds([{ f: "crit", v: 1.0 }]);
     else if (current.outcome === "bad") playSounds([{ f: "hit", v: 0.95 }]);
@@ -216,11 +149,8 @@ export async function rollFate(d) {
         if (p) p.style.opacity = "0";
 
         current = d;
-        // A fresh throw needs the live table back: the last result's still is
-        // swept and the canvas (blanked by that readback) shown again.
+        // A fresh throw sweeps whatever the last one left on the table.
         hideAll();
-        const canvas = document.querySelector("#aq-dice canvas");
-        if (canvas) canvas.style.opacity = "1";
         box.updateConfig({ themeColor: d.c || "#c9a227" });
         box.roll(`1d${d.sides}@${d.value}`);
 
