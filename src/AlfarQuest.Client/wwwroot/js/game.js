@@ -52,6 +52,10 @@ let muted = false;
 // one every frame without knowing which is already playing.
 let music = null, tracks = null, interiorIntro = null, interiorLoop = null;
 let onResize = null;
+// The page component, so the frame loop can tell it things — today, which
+// track just came on, for the Now-Playing banner. Set by startGame.
+let hostRef = null;
+let lastTrackUrl = null;
 
 /// The Alfar songbook: the short names a map's Music property can carry,
 /// resolved here to the real files — so Tiled authors one word, never a URL.
@@ -342,6 +346,15 @@ function loop(now) {
     // The frame's sound events — swings, hits, footfalls, a chest opening. The
     // engine has already faded each for distance; this just turns them into
     // voices. Empty on a quiet frame, which is most of them.
+    // The Now-Playing banner follows the player: when the track actually
+    // changes — a region with its own song, the descent, a doorway — the page
+    // is told which file came on and re-titles itself. Once per change, not
+    // per frame.
+    const nowUrl = music?.url ?? null;
+    if (nowUrl !== lastTrackUrl) {
+        lastTrackUrl = nowUrl;
+        if (nowUrl && hostRef) hostRef.invokeMethodAsync("TrackChanged", nowUrl).catch(() => { });
+    }
     playSounds(state.sounds);
     // Accumulated for the probe: a sound is in the payload for a single frame, so
     // polling snapshots misses sparse events. This rolling set does not.
@@ -412,6 +425,8 @@ export function startGame(heroKeysCsv, approachUrl, cavernUrl, interiorIntroUrl,
     interiorIntro = interiorIntroUrl;
     interiorLoop = interiorLoopUrl;
     music = createMusic(0.55);
+    hostRef = host ?? null;
+    lastTrackUrl = null;
     // Starts decoding the effect library now, so the first swing has its sound
     // ready rather than a beat late.
     initSfx();
@@ -427,6 +442,10 @@ export function stopGame() {
     // Module state survives an in-app navigation (the ES module is cached), so a
     // pause left set here started the NEXT delve frozen until a menu was opened.
     paused = false;
+    // Likewise the page ref: the component is being disposed, and a track change
+    // during the NEXT session must not invoke a dead object.
+    hostRef = null;
+    lastTrackUrl = null;
     _diceSeen.length = 0;
     import("./dice.js").then(m => m.clearDice()).catch(() => { });
     cancelAnimationFrame(raf);

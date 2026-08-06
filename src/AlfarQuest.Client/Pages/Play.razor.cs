@@ -169,6 +169,40 @@ public sealed partial class Play : IAsyncDisposable
             _self);
     }
 
+    /// <summary>The Now-Playing banner's title. The frame loop reports every
+    /// actual track change (see TrackChanged), so the banner follows the player
+    /// into the wood, the deep and the houses instead of naming the title-screen
+    /// ballad forever.</summary>
+    private string _trackTitle = "The Ballad of the Wandering";
+
+    /// <summary>The Alfar songbook, file → title. Matched on the filename so the
+    /// base-URI prefix a track URL carries never matters.</summary>
+    private static readonly (string File, string Title)[] Songbook =
+    {
+        ("ballad-of-the-wandering", "The Ballad of the Wandering"),
+        ("into-the-crystal-deep", "Into the Crystal Deep"),
+        ("crystal-deep-intro", "Crystal Deep (Intro)"),
+        ("the-cleric-pt1", "The Cleric, Pt. 1"),
+        ("the-cleric-pt2", "The Cleric, Pt. 2"),
+        ("the-cleric-game", "The Cleric"),
+    };
+
+    /// <summary>A new track came on — re-title the banner. Called from the JS
+    /// frame loop, once per change; an unknown file keeps the last title rather
+    /// than showing a raw URL.</summary>
+    [JSInvokable]
+    public Task TrackChanged(string url)
+    {
+        foreach (var (file, title) in Songbook)
+            if (url.Contains(file, StringComparison.OrdinalIgnoreCase))
+            {
+                if (_trackTitle == title) return Task.CompletedTask;
+                _trackTitle = title;
+                return InvokeAsync(StateHasChanged);
+            }
+        return Task.CompletedTask;
+    }
+
     /// <summary>Raised by the JS input layer when a menu key is pressed. Keeping
     /// the binding there rather than on a Blazor element means it works while the
     /// canvas has focus, which is almost always.</summary>
