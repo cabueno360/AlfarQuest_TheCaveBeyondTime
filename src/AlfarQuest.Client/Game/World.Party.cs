@@ -121,6 +121,11 @@ public partial class World
         var lead = Party[Active];
         h.ReactCool = MathF.Max(0, h.ReactCool - dt);
 
+        // Companions have legs too: their dash momentum plays out here, since
+        // none of the slot-easing below reads DashVel.
+        if (h.DashVel.Len() > 1f) h.Pos = MoveBlocked(h.Pos, h.DashVel * dt, 14f);
+        h.DashVel *= 0.82f;
+
         // Re-roll the loose formation offset every few seconds — sometimes left,
         // sometimes right, sometimes a little behind — so spacing looks alive.
         h.SlotDriftCool -= dt;
@@ -139,6 +144,17 @@ public partial class World
         bool near = k is not null && (k.Pos - lead.Pos).Len() < AssistTiles * TILE;
         if (!near)
         {
+            // Left well behind — a door, a climb, a dash the leader made — the
+            // companion spends its own dash to close the gap rather than
+            // trudging half a screen at ease speed.
+            if (h.DashCool <= 0 && (slotPos - h.Pos).Len() > 300f && h.SpendStamina(ResourceCosts.Dash))
+            {
+                var chase = (slotPos - h.Pos).Norm();
+                h.DashVel = chase * h.Def.Speed * 3.4f;
+                h.DashCool = h.DashCooldown;
+                Play("dash_dust", h.Pos, chase * -1f);
+            }
+
             // Nothing worth fighting: hold the drifting slot, and keep a fresh
             // reaction primed so the next threat still costs a beat.
             h.ReactCool = MathF.Max(h.ReactCool, 0.4f + (float)_rng.NextDouble() * 1.6f);
@@ -166,6 +182,15 @@ public partial class World
         // rhythm feel unscripted.
         if (_rng.NextDouble() < 0.15) { MoveTowardSlot(h, slotPos, dt); h.ReactCool = 0.3f; return; }
 
+        // Sometimes the answer is a SKILL rather than a swing — the Cleric
+        // mends, the Mage throws fire — but rarely, a beat late, and without
+        // the player's ceremony: no fate die for a cast nobody pressed.
+        if (TryCompanionSkill(h, threat))
+        {
+            h.ReactCool = 0.8f + (float)_rng.NextDouble() * 1.6f;
+            return;
+        }
+
         // Attack, imperfectly. The aim is nudged off-true, so the swing sometimes
         // lands wide or the bolt sails past a target that moved — a companion that
         // never missed read as a machine. Then a fresh reaction beat before the
@@ -174,6 +199,31 @@ public partial class World
         h.Facing = MathF.Atan2(aim.Y, aim.X);
         DoAttack(h, aim);
         h.ReactCool = 0.4f + (float)_rng.NextDouble() * 1.6f;
+    }
+
+    /// <summary>A companion's occasional cast. Mending outranks damage — a heal
+    /// skill fires whenever a friend is truly hurt — while an offensive one is
+    /// only reached for now and then, so the companion stays a second sword,
+    /// never a second player. Slot 4 is not theirs to spend: an ultimate is the
+    /// player's moment. Everything is pre-checked, so the cast never fails into
+    /// a floater over somebody the player is not steering.</summary>
+    bool TryCompanionSkill(Hero h, Husk threat)
+    {
+        var hurt = Party.Any(p => p.Alive && p.Hp < p.MaxHp * 0.55f);
+        for (int slot = 1; slot <= 3; slot++)
+        {
+            if (ActiveSkill.At(h.Def.HeroClass, slot) is not { } s) continue;
+            if (HeroLevelOf(h) < s.UnlockLevel || h.SkillCool[slot] > 0 || h.Mana < s.ManaCost) continue;
+
+            var mends = s.Shape == SkillShape.Heal;
+            if (mends && !hurt) continue;
+            if (!mends && _rng.NextDouble() > 0.25) continue;   // most beats stay a plain swing
+
+            h.Facing = MathF.Atan2(threat.Pos.Y - h.Pos.Y, threat.Pos.X - h.Pos.X);
+            CastSkill(h, slot, threat.Pos, ceremony: false);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>Eases a hero toward a point with a dead zone, so companions settle

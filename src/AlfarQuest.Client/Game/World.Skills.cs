@@ -26,7 +26,11 @@ public partial class World
     /// <summary>Casts the active hero's skill in a hotbar slot, if it is unlocked,
     /// off cooldown and can be paid for. Failing is quiet but legible — a floating
     /// word says why, and no cooldown is spent on a cast that never happened.</summary>
-    void CastSkill(Hero h, int slot)
+    /// <param name="aimAt">Where the cast is aimed when the caster is NOT the
+    /// steered hero — a companion aims at its threat, never at the mouse.</param>
+    /// <param name="ceremony">False for a companion's cast: no fate die and no
+    /// surge — the table belongs to the player's own presses.</param>
+    void CastSkill(Hero h, int slot, Vec? aimAt = null, bool ceremony = true)
     {
         if (ActiveSkill.At(h.Def.HeroClass, slot) is not { } skill) return;
 
@@ -46,21 +50,24 @@ public partial class World
 
         h.SkillCool[slot] = skill.Cooldown;
         h.AbilityAnim = 0.4f;              // the channel pose
-        DoSkill(h, skill);
+        DoSkill(h, skill, aimAt, ceremony);
     }
 
-    void DoSkill(Hero h, ActiveSkill skill)
+    void DoSkill(Hero h, ActiveSkill skill, Vec? aimAt = null, bool ceremony = true)
     {
-        var dir = AimDir(h);
+        var dir = aimAt is { } at && (at - h.Pos).Len() > 4f ? (at - h.Pos).Norm() : AimDir(h);
         var dmg = SkillDamage(h, skill);
         var heal = skill.Heal;
 
-        // Every cast consults the fates: a d20 plus the class's prime
-        // attribute, thrown big across the screen. The number is decided here
-        // and applied NOW — the 3D die lands on the same value a moment later,
-        // so combat never waits on physics. High and the skill surges; a
-        // gutter roll and it falters; most casts are simply themselves.
-        // Cooldowns are what keep the table from never being still.
+        // Every cast the PLAYER presses consults the fates: a d20 plus the
+        // class's prime attribute, thrown big across the screen. The number is
+        // decided here and applied NOW — the 3D die lands on the same value a
+        // moment later, so combat never waits on physics. High and the skill
+        // surges; a gutter roll and it falters; most casts are simply
+        // themselves. Cooldowns are what keep the table from never being
+        // still. A companion's cast skips all of it — their dice would bury
+        // the player's own under a table that never cleared.
+        if (ceremony)
         {
             var m = CharacterStats.For(h.Def.Key);
             var d = RollFate("surge", 20, m.FateMod, FateColour(h.Def.HeroClass));
