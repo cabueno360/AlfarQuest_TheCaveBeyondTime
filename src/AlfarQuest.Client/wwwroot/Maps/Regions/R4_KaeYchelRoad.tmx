@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="630" nextobjectid="299">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="630" nextobjectid="302">
  <properties>
   <property name="DisplayName" value="The Kae Ychel Road"/>
   <property name="EngineTile" type="int" value="32"/>
@@ -167,7 +167,19 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="622" name="EnemySpawn"/>
+ <objectgroup id="622" name="EnemySpawn">
+  <!-- The fallen city keeps its own: spiders in the shade of the pillars,
+       and a worm asleep under the dust that was a floor. -->
+  <object id="299" name="spider" x="600" y="640">
+   <point/>
+  </object>
+  <object id="300" name="spider" x="560" y="688">
+   <point/>
+  </object>
+  <object id="301" name="worm" x="640" y="720">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup id="623" name="Warp">
   <object id="8" name="the Academy Outpost" x="856" y="360">
    <properties>

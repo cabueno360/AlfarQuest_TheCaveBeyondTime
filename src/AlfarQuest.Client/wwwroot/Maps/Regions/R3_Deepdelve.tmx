@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="209">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="213">
  <properties>
   <property name="DisplayName" value="Deepdelve"/>
+  <property name="Music" value="deep-intro"/>
   <property name="EngineTile" type="int" value="32"/>
   <property name="Region" value="r3_deepdelve"/>
   <property name="SouthMap" value="r4_kae_ychel_road"/>
@@ -162,7 +163,22 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="522" name="EnemySpawn"/>
+ <objectgroup id="522" name="EnemySpawn">
+  <!-- The tips are not as abandoned as they look: walkers stand over the
+       spoil seams, and the bats have the dusk shift. -->
+  <object id="209" name="walker" x="520" y="648">
+   <point/>
+  </object>
+  <object id="210" name="walker" x="568" y="624">
+   <point/>
+  </object>
+  <object id="211" name="bat" x="600" y="680">
+   <point/>
+  </object>
+  <object id="212" name="bat" x="632" y="712">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup id="523" name="Warp"/>
  <objectgroup id="524" name="Interaction">
   <object id="177" name="the pass marker" x="56" y="184">

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="430" nextobjectid="779">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="430" nextobjectid="782">
  <properties>
   <property name="DisplayName" value="The Whispering Wood"/>
   <property name="EastMap" value="r3_deepdelve"/>
+  <property name="Music" value="cleric"/>
   <property name="EngineTile" type="int" value="32"/>
   <property name="Region" value="r2_whispering_wood"/>
   <property name="SouthMap" value="r1_ashwold"/>
@@ -162,7 +163,19 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="422" name="EnemySpawn"/>
+ <objectgroup id="422" name="EnemySpawn">
+  <!-- Beasts have made a den of the ruin in the hollow — the cache there is
+       guarded, not free — and a swarm rides the brook above the ford. -->
+  <object id="779" name="beast" x="216" y="792">
+   <point/>
+  </object>
+  <object id="780" name="beast" x="152" y="728">
+   <point/>
+  </object>
+  <object id="781" name="swarm" x="720" y="290">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup id="423" name="Warp">
   <object id="750" name="The Cleric's House" x="328" y="552">
    <properties>

@@ -173,7 +173,11 @@ const mouthRoll = ((await page.evaluate(async () => (await import('/js/game.js')
 check('the light is consulted at the threshold', !!mouthRoll, JSON.stringify(mouthRoll ?? null));
 if (down) {
   check('  granted: the party descends to the first depth', down.level === 1, `level ${down.level}`);
-  await clearLevelUp();
+  // Back above ground before the doors are walked, or every region load
+  // after this reads "The Crystal Cistern" and fails in cascade.
+  await page.click('.aq-cutscene-skip', { timeout: 1500 }).catch(() => { });
+  await page.evaluate(async () => (await import('/js/game.js')).debugLeaveCave());
+  await settle(1200); await clearLevelUp();
 } else {
   check('  refused: the dark holds the door, party above ground',
     mouthRoll?.outcome === 'bad' && (await hud())?.stage === 1, `outcome ${mouthRoll?.outcome}`);

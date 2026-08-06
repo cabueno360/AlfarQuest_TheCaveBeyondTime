@@ -53,6 +53,17 @@ let muted = false;
 let music = null, tracks = null, interiorIntro = null, interiorLoop = null;
 let onResize = null;
 
+/// The Alfar songbook: the short names a map's Music property can carry,
+/// resolved here to the real files — so Tiled authors one word, never a URL.
+/// A name not in the book is passed through as-is (a map may carry a full
+/// path), and the stage defaults below stand when no map speaks.
+const MUSIC_TRACKS = {
+    ballad: "audio/ballad-of-the-wandering.mp3",
+    cleric: "audio/the-cleric-game.mp3",
+    "deep-intro": "audio/crystal-deep-intro.wav",
+    cavern: "audio/into-the-crystal-deep.mp3",
+};
+
 let scenery = null;      // cave scenery, scattered client-side
 let floorCanvas = null;  // the whole chamber floor, pre-painted
 let aboveCanvas = null;  // the roofs/canopies, drawn over the actors
@@ -319,7 +330,7 @@ function loop(now) {
     // A map can name its own track — the Music map property, one line in Tiled —
     // and when it does, it outranks the stage defaults below.
     if (state.music) {
-        music?.play(state.music);
+        music?.play(MUSIC_TRACKS[state.music] ?? state.music);
     } else if (stage === 3 && state.mapId !== "seoshe") {
         const on = music?.url;
         if (on !== interiorIntro && on !== interiorLoop)
@@ -642,6 +653,12 @@ export function debugWarpToBoss() {
 export function debugExportMap() {
     try { return JSON.parse(DotNet.invokeMethod(ASM, "DebugExportMap")); }
     catch { return null; }
+}
+
+/// What the music layer wants and what it is actually playing, for the probe —
+/// `want` is the map's Music word, `playing` the resolved file on the player.
+export function currentMusic() {
+    return { want: lastState?.music ?? "", playing: music?.url ?? null };
 }
 
 /// The world's NPCs with their merchant flag, read from the snapshot — so the probe
