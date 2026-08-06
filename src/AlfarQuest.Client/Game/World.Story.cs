@@ -130,6 +130,17 @@ public partial class World
             "Lean close and the hum is there: the same note the Heart's crystal carries, far off and far down, like a bell heard through a wall. Whatever feeds the Tree drinks from the same deep the delve is walking toward.",
             "Kazzat never said what the Tree was. Only that the Diver crosses to it, and that the sea between is an ocean of every monstrosity across all times and places. Standing under it, you understand why something would grow a shore here — even the dead sea wanted one living thing.");
 
+        // The Still Lagoon earns its name: a line cast into the one living
+        // water down here. Cave containers are never persisted, so the lagoon
+        // is fishable afresh on every crossing.
+        if (CaveRegions.FirstOrDefault(r => r.Key == "lake") is { } lagoon
+            && Models.ContainerKind.Find("fishing") is { } rod)
+        {
+            var cast = TileCentre(lagoon.Cx, lagoon.Cy);
+            if (Blocked(cast, 14f)) cast = NearestOpen(cast);
+            Interactables.Add(new Interactable("The still lagoon", cast, rod));
+        }
+
         Sight("ruins", new Vec(TILE * 1.2f, 0f), "a ship of the fallen fleet", "Examine",
             "Grey steel, of no yard that ever was, broken-backed across the coral where the sea set it down. The pipes above the Cistern have fed this ocean since before the stone; this is where some of what falls comes to rest.",
             "The plates are scoured clean and the holds are long empty. On what is left of the bow, under later growth, runs a line of characters in no alphabet the Academy teaches. The crew did not leave by any gangway. Some of them are still walking the shoals.");

@@ -14,6 +14,7 @@ public sealed record Material(string Id, string Name, string Icon, string Colour
         new("Bat Wing",      "Bat Wing",      "𝇋", "#c98fff"),
         new("Herbs",         "Herbs",         "❦", "#7fd694"),
         new("Small Crystal", "Small Crystal", "◆", "#9fe4ff"),
+        new("Fish",          "Fresh Fish",    "🐟", "#8fc7d6"),
 
         // Not a crafting resource — a key. It lives here because the pouch is
         // already the place that counts things the party carries but does not

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="332" nextobjectid="704">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="332" nextobjectid="705">
  <properties>
   <property name="DisplayName" value="Ashwold"/>
   <property name="EastMap" value="r4_kae_ychel_road"/>
@@ -297,6 +297,12 @@
   </object>
  </objectgroup>
  <objectgroup id="326" name="TreasureSpawn">
+  <object id="704" name="The brook pool" x="632" y="296">
+   <properties>
+    <property name="ContainerKind" value="fishing"/>
+   </properties>
+   <point/>
+  </object>
   <object id="679" name="The smith's stock" x="440" y="472">
    <properties>
     <property name="ContainerKind" value="crate"/>

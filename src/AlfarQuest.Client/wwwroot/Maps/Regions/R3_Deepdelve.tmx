@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="208">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="209">
  <properties>
   <property name="DisplayName" value="Deepdelve"/>
   <property name="EngineTile" type="int" value="32"/>
@@ -722,6 +722,12 @@
   </object>
  </objectgroup>
  <objectgroup id="526" name="TreasureSpawn">
+  <object id="208" name="The black water" x="344" y="488">
+   <properties>
+    <property name="ContainerKind" value="fishing"/>
+   </properties>
+   <point/>
+  </object>
   <object id="186" name="A loaded cart" x="616" y="392">
    <properties>
     <property name="ContainerKind" value="cart"/>

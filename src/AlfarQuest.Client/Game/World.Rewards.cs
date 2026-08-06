@@ -218,6 +218,14 @@ public partial class World
                     harvestKind == "mine" ? "#c05b4d" : "#4f9e64");
             }
 
+            // FISHING throws the bite die — A Fisgada: a d20 + Luck, because a
+            // line in black water is nothing BUT luck. Under 8 the line goes
+            // slack and the water keeps what it almost gave; 15 or better and
+            // the line sings — twice the haul. The catch waits for the die.
+            RDice? fish = null;
+            if (thing.Kind.Verb == "Fish")
+                fish = RollFate("fish", 20, CharacterStats.For(SteeredKey).LuckMod, "#4fa3a0");
+
             // A CHEST consults the fates: a d6 plus the opener's Luck, tumbled
             // at the centre of the screen. The number sweetens (or sours) the
             // loot table's chances, and the reveal waits for the die to settle
@@ -237,6 +245,24 @@ public partial class World
             }
 
             thing.Contents = thing.Kind.Loot.Roll(_rng.NextDouble, luck);
+            if (fish is not null)
+            {
+                if (fish.total < 8)
+                {
+                    fish.outcome = "bad";
+                    thing.Contents.Clear();
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46),
+                        "Something takes the bait — and the line goes slack", "#9a95b6"));
+                }
+                else if (fish.total >= 15)
+                {
+                    fish.outcome = "good";
+                    thing.Contents.Bounty();
+                    Floaters.Add(new FloatText(thing.Pos + new Vec(0, -46),
+                        "A heavy pull — the line sings!", "#f0d99a"));
+                }
+                else fish.outcome = "plain";
+            }
             if (harvest is not null)
             {
                 if (harvest.total >= 6)
@@ -261,11 +287,13 @@ public partial class World
             Claim(thing.Name);
             Record(thing);
             StatBridge.Record(SteeredKey, HeroStats.Kind.TreasuresOpened);
-            Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
+            // A slack line pays nothing — the XP is for the catch, not the cast.
+            if (fish is null || fish.outcome != "bad")
+                Award(XpAward.Value(thing.Kind.Xp), thing.Kind.Xp, thing.Pos, thing.Name);
 
             // The window opens when the die lands — see UpdateFate. A picked
-            // lock waits on the pick's own die the same way.
-            if (fated || picked) { _pendingReveal = thing; _revealIn = RevealDelay; return true; }
+            // lock waits on the pick's own die the same way; a landed catch too.
+            if (fated || picked || fish is not null) { _pendingReveal = thing; _revealIn = RevealDelay; return true; }
         }
 
         Reveal(thing);
@@ -303,7 +331,7 @@ public partial class World
     static string EffectFor(ContainerKind kind) => kind.Verb switch
     {
         "Mine" or "Prise" => "mine",
-        "Gather" => "gather",
+        "Gather" or "Fish" => "gather",
         _ => kind.Tier >= Rarity.Rare ? "chest_rare" : "chest_open",
     };
 

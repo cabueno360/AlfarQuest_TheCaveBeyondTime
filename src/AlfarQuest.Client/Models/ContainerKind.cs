@@ -137,6 +137,19 @@ public sealed record ContainerKind(
                 LootEntry.Material("Spider Silk", 1, 1, 0.2f)),
             XpSource.OreVein, Rarity.Common, RespawnHours: 0.5f),
 
+        // A still stretch of water worth a line. The bite is a d20 + Luck —
+        // A Fisgada — rolled in UseThingInReach: under 8 the line goes slack
+        // and the water keeps what it almost gave; 15 or better doubles the
+        // haul. The water itself is the picture, so the Prop key is only the
+        // loot window's icon. Recasts within minutes, like any patch.
+        new("fishing", "Still Water", "Fish", "well", new LootTable(
+                LootEntry.Material("Fish", 1, 2, guaranteed: true),
+                LootEntry.Coin(4, 14, 0.3f),
+                LootEntry.Material("Small Crystal", 1, 1, 0.12f),
+                LootEntry.Gear("ring_copper", 0.04f)),
+            XpSource.OreVein, Rarity.Common, RespawnHours: 0.1f,
+            EmptyLine: "The water stills. Whatever it was is gone."),
+
         // ---- things to read and stand before
         new("altar", "Ancient Altar", "Touch", "ruin", new LootTable(
                 LootEntry.Coin(60, 120, guaranteed: true),
