@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="430" nextobjectid="777">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="430" nextobjectid="778">
  <properties>
   <property name="DisplayName" value="The Whispering Wood"/>
   <property name="EastMap" value="r3_deepdelve"/>
@@ -176,6 +176,16 @@
   </object>
  </objectgroup>
  <objectgroup id="424" name="Interaction">
+  <object id="777" name="the ford boulder" x="664" y="328">
+   <properties>
+    <property name="InteractionType" value="Shove"/>
+    <property name="Verb" value="Shove"/>
+    <property name="FateCheck" value="13"/>
+    <property name="SetsFlag" value="ford_boulder_moved"/>
+    <property name="Radius" value="46"/>
+   </properties>
+   <point/>
+  </object>
   <object id="751" name="the ford stone" x="472" y="248">
    <properties>
     <property name="InteractionType" value="Examine"/>

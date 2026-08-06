@@ -26,7 +26,14 @@ public partial class World
         public Vec Return;               // where a door from the world drops you back
         public Vec? Arrive;              // where a stair or inner door sets you down
 
+        // A feat of the body rather than a doorway: the fate check that guards
+        // it, and the flag a one-time feat claims so it stays done.
+        public int CheckDC;
+        public string SetsFlag = "";
+
         public const string Overworld = "__overworld__";
+        public const string ClimbTarget = "__climb__";   // a scar of handholds — Dexterity
+        public const string ShoveTarget = "__shove__";   // a boulder to move — Strength
     }
 
     public List<Portal> Portals { get; } = [];
@@ -97,6 +104,8 @@ public partial class World
         }
         else if (p.Target == Tiled.MapCatalog.Cave) TryDescend();  // the mouth — the light first, then down
         else if (p.Target == RestTarget) RestAtAlcove();           // the alcove — one watch per depth
+        else if (p.Target == Portal.ClimbTarget) TryClimb(p);      // a shortcut for quick hands
+        else if (p.Target == Portal.ShoveTarget) TryShove(p);      // a boulder for strong backs
         else if (IsInterior) SwitchInterior(p.Target, p.Arrive);   // a stair between floors
         else
         {

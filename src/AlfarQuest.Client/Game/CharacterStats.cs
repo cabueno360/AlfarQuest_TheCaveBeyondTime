@@ -99,6 +99,9 @@ public readonly record struct HeroModifiers(
     int StrMod = 0,
     int WisMod = 0,
     int VitMod = 0,
+    // Dexterity's own die, for the checks that are about the BODY's quickness
+    // whoever owns it — a scar of handholds up a cliff face.
+    int DexMod = 0,
     // What the basic attack deals, so a creature can resist it.
     Models.DamageType WeaponDamage = Models.DamageType.Slashing)
 {

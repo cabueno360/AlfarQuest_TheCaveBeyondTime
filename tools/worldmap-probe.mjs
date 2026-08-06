@@ -130,12 +130,21 @@ const cerno = await standAt(51, 14);
 check('the cave guide waits at the mouth', cerno?.promptName === 'Cerno',
   `"${cerno?.promptVerb} ${cerno?.promptName}"`);
 if (cerno?.promptName === 'Cerno') {
-  await press('e'); await settle(500);
-  const t = await hud();
+  // Cerno speaks through the conversation window now, not the balloon — and
+  // the window MUST be closed before moving on, or its Busy pins every
+  // prompt after it to empty and the rest of the walk fails in cascade.
+  await press('e'); await settle(700);
   check('  he is Cerno of Kaladash, from the book',
-    t?.talkName === 'Cerno' && /Kaladash/.test(t?.talkRole || ''), `${t?.talkName}, ${t?.talkRole}`);
-  check('  and he speaks the story\'s warning',
-    /panacea|madness|cave|descend|myth/i.test(t?.talkLine || ''), `"${(t?.talkLine || '').slice(0, 44)}…"`);
+    (await page.locator('.aq-talk').count()) > 0 && /Cerno/.test(await text('.aq-talk-name')),
+    `"${await text('.aq-talk-name')}"`);
+  const cernoTalk = await text('.aq-talk');
+  check('  and he speaks of the book\'s matters',
+    /Kaladash|panacea|madness|cave|descend|myth/i.test(cernoTalk), `"${cernoTalk.slice(0, 44)}…"`);
+  for (let i = 0; i < 3 && (await page.locator('.aq-talk').count()) > 0; i++) {
+    if (await page.locator('.aq-talk-close').count()) await page.locator('.aq-talk-close').click().catch(() => { });
+    else await press('Escape');
+    await settle(300);
+  }
 }
 
 // ------------------------------------------------------------------
@@ -143,12 +152,32 @@ console.log('\n=== the cave mouth in Deepdelve still takes the party down ===');
 
 const shelf = await standAt(54, 16);
 check('on the shelf below the mouth, above ground', shelf?.stage === 1, `stage ${shelf?.stage}`);
-await page.keyboard.down('w');
+// The mouth is a doorway now — [E] at the threshold, and the light must
+// answer first: the summon die decides whether the descent is granted this
+// try or the dark holds the door for a while. Either answer is the game
+// working; only silence is a failure.
+const atMouth = await standAt(54, 14);
+check('the mouth offers the descent', atMouth?.promptVerb === 'Descend',
+  `"${atMouth?.promptVerb} ${atMouth?.promptName}"`);
+const beforeMouth = ((await page.evaluate(async () => (await import('/js/game.js')).diceSeen())) ?? []).length;
+await press('e');
 let down = null;
-for (let i = 0; i < 30 && !down; i++) { await settle(160); const h = await hud(); if (h?.stage === 2) down = h; }
-await page.keyboard.up('w');
-check('walking into the mouth carries the party down', !!down, `stage ${down?.stage}`);
-check('  and it is the first depth of the cave', down?.level === 1, `level ${down?.level}`);
+for (let i = 0; i < 30 && !down; i++) {
+  await settle(200);
+  await page.click('.aq-cutscene-skip', { timeout: 200 }).catch(() => { });
+  const h = await hudRaw();
+  if (h?.stage === 2) down = h;
+}
+const mouthRoll = ((await page.evaluate(async () => (await import('/js/game.js')).diceSeen())) ?? [])
+  .slice(beforeMouth).find(d => d.kind === 'summon');
+check('the light is consulted at the threshold', !!mouthRoll, JSON.stringify(mouthRoll ?? null));
+if (down) {
+  check('  granted: the party descends to the first depth', down.level === 1, `level ${down.level}`);
+  await clearLevelUp();
+} else {
+  check('  refused: the dark holds the door, party above ground',
+    mouthRoll?.outcome === 'bad' && (await hud())?.stage === 1, `outcome ${mouthRoll?.outcome}`);
+}
 
 // ------------------------------------------------------------------
 console.log('\n=== the Cleric\'s house, from the wood ===');

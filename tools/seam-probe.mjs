@@ -106,22 +106,35 @@ console.log('\n=== and the world can reach the cave again ===');
 // Stage 1 had a way down, which is why the old map was still the one being played.
 await p.evaluate(async () => (await import('/js/game.js')).debugLoadRegion('r3_deepdelve'));
 await s(1200); await clear();
-// Below the mouth, walking up to it: the trigger is a radius of about a cell
-// and a half, so an approach that passes two cells to the side misses it.
+// The mouth is a doorway now — [E] at the threshold, and the summon die
+// answers first: a good light descends, a bad one holds the door. Either is
+// the game working; only silence is a failure.
 await warp(54, 16); await s(600); await clear();
 const shelf = await hud();
 ok(shelf.stage === 1, `on the shelf, above ground (stage ${shelf.stage})`);
-await p.keyboard.down('w');
+await warp(54, 14); await s(600); await clear();
+const beforeMouth = ((await p.evaluate(async () => (await import('/js/game.js')).diceSeen())) ?? []).length;
+await p.keyboard.press('e');
 let down = null;
 for (let i = 0; i < 30 && !down; i++) {
-  await s(160);
+  await s(200);
+  await p.click('.aq-cutscene-skip', { timeout: 200 }).catch(() => { });
   const h = await hud();
   if (h.stage === 2) down = h;
 }
-await p.keyboard.up('w');
-ok(!!down, 'walking into the mouth carried the party down');
-if (down) ok(down.level === 1, `and it is the first depth (level ${down.level})`);
+const mouthRoll = ((await p.evaluate(async () => (await import('/js/game.js')).diceSeen())) ?? [])
+  .slice(beforeMouth).find(d => d.kind === 'summon');
+ok(!!mouthRoll, 'the light is consulted at the threshold');
+if (down) ok(down.level === 1, `and the descent granted is to the first depth (level ${down.level})`);
+else ok(mouthRoll?.outcome === 'bad', `the dark held the door (outcome ${mouthRoll?.outcome})`);
 await p.screenshot({ path: 'tools/shots/seam-into-the-cave.png' });
+// A granted descent leaves the party IN the cave — climb back out before the
+// ring walk, or every region load after this reads "The Crystal Cistern".
+if (down) {
+  await p.click('.aq-cutscene-skip', { timeout: 1500 }).catch(() => { });
+  await p.evaluate(async () => (await import('/js/game.js')).debugLeaveCave());
+  await s(1200); await clear();
+}
 
 // ------------------------------------------------------------------
 console.log('\n=== the ring closes: south out of Deepdelve, west out of the road ===');

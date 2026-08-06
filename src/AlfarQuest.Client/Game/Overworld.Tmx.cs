@@ -358,6 +358,45 @@ public partial class World
         foreach (var o in m.Objects("Interaction"))
         {
             var itype = o.Str("InteractionType", "Examine");
+
+            // Feats of the body: a climbable scar (Dexterity) or a boulder to
+            // shove aside (Strength). Both are Portals with a special target,
+            // so the fate roll lives in one place (World.Fate) whichever map
+            // authored the spot. A one-time feat whose flag is already claimed
+            // is simply not placed again.
+            if (itype.Equals("Climb", StringComparison.OrdinalIgnoreCase) ||
+                itype.Equals("Shove", StringComparison.OrdinalIgnoreCase))
+            {
+                var setsFlag = o.Str("SetsFlag");
+                if (setsFlag.Length > 0 && RewardBridge.Claimed().Contains(setsFlag)) continue;
+
+                Vec? arrive = null;
+                var dest = o.Str("Destination").Split(',');
+                if (dest.Length == 2
+                    && float.TryParse(dest[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var dx)
+                    && float.TryParse(dest[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var dy))
+                    arrive = FromMap(dx, dy);
+                if (itype.Equals("Climb", StringComparison.OrdinalIgnoreCase) && arrive is null)
+                {
+                    Console.Error.WriteLine($"tmx: Climb '{o.Name}' has no Destination \"x,y\" — skipped");
+                    continue;
+                }
+
+                Portals.Add(new Portal
+                {
+                    Pos = FromMap(o.X, o.Y),
+                    Target = itype.Equals("Climb", StringComparison.OrdinalIgnoreCase)
+                        ? Portal.ClimbTarget : Portal.ShoveTarget,
+                    Label = o.Name,
+                    Verb = o.Str("Verb", itype),
+                    R = o.Num("Radius", 46f),
+                    Arrive = arrive,
+                    CheckDC = o.Int("FateCheck"),
+                    SetsFlag = setsFlag,
+                });
+                continue;
+            }
+
             if (!itype.Equals("Examine", StringComparison.OrdinalIgnoreCase))
             {
                 Console.Error.WriteLine($"tmx: Interaction '{o.Name}' has type '{itype}', which nothing implements yet — skipped");

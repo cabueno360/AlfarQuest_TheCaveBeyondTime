@@ -243,7 +243,8 @@ public sealed class PartyState
                 IntMod: Math.Clamp((c.Total.Intelligence - 10) / 2, 0, 5),
                 StrMod: Math.Clamp((c.Total.Strength - 10) / 2, 0, 5),
                 WisMod: Math.Clamp((c.Total.Wisdom - 10) / 2, 0, 5),
-                VitMod: Math.Clamp((c.Total.Vitality - 10) / 2, 0, 5));
+                VitMod: Math.Clamp((c.Total.Vitality - 10) / 2, 0, 5),
+                DexMod: Math.Clamp((c.Total.Dexterity - 10) / 2, 0, 5));
         };
     }
 

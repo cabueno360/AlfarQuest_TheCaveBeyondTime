@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="206">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="208">
  <properties>
   <property name="DisplayName" value="Deepdelve"/>
   <property name="EngineTile" type="int" value="32"/>
@@ -222,6 +222,26 @@
     <property name="Radius" value="46"/>
     <property name="ReadKind" value="note"/>
     <property name="Verb" value="Examine"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="206" name="a climbers' scar" x="744" y="400">
+   <properties>
+    <property name="InteractionType" value="Climb"/>
+    <property name="Verb" value="Climb"/>
+    <property name="FateCheck" value="12"/>
+    <property name="Destination" value="776,272"/>
+    <property name="Radius" value="46"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="207" name="the scar's brink" x="776" y="272">
+   <properties>
+    <property name="InteractionType" value="Climb"/>
+    <property name="Verb" value="Climb"/>
+    <property name="FateCheck" value="10"/>
+    <property name="Destination" value="744,400"/>
+    <property name="Radius" value="46"/>
    </properties>
    <point/>
   </object>

@@ -91,6 +91,91 @@ public partial class World
     /// <summary>Seconds this thing still refuses another try, or zero.</summary>
     float JamRemaining(object thing) => _jams.GetValueOrDefault(thing);
 
+    /// <summary>A climb whose die is still tumbling — the party jumps to the
+    /// brink when it settles, like every other fated reveal.</summary>
+    Portal? _pendingClimb;
+    float _climbIn;
+
+    /// <summary>A failed climb sulks for three minutes, not ten: wet holds dry,
+    /// and a shortcut that locks for a delve's length is just a wall.</summary>
+    const float ClimbLockout = 180f;
+
+    /// <summary>The scar of handholds: the party's quickest hands roll d20 +
+    /// Dexterity against the rock's DC. Success carries everyone to the brink
+    /// when the die settles; failure is a short fall — a graze, and the holds
+    /// refused for a while. The scar works both ways, so it is a true shortcut,
+    /// never a one-way drop.</summary>
+    void TryClimb(Portal p)
+    {
+        if (_pendingClimb is not null || p.Arrive is not { } top) return;
+        if (JamRemaining(p) is > 0 and var left)
+        {
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40),
+                "The arms still remember the fall — {0} min", "#9a95b6",
+                MathF.Ceiling(left / 60f).ToString()));
+            return;
+        }
+
+        var climber = Party.OrderByDescending(h => CharacterStats.For(h.Def.Key).DexMod).First();
+        var d = RollFate("climb", 20, CharacterStats.For(climber.Def.Key).DexMod, FateColour(climber.Def.HeroClass));
+
+        if (d.total >= (p.CheckDC > 0 ? p.CheckDC : 12))
+        {
+            d.outcome = "good";
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40), "The holds are where they should be", "#f0d99a"));
+            _pendingClimb = p;
+            _climbIn = RevealDelay;                      // the party goes up with the die
+        }
+        else
+        {
+            d.outcome = "bad";
+            _jams[p] = ClimbLockout;
+            var h = Party[Active];
+            var graze = (int)MathF.Round(h.MaxHp * 0.08f);
+            h.Hp = MathF.Max(1f, h.Hp - graze);
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40), "Ten feet up, the holds run out", "#d98a8a"));
+            Floaters.Add(new FloatText(h.Pos + new Vec(0, -26), "-{0}", "#d98a8a", graze.ToString()));
+            PlaySound("hit", h.Pos, 0.7f);
+        }
+    }
+
+    /// <summary>The boulder: the party's strongest back rolls d20 + Strength
+    /// against the stone's DC. Success rolls it aside once and forever — the
+    /// flag keeps it moved — and what it was sitting on is a find worth the
+    /// shoulders. Failure burns them for a few minutes and moves nothing.</summary>
+    void TryShove(Portal p)
+    {
+        if (JamRemaining(p) is > 0 and var left)
+        {
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40),
+                "The shoulders still burn — {0} min", "#9a95b6",
+                MathF.Ceiling(left / 60f).ToString()));
+            return;
+        }
+
+        var strong = Party.OrderByDescending(h => CharacterStats.For(h.Def.Key).StrMod).First();
+        var d = RollFate("shove", 20, CharacterStats.For(strong.Def.Key).StrMod, FateColour(strong.Def.HeroClass));
+
+        if (d.total >= (p.CheckDC > 0 ? p.CheckDC : 13))
+        {
+            d.outcome = "good";
+            Portals.Remove(p);
+            if (p.SetsFlag.Length > 0) RewardBridge.Claim(p.SetsFlag);
+            Award(60, XpSource.SecretArea, p.Pos);
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40), "The boulder tips, holds — and goes", "#f0d99a"));
+            if (Models.ContainerKind.Find("chest_iron") is { } cache)
+                Interactables.Add(new Interactable("A hollow under the boulder", p.Pos, cache));
+            Shake = MathF.Max(Shake, 0.6f);
+            PlaySound("mine", p.Pos, 0.8f);
+        }
+        else
+        {
+            d.outcome = "bad";
+            _jams[p] = 240f;
+            Floaters.Add(new FloatText(p.Pos + new Vec(0, -40), "The stone does not care", "#9a95b6"));
+        }
+    }
+
     /// <summary>A warded text: the party's best mind rolls d20 + Intelligence
     /// against the text's own DC. Success opens the page when the die settles
     /// and pays a Puzzle's XP; failure locks the letters for ten minutes — and
@@ -179,6 +264,23 @@ public partial class World
         {
             _readIn -= dt;
             if (_readIn <= 0) { _pendingRead = null; OpenReadingNow(text); }
+        }
+
+        if (_pendingClimb is { Arrive: { } brink } scar)
+        {
+            _climbIn -= dt;
+            if (_climbIn <= 0)
+            {
+                _pendingClimb = null;
+                var at = Blocked(brink, 14f) ? NearestOpen(brink) : brink;
+                // The STEERED hero lands on the mark — the rest fan out from
+                // them — so the way back down is in reach the moment you arrive.
+                for (int i = 0; i < Party.Count; i++)
+                    Party[i].Pos = at + new Vec((i - Active) * 34f, 0);
+                Camera = at;
+                Shake = MathF.Max(Shake, 0.3f);
+                PlaySound("step_stone", at, 0.7f);
+            }
         }
 
         if (_pendingReveal is not { } thing) return;
