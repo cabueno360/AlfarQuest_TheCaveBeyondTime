@@ -31,8 +31,11 @@ public static class GameEngine
     [JSInvokable]
     public static string Snapshot()
     {
-        if (_world is null) return "{}";
-        return JsonSerializer.Serialize(_world.TakeSnapshot(), Json);
+        // Captured once: Init() can replace the static mid-call (a New Game
+        // over a running session), and a torn read here serialized half of one
+        // world and half of the next.
+        if (_world is not { } w) return "{}";
+        return JsonSerializer.Serialize(w.TakeSnapshot(), Json);
     }
 
     // The creature catalogue, as data, so a test can assert the bestiary is
@@ -179,10 +182,13 @@ public static class GameEngine
     [JSInvokable]
     public static string Tick(double dtMs, string inputJson)
     {
-        if (_world is null) return "{}";
+        // One capture for the whole frame: if Init() swaps the world mid-tick,
+        // this frame finishes on the world it started with rather than
+        // updating one and rendering the other.
+        if (_world is not { } w) return "{}";
         var input = JsonSerializer.Deserialize<InputState>(inputJson, Json) ?? new InputState();
         float dt = Math.Min(0.05f, (float)dtMs / 1000f); // clamp to avoid tunnelling on lag
-        _world.Update(dt, input);
-        return JsonSerializer.Serialize(_world.Render(), Json);
+        w.Update(dt, input);
+        return JsonSerializer.Serialize(w.Render(), Json);
     }
 }

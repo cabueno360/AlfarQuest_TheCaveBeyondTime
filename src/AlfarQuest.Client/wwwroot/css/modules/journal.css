@@ -1,4 +1,4 @@
-/* The quest journal (J) — a parchment of the party's tales over a dimming scrim. */
+/* The quest journal (L) — a parchment of the party's tales over a dimming scrim. */
 
 .aq-journal-scrim {
     position: fixed; inset: 0; z-index: 80;

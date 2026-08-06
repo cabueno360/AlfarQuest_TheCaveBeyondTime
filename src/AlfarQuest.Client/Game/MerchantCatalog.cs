@@ -115,9 +115,11 @@ public static class MerchantCatalog
             NpcId = "scholar", Greeting = "Few find this door. Fewer leave with coin still in their purse.",
             Special = true,
             Buys = [ItemClass.Magic, ItemClass.Book, ItemClass.Accessory, ItemClass.Consumable],
+            // No tome_embers here: the Tome is The Struck Name's reward — the
+            // Mage's own thread — and a story payoff on a shelf is just a price.
             Stock =
             [
-                new("tome_embers", 1), new("rune_ward", 2), new("crystal_mana", 2),
+                new("rune_ward", 2), new("crystal_mana", 2),
                 new("ring_scholar", 1), new("potion_elixir", 2),
             ],
         },

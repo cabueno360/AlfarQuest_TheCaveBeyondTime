@@ -159,6 +159,9 @@ public sealed partial class Home : IAsyncDisposable
         // joined at the Cave (and so appears in the save). The lead is whoever was
         // chosen, if they are available; otherwise the first one who is.
         var roster = PartyOrder.Where(IsUnlocked).ToList();
+        // Never begin with nobody: a save whose hero list came back empty (or a
+        // lock rule gone wrong) would have crashed here on roster[0].
+        if (roster.Count == 0) roster = [.. PartyOrder];
         var lead = roster.Contains(Lead) ? Lead : roster[0];
         GameSession.PartyKeys = [lead, .. roster.Where(k => k != lead)];
 

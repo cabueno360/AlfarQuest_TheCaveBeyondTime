@@ -53,11 +53,14 @@ public sealed record ContainerKind(
                 LootEntry.Gear("spear_long", 0.12f)),
             XpSource.TreasureChest, Rarity.Uncommon),
 
+        // No daggers_twin here: the Twin Daggers are Ashes of the Crew's reward
+        // — the Thief's own thread — and finding them in a random chest first
+        // made the quest's payoff a duplicate.
         new("chest_gold", "Gilded Chest", "Open", "crate", new LootTable(
                 LootEntry.Coin(90, 160, guaranteed: true),
                 LootEntry.Material("Small Crystal", 2, 5, 0.8f),
                 LootEntry.Gear("amulet_quiet", 0.30f),
-                LootEntry.Gear("daggers_twin", 0.22f),
+                LootEntry.Gear("hammer_iron", 0.18f),
                 LootEntry.Gear("sword_steel", 0.15f)),
             XpSource.TreasureChest, Rarity.Rare),
 

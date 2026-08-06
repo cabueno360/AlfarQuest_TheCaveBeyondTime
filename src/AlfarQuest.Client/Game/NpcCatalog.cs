@@ -347,7 +347,10 @@ public static class NpcCatalog
                 Lines = ["Wards, always wards. Boring, the others say. Boring keeps you alive when a working turns on you.",
                          "Gersimo did wards too. He put one up at the tests, the year of the fire. It did not matter. Nothing did.",
                          "A five-point array is stable. Fewer points and it wants to come apart in your hands. Never trust a three-point array — whatever they tell you about prodigies."] },
-        new() { Id = "apprentice_fire", Kind = "npcBoy", Name = "An Apprentice", Role = "Of the Academy",
+        // Kind npcApprentice like the ward-student beside him — he wore the
+        // village boy's sprite for a while, which read as a child enrolled in
+        // evocation.
+        new() { Id = "apprentice_fire", Kind = "npcApprentice", Name = "An Apprentice", Role = "Of the Academy",
                 Lines = ["Lightning's the thing. A good enough show at the tests and you're Evoker Corps, the King's own war-mages.",
                          "Thami tried lightning three years running. They say he cared more for the Corps than the boon itself. They say a lot about Thami now.",
                          "Fire and force. Who wants to spend their life warding doors that were never going to open?"] },
