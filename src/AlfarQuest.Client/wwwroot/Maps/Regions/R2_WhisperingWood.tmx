@@ -263,7 +263,8 @@
   <object id="757" name="the ruin in the hollow" x="184" y="760">
    <properties>
     <property name="InteractionType" value="Examine"/>
-    <property name="Pages" value="Four courses of dressed stone in a square, and the moss has been scraped off one of them recently. The letters are the old kind, the same as the boundary stone in Ashwold's fields — Ychellen. Whatever stood here was standing before anyone in the vale had a name for the mountain."/>
+    <property name="Pages" value="Four courses of dressed stone in a square, and the moss has been scraped off one of them recently. The letters are the old kind, the same as the boundary stone in Ashwold's fields — Ychellen. Whatever stood here was standing before anyone in the vale had a name for the mountain.␟Held long enough, the old letters give up a list: measures of grain, of oil, of wool — a tally-house, keeping accounts for farms that are forest now. The last line is cut deeper than the rest, by a different hand: PAID IN FULL. AND STILL IT TOOK. Whoever scraped the moss away stopped reading exactly here."/>
+    <property name="FateCheck" value="12"/>
     <property name="Radius" value="46"/>
     <property name="ReadKind" value="plaque"/>
     <property name="Verb" value="Read"/>

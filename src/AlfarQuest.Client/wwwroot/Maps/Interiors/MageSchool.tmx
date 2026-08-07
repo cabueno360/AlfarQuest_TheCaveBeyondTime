@@ -152,7 +152,9 @@
     <property name="Verb" value="Examine"/>
     <property name="ReadKind" value="note"/>
     <property name="Radius" value="44"/>
-    <property name="Pages" value="A low door sealed with arcane script that hums faintly under your hand. Whatever the Academy keeps behind it is not for apprentices — nor, by the look of the seals, is it meant to get out."/>
+    <property name="Pages" value="A low door sealed with arcane script that hums faintly under your hand. Whatever the Academy keeps behind it is not for apprentices — nor, by the look of the seals, is it meant to get out.␟The script yields to a mind that pushes back, and lets you read what it guards rather than the room itself: an inventory, in the librarian's careful hand. The missing shelf's bindings, chained twice now. The granite slab from the sealed chamber, cut whole from the floor, its circle still scored black. And at the end one line struck through so hard the quill tore the paper: the heart is NOT kept here. It walks."/>
+    <property name="FateCheck" value="15"/>
+    <property name="FateBite" value="8"/>
    </properties>
    <point/>
   </object>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="219">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="221">
  <properties>
   <property name="DisplayName" value="Deepdelve"/>
   <property name="Music" value="deep-intro"/>
@@ -153,6 +153,18 @@
   <object id="5" name="pit_captain" x="536" y="472">
    <properties>
     <property name="NpcId" value="pit_captain"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="219" name="camp_cook" x="424" y="464">
+   <properties>
+    <property name="NpcId" value="camp_cook"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="220" name="harven" x="704" y="440">
+   <properties>
+    <property name="NpcId" value="harven"/>
    </properties>
    <point/>
   </object>

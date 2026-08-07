@@ -20,6 +20,19 @@ public static class NpcCatalog
         // What is left of a working mine after the thing below it stopped giving
         // ore and started taking crews.
         new() { Id = "pit_captain", Kind = "npcBlacksmith", Name = "Captain Orlo", Role = "Pit Captain",
+                Greeting = "Sign in or sign out — those are the words I have. If you are going up to the mouth, I will take your names now and save my legs the climb.",
+                Topics =
+                [
+                    new("What does the board keep count of?",
+                        "Every party that goes up, with the date and the number in it. And every party that comes down, the same. The left column runs onto a second sheet. The right one stops.",
+                        "I keep it because somebody must, and because a family that walks up here deserves a date, not a shrug."),
+                    // A persuasion — why the right column went quiet, said once.
+                    new("Press him: why did the right column stop?",
+                        "He looks at the board a long time before he answers. 'Because I stopped lying to it. One came down in the spring and swore the rest were a day behind her. They were not.'",
+                        "'She sells their rope by the pit head now, and feeds herself on it, and I do not grudge her a copper of it. But I have not had the stomach to write in the right column since. The board keeps the count so I do not have to say it.'")
+                        { Persuade = 14, SetsFlag = "sq_orlo_column",
+                          FailA = ["'The board keeps the count so I do not have to say it.' He squares the chalk against the ledge and turns back to the winch."] },
+                ],
                 Lines = ["I sign them in and I sign them out. The second column has gone quiet.",
                          "The seam was good for nine years. Then it was not a seam any more.",
                          "You want the mouth, it is up the switchback. I will not walk you to it."] },
@@ -32,6 +45,55 @@ public static class NpcCatalog
                 Lines = ["I sell what the last lot did not need. They will not be needing it.",
                          "Rope, oil, a good lamp. Go down without all three and do not come back.",
                          "I have been at this mouth eleven days. I have not gone in."] },
+        // Harven, the foreman whose bill closes the south heaps — The Dragon of
+        // the Tips made him; standing him by the winch makes the bill a person.
+        // His persuasion opens only once the bill is read, and gives the weight
+        // behind it: the count he wrote to the families himself.
+        new() { Id = "harven", Kind = "npcOldMan", Name = "Harven", Role = "Foreman of Deepdelve",
+                Greeting = "If you are here about the bill, say so plain. If you are here for work, the south heaps are closed and I will not be argued with.",
+                Topics =
+                [
+                    new("What is under the heaps?",
+                        "I have put my ear where a foreman should not and heard what I will not name. The men say dragon. I say the heaps are closed.",
+                        "Both of us are right enough to be going on with. If you mean to settle it, read everything my people wrote down first. The mountain does not forgive the unprepared twice."),
+                    new("Who was Derran?",
+                        "The last man the slide gave back. The clerk took his account while the wounds were fresh — he will not give it twice, so read the record and do not go asking him.",
+                        "He sits by the bunkhouse fire now. He does not sort spoil any more, and no one has asked him to.")
+                        { ShowWhen = "sq_tips_started" },
+                    // A persuasion — the count he has never said out loud.
+                    new("Press him: how many did the slide take?",
+                        "'Ten.' He says it the way a man sets down a full bucket. 'Ten, and one given back. I wrote every name to every family myself, in my own hand, because that is the one thing a foreman is for when the wages stop mattering.'",
+                        "'Now you know the weight of the bill. See it is not wasted.'")
+                        { Persuade = 13, SetsFlag = "sq_tips_harven", ShowWhen = "sq_tips_started",
+                          FailA = ["'I count my dead for the families, not for the curious.' He looks past you at the south heaps, and the conversation is over."] },
+                ],
+                Lines = ["The south heaps are closed. That is the whole of it.",
+                         "If you hear knocking under your boots, walk. Do not run. Running starts slides.",
+                         "Find me by the old winch if you have word worth coin."] },
+        // The cook at the bunkhouse, who still lays eighteen places. The
+        // bunkhouse examinable has said so for a while; now she can say it
+        // herself — and what her pressing yields is the terms of her grief,
+        // which a later notice-board tale will come back for.
+        new() { Id = "camp_cook", Kind = "npcFarmwife", Name = "The Cook", Role = "Of the Bunkhouse",
+                Greeting = "Mind the benches — supper is not till the bell. If you are new hands, there are beds. If you are only passing, there is bread. Sit, either way.",
+                Topics =
+                [
+                    new("Why eighteen places?",
+                        "Eleven of those bunks have blankets folded the way a man folds a blanket when he means to come back to it. I cook for the ones who eat and for the ones who mean to.",
+                        "The captain has told me twice to stop. He has not told me a third time. He counts his board every morning, same as I count my places. None of us here are any good at arithmetic."),
+                    new("What happened to the crew?",
+                        "Went up to the mouth in the spring, on the captain's own roll, with the winch greased for them. The winch has stayed greased.",
+                        "One came back down. She does not eat here. I do not blame her for it — my table is a hard place to sit if you are the reason it is too long."),
+                    // A persuasion — what she knows, and the terms she has set.
+                    new("Press her: you know they are not coming back",
+                        "She sets the ladle down, and for a moment the kitchen is only the fire. 'I have known since the frost came early. Knowing is not the same as a grave, and a grave is not the same as a place at my table.'",
+                        "'When somebody brings me a thing of theirs to bury — a pipe, a whetstone, anything a man's hand wore smooth — I will lay seven places and not one fewer. Until then the table stays long, and you will eat what I put in front of you like everyone else.'")
+                        { Persuade = 12, SetsFlag = "sq_cook_pressed",
+                          FailA = ["'The pot does not stir itself.' She turns her back, and the ladle says the conversation is over."] },
+                ],
+                Lines = ["Supper is at the bell. Not before.",
+                         "Eighteen places, and I will hear no arithmetic about it.",
+                         "There is bread if you are passing. Take it sitting down."] },
 
         // ---- the Whispering Wood, and the chapel hamlet in its vale ----
         // The wood's people are not the village's people: they live off it, not
@@ -234,6 +296,14 @@ public static class NpcCatalog
                     new("Why is the world older when we go back up?",
                         "Ah. You have noticed, or you will. The name is not a flourish — this place sits BEYOND time, and your hours are a coin the deep spends faster than you do. A kettle's worth of tea down here is a day of harvest up there. Deeper, worse.",
                         "Do not grieve it at me. The ones who come out counting lost days were always the lucky ones — the others come out counting nothing at all. Drink; it is getting cold at both speeds."),
+                    // The persuasion nobody should win: he SAYS he is not in the
+                    // habit of telling — press him, and the habit holds unless
+                    // the die is very kind. Won once, ever; the seeing sticks.
+                    new("Press him: say what you see in us",
+                        "For a long while there is only the kettle. Then: 'As you like. The burning one carries a debt with a heart sewn shut around it, and it is not his heart. The praying one has already paid, and hopes the receipt was lost. The grinning one believes his dead are only mislaid.'",
+                        "'And all three of you believe the deep owes you something back. It does not owe. It keeps. Now drink your tea — seeing costs me nothing, but being seen has a price, and you have just paid it.'")
+                        { Persuade = 15, SetsFlag = "kazzat_seen",
+                          FailA = ["'No.' The kettle sings into the silence. 'I am not in the habit of telling. It is my gift, my way — mine, and not for pressing.'"] },
                 ],
                 Lines = ["No one should be down here. Drink your tea.",
                          "I see you. I see all of you. It is my gift, my way.",

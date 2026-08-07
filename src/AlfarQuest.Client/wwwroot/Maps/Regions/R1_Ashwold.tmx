@@ -292,7 +292,8 @@
   <object id="677" name="the boundary stone" x="968" y="760">
    <properties>
     <property name="InteractionType" value="Examine"/>
-    <property name="Pages" value="A stone older than the village, half sunk and furred with lichen. The letters on it are not the ones anyone here uses now, and the one word that can still be made out is a name — Ychellen. The fields stop at it. Nobody has ever ploughed past it, and nobody can say why not."/>
+    <property name="Pages" value="A stone older than the village, half sunk and furred with lichen. The letters on it are not the ones anyone here uses now, and the one word that can still be made out is a name — Ychellen. The fields stop at it. Nobody has ever ploughed past it, and nobody can say why not.␟The letters settle for a mind that holds them still. Not a boundary — an instruction, worn to its bones: WHAT IS PLOUGHED IS OWED. The fields stop here because someone, in a tongue nobody has spoken for an age, told them where owing begins — and the vale has kept the terms without ever reading them."/>
+    <property name="FateCheck" value="12"/>
     <property name="Radius" value="46"/>
     <property name="ReadKind" value="plaque"/>
     <property name="Verb" value="Read"/>
