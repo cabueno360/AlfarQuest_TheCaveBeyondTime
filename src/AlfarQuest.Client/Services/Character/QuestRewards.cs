@@ -40,6 +40,20 @@ public static class QuestRewards
                       "He pressed it on you at the cave-mouth — 'so they know you were sent.'",
         },
 
+        // The Dragon of the Tips — the pick the south heaps swallowed and the
+        // slide gave back. Whatever tempered it below, it has not chipped since:
+        // while it is earned (the Old Worm at rest), the mining die's bare 1
+        // never chips the party's pick again — see World.Rewards.
+        new()
+        {
+            Id = "pick_tempered", Name = "The Foreman's Pick", Slot = Slot.Artifact,
+            Rarity = Rarity.Epic, Icon = "⛏", Value = 0,
+            Attributes = new() { Strength = 2 },
+            Flavour = "Harven pressed it on you at the winch-house door. One of the picks the " +
+                      "south heaps swallowed, given back by the slide — and whatever tempered " +
+                      "it below, no stone has chipped it since.",
+        },
+
         // Word for the Cleric — Mirka's locket, warm from her father's hand.
         new()
         {

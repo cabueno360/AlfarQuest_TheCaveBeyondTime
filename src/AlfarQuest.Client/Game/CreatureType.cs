@@ -124,6 +124,11 @@ public sealed record CreatureType
     /// rate and announces itself.</summary>
     public bool MiniBoss { get; init; }
 
+    /// <summary>A story flag its death claims — how a hunt advances a quest:
+    /// the notice asks, the kill answers. Empty for everything else. Claimed
+    /// through the bridge so it persists like any other deed.</summary>
+    public string ClaimFlag { get; init; } = "";
+
     /// <summary>The chamber-holding kind: a health bar of its own, a KIT it rotates
     /// through instead of one trick, and an enrage. A step above MiniBoss — this is
     /// the fight a room is built around, not just a dangerous variant.</summary>
@@ -262,6 +267,22 @@ public static class CreatureCatalog
                 Ability = MonsterAbility.Smash, AbilityRangeTiles = 2.6f, AbilityCooldown = 3f,
                 Material = "stone", Resist = Stone,
                 Loot = [("Stone", 0.5f), ("Small Crystal", 0.5f)] },
+
+        // --- the thing under the south heaps (The Dragon of the Tips) ---
+        // The miners call it a dragon and know it is not; Harven's bill asks
+        // for its rest. An old, patient worm grown vast under years of spoil —
+        // asleep until boots come close, then the heap folds. Its death claims
+        // the quest flag, and its authored spawn (R3, UnlessFlag) never
+        // returns once it is done. Tuned as a surface mini-boss: hard for the
+        // level the region runs at, not a keeper.
+        new() { Id = "old_worm", Kind = "mobWorm", Name = "The Old Worm of the Tips", Biome = Biome.Cave,
+                MaxHp = 380, Damage = 18, Speed = 40, Radius = 22, Scale = 1.55f,
+                PatrolTiles = 2, AggroTiles = 5,
+                Xp = 150, MiniBoss = true, ClaimFlag = "sq_tips_worm",
+                Demeanor = Demeanor.Sleeper, AlertTiles = 3f,
+                Ability = MonsterAbility.Smash, AbilityRangeTiles = 2.8f, AbilityCooldown = 2.6f,
+                Material = "stone", Resist = Stone,
+                Loot = [("Stone", 1f), ("Small Crystal", 0.8f), ("Coins", 1f)] },
 
         // --- the other shore: what prowls the Great Coral Tree (depth 2) ---
         // Kazzat's warning made flesh: the sea beneath the Cistern is an ocean of

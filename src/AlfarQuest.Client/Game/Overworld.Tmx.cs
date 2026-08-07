@@ -280,6 +280,12 @@ public partial class World
     {
         foreach (var o in m.Objects("EnemySpawn"))
         {
+            // A hunted one stays dead: a spawn with UnlessFlag is simply not
+            // placed once that flag is claimed — the Old Worm does not crawl
+            // back under the tips every time the region reloads.
+            var unless = o.Str("UnlessFlag");
+            if (unless.Length > 0 && RewardBridge.Claimed().Contains(unless)) continue;
+
             var id = o.Str("EnemyId", o.Name);
             if (CreatureCatalog.All.FirstOrDefault(c => c.Id == id) is not { } def)
             {

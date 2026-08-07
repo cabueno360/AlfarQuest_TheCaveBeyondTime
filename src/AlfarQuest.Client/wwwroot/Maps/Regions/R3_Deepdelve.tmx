@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="213">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="144" height="112" tilewidth="16" tileheight="16" infinite="0" nextlayerid="531" nextobjectid="219">
  <properties>
   <property name="DisplayName" value="Deepdelve"/>
   <property name="Music" value="deep-intro"/>
@@ -178,6 +178,14 @@
   <object id="212" name="bat" x="632" y="712">
    <point/>
   </object>
+  <!-- The Dragon of the Tips: asleep under the south heaps until boots come
+       close. Once put to rest (its death claims the flag) it never returns. -->
+  <object id="218" name="old_worm" x="560" y="640">
+   <properties>
+    <property name="UnlessFlag" value="sq_tips_worm"/>
+   </properties>
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="523" name="Warp"/>
  <objectgroup id="524" name="Interaction">
@@ -259,6 +267,62 @@
     <property name="FateCheck" value="10"/>
     <property name="Destination" value="744,400"/>
     <property name="Radius" value="46"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="213" name="the foreman's bill" x="664" y="440">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="To the men of Deepdelve, and to any soul willing to earn honest coin. Leave the south spoil heaps alone. I have said it twice this week and I will say it once more. No man is to sort the black heaps beyond Marker Six until this business is settled. If you have already found work there, report to the west cut instead. Your wages will not be docked. Some fool has begun calling what lives beneath the heaps a dragon. It is no dragon. We all know what dragons are worth in stories, and we know there has never been one under this mountain. Still, something moves below the spoil, and I have buried enough men to stop laughing at names.␟Picks disappear into one seam and never strike bottom. The ground shifts after sunset. Last Thirdday a whole mound settled six feet without rain, blasting, or warning. If you hear stone knocking from below your boots, leave your tools where they are and walk away. Do not run. Running starts slides. Payment will be made to any miner, trapper, or delver who finds what is causing this and sees that the south heaps are safe to work again. If I am not in the counting house, find me by the old winch. — Harven, Foreman of Deepdelve.␟The pick-head hangs above the winch-house door now. No handle. Only the iron. Rust has already begun gathering where the ash failed to clean away the blood. The men pass beneath it every morning without remark. New hands ask whose tool it was. Older ones tell them it belonged to no one now, and that answer has always been enough. The south heaps remain closed. Grass has begun to grow where wagons once cut deep ruts through the spoil. Rain has softened the black mounds into long, gentle slopes. From the ridge above, a stranger might think the place abandoned years ago. Only those who worked there notice the changes. The heaps sit differently. Lower. As though something beneath them has settled after a long labor. No more tools have vanished. No more knocking has been heard.␟The silence has lasted long enough that some of the younger miners have started speaking of reopening the seam before winter. Ore is scarce, wages shorter still, and hungry children care little for old stories. Harven says nothing when they speak. Each evening, before the counting house is locked, he walks alone to the winch-house. He stands beneath the broken pick-head for a little while, removes his cap, then turns his eyes toward the south heaps. No prayer leaves his lips. No curse either. Only listening.␟The wind still crosses the spoil with the same low voice it always carried. Sometimes it shifts loose stones. Sometimes it finds the mouths of abandoned shafts and makes them sigh. And sometimes, when the dusk has nearly swallowed the hills and no hammer rings from the workings, the foreman thinks he hears three slow knocks carried through the earth. He never goes to look. In the morning the pick-head is always where he left it, dark against the weathered timber above the door, and the men step beneath it one by one, removing their caps without ever being told why."/>
+    <property name="PageFlags" value="␟␟sq_tips_worm␟sq_tips_worm␟sq_tips_worm"/>
+    <property name="SetsFlag" value="sq_tips_started"/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Verb" value="Read"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="214" name="the tool tally" x="680" y="472">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="Extract from the Foreman's Tool Tally. There is no point pretending the numbers are wrong. I counted them myself each evening before locking the shed. The first pick was blamed on young Edric. He swore he leaned it against the spoil before taking a drink and found only the handle still standing when he turned back. We docked his pay. He accepted it without argument, though he looked at the ground more than at me. Three days later another vanished. Then two together. Always the same seam. The men stopped calling it South Cut Nine and began saying that crack instead, as though giving it a proper name would invite something to answer.␟I walked there myself. The spoil lies black and loose over old grey stone. Nothing uncommon until one notices how quiet the place is. The sorting hammers carry plainly from every other heap. At South Cut Nine they come muffled, as though wrapped in thick wool. Even the crows refuse the ground. I pushed an iron rod into the seam. It slid farther than any rod should have gone. No scrape against stone. No splash. No sound at all. When I pulled it back, the last foot was warm. Not hot enough to burn. Just warm enough that I looked twice. The miners watched me from twenty paces away. No one asked what I found. No one wished to hear the answer.␟Tools missing to date: seven iron picks. Three shovels. One pry bar. Two lanterns. One full coil of hemp rope. The rope troubles me most. Iron may sink. Wood may rot. But rope is useful only to hands that know what it is for."/>
+    <property name="SetsFlag" value="sq_tips_tally"/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Verb" value="Read"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="215" name="a coal-stained note" x="512" y="632">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="Found beneath a collapsed ore cart beside the south heaps. The paper is stained with coal dust and dried mud. The writing begins steadily, then grows hurried. I write this because no one believed the knocking. It began three weeks before the heap moved. Never loud. Three taps together. Then silence. Always from beneath. Old Bren said it was spoil settling over abandoned workings. He had spent forty years under mountains and had earned the right to speak before younger men. We believed him because it was easier than believing ourselves.␟The tapping continued. One morning I placed my ear against the ground before work. There was nothing for nearly a minute. Then came the sound. Not knocking. Breathing. Long. Slow. Heavy enough that loose grit rolled across the stones with every exhale. I stood too quickly and laughed at myself. When I looked around, I saw Joren doing the same on another heap. He did not laugh. Neither of us spoke of it.␟By week's end the spoil had begun to settle differently. Entire ridges sagged a finger's width overnight while others rose without reason. Marker posts leaned where no rain had fallen. Cracks opened across the heaps and closed again before sunset. The foreman ordered fresh measurements every evening. Every morning they were wrong. Something below was changing the mountain one careful handful at a time."/>
+    <property name="SetsFlag" value="sq_tips_note"/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Verb" value="Read"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="216" name="the clerk's record" x="488" y="432">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="The account of Derran, the last man carried alive from the south heaps after the slide. Recorded by the village clerk while the wounds were still fresh. You want to know what happened. I will tell it once. Do not ask me again. There were eleven of us sorting the south heap after sunrise. The weather was clear enough that you could see smoke from the lower cottages. Nothing moved except the dust beneath our boots. Mikel struck his shovel into the pile. The heap answered. Not an echo. Something deeper. The whole mound gave a single groan, low enough that I felt it in my ribs before I heard it. Someone shouted to run. Someone else shouted to stay still. Neither mattered.␟The ground folded. That is the only word I have for it. Folded. The spoil did not fall downhill. It rolled upward first, as though something underneath had drawn one long breath. Then everything came down. Stone, ash, broken timber, rusted tools from years before my birth. I remember a lantern sailing through the air with its flame still burning. I remember seeing half a cart wheel standing upright before it disappeared beneath black rock.␟I woke with only my head above the spoil. The others did not answer when I called. While I waited for the rescue ropes, I heard it again beneath me. Three slow knocks. Far below. Not trapped men. Too steady. Too patient. As though whatever lay beneath knew the heap had finally fed it."/>
+    <property name="SetsFlag" value="sq_tips_derran"/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="note"/>
+    <property name="Verb" value="Read"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="217" name="the marked slag" x="568" y="648">
+   <properties>
+    <property name="InteractionType" value="Examine"/>
+    <property name="Pages" value="Broken slag heaped over something long, and white paint splashed across the stones to mark the place. A strip of parchment is wrapped around a stake driven at its edge. The hand belongs to Olan Breck, pit examiner. The writing is careful, though several words have been scratched out and begun again. I was the only fool who touched it. The others would not come within ten paces. They were right. It was lying half buried where the slide had stripped the heap bare. At first I thought it a length of old leather peeled from some forgotten machine belt. The shape was wrong for hide, and wrong for bark besides. It rested in folds upon the stones, collapsed upon itself as though whatever had once filled it had quietly gone elsewhere.␟Calling it a skin seems honest enough. Not because it resembles the skin of any beast I know. Because it is empty. The outside is the colour of soot after rain. Not black, but the dull grey that comes when ash has been washed a hundred times. Dust clings to it without settling, as though the surface holds no purchase for dirt. I laid one finger upon it. It yielded. Not soft. Not hard. Like pressing against a tightly packed sack of grain. There were ridges running its length, each one broad enough to lay a hand across. Between them stretched thinner bands that caught the light like old horn. The whole thing bore no wound, no tear where it had been shed. It simply ended in ragged edges that looked worn apart by years of rubbing through stone. I drew my hand away. It was warm. Not with the warmth of the sun. The warmth of something that had only just risen from sleep.␟The smell reached me after. Stone dust. Wet iron. That sour scent left in the air after blasting powder, though no charge had been fired that week. I fetched a knife and cut at one loose edge. The blade would not bite. It skated across the surface without leaving so much as a scratch, yet when I pressed harder the knife snapped clean across the middle. I still have the broken half. No man spoke. The miners stood watching me as though waiting for the skin to move. It never did. That frightened me more. I have hunted wolves. I have watched cave bears dying with three spears through their ribs. Living things breathe. Living things twitch. Living things bleed. This thing lay as still as old cloth, yet every moment beside it carried the feeling that I had interrupted someone's sleep.␟When the foreman arrived, he ordered six men to haul it away with hooks. The hooks tore free. The skin remained. It was lighter than timber and heavier than stone. No measure suited it. In the end we covered it again beneath broken slag and marked the place with white paint. No one wished to see it twice. If another man uncovers it after I am gone, leave it where it lies. Do not strike it. Do not burn it. And should someone tell you there is a dragon beneath the spoil heaps, do not waste time arguing over the name. Whatever sleeps below has already outlived every word we have for it."/>
+    <property name="SetsFlag" value="sq_tips_skin"/>
+    <property name="Radius" value="46"/>
+    <property name="ReadKind" value="plaque"/>
+    <property name="Verb" value="Read"/>
    </properties>
    <point/>
   </object>

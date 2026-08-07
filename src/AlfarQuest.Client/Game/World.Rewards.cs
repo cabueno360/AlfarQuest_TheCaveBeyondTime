@@ -273,7 +273,10 @@ public partial class World
                         harvestKind == "mine" ? "The vein cracks wide — twice the yield!"
                                               : "A rare bloom among the leaves — twice the pick!", "#f0d99a"));
                 }
-                else if (harvestKind == "mine" && harvest.value == 1)
+                // The Foreman's Pick never chips — the reward for putting the
+                // Old Worm to rest. Iron the tips swallowed and gave back.
+                else if (harvestKind == "mine" && harvest.value == 1
+                         && !RewardBridge.Claimed().Contains("sq_tips_worm"))
                 {
                     harvest.outcome = "bad";
                     _pickChipFor = 180f;
@@ -386,6 +389,9 @@ public partial class World
         var killer = k.LastHitBy ?? SteeredKey;
         StatBridge.Record(killer, HeroStats.Kind.EnemiesDefeated);
         if (k.Def.MiniBoss) StatBridge.Record(killer, HeroStats.Kind.BossesDefeated);
+        // A hunted thing's death is a deed the story can ask for — the Old Worm
+        // under the tips. Straight through the bridge, so it persists.
+        if (k.Def.ClaimFlag.Length > 0) RewardBridge.Claim(k.Def.ClaimFlag);
         AwardTo(killer, xp, source, k.Pos, k.Def.MiniBoss ? XpAward.For(XpSource.MiniBoss).Label : "");
     }
 }

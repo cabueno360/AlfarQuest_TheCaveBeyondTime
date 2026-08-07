@@ -225,9 +225,34 @@ public static class QuestCatalog
         StartFlag: "sq_four_started")
     { Reward = new(Xp: 400, Gold: 60) };
 
+    /// <summary>The second notice-board tale: the miners call what lives under
+    /// the south spoil heaps a dragon, and Harven's bill asks somebody to make
+    /// them safe to work again. Four reads and one kill — the Old Worm sleeps
+    /// where the heap folded (its death claims sq_tips_worm; its spawn carries
+    /// UnlessFlag so it never crawls back). The bill's closing pages open when
+    /// the thing is at rest: the pick-head above the winch-house door.</summary>
+    public static readonly QuestDef TipsDragon = new(
+        Id: "tips_dragon",
+        Title: "The Dragon of the Tips",
+        Kind: QuestKind.Side,
+        Summary: "Something moves beneath the south spoil heaps of Deepdelve. Picks " +
+                 "vanish into one seam, the ground shifts after sunset, and a whole " +
+                 "mound settled six feet without warning. Harven the foreman has " +
+                 "buried enough men to stop laughing at names.",
+        Steps: new QuestStep[]
+        {
+            new("Read the foreman's tool tally by the winch house", "sq_tips_tally"),
+            new("Read the coal-stained note at the south heaps", "sq_tips_note"),
+            new("Hear Derran's account, kept at the bunkhouse", "sq_tips_derran"),
+            new("Read the pit examiner's parchment at the marked slag", "sq_tips_skin"),
+            new("Put the thing beneath the south heaps to rest", "sq_tips_worm"),
+        },
+        StartFlag: "sq_tips_started")
+    { Reward = new(Xp: 500, Gold: 150, Items: ["pick_tempered"]) };
+
     public static readonly IReadOnlyList<QuestDef> All = new[]
     {
-        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome, CrewAshes, StruckName, FeastFour,
+        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome, CrewAshes, StruckName, FeastFour, TipsDragon,
     };
 
     public static QuestDef? Find(string id) => All.FirstOrDefault(q => q.Id == id);
