@@ -22,6 +22,7 @@ public partial class World
 
         Stage = 2;
         Level = 1;
+        _slippedHours = 0f;      // a fresh delve owes the sun nothing yet
         // The cave is its own size. Without this it inherits the dimensions of
         // whatever map the party just left — which on the authored path is put
         // right by the map itself, and on the generator path leaves the delve
@@ -143,6 +144,17 @@ public partial class World
     /// of the cave on the region they came in from. Until now the only way out was
     /// Abandon Delve, which quit to the roster — this walks you home instead. Run by
     /// the "Leave the cave" step placed at the cave's entrance (see AddCaveExit).</summary>
+    /// <summary>How much faster the hours pass where the party stands. The Cave
+    /// is Beyond Time: each depth leans harder on the clock — ×2 in the Cistern,
+    /// ×3 on the coral shore, ×7 in the Cave Beyond Time itself, and worse past
+    /// it. The surface keeps honest time. Cerno's phial bought a month with six
+    /// drops; this is the same wrongness, felt from inside.</summary>
+    public float TimeDilation => Stage == 2 ? 1f + Level : 1f;
+
+    /// <summary>Hours the cave stole this delve — what the dilated clock ran
+    /// beyond honest time. Counted out at the mouth, then forgotten.</summary>
+    float _slippedHours;
+
     public void LeaveCave()
     {
         // The delve's own state goes; standing the region up lays its ground fresh.
@@ -157,6 +169,20 @@ public partial class World
         var at = NearestOpen(CaveMouth + new Vec(0, TILE * 2.6f));
         PlaceParty(at);
         Camera = at;
+
+        // The reckoning: down there nothing marked it, but up here the light is
+        // wrong. Days only — an hour or two slipped reads as a long delve, not
+        // a wound — and the number floats rather than rides the line, so the
+        // sentence stays one translatable sentence.
+        if (_slippedHours >= 24f && Party.Count > 0)
+        {
+            Say(Party[Active].Def.Name,
+                "(The light is wrong. We went down and the sun went on without us — the world is older than we left it.)", 7f);
+            Floaters.Add(new FloatText(at + new Vec(0, -46),
+                "The world has spent {0} days", "#9a95b6",
+                ((int)(_slippedHours / 24f)).ToString()));
+        }
+        _slippedHours = 0f;
     }
 
     /// <summary>Stands a wiped party back up, once the fall has had its moment.

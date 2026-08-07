@@ -134,8 +134,14 @@ public partial class World
     {
         TorchTime += dt;
         // The world clock. Only moves here, so it holds still in every menu; slow, so
-        // an afternoon is an afternoon. Wraps at midnight.
-        GameSession.TimeOfDay = (GameSession.TimeOfDay + dt / GameSession.SecondsPerHour) % 24f;
+        // an afternoon is an afternoon. Wraps at midnight. BELOW GROUND IT RUNS
+        // FAST — the Cave is Beyond Time, and every depth leans harder on the
+        // hours (TimeDilation). Nothing marks it down there, on purpose: there
+        // is no sky to read. The reckoning is the light being wrong when you
+        // surface — LeaveCave counts the stolen days out loud.
+        var hours = dt / GameSession.SecondsPerHour * TimeDilation;
+        GameSession.TimeOfDay = (GameSession.TimeOfDay + hours) % 24f;
+        if (Stage == 2) _slippedHours += hours - dt / GameSession.SecondsPerHour;
         Shake = Math.Max(0, Shake - dt * 4f);
         // Emptied here so the sounds raised during this tick are exactly what the
         // frame's render payload carries — see World.Sfx. The fate dice follow
