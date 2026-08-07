@@ -98,10 +98,13 @@ public partial class World
         }
         if (ReadBridge.Offer(new OpenedReading(e.Title, e.Kind, pages))) Reading = e;
 
-        // Reading it is the deed: the flag goes up the moment the page is open,
-        // through the same gated claim every one-shot uses — so an examinable in
-        // a Tiled map can advance a quest with one SetsFlag property.
-        if (Reading is not null && e.SetsFlag.Length > 0) Claim(e.SetsFlag);
+        // Reading it is the deed: the flag goes up the moment the page is open.
+        // Straight through the bridge, NOT through the stage-gated Claim(): that
+        // gate exists so the regenerating cave's containers come back, but a
+        // STORY flag read below ground — the Four's cold camp, the words Toman
+        // cut — must persist like any other deed, or a delve-read quest step
+        // silently never advances.
+        if (Reading is not null && e.SetsFlag.Length > 0) RewardBridge.Claim(e.SetsFlag);
     }
 
     /// <summary>Closes the reading from the engine's side. Wired to

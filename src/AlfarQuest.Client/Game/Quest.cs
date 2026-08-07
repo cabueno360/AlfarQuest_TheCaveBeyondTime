@@ -201,9 +201,33 @@ public static class QuestCatalog
         StartFlag: "sq_name_started")
     { Reward = new(Xp: 350, Gold: 150, Items: ["tome_embers"]) };
 
+    /// <summary>The first of the notice-board tales: four of Ashwold climbed on
+    /// the feast day and never came down, and their story is read, not fought —
+    /// the forester's ledger, the miner's chalk, and what the cave kept. The
+    /// board's own notice starts it (SetsFlag on the notice post), and the
+    /// board's last pages open only when the last step is read, so coming back
+    /// to it IS the ending. Written as a little book — see docs/side-quests.</summary>
+    public static readonly QuestDef FeastFour = new(
+        Id: "feast_four",
+        Title: "The Four of the Feast Day",
+        Kind: QuestKind.Side,
+        Summary: "Four honest folk climbed the mountain on the feast day and have not " +
+                 "come down. Their grey mule returned alone, packs still tied. The " +
+                 "notice on Ashwold's board has been copied three times; somebody " +
+                 "should follow where they went.",
+        Steps: new QuestStep[]
+        {
+            new("Read the forester's ledger at the tally-platform in the wood", "sq_four_tally"),
+            new("Read the chalk on the loaded cart at the Deepdelve pit head", "sq_four_cart"),
+            new("Find the Four's cold camp inside the first depth of the cave", "sq_four_camp"),
+            new("Read what was cut into the stone beyond their camp", "sq_four_wall"),
+        },
+        StartFlag: "sq_four_started")
+    { Reward = new(Xp: 400, Gold: 60) };
+
     public static readonly IReadOnlyList<QuestDef> All = new[]
     {
-        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome, CrewAshes, StruckName,
+        DelversPact, WordForTheCleric, SeekCerno, PanaceaHome, CrewAshes, StruckName, FeastFour,
     };
 
     public static QuestDef? Find(string id) => All.FirstOrDefault(q => q.Id == id);

@@ -241,12 +241,48 @@ public partial class World
         "(Something with too many arms tumbles past the far light and is gone. The sea does not even splash.)",
     ];
 
-    /// <summary>Arms the cave's story timers. Called by EnterCave.</summary>
+    /// <summary>Arms the cave's story timers, and lays what the Four of the
+    /// Feast Day left in the first depth. Called by EnterCave.</summary>
     void ArmCaveStory()
     {
         if (!_bruelosShown && Party.Any(h => h.Def.Key == "mage"))
             _bruelosIn = 50f + (float)_rng.NextDouble() * 70f;
         _pipeFallIn = 70f + (float)_rng.NextDouble() * 60f;
+        AddFeastCamp();
+    }
+
+    /// <summary>The Four of the Feast Day, as the cave keeps them: the cold camp
+    /// in the first chamber (Elske's unfinished letter under a tin cup) and, a
+    /// room deeper, the words Toman cut into the stone. Reading each claims its
+    /// quest flag; the notice on Ashwold's board is where the tale begins and
+    /// where its last pages open. From the little book written for the board —
+    /// the tale itself never says what took them, and neither do we.</summary>
+    void AddFeastCamp()
+    {
+        void Leaving(string regionKey, Vec off, string title, string verb, string kind, string flag, params string[] pages)
+        {
+            if (CaveRegions.FirstOrDefault(r => r.Key == regionKey) is not { } reg) return;
+            var at = TileCentre(reg.Cx, reg.Cy) + off;
+            if (Blocked(at, 14f)) at = NearestOpen(at);
+            Examinables.Add(new Examinable
+            {
+                Pos = at, R = 56f, Title = title, Verb = verb, Kind = kind,
+                Pages = pages, SetsFlag = flag,
+            });
+        }
+
+        Leaving("entrance", new Vec(-TILE * 2.2f, -TILE * 1.4f), "a cold camp", "Search", "note", "sq_four_camp",
+            "The first chamber lay scarcely beyond the reach of daylight. Even at noon the light entered grudgingly, spilling over the stone in a pale sheet before surrendering to the deeper dark. Someone had made camp there with the sort of care born from habit rather than comfort. Four bedrolls had been laid around a shallow fire pit whose ashes had long since cooled. A blackened cook pot still rested upon three stones. Beside it sat four wooden bowls, one with a crust of oat porridge dried hard against its side, another holding only the heel of a spoon worn smooth by years of use. The lamp, its oil spent, had been set neatly against a rolled blanket instead of abandoned where it died. Whoever had left this place had not fled. A folded letter lay beneath a tin cup to keep the damp from curling it. The paper had yellowed around the edges, though the ink remained dark enough to read.",
+            "Mera — if this reaches your hands by another's instead of mine, then you have my leave to laugh at me before you scold me. I have spent the better part of today speaking of nothing except turning back, and by now I imagine the others are thoroughly tired of hearing it. Do not mistake me. The climb itself has been no cruel thing. We have seen steeper slopes while gathering pine after the winter storms, and rougher weather besides. Brann's leg has troubled him little, Harl still finds breath enough to whistle after every mile despite Toman threatening to throw him into the nearest ditch, and I will not pretend the bread does not taste finer on the mountain than at home, though hunger has more to do with it than altitude.",
+            "No, it is not the road that troubles me. It is how empty everything becomes the farther one climbs. You remember the old shepherd's track above the Whispering Wood, where the jays used to gather in such numbers that a man could scarcely hear his own thoughts? There is not a single bird there now. We walked nearly an hour this afternoon without hearing so much as a squirrel among the needles. Even the flies seem unwilling to follow us beyond the last stream. The silence is of a sort I have never known. It is not peaceful. Peace carries little sounds within it. Water upon stone. Leaves turning together. A distant crow complaining over nothing. Here there is only the wind, and even that does not seem to belong to these hills. It comes in long breaths through the trees as though passing somewhere beyond them rather than amongst them.",
+            "We found signs of an older camp before reaching the cave. Not fresh. The fire pit had filled with pine needles seasons ago, and a kettle lay upon its side with moss growing through the handle. Whoever rested there took nearly everything with them. They left only a horn spoon blackened by smoke and a strip of leather so weathered it broke apart when Brann lifted it. No names. No carvings. No mark to say who they were or whether they ever returned. The mule carried our burden faithfully until the stone gave way beneath the trees. There it stopped. Brann coaxed it. Toman pushed behind. Harl fetched grain from one of the sacks and held it beneath its nose as though tempting a child. The poor creature would not move another step. I have seen stubborn beasts before. This was not stubbornness. Its whole frame trembled, not with labour, but with fear. The whites of its eyes showed plainly though nothing stood before it. At last we agreed to leave it outside the entrance with enough feed for two days. Should we not return by then, I daresay the beast will make better use of its own judgement than ours.",
+            "There is another passage beyond this chamber where we now rest. Cold comes from it without any wind to carry it. Harl says it is merely deep air finding its way upward. Perhaps he is right. Still, I cannot persuade myself to believe him. The others have begun packing away the bowls, and Brann says we should not linger once the lamp is lit again. I shall fold this now. If I place it into your hands myself, remind me that I worried over nothing and make certain no one in the village hears a word of it. If someone else should carry it home— The sentence ended there. No blot marked the page. No hurried line trailed away. The quill had simply been lifted, as though the writer intended to return after only a moment's interruption, and never found occasion to finish what remained.");
+
+        Leaving("tunnels", new Vec(TILE * 1.4f, 0f), "words cut into the stone", "Read", "plaque", "sq_four_wall",
+            "The passage narrowed until no more than two men might have walked abreast. The floor, rough and broken near the entrance, slowly gave way to broad shelves of stone worn smooth by an age no mason could have measured. Water gathered in shallow hollows beside the walls, clear enough to reflect the light, though none remembered hearing so much as a single drop falling from the ceiling. Every breath lingered. Every scrape of a boot returned from somewhere ahead, softer than before, as though another traveller repeated it after them. Near the bend where the passage turned, words had been scratched into the wall with the point of a miner's chisel. The grooves were shallow in places and cut deep in others where the hand had pressed harder. Dust had gathered in the letters.",
+            "I have stopped pretending that I understand this place. Brann says there must be another gallery running beside ours, and that what we hear belongs to travellers we cannot see. Toman answered that no one else climbed the mountain after us. They argued quietly for a time, not because either believed his own explanation, but because speaking of ordinary things is easier than admitting none can be found. We heard footsteps after the lamp had burned low. Not behind us. Ahead. They kept our pace exactly. When we stopped, they stopped. When we walked again, they did likewise. Harl laughed at first. He called out into the dark, asking whether someone meant to share our supper. No answer came. Only the steps. Elske took hold of my sleeve. I had not noticed she was trembling until then.",
+            "We rounded the next bend and found our own footprints before us. Fresh. Brann's lame stride. My boot with its broken heel. The small mark Harl's walking stick leaves whenever it strikes the stone. They continued away from us into the darkness. We had not walked there. Brann would swear before any judge in the kingdoms that we had not. He turned us about at once. We followed our own trail back until we reached the place where we first saw it. There were no prints behind us. Only those still leading onward. No one wished to speak after that. The lamp guttered. We put it out for fear of wasting the last of the oil. The footsteps ceased the very instant the light died. Not slowly. Not fading into the distance. Simply gone.",
+            "We remained in darkness longer than any of us care to admit. When Brann judged our courage had returned enough to strike the lamp again, we lit it. The footprints had vanished. Even the dust lay smooth where they had been. Brann says we leave with first light. If another soul should find these words before— The final line ended beneath a deep score that wandered downward across the stone, as though the chisel had slipped from the writer's hand. Below it, scarcely knee-high, four short marks had been cut side by side. Someone had later dragged a rough palm across them. Only one remained clear enough to count.");
     }
 
     void UpdateStory(float dt)
